@@ -51,8 +51,8 @@ sudo ./setup.sh
 # Initialize pi-timolo.py files, motion and test motion.
 python ./pi-timolo.py
 # Verify motion then ctrl-c to exit pi-timolo.py
-# Edit pi-timolo.py to change any desired settings per comments. ctrl-x to Save
-nano pi-timolo.py
+# Edit config.py to change any desired settings per comments. ctrl-x to Save
+nano pi-timolo.py or copy a template config from config-templates folder
 # test edit changes. ctrl-c to exit pi-timolo.py
 python ./pi-timolo.py
 
