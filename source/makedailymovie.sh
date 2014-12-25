@@ -37,8 +37,9 @@
 #
 # 01 20 * * * /home/pi/pi-timolo/makedailymovie.sh
 
-files_to_check=/home/pi/pi-timolo/timelapse/*jpg
-command_to_run='mv -f '
+sudo rm /home/pi/pi-timolo/dailymovie/*jpg
+files_to_check=/home/pi/pi-timolo/motion/*jpg
+command_to_run='cp -u'
 the_destination=/home/pi/pi-timolo/dailymovie
 
 # looking for files matching $files_to_check

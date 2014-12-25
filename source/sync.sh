@@ -10,7 +10,7 @@
 
 echo ---------------------------- $0 ---------------------------------
 # Get current folder that this script is located in
-SYNCFILE=pimotion.sync
+SYNCFILE=pi-timolo.sync
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 echo "Current Directory=$DIR"
 # check if grive is already running to avoid multiple instances

@@ -70,7 +70,7 @@ def shut2Sec (shutspeed):
     
 def showTime():
     rightNow = datetime.datetime.now()
-    currentTime = "%02d:%02d:%02d" % ( rightNow.hour, rightNow.minute, rightNow.second)
+    currentTime = "%04d%02d%02d_%02d-%02d-%02d" % (rightNow.year, rightNow.month, rightNow.day, rightNow.hour, rightNow.minute, rightNow.second)
     return currentTime    
     
 def showMessage(functionName, messageStr):
@@ -384,7 +384,7 @@ def getTwilghtCamSettings (sunset, currentPixAve):
     if sunset:
         # calculate sunrise settings  eg. 0-100
         # Calculate ramp down of night settings to day
-        ratio = currentPixAve/float(sunsetThreshold) 
+        ratio = 1 - (currentPixAve/float(sunsetThreshold)) 
     else:
         # calculate sunset settings eg 261 - sunriseThreshold
         # calculate ramp up of settings for sunset
@@ -543,7 +543,6 @@ def dataLogger():
         nightPixAverage = getStreamPixAve(nightStream)
         logdata  = "nightPixAverage=%i  sunriseThreshold=%i  dayPixAverage=%i  sunsetThreshold=%i  " % ( nightPixAverage, sunriseThreshold, dayPixAverage, sunsetThreshold )
         showMessage("dataLogger",logdata)
-        now = showTime()
         logdata = now + " " + logdata
         logToFile(logdata)
         time.sleep(60)
