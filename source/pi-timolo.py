@@ -4,7 +4,7 @@
 # written by Claude Pageau Dec-2014
 # getStreamImage function based on utpalc code based on brainflakes lightweight motion detection code on Raspberry PI forum - Thanks
 
-progVer = "ver 1.01"
+progVer = "ver 1.03"
 
 # Read Configuration variables from config.py file
 import os
@@ -33,6 +33,7 @@ import time
 import datetime
 import picamera
 import picamera.array
+import numpy as np
 from PIL import Image
 from PIL import ImageFont
 from PIL import ImageDraw
@@ -65,7 +66,7 @@ def userMotionCodeHere():
 
 def shut2Sec (shutspeed):
     shutspeedSec = shutspeed/float(SECONDS2MICRO)
-    shutstring = str("%.1f sec") % ( shutspeedSec )
+    shutstring = str("%.3f sec") % ( shutspeedSec )
     return shutstring
     
 def showTime():
@@ -277,7 +278,7 @@ def getFileName(path, prefix, numberon, counter):
 
 def takeDayImage(filename):
     # Take a Day image using exp=auto and awb=auto
-    autowait = 2
+    autowait = 0.1
     with picamera.PiCamera() as camera:
         camera.resolution = (imageWidth, imageHeight) 
         # camera.rotation = cameraRotate #Note use imageVFlip and imageHFlip variables
@@ -372,15 +373,7 @@ def getStreamImage(daymode):
 
 def getStreamPixAve(streamData):
     # Calculate the average pixel values for the specified stream (used for determining day/night or twilight conditions)
-    streamSize = 0;
-    pixVal = 0;
-    for w in range(0, testWidth):
-        for h in range(0, testHeight):
-            # get the diff of the pixel. Conversion to int
-            # is required to avoid unsigned short overflow.
-            pixVal = int(streamData[h][w][1])
-            streamSize = streamSize + pixVal
-    pixAverage = streamSize / (testWidth * testHeight)
+    pixAverage = int(np.average(streamData[...,0]))
     return pixAverage
 
 def getTwilghtCamSettings (sunset, dayPixAve):
@@ -456,32 +449,31 @@ def checkIfDay(currentDayMode, sunSet, dataStream):
                 ISO  = nightMaxISO
         else: 
             dayStream = getStreamImage(True)
-            dayPixAverage = getStreamPixAve(dayStream)       
-            if nightPixAverage < sunriseThreshold and dayPixAverage < 5:                
-                status = "3N- Full Night"
-                currentDayMode=False
-                sunSet = False
-                dataStream = nightStream
-                shut = nightMaxShut
-                ISO = nightMaxISO
+            dayPixAverage = getStreamPixAve(dayStream)
+            if nightPixAverage > 253 and dayPixAverage > sunsetThreshold:
+                # It is Day
+                status = "3N- Full Day"
+                currentDayMode = True
+                sunSet = True                    
+                dataStream = dayStream
             else:
-                if nightPixAverage > 253 and dayPixAverage > sunsetThreshold:
-                    # It is Day
-                    status = "4N- Full Day"
-                    currentDayMode = True
-                    sunSet = True                    
-                    dataStream = dayStream
+                if nightPixAverage < sunriseThreshold and dayPixAverage < sunsetThreshold:                
+                    status = "4N- Full Night"
+                    currentDayMode=False
+                    sunSet = False
+                    dataStream = nightStream
+                    shut = nightMaxShut
+                    ISO = nightMaxISO
                 else:
                     status = "5N- SunRise Twilight"
                     currentDayMode = False
                     sunSet = False
                     dataStream = nightStream
-                    shut , ISO = getTwilghtCamSettings(sunSet, dayPixAverage)
-            
+                    shut , ISO = getTwilghtCamSettings(sunSet, dayPixAverage)           
             # Currently in NIGHT Mode or unknown currentDaymode=False Camera is in night low light settings
             # nightStream = dataStream
             # nightPixAverage = getStreamPixAve(nightStream)
-            # assumes startup during day or night (not twilight
+            # assumes startup during day or night (not twilight)
 
     if currentDayMode:
         msgStr = "Completed - currentDayMode=%s -%s- dayPixAverage=%i nightPixAverage=%i"   %  (currentDayMode, status, dayPixAverage, nightPixAverage)
