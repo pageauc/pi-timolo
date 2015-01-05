@@ -4,7 +4,7 @@
 # written by Claude Pageau Dec-2014
 # getStreamImage function based on utpalc code based on brainflakes lightweight motion detection code on Raspberry PI forum - Thanks
 
-progVer = "ver 1.03"
+progVer = "ver 1.04"
 
 # Read Configuration variables from config.py file
 import os
@@ -390,7 +390,7 @@ def getTwilghtCamSettings (sunset, dayPixAve):
         outISO = nightMinISO
     if outISO > nightMaxISO:
         outISO = nightMaxISO
-    msgStr = "Camera Settings - sunset=%s dayPixAve=%i ratio=%.2f ISO=%i shut=%i %s" % ( sunset, dayPixAve, ratio, outISO, outShut, shut2Sec(outShut)) 
+    msgStr = "Camera Settings - sunset=%s dayPixAve=%i ratio=%.3f ISO=%i shut=%i %s" % ( sunset, dayPixAve, ratio, outISO, outShut, shut2Sec(outShut)) 
     showMessage("  getTwilightCamSettings", msgStr)
     return outShut, outISO
     
@@ -404,13 +404,11 @@ def checkIfDay(currentDayMode, sunSet, dataStream):
     status = "Unknown"
     if currentDayMode:
         # Currently in DAY Mode since currentDayMode=True camera is in Day Auto settings
-        dayStream = dataStream
-        dayPixAverage = getStreamPixAve(dayStream)
+        dayPixAverage = getStreamPixAve(dataStream)
         if dayPixAverage > sunsetThreshold:
             status = "1D- Full Day"
             currentDayMode = True
             sunSet = True
-            dataStream = dayStream
         else:
             # Confirm if it is really day by overexposure of night shot
             nightStream = getStreamImage(False)
@@ -419,7 +417,6 @@ def checkIfDay(currentDayMode, sunSet, dataStream):
                 status = "2D- Full Day"
                 currentDayMode = True
                 sunSet = True
-                dataStream = dayStream
                 # Check for Twilight Conditions            
             else:
                 # Should be in SunSet Twilight
@@ -429,8 +426,7 @@ def checkIfDay(currentDayMode, sunSet, dataStream):
                 dataStream = nightStream
                 shut , ISO = getTwilghtCamSettings (sunSet, dayPixAverage)  
     else:
-        nightStream = dataStream
-        nightPixAverage = getStreamPixAve(nightStream)  
+        nightPixAverage = getStreamPixAve(dataStream)
         if sunSet:
             dayStream = getStreamImage(True)
             dayPixAverage = getStreamPixAve(dayStream)
@@ -438,13 +434,11 @@ def checkIfDay(currentDayMode, sunSet, dataStream):
                 status = "1N- SunSet Twilight"
                 currentDayMode = False
                 sunSet = True
-                dataStream = nightStream
                 shut , ISO = getTwilghtCamSettings(sunSet, dayPixAverage)                      
             else:
                 status = "2N- Full Night"
                 currentDayMode = False
                 sunSet = False
-                dataStream = nightStream
                 shut = nightMaxShut
                 ISO  = nightMaxISO
         else: 
@@ -461,20 +455,13 @@ def checkIfDay(currentDayMode, sunSet, dataStream):
                     status = "4N- Full Night"
                     currentDayMode=False
                     sunSet = False
-                    dataStream = nightStream
                     shut = nightMaxShut
                     ISO = nightMaxISO
                 else:
                     status = "5N- SunRise Twilight"
                     currentDayMode = False
                     sunSet = False
-                    dataStream = nightStream
                     shut , ISO = getTwilghtCamSettings(sunSet, dayPixAverage)           
-            # Currently in NIGHT Mode or unknown currentDaymode=False Camera is in night low light settings
-            # nightStream = dataStream
-            # nightPixAverage = getStreamPixAve(nightStream)
-            # assumes startup during day or night (not twilight)
-
     if currentDayMode:
         msgStr = "Completed - currentDayMode=%s -%s- dayPixAverage=%i nightPixAverage=%i"   %  (currentDayMode, status, dayPixAverage, nightPixAverage)
     else:    
