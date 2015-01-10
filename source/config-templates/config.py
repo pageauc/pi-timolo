@@ -8,13 +8,13 @@ configName = "pitimolo-default-config"
 
 # These settings should both be False if this script is run as a background /etc/init.d daemon
 logDataToFile = True  # logs diagnostic data to a file for review  default=False
-verbose = True
+verbose = True        # Sends detailed logging info to console. set to False if running script as daeman
 
 # print a test image
 imageTestPrint = False     # default=False Set to True to print one image and exit (useful for aligning camera)
 
 # Image Settings
-imageNamePrefix = 'front-' # Prefix for all image file names. Eg front-
+imageNamePrefix = 'cam1-'  # Prefix for all image file names. Eg front-
 imageWidth = 1920          # Full Size Image Width in px  default=1980
 imageHeight = 1080         # Full Size Image Height in px default=1080
 imageVFlip = False         # Flip image Vertically    default=False
@@ -23,7 +23,7 @@ imagePreview = False       # Preview image on connected RPI Monitor default=Fals
 
 # Low Light Night Settings
 nightMaxShut = 5.5         # default=5 sec Highest cam shut exposure time. IMPORTANT 6 sec works sometimes but occasionally locks RPI and HARD reboot required to clear
-nightMinShut = .10         # default=.10 sec Lowest camera shut exposure time for transition from day to night (or visa versa)
+nightMinShut = .01         # default=.01 sec Lowest camera shut exposure time for transition from day to night (or visa versa)
 nightMaxISO = 800          # default=800  Max cam ISO night setting
 nightMinISO = 100          # lowest ISO camera setting for transition from day to night (or visa versa)  
 nightSleepSec = 10         # default=10 Sec - Time period to allow camera to calculate low light AWB   

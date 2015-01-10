@@ -4,7 +4,7 @@
 # written by Claude Pageau Dec-2014
 # getStreamImage function based on utpalc code based on brainflakes lightweight motion detection code on Raspberry PI forum - Thanks
 
-progVer = "ver 1.04"
+progVer = "ver 1.06"
 
 # Read Configuration variables from config.py file
 import os
@@ -278,7 +278,7 @@ def getFileName(path, prefix, numberon, counter):
 
 def takeDayImage(filename):
     # Take a Day image using exp=auto and awb=auto
-    autowait = 0.1
+    autowait = 0.5
     with picamera.PiCamera() as camera:
         camera.resolution = (imageWidth, imageHeight) 
         # camera.rotation = cameraRotate #Note use imageVFlip and imageHFlip variables
@@ -314,8 +314,8 @@ def takeNightImage(filename, currentShut, currentISO):
         # (you may wish to use fixed AWB instead)
         time.sleep(nightSleepSec)
         camera.capture(filename)
-    msgStr = "Captured - Image=%ix%i VFlip=%s HFlip=%s nightSleepSec=%i ISO=%i shut=%i %s %s"  %( imageWidth, imageHeight, imageVFlip, imageHFlip, nightSleepSec, currentISO, currentShut, shut2Sec(currentShut), filename )
-    dataToLog = showTime() + " " + msgStr + "\n"
+    msgStr = "- Image=%ix%i VFlip=%s HFlip=%s nightSleepSec=%i ISO=%i shut=%i %s %s"  %( imageWidth, imageHeight, imageVFlip, imageHFlip, nightSleepSec, currentISO, currentShut, shut2Sec(currentShut), filename )
+    dataToLog = showTime() + " takeNightImage " + msgStr + "\n"
     logToFile(dataToLog)
     showMessage("  takeNightImage", msgStr)
     return        
@@ -424,17 +424,17 @@ def checkIfDay(currentDayMode, sunSet, dataStream):
                 currentDayMode = False
                 sunSet = True
                 dataStream = nightStream
-                shut , ISO = getTwilghtCamSettings (sunSet, dayPixAverage)  
+                shut, ISO = getTwilghtCamSettings (sunSet, dayPixAverage)  
     else:
         nightPixAverage = getStreamPixAve(dataStream)
+        dayStream = getStreamImage(True)
+        dayPixAverage = getStreamPixAve(dayStream)
         if sunSet:
-            dayStream = getStreamImage(True)
-            dayPixAverage = getStreamPixAve(dayStream)
             if nightPixAverage > sunriseThreshold and dayPixAverage < sunsetThreshold:
                 status = "1N- SunSet Twilight"
                 currentDayMode = False
                 sunSet = True
-                shut , ISO = getTwilghtCamSettings(sunSet, dayPixAverage)                      
+                shut, ISO = getTwilghtCamSettings(sunSet, dayPixAverage)                      
             else:
                 status = "2N- Full Night"
                 currentDayMode = False
@@ -442,8 +442,6 @@ def checkIfDay(currentDayMode, sunSet, dataStream):
                 shut = nightMaxShut
                 ISO  = nightMaxISO
         else: 
-            dayStream = getStreamImage(True)
-            dayPixAverage = getStreamPixAve(dayStream)
             if nightPixAverage > 253 and dayPixAverage > sunsetThreshold:
                 # It is Day
                 status = "3N- Full Day"
@@ -451,23 +449,23 @@ def checkIfDay(currentDayMode, sunSet, dataStream):
                 sunSet = True                    
                 dataStream = dayStream
             else:
-                if nightPixAverage < sunriseThreshold and dayPixAverage < sunsetThreshold:                
-                    status = "4N- Full Night"
+                if nightPixAverage > sunriseThreshold and dayPixAverage < sunsetThreshold:                
+                    status = "4N- SunRise Twilight"
+                    currentDayMode = False
+                    sunSet = False
+                    shut, ISO = getTwilghtCamSettings(sunSet, dayPixAverage)
+                else:
+                    status = "5N- Full Night"
                     currentDayMode=False
                     sunSet = False
                     shut = nightMaxShut
-                    ISO = nightMaxISO
-                else:
-                    status = "5N- SunRise Twilight"
-                    currentDayMode = False
-                    sunSet = False
-                    shut , ISO = getTwilghtCamSettings(sunSet, dayPixAverage)           
+                    ISO = nightMaxISO         
     if currentDayMode:
-        msgStr = "Completed - currentDayMode=%s -%s- dayPixAverage=%i nightPixAverage=%i"   %  (currentDayMode, status, dayPixAverage, nightPixAverage)
+        msgStr = "- currentDayMode=%s -%s- dayPixAverage=%i nightPixAverage=%i"   %  (currentDayMode, status, dayPixAverage, nightPixAverage)
     else:    
-        msgStr = "Completed - currentDayMode=%s -%s- dayPixAverage=%i nightPixAverage=%i ISO=%i Shut=%i %s"   %  (currentDayMode, status, dayPixAverage, nightPixAverage, ISO, shut, shut2Sec(shut))
+        msgStr = "- currentDayMode=%s -%s- dayPixAverage=%i nightPixAverage=%i ISO=%i Shut=%i %s"   %  (currentDayMode, status, dayPixAverage, nightPixAverage, ISO, shut, shut2Sec(shut))
     showMessage("  checkIfDay", msgStr)
-    dataToLog = showTime() + " " + msgStr + "\n"
+    dataToLog = showTime() + " checkIfDay " + msgStr + "\n"
     logToFile(dataToLog)
     return dataStream, sunSet, currentDayMode, shut, ISO
     
@@ -598,7 +596,6 @@ def Main():
             if motionFound or forceMotion:
                 if motionFound:
                     dotCount = showDots(motionMaxDots + 2)      # New Line   
-                forceMotion = False
                 imagePrefix = motionPrefix + imageNamePrefix            
                 filename = getFileName(motionPath, imagePrefix, motionNumOn, motionNumCount)
                 if daymode:
@@ -608,13 +605,13 @@ def Main():
                 motionNumCount = postImageProcessing(motionNumOn, motionNumStart, motionNumMax, motionNumCount, motionNumRecycle, motionNumPath, filename)
                 dotCount = showDots(motionMaxDots)
                 if motionFound:
-                    if motionVideoOn:
-                       takeVideo(filename)
-                       dotCount = showDots(motionMaxDots)  
-                    userMotionCodeHere()
                     # =========================================================================
                     # Put your user code in userMotionCodeHere() function at top of this script
-                    # =========================================================================           
+                    # =========================================================================                    
+                    userMotionCodeHere()
+                    if motionVideoOn:
+                       takeVideo(filename)
+                    dotCount = showDots(motionMaxDots)       
             else:
                 dotCount = showDots(dotCount)  # show progress dots when no motion found
  
