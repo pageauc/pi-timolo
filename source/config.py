@@ -20,9 +20,11 @@ imageHeight = 1080         # Full Size Image Height in px default=1080
 imageVFlip = False         # Flip image Vertically    default=False
 imageHFlip = False         # Flip image Horizontally  default=False
 imagePreview = False       # Preview image on connected RPI Monitor default=False
+noNightShots = False       # Don't Take images at Night default=False
+noDayShots = False         # Don't Take images during day time default=False  
 
 # Low Light Night Settings
-nightMaxShut = 5.5         # default=5 sec Highest cam shut exposure time. IMPORTANT 6 sec works sometimes but occasionally locks RPI and HARD reboot required to clear
+nightMaxShut = 5.7         # default=5 sec Highest cam shut exposure time. IMPORTANT 6 sec works sometimes but occasionally locks RPI and HARD reboot required to clear
 nightMinShut = .01         # default=.01 sec Lowest camera shut exposure time for transition from day to night (or visa versa)
 nightMaxISO = 800          # default=800  Max cam ISO night setting
 nightMinISO = 100          # lowest ISO camera setting for transition from day to night (or visa versa)  

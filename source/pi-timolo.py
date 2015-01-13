@@ -1,10 +1,10 @@
 #!/usr/bin/python
 
 # pitimolo - Raspberry Pi Long Duration Timelapse, Motion Detection, with Low Light Capability
-# written by Claude Pageau Dec-2014
+# written by Claude Pageau Dec-2014 (original issue)
 # getStreamImage function based on utpalc code based on brainflakes lightweight motion detection code on Raspberry PI forum - Thanks
 
-progVer = "ver 1.06"
+progVer = "ver 1.10"
 
 # Read Configuration variables from config.py file
 import os
@@ -141,6 +141,7 @@ def displayInfo(motioncount, timelapsecount):
         print("Config File .. Title=%s" % configTitle)
         print("               config-template filename=%s" % configName)
         print("Images ....... Size=%ix%i   Prefix=%s   VFlip=%s   HFlip=%s   Preview=%s" % (imageWidth, imageHeight, imageNamePrefix, imageVFlip, imageHFlip, imagePreview))
+        print("               noNightShots=%s   noDayShots=%s" % (noNightShots, noDayShots))
         print("Thresholds ... PixAverages[ Sunset=%i  Sunrise=%i ]  nightDayTimer=%i sec(Periodic Day/Night Checks)" % (sunsetThreshold, sunriseThreshold, nightDayTimer))
         shutStr = shut2Sec(nightMaxShut)
         print("               nightMaxShut=%i %s  nightMaxISO=%i   nightSleep=%i sec" % (nightMaxShut, shutStr, nightMaxISO, nightSleepSec))
@@ -480,6 +481,21 @@ def checkForTimelapse (timelapseStart):
         timelapseFound = False 
     return timelapseFound
     
+def timeToSleep(daymode):
+    if noNightShots:
+       if daymode:
+          sleepMode=False
+       else:
+          sleepMode=True
+    elif noDayShots:
+        if daymode:
+           sleepMode=True
+        else:
+           sleepMode=False
+    else:
+        sleepMode=False    
+    return sleepMode
+    
 def checkForMotion(data1, data2):
     # Find motion between two data streams based on sensitivity and threshold
     motionDetected = False
@@ -559,68 +575,69 @@ def Main():
     while True:
         data2 = getStreamImage(daymode)      # This gets the second stream of motion analysis
         rightNow = datetime.datetime.now()   # refresh rightNow time
-        
-        if timelapseOn:
-            takeTimeLapse = checkForTimelapse(timelapseStart)
-            if takeTimeLapse:
-                imagePrefix = timelapsePrefix + imageNamePrefix            
-                filename = getFileName(timelapsePath, imagePrefix, timelapseNumOn, timelapseNumCount)
-                tdaymode = daymode
-                streamData, daymode, sunset, newShut, newISO = checkIfDay( daymode, sunset, data2)
-                dotCount = showDots(motionMaxDots + 2)      # reset motion dots              
-                msgStr = "Scheduled Time Lapse Image - daymode=" + str(daymode)
-                showMessage("Main", msgStr)    
-                if not tdaymode == daymode:  # if daymode changed then avoid false motion below by making streams the same 
-                    data1 = streamData
-                    data2 = streamData
-                if daymode:
-                    takeDayImage(filename)    
-                else:
-                    takeNightImage(filename, newShut, newISO)
-                timelapseNumCount = postImageProcessing(timelapseNumOn, timelapseNumStart, timelapseNumMax, timelapseNumCount, timelapseNumRecycle, timelapseNumPath, filename)
-                timelapseStart = datetime.datetime.now()  # reset timelapse timer
-                dotCount = showDots(motionMaxDots)
-                
-        if motionOn:
-            # IMPORTANT - Night motion detection may not work very well due to long exposure times and low light (may try checking red instead of green)
-            # Also may need night specific threshold and sensitivity settings (Needs more testing)
-            motionFound = checkForMotion(data1, data2)
-            rightNow = datetime.datetime.now()
-            timeDiff = (rightNow - checkMotionTimer).total_seconds()
-            if timeDiff > motionForce:
-                dotCount = showDots(motionMaxDots + 2)      # New Line   
-                msgStr = "No Motion Detected for " + str(motionForce / 60) + " minutes. Taking Forced Motion Image."
-                showMessage("Main", msgStr)
-                checkMotionTimer = rightNow
-                forceMotion = True
-            if motionFound or forceMotion:
-                if motionFound:
+
+        if not timeToSleep(daymode):
+            if timelapseOn:
+                takeTimeLapse = checkForTimelapse(timelapseStart)
+                if takeTimeLapse:
+                    imagePrefix = timelapsePrefix + imageNamePrefix            
+                    filename = getFileName(timelapsePath, imagePrefix, timelapseNumOn, timelapseNumCount)
+                    tdaymode = daymode
+                    streamData, daymode, sunset, newShut, newISO = checkIfDay( daymode, sunset, data2)
+                    dotCount = showDots(motionMaxDots + 2)      # reset motion dots              
+                    msgStr = "Scheduled Time Lapse Image - daymode=" + str(daymode)
+                    showMessage("Main", msgStr)    
+                    if not tdaymode == daymode:  # if daymode changed then avoid false motion below by making streams the same 
+                        data1 = streamData
+                        data2 = streamData
+                    if daymode:
+                        takeDayImage(filename)    
+                    else:
+                        takeNightImage(filename, newShut, newISO)
+                    timelapseNumCount = postImageProcessing(timelapseNumOn, timelapseNumStart, timelapseNumMax, timelapseNumCount, timelapseNumRecycle, timelapseNumPath, filename)
+                    timelapseStart = datetime.datetime.now()  # reset timelapse timer
+                    dotCount = showDots(motionMaxDots)
+                    
+            if motionOn:
+                # IMPORTANT - Night motion detection may not work very well due to long exposure times and low light (may try checking red instead of green)
+                # Also may need night specific threshold and sensitivity settings (Needs more testing)
+                motionFound = checkForMotion(data1, data2)
+                rightNow = datetime.datetime.now()
+                timeDiff = (rightNow - checkMotionTimer).total_seconds()
+                if timeDiff > motionForce:
                     dotCount = showDots(motionMaxDots + 2)      # New Line   
-                imagePrefix = motionPrefix + imageNamePrefix            
-                filename = getFileName(motionPath, imagePrefix, motionNumOn, motionNumCount)
-                if daymode:
-                    takeDayImage(filename)
+                    msgStr = "No Motion Detected for " + str(motionForce / 60) + " minutes. Taking Forced Motion Image."
+                    showMessage("Main", msgStr)
+                    checkMotionTimer = rightNow
+                    forceMotion = True
+                if motionFound or forceMotion:
+                    if motionFound:
+                        dotCount = showDots(motionMaxDots + 2)      # New Line   
+                    imagePrefix = motionPrefix + imageNamePrefix            
+                    filename = getFileName(motionPath, imagePrefix, motionNumOn, motionNumCount)
+                    if daymode:
+                        takeDayImage(filename)
+                    else:
+                        takeNightImage(filename, newShut, newISO)
+                    motionNumCount = postImageProcessing(motionNumOn, motionNumStart, motionNumMax, motionNumCount, motionNumRecycle, motionNumPath, filename)
+                    dotCount = showDots(motionMaxDots)
+                    if motionFound:
+                        # =========================================================================
+                        # Put your user code in userMotionCodeHere() function at top of this script
+                        # =========================================================================                    
+                        userMotionCodeHere()
+                        if motionVideoOn:
+                           takeVideo(filename)
+                        dotCount = showDots(motionMaxDots)       
                 else:
-                    takeNightImage(filename, newShut, newISO)
-                motionNumCount = postImageProcessing(motionNumOn, motionNumStart, motionNumMax, motionNumCount, motionNumRecycle, motionNumPath, filename)
-                dotCount = showDots(motionMaxDots)
-                if motionFound:
-                    # =========================================================================
-                    # Put your user code in userMotionCodeHere() function at top of this script
-                    # =========================================================================                    
-                    userMotionCodeHere()
-                    if motionVideoOn:
-                       takeVideo(filename)
-                    dotCount = showDots(motionMaxDots)       
-            else:
-                dotCount = showDots(dotCount)  # show progress dots when no motion found
+                    dotCount = showDots(dotCount)  # show progress dots when no motion found
  
         # Check if day/night checking timer is exceeded
         rightNow = datetime.datetime.now()
         timeDiff = ( rightNow - checkDayTimer).total_seconds()
         if timeDiff > nightDayTimer:
             dotCount = showDots(motionMaxDots + 2 )      # New Line              
-            msgStr = "Check for Day/Night - nightDayTimer=" + str(nightDayTimer) + " sec Exceeded ..."
+            msgStr = "Check Day/Night - nightDayTimer=" + str(nightDayTimer) + " sec Exceeded ... timeToSleep=" + str(timeToSleep(daymode))
             showMessage("Main", msgStr)
             checkDayTimer = rightNow
             tdaymode = daymode  # used to check if daymode has changed
