@@ -4,7 +4,7 @@
 # written by Claude Pageau Dec-2014 (original issue)
 # getStreamImage function based on utpalc code based on brainflakes lightweight motion detection code on Raspberry PI forum - Thanks
 
-progVer = "ver 1.10"
+progVer = "ver 1.11"
 
 # Read Configuration variables from config.py file
 import os
@@ -374,7 +374,7 @@ def getStreamImage(daymode):
 
 def getStreamPixAve(streamData):
     # Calculate the average pixel values for the specified stream (used for determining day/night or twilight conditions)
-    pixAverage = int(np.average(streamData[...,0]))
+    pixAverage = int(np.average(streamData[...,1]))
     return pixAverage
 
 def getTwilghtCamSettings (sunset, dayPixAve):
