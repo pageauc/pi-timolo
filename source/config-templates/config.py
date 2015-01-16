@@ -24,14 +24,14 @@ noNightShots = False       # Don't Take images at Night default=False
 noDayShots = False         # Don't Take images during day time default=False  
 
 # Low Light Night Settings
-nightMaxShut = 5.5         # default=5 sec Highest cam shut exposure time. IMPORTANT 6 sec works sometimes but occasionally locks RPI and HARD reboot required to clear
-nightMinShut = .01         # default=.01 sec Lowest camera shut exposure time for transition from day to night (or visa versa)
+nightMaxShut = 5.7         # default=5 sec Highest cam shut exposure time. IMPORTANT 6 sec works sometimes but occasionally locks RPI and HARD reboot required to clear
+nightMinShut = .002        # default=.002 sec Lowest camera shut exposure time for transition from day to night (or visa versa)
 nightMaxISO = 800          # default=800  Max cam ISO night setting
 nightMinISO = 100          # lowest ISO camera setting for transition from day to night (or visa versa)  
 nightSleepSec = 10         # default=10 Sec - Time period to allow camera to calculate low light AWB   
-nightDayTimer = 2 * 60     # Check stream changes to determine if entering twilight zones
-sunsetThreshold = 90       # If in Day and pixAverage below this then time to ram to switch to low light mode and ramp settings
-sunriseThreshold = 220     # If in Night and pixAverage below this then time to ramp low light settings
+nightDayTimer = 2 * 60     # (Not used in ver 1.2) Check stream changes to determine if entering twilight zones
+sunsetThreshold = 90       # If in Day and pixAverage below this then time to switch to low light mode and ramp settings
+sunriseThreshold = 220     # (Not used in ver 1.2) If in Night and pixAverage below this then time to ramp low light settings
 
 # Settings for Displaying Date/Time Stamp Directly on Images
 showDateOnImage = True     # Set to False for No display of date/time on image default= True

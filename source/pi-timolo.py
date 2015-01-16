@@ -3,8 +3,9 @@
 # pitimolo - Raspberry Pi Long Duration Timelapse, Motion Detection, with Low Light Capability
 # written by Claude Pageau Dec-2014 (original issue)
 # getStreamImage function based on utpalc code based on brainflakes lightweight motion detection code on Raspberry PI forum - Thanks
+# Complete code is available on my github repo at https://github.com/pageauc
 
-progVer = "ver 1.11"
+progVer = "ver 1.2"
 
 # Read Configuration variables from config.py file
 import os
@@ -142,11 +143,11 @@ def displayInfo(motioncount, timelapsecount):
         print("               config-template filename=%s" % configName)
         print("Images ....... Size=%ix%i   Prefix=%s   VFlip=%s   HFlip=%s   Preview=%s" % (imageWidth, imageHeight, imageNamePrefix, imageVFlip, imageHFlip, imagePreview))
         print("               noNightShots=%s   noDayShots=%s" % (noNightShots, noDayShots))
-        print("Thresholds ... PixAverages[ Sunset=%i  Sunrise=%i ]  nightDayTimer=%i sec(Periodic Day/Night Checks)" % (sunsetThreshold, sunriseThreshold, nightDayTimer))
+        print("Thresholds ... PixAverages[ Sunset=%i  *Sunrise=%i ]  *nightDayTimer=%i sec(Periodic Day/Night Checks) * Not used in ver 1.2" % (sunsetThreshold, sunriseThreshold, nightDayTimer))
         shutStr = shut2Sec(nightMaxShut)
         print("               nightMaxShut=%i %s  nightMaxISO=%i   nightSleep=%i sec" % (nightMaxShut, shutStr, nightMaxISO, nightSleepSec))
         print("Image Text ... On=%s  Bottom=%s (Top=False)   WhiteText=%s (False=Black)" % (showDateOnImage, showTextBottom, showTextWhite)) 
-        print("Motion ....... On=%s  Prefix=%s  threshold=%i(How Much)  sensitivity=%i(How Many)  forceTimer=%i sec(If No Motion)"  % (motionOn, motionPrefix, threshold, sensitivity, motionForce))
+        print("Motion ....... On=%s  Prefix=%s  threshold=%i(How Much)  sensitivity=%i(How Many)  forceTimer=%i min(If No Motion)"  % (motionOn, motionPrefix, threshold, sensitivity, motionForce/60))
         print("               videoOn=%s   videoTime=%i sec" % (motionVideoOn, motionVideoTimer))
         print("               motionPath=%s" % (motionPath))
         if motionNumOn:
@@ -293,10 +294,15 @@ def takeDayImage(filename):
         camera.awb_mode = 'auto'
         camera.capture(filename)
     msgStr = "Captured - Image=" + str(imageWidth) + "x" + str(imageHeight) + " VFlip=" + str(imageVFlip) +" HFlip=" + str(imageHFlip) + " autowait=" + str(autowait) + " sec " + filename
+    dataToLog = showTime() + " takeDayImage " + msgStr + "\n"
+    logToFile(dataToLog)
     showMessage("  takeDayImage", msgStr)
     return
     
-def takeNightImage(filename, currentShut, currentISO):
+def takeNightImage(filename):
+    dayStream = getStreamImage(True)
+    dayPixAve = getStreamPixAve(dayStream)
+    currentShut, currentISO = getNightCamSettings(dayPixAve)
     # Take low light Night image (including twilight zones)
     with picamera.PiCamera() as camera:
         # Take Low Light image            
@@ -348,9 +354,8 @@ def createGriveLockFile(imagefilename):
         f.close()
     return          
  
-def getStreamImage(daymode):
+def getStreamImage(isDay):
     # Capture an image stream to memory based on daymode
-    isDay = daymode
     with picamera.PiCamera() as camera:
         time.sleep(0.1)
         camera.resolution = (testWidth, testHeight)
@@ -377,11 +382,12 @@ def getStreamPixAve(streamData):
     pixAverage = int(np.average(streamData[...,1]))
     return pixAverage
 
-def getTwilghtCamSettings (sunset, dayPixAve):
+def getNightCamSettings(dayPixAve):
     # Calculate Ratio
-    ratio = (sunsetThreshold - dayPixAve)/float(sunsetThreshold) 
-    outShut = int(nightMaxShut * ratio)
-    outISO  = int(nightMaxISO * ratio)      
+    if dayPixAve < sunsetThreshold:
+        ratio = ((sunsetThreshold - dayPixAve)/float(sunsetThreshold)) 
+        outShut = int(nightMaxShut * ratio)
+        outISO  = int(nightMaxISO * ratio)      
     # Do some Bounds Checking to avoid problems        
     if outShut < nightMinShut:
         outShut = nightMinShut
@@ -391,85 +397,39 @@ def getTwilghtCamSettings (sunset, dayPixAve):
         outISO = nightMinISO
     if outISO > nightMaxISO:
         outISO = nightMaxISO
-    msgStr = "Camera Settings - sunset=%s dayPixAve=%i ratio=%.3f ISO=%i shut=%i %s" % ( sunset, dayPixAve, ratio, outISO, outShut, shut2Sec(outShut)) 
-    showMessage("  getTwilightCamSettings", msgStr)
+    msgStr = "Settings - dayPixAve=%i ratio=%.3f ISO=%i shut=%i %s" % ( dayPixAve, ratio, outISO, outShut, shut2Sec(outShut)) 
+    showMessage("  getNightCamSettings", msgStr)
     return outShut, outISO
     
-def checkIfDay(currentDayMode, sunSet, dataStream):
+def checkIfDay(currentDayMode, dataStream):
     # Try to determine if it is day, night or twilight.  
-    # Best if program started during full day or full night to avoid common twilight light conditions
-    dayPixAverage = 0      # initialize since may not be used for Full Night
-    nightPixAverage = 0    # initialize since may not be used for Full Day
-    shut = 99              # initialize since daymode needs a dummy return value
-    ISO = 99               # initialize since daymode needs a dummy return value
-    status = "Unknown"
+    dayPixAverage = 0 
     if currentDayMode:
-        # Currently in DAY Mode since currentDayMode=True camera is in Day Auto settings
         dayPixAverage = getStreamPixAve(dataStream)
-        if dayPixAverage > sunsetThreshold:
-            status = "1D- Full Day"
-            currentDayMode = True
-            sunSet = True
-        else:
-            # Confirm if it is really day by overexposure of night shot
-            nightStream = getStreamImage(False)
-            nightPixAverage = getStreamPixAve(nightStream)
-            if nightPixAverage > 253 and dayPixAverage > sunsetThreshold: 
-                status = "2D- Full Day"
-                currentDayMode = True
-                sunSet = True
-                # Check for Twilight Conditions            
-            else:
-                # Should be in SunSet Twilight
-                status = "3D- SunSet Twilight"
-                currentDayMode = False
-                sunSet = True
-                dataStream = nightStream
-                shut, ISO = getTwilghtCamSettings (sunSet, dayPixAverage)  
     else:
-        nightPixAverage = getStreamPixAve(dataStream)
         dayStream = getStreamImage(True)
-        dayPixAverage = getStreamPixAve(dayStream)
-        if sunSet:
-            if nightPixAverage > sunriseThreshold and dayPixAverage < sunsetThreshold:
-                status = "1N- SunSet Twilight"
-                currentDayMode = False
-                sunSet = True
-                shut, ISO = getTwilghtCamSettings(sunSet, dayPixAverage)                      
-            else:
-                status = "2N- Full Night"
-                currentDayMode = False
-                sunSet = False
-                shut = nightMaxShut
-                ISO  = nightMaxISO
-        else: 
-            if nightPixAverage > 253 and dayPixAverage > sunsetThreshold:
-                # It is Day
-                status = "3N- Full Day"
-                currentDayMode = True
-                sunSet = True                    
-                dataStream = dayStream
-            else:
-                if nightPixAverage > sunriseThreshold and dayPixAverage < sunsetThreshold:                
-                    status = "4N- SunRise Twilight"
-                    currentDayMode = False
-                    sunSet = False
-                    shut, ISO = getTwilghtCamSettings(sunSet, dayPixAverage)
-                else:
-                    status = "5N- Full Night"
-                    currentDayMode=False
-                    sunSet = False
-                    shut = nightMaxShut
-                    ISO = nightMaxISO         
-    if currentDayMode:
-        msgStr = "- currentDayMode=%s -%s- dayPixAverage=%i nightPixAverage=%i"   %  (currentDayMode, status, dayPixAverage, nightPixAverage)
-    else:    
-        msgStr = "- currentDayMode=%s -%s- dayPixAverage=%i nightPixAverage=%i ISO=%i Shut=%i %s"   %  (currentDayMode, status, dayPixAverage, nightPixAverage, ISO, shut, shut2Sec(shut))
-    showMessage("  checkIfDay", msgStr)
-    dataToLog = showTime() + " checkIfDay " + msgStr + "\n"
-    logToFile(dataToLog)
-    return dataStream, sunSet, currentDayMode, shut, ISO
+        dayPixAverage = getStreamPixAve(dayStream)         
+    if dayPixAverage > sunsetThreshold:
+        currentDayMode = True
+    else:
+        currentDayMode = False
+    return currentDayMode
     
+def timeToSleep(currentDayMode):
+    if noNightShots:
+       if currentDayMode:
+          sleepMode=False
+       else:
+          sleepMode=True
+    elif noDayShots:
+        if currentDayMode:
+           sleepMode=True
+        else:
+           sleepMode=False
+    else:
+        sleepMode=False    
+    return sleepMode
+ 
 def checkForTimelapse (timelapseStart):
     # Check if timelapse timer has expired
     rightNow = datetime.datetime.now()
@@ -480,22 +440,7 @@ def checkForTimelapse (timelapseStart):
     else:
         timelapseFound = False 
     return timelapseFound
-    
-def timeToSleep(daymode):
-    if noNightShots:
-       if daymode:
-          sleepMode=False
-       else:
-          sleepMode=True
-    elif noDayShots:
-        if daymode:
-           sleepMode=True
-        else:
-           sleepMode=False
-    else:
-        sleepMode=False    
-    return sleepMode
-    
+ 
 def checkForMotion(data1, data2):
     # Find motion between two data streams based on sensitivity and threshold
     motionDetected = False
@@ -557,13 +502,12 @@ def Main():
     if imageTestPrint:
         takeTestImage() # prints one image and exits if imageTestPrint = True in config.py
     # image stream is taken with low light settings and if Day will be almost all white pix val >240
-    msgStr = "Checking if Day or Night  One Moment Please ...."
-    showMessage("Main", msgStr)
-    daymode = False
     sunset = False
-    nightStream = getStreamImage(daymode)
-    streamData, daymode, sunset, newShut, newISO = checkIfDay(daymode, sunset, nightStream)
-    data1 = streamData
+    daymode = False
+    data1 = getStreamImage(True)
+    daymode = checkIfDay(daymode, data1)
+    if not daymode:
+        data1 = getStreamImage(False)
     timelapseStart = datetime.datetime.now()
     checkDayTimer = timelapseStart
     checkMotionTimer = timelapseStart
@@ -573,6 +517,7 @@ def Main():
     dotCount = showDots(motionMaxDots)  # reset motion dots
     # Start main program loop here.  Use Ctl-C to exit if required.
     while True:
+        daymode = checkIfDay(daymode, data1)
         data2 = getStreamImage(daymode)      # This gets the second stream of motion analysis
         rightNow = datetime.datetime.now()   # refresh rightNow time
 
@@ -580,20 +525,15 @@ def Main():
             if timelapseOn:
                 takeTimeLapse = checkForTimelapse(timelapseStart)
                 if takeTimeLapse:
-                    imagePrefix = timelapsePrefix + imageNamePrefix            
-                    filename = getFileName(timelapsePath, imagePrefix, timelapseNumOn, timelapseNumCount)
-                    tdaymode = daymode
-                    streamData, daymode, sunset, newShut, newISO = checkIfDay( daymode, sunset, data2)
                     dotCount = showDots(motionMaxDots + 2)      # reset motion dots              
                     msgStr = "Scheduled Time Lapse Image - daymode=" + str(daymode)
                     showMessage("Main", msgStr)    
-                    if not tdaymode == daymode:  # if daymode changed then avoid false motion below by making streams the same 
-                        data1 = streamData
-                        data2 = streamData
+                    imagePrefix = timelapsePrefix + imageNamePrefix            
+                    filename = getFileName(timelapsePath, imagePrefix, timelapseNumOn, timelapseNumCount)
                     if daymode:
                         takeDayImage(filename)    
                     else:
-                        takeNightImage(filename, newShut, newISO)
+                        takeNightImage(filename)
                     timelapseNumCount = postImageProcessing(timelapseNumOn, timelapseNumStart, timelapseNumMax, timelapseNumCount, timelapseNumRecycle, timelapseNumPath, filename)
                     timelapseStart = datetime.datetime.now()  # reset timelapse timer
                     dotCount = showDots(motionMaxDots)
@@ -601,7 +541,7 @@ def Main():
             if motionOn:
                 # IMPORTANT - Night motion detection may not work very well due to long exposure times and low light (may try checking red instead of green)
                 # Also may need night specific threshold and sensitivity settings (Needs more testing)
-                motionFound = checkForMotion(data1, data2)
+                motionFound = checkForMotion( data1, data2 )
                 rightNow = datetime.datetime.now()
                 timeDiff = (rightNow - checkMotionTimer).total_seconds()
                 if timeDiff > motionForce:
@@ -611,6 +551,9 @@ def Main():
                     checkMotionTimer = rightNow
                     forceMotion = True
                 if motionFound or forceMotion:
+                    checkMotionTimer = rightNow
+                    if forceMotion:
+                        forceMotion = False           
                     if motionFound:
                         dotCount = showDots(motionMaxDots + 2)      # New Line   
                     imagePrefix = motionPrefix + imageNamePrefix            
@@ -618,9 +561,9 @@ def Main():
                     if daymode:
                         takeDayImage(filename)
                     else:
-                        takeNightImage(filename, newShut, newISO)
+                        takeNightImage(filename)
                     motionNumCount = postImageProcessing(motionNumOn, motionNumStart, motionNumMax, motionNumCount, motionNumRecycle, motionNumPath, filename)
-                    dotCount = showDots(motionMaxDots)
+                    # dotCount = showDots(motionMaxDots)
                     if motionFound:
                         # =========================================================================
                         # Put your user code in userMotionCodeHere() function at top of this script
@@ -628,23 +571,9 @@ def Main():
                         userMotionCodeHere()
                         if motionVideoOn:
                            takeVideo(filename)
-                        dotCount = showDots(motionMaxDots)       
+                        dotCount = showDots(motionMaxDots)           
                 else:
                     dotCount = showDots(dotCount)  # show progress dots when no motion found
- 
-        # Check if day/night checking timer is exceeded
-        rightNow = datetime.datetime.now()
-        timeDiff = ( rightNow - checkDayTimer).total_seconds()
-        if timeDiff > nightDayTimer:
-            dotCount = showDots(motionMaxDots + 2 )      # New Line              
-            msgStr = "Check Day/Night - nightDayTimer=" + str(nightDayTimer) + " sec Exceeded ... timeToSleep=" + str(timeToSleep(daymode))
-            showMessage("Main", msgStr)
-            checkDayTimer = rightNow
-            tdaymode = daymode  # used to check if daymode has changed
-            streamData, sunset, daymode, newShut, newISO = checkIfDay(tdaymode, sunset, data2)
-            dotCount = showDots(motionMaxDots)      # reset motion dots             
-            if not tdaymode == daymode:
-                data2 = streamData
         data1 = data2
     return
     

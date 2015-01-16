@@ -1,7 +1,17 @@
                                  pi-timolo
-  Raspberry (Pi) Python (Ti))me Lapse, (Mo)tion Detect using (Lo)w Light Settings
-  ----------------------------------------------------------------------------------
+  Raspberry (Pi) (Ti)me Lapse, (Mo)tion Detect using (Lo)w Light Settings
+  ------------------------------------------------------------------------
 
+Note regarding Version 1.2
+--------------------------
+This version fixes a bug that caused motion capture to go into a continuous loop after forceTimer triggered.
+Also this version greatly simplifies the previous convoluted checkIfDay() logic and is much simpler.
+I still need to do a bit of code clean up. Note the sunriseThreshold and nightDayTimer variables are no
+longer used. The sunset threshold is used and sets the day pixel average threshold and may need to be
+tuned slightly higher or lower.  Currently I have full daylight setting at 90 and lower lighting
+conditions during the day set to approx 55 (your mileage may vary).
+Claude ...
+  
 Introduction
 ------------
 This is a picamara python module application using a Raspberry PI with a RPI camera
@@ -51,8 +61,8 @@ sudo ./setup.sh
 # Initialize pi-timolo.py files, motion and test motion.
 python ./pi-timolo.py
 # Verify motion then ctrl-c to exit pi-timolo.py
-# Edit config.py to change any desired settings per comments. ctrl-x to Save
-nano pi-timolo.py or copy a template config from config-templates folder
+# Edit pi-timolo.py to change any desired settings per comments. ctrl-x to Save
+nano pi-timolo.py
 # test edit changes. ctrl-c to exit pi-timolo.py
 python ./pi-timolo.py
 
