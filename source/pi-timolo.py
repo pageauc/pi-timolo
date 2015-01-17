@@ -5,7 +5,7 @@
 # getStreamImage function based on utpalc code based on brainflakes lightweight motion detection code on Raspberry PI forum - Thanks
 # Complete code is available on my github repo at https://github.com/pageauc
 
-progVer = "ver 1.22"
+progVer = "ver 1.23"
 
 # Read Configuration variables from config.py file
 import os
@@ -72,7 +72,7 @@ def shut2Sec (shutspeed):
     
 def showTime():
     rightNow = datetime.datetime.now()
-    currentTime = "%04d%02d%02d_%02d-%02d-%02d" % (rightNow.year, rightNow.month, rightNow.day, rightNow.hour, rightNow.minute, rightNow.second)
+    currentTime = "%04d%02d%02d_%02d:%02d:%02d" % (rightNow.year, rightNow.month, rightNow.day, rightNow.hour, rightNow.minute, rightNow.second)
     return currentTime    
     
 def showMessage(functionName, messageStr):
@@ -109,7 +109,7 @@ def logToFile(dataToAppend):
         logFilePath = baseDir + baseFileName + ".log"
         if not os.path.exists(logFilePath):
             open(logFilePath, 'w').close()
-            msgStr = "Created New Data Logging File %s" % logFilePath
+            msgStr = "Create New Data Log File %s" % logFilePath
             showMessage("  logToFile", msgStr)
         filecontents = dataToAppend
         f = open(logFilePath, 'ab')
@@ -195,7 +195,7 @@ def getCurrentCount(numberpath, numberstart):
         numbercounter = int(writeCount)
     return numbercounter
 
-def writeTextToImage( imagename, datetoprint ):
+def writeTextToImage(imagename, datetoprint):
     # function to write date/time stamp directly on top or bottom of images.
     if showTextWhite:
         FOREGROUND = ( 255, 255, 255 )  # rgb settings for white text foreground
@@ -204,7 +204,6 @@ def writeTextToImage( imagename, datetoprint ):
     
     if not daymode and showTextWhiteNight: # Force night Text to be white
         FOREGROUND = ( 255, 255, 255 )  # rgb settings for white text foreground
-    
     # centre text and compensate for graphics text being wider
     x = int((imageWidth/2) - (len(imagename)*2))
     if showTextBottom:
@@ -220,7 +219,7 @@ def writeTextToImage( imagename, datetoprint ):
     # draw.text((x, y),"Sample Text",(r,g,b))
     draw.text(( x, y ),text,FOREGROUND,font=font)
     img.save(imagename)
-    msgStr = "Completed - Text=" + datetoprint + " to filename" + imagename
+    msgStr = "Added Text[" + datetoprint + "] on " + imagename
     showMessage("  writeDataToImage",msgStr)
     return
  
@@ -229,7 +228,7 @@ def postImageProcessing(numberon, counterstart, countermax, counter, recycle, co
     if not motionVideoOn:
         rightNow = datetime.datetime.now()
         if showDateOnImage:
-            dateTimeText = "%04d%02d%02d-%02d:%02d:%02d" % (rightNow.year, rightNow.month, rightNow.day, rightNow.hour, rightNow.minute, rightNow.second)
+            dateTimeText = "%04d%02d%02d_%02d:%02d:%02d" % (rightNow.year, rightNow.month, rightNow.day, rightNow.hour, rightNow.minute, rightNow.second)
             if numberon:
                 counterStr = "%i    "  % ( counter )
                 imageText =  counterStr + dateTimeText
@@ -260,7 +259,7 @@ def postImageProcessing(numberon, counterstart, countermax, counter, recycle, co
         f = open(counterpath, 'w+')
         f.write(str(writeCount))
         f.close()
-        msgStr = "Completed - Next Counter=" + str(writeCount) + " " + counterpath
+        msgStr = "Next Counter=" + str(writeCount) + " " + counterpath
         showMessage("  postImageProcessing", msgStr)
     return counter
        
@@ -291,7 +290,7 @@ def takeDayImage(filename):
         camera.exposure_mode = 'auto'
         camera.awb_mode = 'auto'
         camera.capture(filename)
-    msgStr = "Size=%ix%i %s"  % (imageWidth, imageHeight, filename)
+    msgStr = "Size=%ix%i exp=auto awb=auto %s"  % (imageWidth, imageHeight, filename)
     dataToLog = showTime() + " takeDayImage " + msgStr + "\n"
     logToFile(dataToLog)
     showMessage("  takeDayImage", msgStr)
@@ -305,7 +304,6 @@ def takeNightImage(filename):
     with picamera.PiCamera() as camera:
         # Take Low Light image            
         # Set a framerate of 1/6fps, then set shutter
-        # speed to 6s and ISO to 800
         camera.resolution = (imageWidth, imageHeight)
         if imagePreview:
             camera.start_preview()
@@ -319,7 +317,8 @@ def takeNightImage(filename):
         # (you may wish to use fixed AWB instead)
         time.sleep(nightSleepSec)
         camera.capture(filename)
-    msgStr = "Size=%ix%i ISO=%i shut=%s %s"  %( imageWidth, imageHeight, currentISO, shut2Sec(currentShut), filename )
+    shutSec = shut2Sec(currentShut)
+    msgStr = "Size=%ix%i dayPixAve=%i ISO=%i shut=%s %s"  %( imageWidth, imageHeight, dayPixAve, currentISO, shutSec, filename )
     dataToLog = showTime() + " takeNightImage " + msgStr + "\n"
     logToFile(dataToLog)
     showMessage("  takeNightImage", msgStr)
@@ -327,7 +326,7 @@ def takeNightImage(filename):
 
 def takeVideo(filename):
     # Take a short motion video if required
-    msgStr = "Size %ix%i for %i sec to %s" % (imageWidth, imageHeight, motionVideoTimer, filename)
+    msgStr = "Size %ix%i for %i sec %s" % (imageWidth, imageHeight, motionVideoTimer, filename)
     showMessage("  takeVideo", msgStr)        
     if motionVideoOn:
         with picamera.PiCamera() as camera:
@@ -342,7 +341,7 @@ def createGriveLockFile(imagefilename):
     if createLockFile:
         if not os.path.exists(lockFilePath):
             open(lockFilePath, 'w').close()
-            msgStr = "Created grive sync.sh Lock File " + lockFilePath
+            msgStr = "Create grive sync.sh Lock File " + lockFilePath
             showMessage("  createGriveLockFile", msgStr)
         rightNow = datetime.datetime.now()
         now = "%04d%02d%02d-%02d%02d%02d" % ( rightNow.year, rightNow.month, rightNow.day, rightNow.hour, rightNow.minute, rightNow.second )
@@ -364,7 +363,7 @@ def getStreamImage(isDay):
             else:
                 # Take Low Light image            
                 # Set a framerate of 1/6fps, then set shutter
-                # speed to 6s and ISO to 800
+                # speed to 6s
                 camera.framerate = Fraction(1, 6)
                 camera.shutter_speed = nightMaxShut
                 camera.exposure_mode = 'off'
