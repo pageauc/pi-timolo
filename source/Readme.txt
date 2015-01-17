@@ -2,7 +2,7 @@
   Raspberry (Pi) (Ti)me Lapse, (Mo)tion Detect using (Lo)w Light Settings
   ------------------------------------------------------------------------
 
-Note regarding Version 1.2
+Note regarding Version 2.2
 --------------------------
 This version fixes a bug that caused motion capture to go into a continuous loop
 after forceTimer triggered. Also this version greatly simplifies the previous
