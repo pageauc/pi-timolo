@@ -5,7 +5,7 @@
 # getStreamImage function based on utpalc code based on brainflakes lightweight motion detection code on Raspberry PI forum - Thanks
 # Complete code is available on my github repo at https://github.com/pageauc
 
-progVer = "ver 1.2"
+progVer = "ver 1.22"
 
 # Read Configuration variables from config.py file
 import os
@@ -142,10 +142,9 @@ def displayInfo(motioncount, timelapsecount):
         print("Config File .. Title=%s" % configTitle)
         print("               config-template filename=%s" % configName)
         print("Images ....... Size=%ix%i   Prefix=%s   VFlip=%s   HFlip=%s   Preview=%s" % (imageWidth, imageHeight, imageNamePrefix, imageVFlip, imageHFlip, imagePreview))
-        print("               noNightShots=%s   noDayShots=%s" % (noNightShots, noDayShots))
-        print("Thresholds ... PixAverages[ Sunset=%i  *Sunrise=%i ]  *nightDayTimer=%i sec(Periodic Day/Night Checks) * Not used in ver 1.2" % (sunsetThreshold, sunriseThreshold, nightDayTimer))
+        print("               twilightThreshold=%i noNightShots=%s   noDayShots=%s" % (sunsetThreshold, noNightShots, noDayShots))
         shutStr = shut2Sec(nightMaxShut)
-        print("               nightMaxShut=%i %s  nightMaxISO=%i   nightSleep=%i sec" % (nightMaxShut, shutStr, nightMaxISO, nightSleepSec))
+        print("               nightMaxShut=%s  nightMaxISO=%i   nightSleep=%i sec" % (shutStr, nightMaxISO, nightSleepSec))
         print("Image Text ... On=%s  Bottom=%s (Top=False)   WhiteText=%s (False=Black)" % (showDateOnImage, showTextBottom, showTextWhite)) 
         print("Motion ....... On=%s  Prefix=%s  threshold=%i(How Much)  sensitivity=%i(How Many)  forceTimer=%i min(If No Motion)"  % (motionOn, motionPrefix, threshold, sensitivity, motionForce/60))
         print("               videoOn=%s   videoTime=%i sec" % (motionVideoOn, motionVideoTimer))
@@ -280,11 +279,10 @@ def getFileName(path, prefix, numberon, counter):
 
 def takeDayImage(filename):
     # Take a Day image using exp=auto and awb=auto
-    autowait = 0.5
     with picamera.PiCamera() as camera:
         camera.resolution = (imageWidth, imageHeight) 
         # camera.rotation = cameraRotate #Note use imageVFlip and imageHFlip variables
-        time.sleep(autowait)   # sleep for a little while so camera can get adjustments
+        time.sleep(0.5)   # sleep for a little while so camera can get adjustments
         if imagePreview:
             camera.start_preview()
         camera.vflip = imageVFlip
@@ -293,7 +291,7 @@ def takeDayImage(filename):
         camera.exposure_mode = 'auto'
         camera.awb_mode = 'auto'
         camera.capture(filename)
-    msgStr = "Captured - Image=" + str(imageWidth) + "x" + str(imageHeight) + " VFlip=" + str(imageVFlip) +" HFlip=" + str(imageHFlip) + " autowait=" + str(autowait) + " sec " + filename
+    msgStr = "Size=%ix%i %s"  % (imageWidth, imageHeight, filename)
     dataToLog = showTime() + " takeDayImage " + msgStr + "\n"
     logToFile(dataToLog)
     showMessage("  takeDayImage", msgStr)
@@ -321,7 +319,7 @@ def takeNightImage(filename):
         # (you may wish to use fixed AWB instead)
         time.sleep(nightSleepSec)
         camera.capture(filename)
-    msgStr = "- Image=%ix%i VFlip=%s HFlip=%s nightSleepSec=%i ISO=%i shut=%i %s %s"  %( imageWidth, imageHeight, imageVFlip, imageHFlip, nightSleepSec, currentISO, currentShut, shut2Sec(currentShut), filename )
+    msgStr = "Size=%ix%i ISO=%i shut=%s %s"  %( imageWidth, imageHeight, currentISO, shut2Sec(currentShut), filename )
     dataToLog = showTime() + " takeNightImage " + msgStr + "\n"
     logToFile(dataToLog)
     showMessage("  takeNightImage", msgStr)
@@ -329,7 +327,7 @@ def takeNightImage(filename):
 
 def takeVideo(filename):
     # Take a short motion video if required
-    msgStr = "Capturing Motion Video Size %ix%i for %i seconds to %s" % (imageWidth, imageHeight, motionVideoTimer, filename)
+    msgStr = "Size %ix%i for %i sec to %s" % (imageWidth, imageHeight, motionVideoTimer, filename)
     showMessage("  takeVideo", msgStr)        
     if motionVideoOn:
         with picamera.PiCamera() as camera:
@@ -384,10 +382,14 @@ def getStreamPixAve(streamData):
 
 def getNightCamSettings(dayPixAve):
     # Calculate Ratio
-    if dayPixAve < sunsetThreshold:
+    if dayPixAve <= sunsetThreshold:
         ratio = ((sunsetThreshold - dayPixAve)/float(sunsetThreshold)) 
         outShut = int(nightMaxShut * ratio)
-        outISO  = int(nightMaxISO * ratio)      
+        outISO  = int(nightMaxISO * ratio)
+    else:
+        ratio = 0.0
+        outShut = nightMinShut
+        outISO = nightMinISO 
     # Do some Bounds Checking to avoid problems        
     if outShut < nightMinShut:
         outShut = nightMinShut
@@ -396,8 +398,8 @@ def getNightCamSettings(dayPixAve):
     if outISO < nightMinISO:
         outISO = nightMinISO
     if outISO > nightMaxISO:
-        outISO = nightMaxISO
-    msgStr = "Settings - dayPixAve=%i ratio=%.3f ISO=%i shut=%i %s" % ( dayPixAve, ratio, outISO, outShut, shut2Sec(outShut)) 
+        outISO = nightMaxISO    
+    msgStr = "dayPixAve=%i ratio=%.3f ISO=%i shut=%i %s" % ( dayPixAve, ratio, outISO, outShut, shut2Sec(outShut)) 
     showMessage("  getNightCamSettings", msgStr)
     return outShut, outISO
     
@@ -541,7 +543,7 @@ def Main():
             if motionOn:
                 # IMPORTANT - Night motion detection may not work very well due to long exposure times and low light (may try checking red instead of green)
                 # Also may need night specific threshold and sensitivity settings (Needs more testing)
-                motionFound = checkForMotion( data1, data2 )
+                motionFound = checkForMotion(data1, data2)
                 rightNow = datetime.datetime.now()
                 timeDiff = (rightNow - checkMotionTimer).total_seconds()
                 if timeDiff > motionForce:
@@ -563,7 +565,6 @@ def Main():
                     else:
                         takeNightImage(filename)
                     motionNumCount = postImageProcessing(motionNumOn, motionNumStart, motionNumMax, motionNumCount, motionNumRecycle, motionNumPath, filename)
-                    # dotCount = showDots(motionMaxDots)
                     if motionFound:
                         # =========================================================================
                         # Put your user code in userMotionCodeHere() function at top of this script

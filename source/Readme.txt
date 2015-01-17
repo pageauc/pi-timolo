@@ -4,12 +4,13 @@
 
 Note regarding Version 1.2
 --------------------------
-This version fixes a bug that caused motion capture to go into a continuous loop after forceTimer triggered.
-Also this version greatly simplifies the previous convoluted checkIfDay() logic and is much simpler.
-I still need to do a bit of code clean up. Note the sunriseThreshold and nightDayTimer variables are no
-longer used. The sunset threshold is used and sets the day pixel average threshold and may need to be
-tuned slightly higher or lower.  Currently I have full daylight setting at 90 and lower lighting
-conditions during the day set to approx 55 (your mileage may vary).
+This version fixes a bug that caused motion capture to go into a continuous loop
+after forceTimer triggered. Also this version greatly simplifies the previous
+convoluted checkIfDay() logic and is much simpler. I still need to do a bit of
+code clean up. Note the sunriseThreshold and nightDayTimer variables are no
+longer used. The sunset threshold is used and sets the day pixel average threshold
+and may need to be tuned slightly higher or lower.  Currently I have full daylight
+setting at 90 and lower lighting conditions during the day set to approx 55.
 Claude ...
   
 Introduction
