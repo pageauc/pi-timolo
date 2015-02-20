@@ -47,14 +47,14 @@ if [ -z "$(pgrep grive)" ]
     cd $DIR
 else
   # grive is already running so check how long and kill if past time limit
-  if [ -z "$(sudo ps axh -O etimes | grep grive | grep -v grep | sed 's/^ *//'| awk '{if ($2 >= 300) print $1}')" ]
+  if [ -z "$(sudo ps axh -O etimes | grep grive | grep -v grep | sed 's/^ *//'| awk '{if ($2 >= 600) print $1}')" ]
   then
     GRIVETIME=$(sudo ps axh -O etimes | grep grive | grep -v grep | sed 's/^ *//' | awk '{if ($2 > 0) print $2}')
-    echo "grive .. Has run for $GRIVETIME seconds. Will kill when greater than 300 seconds."
+    echo "grive .. Has run for $GRIVETIME seconds. Will kill when greater than 600 seconds 10 min."
   else
     GRIVEPID=$(pgrep grive)
-    echo "grive .. Has run longer than 5 minutes so kill pid $GRIVEPID"
-    KILLPID=$(ps axh -O etimes | grep grive | grep -v grep | awk '{if ($2 >= 300) print $1}')
+    echo "grive .. Has run longer than 10 minutes so kill pid $GRIVEPID"
+    KILLPID=$(ps axh -O etimes | grep grive | grep -v grep | awk '{if ($2 >= 600) print $1}')
     echo "grive .. killing $KILLPID"
     sudo kill $KILLPID
   fi

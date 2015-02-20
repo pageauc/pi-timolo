@@ -1,7 +1,8 @@
 #!/bin/bash
-echo "Downloading and Installing grive and pimotion dependencies. One Mement Please ......."
+echo "Downloading and Installing grive and pimotion dependencies. One Moment Please ......."
 sudo apt-get install build-essential libcurl4-openssl-dev libexpat1-dev libboost-filesystem-dev qt4-dev-tools libyajl-dev libboost-all-dev binutils-dev
 sudo apt-get install libgcrypt11-dev libjson0-dev libboost-program-options-dev python-imaging python-picamera mencoder
+sudo apt-get install libboost1.49-dev
 echo "----------- grive, pimotion and mencoder Dependencies Installed --------------------"
 echo "Steps to initialize grive"
 echo "1  Open a web browser on your PC and login to google. eg gmail and open a new blank tab"

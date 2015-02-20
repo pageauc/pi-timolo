@@ -5,7 +5,7 @@
 # getStreamImage function based on utpalc code based on brainflakes lightweight motion detection code on Raspberry PI forum - Thanks
 # Complete code is available on my github repo at https://github.com/pageauc
 
-progVer = "ver 1.23"
+progVer = "ver 1.26"
 
 # Read Configuration variables from config.py file
 import os
@@ -56,31 +56,37 @@ motionNumPath = baseDir + motionPrefix + baseFileName + ".dat"  # dat file to sa
 timelapsePath = baseDir + timelapseDir  # Store Time Lapse images
 timelapseNumPath = baseDir + timelapsePrefix + baseFileName + ".dat"  # dat file to save currentCount
 lockFilePath = baseDir + baseFileName + ".sync"
+twilightThreshold = sunsetThreshold
 
+#-----------------------------------------------------------------------------------------------
 def userMotionCodeHere():
     # Users can put code here that needs to be run prior to taking motion capture images
     # Eg Notify or activate something.
     
     # User code goes here
     
-    return    
-
+    return   
+    
+#-----------------------------------------------------------------------------------------------
 def shut2Sec (shutspeed):
     shutspeedSec = shutspeed/float(SECONDS2MICRO)
     shutstring = str("%.3f sec") % ( shutspeedSec )
     return shutstring
     
+#-----------------------------------------------------------------------------------------------    
 def showTime():
     rightNow = datetime.datetime.now()
     currentTime = "%04d%02d%02d_%02d:%02d:%02d" % (rightNow.year, rightNow.month, rightNow.day, rightNow.hour, rightNow.minute, rightNow.second)
     return currentTime    
     
+#-----------------------------------------------------------------------------------------------    
 def showMessage(functionName, messageStr):
     if verbose:
         now = showTime()
         print ("%s %s - %s " % (now, functionName, messageStr))
     return
-
+    
+#-----------------------------------------------------------------------------------------------
 def showDots(dotcnt):
     if motionOn and verbose:
         dotcnt += 1
@@ -98,12 +104,14 @@ def showDots(dotcnt):
             sys.stdout.flush()
     return dotcnt
     
+#-----------------------------------------------------------------------------------------------    
 def checkConfig():
     if not motionOn and not timelapseOn:
         msgStr = "Warning - Both Motion and Timelapse are turned OFF - motionOn=%s timelapseOn=%s"
         showMessage("checkConfig", msgStr)
     return 
     
+#-----------------------------------------------------------------------------------------------    
 def logToFile(dataToAppend):
     if logDataToFile:
         logFilePath = baseDir + baseFileName + ".log"
@@ -116,7 +124,8 @@ def logToFile(dataToAppend):
         f.write(filecontents)
         f.close()
     return
-    
+     
+#-----------------------------------------------------------------------------------------------   
 def takeTestImage():
     # Check if any parameter was passed to this script from the command line.
     # This is useful for taking a single image for aligning camera without editing script settings.
@@ -130,7 +139,8 @@ def takeTestImage():
     showMessage ("takeTestImage", msgStr)
     sys.exit(2)
     return
-
+    
+#-----------------------------------------------------------------------------------------------
 def displayInfo(motioncount, timelapsecount):
     if verbose:
         print("")
@@ -142,7 +152,7 @@ def displayInfo(motioncount, timelapsecount):
         print("Config File .. Title=%s" % configTitle)
         print("               config-template filename=%s" % configName)
         print("Images ....... Size=%ix%i   Prefix=%s   VFlip=%s   HFlip=%s   Preview=%s" % (imageWidth, imageHeight, imageNamePrefix, imageVFlip, imageHFlip, imagePreview))
-        print("               twilightThreshold=%i noNightShots=%s   noDayShots=%s" % (sunsetThreshold, noNightShots, noDayShots))
+        print("               twilightThreshold=%i  noNightShots=%s   noDayShots=%s" % (twilightThreshold, noNightShots, noDayShots))
         shutStr = shut2Sec(nightMaxShut)
         print("               nightMaxShut=%s  nightMaxISO=%i   nightSleep=%i sec" % (shutStr, nightMaxISO, nightSleepSec))
         print("Image Text ... On=%s  Bottom=%s (Top=False)   WhiteText=%s (False=Black)" % (showDateOnImage, showTextBottom, showTextWhite)) 
@@ -164,6 +174,7 @@ def displayInfo(motioncount, timelapsecount):
     checkConfig()        
     return            
     
+#-----------------------------------------------------------------------------------------------    
 def checkImagePath():
     # Checks for image folders and creates them if they do not already exist.
     if motionOn:
@@ -178,6 +189,7 @@ def checkImagePath():
             os.makedirs(timelapsePath)
     return
     
+#-----------------------------------------------------------------------------------------------    
 def getCurrentCount(numberpath, numberstart):
     # Create a .dat file to store currentCount or read file if it already Exists
     # Create numberPath file if it does not exist
@@ -194,7 +206,8 @@ def getCurrentCount(numberpath, numberstart):
         f.closed
         numbercounter = int(writeCount)
     return numbercounter
-
+    
+#-----------------------------------------------------------------------------------------------
 def writeTextToImage(imagename, datetoprint):
     # function to write date/time stamp directly on top or bottom of images.
     if showTextWhite:
@@ -222,7 +235,8 @@ def writeTextToImage(imagename, datetoprint):
     msgStr = "Added Text[" + datetoprint + "] on " + imagename
     showMessage("  writeDataToImage",msgStr)
     return
- 
+    
+#----------------------------------------------------------------------------------------------- 
 def postImageProcessing(numberon, counterstart, countermax, counter, recycle, counterpath, filename):
     # If required process text to display directly on image
     if not motionVideoOn:
@@ -262,7 +276,8 @@ def postImageProcessing(numberon, counterstart, countermax, counter, recycle, co
         msgStr = "Next Counter=" + str(writeCount) + " " + counterpath
         showMessage("  postImageProcessing", msgStr)
     return counter
-       
+    
+#-----------------------------------------------------------------------------------------------       
 def getFileName(path, prefix, numberon, counter):
     # build image file names by number sequence or date/time
     if numberon:
@@ -275,7 +290,8 @@ def getFileName(path, prefix, numberon, counter):
         if motionVideoOn:
             filename = "%s/%s%04d%02d%02d-%02d%02d%02d.h264" % ( path, prefix ,rightNow.year, rightNow.month, rightNow.day, rightNow.hour, rightNow.minute, rightNow.second)
     return filename    
-
+    
+#-----------------------------------------------------------------------------------------------
 def takeDayImage(filename):
     # Take a Day image using exp=auto and awb=auto
     with picamera.PiCamera() as camera:
@@ -295,7 +311,8 @@ def takeDayImage(filename):
     logToFile(dataToLog)
     showMessage("  takeDayImage", msgStr)
     return
-    
+     
+#-----------------------------------------------------------------------------------------------   
 def takeNightImage(filename):
     dayStream = getStreamImage(True)
     dayPixAve = getStreamPixAve(dayStream)
@@ -323,7 +340,8 @@ def takeNightImage(filename):
     logToFile(dataToLog)
     showMessage("  takeNightImage", msgStr)
     return        
-
+    
+#-----------------------------------------------------------------------------------------------
 def takeVideo(filename):
     # Take a short motion video if required
     msgStr = "Size %ix%i for %i sec %s" % (imageWidth, imageHeight, motionVideoTimer, filename)
@@ -336,6 +354,7 @@ def takeVideo(filename):
             camera.stop_recording()
     return
     
+#-----------------------------------------------------------------------------------------------    
 def createGriveLockFile(imagefilename):
     # If required create a lock file to indicate grive (sync.sh) has file(s) to process
     if createLockFile:
@@ -350,11 +369,12 @@ def createGriveLockFile(imagefilename):
         f.write(filecontents)
         f.close()
     return          
- 
+    
+#----------------------------------------------------------------------------------------------- 
 def getStreamImage(isDay):
     # Capture an image stream to memory based on daymode
     with picamera.PiCamera() as camera:
-        time.sleep(0.1)
+        time.sleep(0.5)
         camera.resolution = (testWidth, testHeight)
         with picamera.array.PiRGBArray(camera) as stream:
             if isDay:
@@ -373,16 +393,18 @@ def getStreamImage(isDay):
                 time.sleep( nightSleepSec )
             camera.capture(stream, format='rgb')
             return stream.array
-
+    
+#-----------------------------------------------------------------------------------------------
 def getStreamPixAve(streamData):
     # Calculate the average pixel values for the specified stream (used for determining day/night or twilight conditions)
     pixAverage = int(np.average(streamData[...,1]))
     return pixAverage
-
+    
+#-----------------------------------------------------------------------------------------------
 def getNightCamSettings(dayPixAve):
     # Calculate Ratio
-    if dayPixAve <= sunsetThreshold:
-        ratio = ((sunsetThreshold - dayPixAve)/float(sunsetThreshold)) 
+    if dayPixAve <= twilightThreshold:
+        ratio = ((twilightThreshold - dayPixAve)/float(twilightThreshold)) 
         outShut = int(nightMaxShut * ratio)
         outISO  = int(nightMaxISO * ratio)
     else:
@@ -402,6 +424,7 @@ def getNightCamSettings(dayPixAve):
     showMessage("  getNightCamSettings", msgStr)
     return outShut, outISO
     
+#-----------------------------------------------------------------------------------------------    
 def checkIfDay(currentDayMode, dataStream):
     # Try to determine if it is day, night or twilight.  
     dayPixAverage = 0 
@@ -410,12 +433,13 @@ def checkIfDay(currentDayMode, dataStream):
     else:
         dayStream = getStreamImage(True)
         dayPixAverage = getStreamPixAve(dayStream)         
-    if dayPixAverage > sunsetThreshold:
+    if dayPixAverage > twilightThreshold:
         currentDayMode = True
     else:
         currentDayMode = False
     return currentDayMode
     
+#-----------------------------------------------------------------------------------------------    
 def timeToSleep(currentDayMode):
     if noNightShots:
        if currentDayMode:
@@ -430,7 +454,8 @@ def timeToSleep(currentDayMode):
     else:
         sleepMode=False    
     return sleepMode
- 
+    
+#----------------------------------------------------------------------------------------------- 
 def checkForTimelapse (timelapseStart):
     # Check if timelapse timer has expired
     rightNow = datetime.datetime.now()
@@ -441,7 +466,8 @@ def checkForTimelapse (timelapseStart):
     else:
         timelapseFound = False 
     return timelapseFound
- 
+    
+#----------------------------------------------------------------------------------------------- 
 def checkForMotion(data1, data2):
     # Find motion between two data streams based on sensitivity and threshold
     motionDetected = False
@@ -465,7 +491,8 @@ def checkForMotion(data1, data2):
         msgStr = "Found Motion - sensitivity=" + str(sensitivity) + " Exceeded ..."
         showMessage("checkForMotion", msgStr)
     return motionDetected  
- 
+    
+#----------------------------------------------------------------------------------------------- 
 def dataLogger():
     # Replace main() with this function to log day/night pixAve to a file.
     # Note variable logDataToFile must be set to True in config.py  
@@ -476,13 +503,14 @@ def dataLogger():
         dayPixAverage = getStreamPixAve(dayStream)    
         nightStream = getStreamImage(False)
         nightPixAverage = getStreamPixAve(nightStream)
-        logdata  = "nightPixAverage=%i  sunriseThreshold=%i  dayPixAverage=%i  sunsetThreshold=%i  " % ( nightPixAverage, sunriseThreshold, dayPixAverage, sunsetThreshold )
+        logdata  = "nightPixAverage=%i dayPixAverage=%i twilightThreshold=%i  " % ( nightPixAverage, dayPixAverage, twilightThreshold )
         showMessage("dataLogger",logdata)
         logdata = now + " " + logdata
         logToFile(logdata)
         time.sleep(60)
     return    
- 
+    
+#----------------------------------------------------------------------------------------------- 
 def Main():
     # Main program initialization and logic loop
     dotCount = 0   # Counter for showDots() display if not motion found (shows system is working)
@@ -552,11 +580,10 @@ def Main():
                     checkMotionTimer = rightNow
                     forceMotion = True
                 if motionFound or forceMotion:
+                    dotCount = showDots(motionMaxDots + 2)      # New Line 
                     checkMotionTimer = rightNow
                     if forceMotion:
                         forceMotion = False           
-                    if motionFound:
-                        dotCount = showDots(motionMaxDots + 2)      # New Line   
                     imagePrefix = motionPrefix + imageNamePrefix            
                     filename = getFileName(motionPath, imagePrefix, motionNumOn, motionNumCount)
                     if daymode:
@@ -577,6 +604,7 @@ def Main():
         data1 = data2
     return
     
+#-----------------------------------------------------------------------------------------------    
 if __name__ == '__main__':
     try:
         Main()

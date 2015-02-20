@@ -1,6 +1,7 @@
                                  pi-timolo
   Raspberry (Pi) (Ti)me Lapse, (Mo)tion Detect using (Lo)w Light Settings
   ------------------------------------------------------------------------
+This projected is licensed under the terms of the MIT license http://opensource.org/licenses/MIT
 
 Note regarding Version 2.2
 --------------------------
