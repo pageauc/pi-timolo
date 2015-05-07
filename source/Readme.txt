@@ -2,15 +2,19 @@
   Raspberry (Pi) (Ti)me Lapse, (Mo)tion Detect using (Lo)w Light Settings
   ------------------------------------------------------------------------
 
-Note regarding Version 2.2
+Note regarding Version 2.5
 --------------------------
-This version fixes a bug that caused motion capture to go into a continuous loop
-after forceTimer triggered. Also this version greatly simplifies the previous
-convoluted checkIfDay() logic and is much simpler. I still need to do a bit of
-code clean up. Note the sunriseThreshold and nightDayTimer variables are no
-longer used. The sunset threshold is used and sets the day pixel average threshold
-and may need to be tuned slightly higher or lower.  Currently I have full daylight
-setting at 90 and lower lighting conditions during the day set to approx 55.
+This version fixes a bug that caused a hang when video mode was True
+A new feature adds quick time lapse after motion detected
+The console display is cleaned up plus a number of other bug fixes
+Please not the older config.py is not compatible with this release
+since new variables have been added
+Note:
+This release does not include grive
+As of 20-Apr-2015 grive no longer works until it can be modified.
+I have included instructions for installing GDriveFS.  Here
+https://www.raspberrypi.org/forums/viewtopic.php?p=753018&sid=d937a9e30526d324992968a7f4d73e6b#p753018
+
 Claude ...
   
 Introduction
@@ -20,8 +24,9 @@ module. Use for Long Duration Time Lapse and/or Motion Detection projects.
 File names can be by Number Sequence or by Date/Time Naming.  Time Lapse and Motion
 image files can be named and save images to different folders or the same folder.  
 Optionally motion files can be uploaded to your web based google drive using a
-precompiled (github) grive binary. (requires security setup).
-The program uses low light long exposure for night motion and/or timelapse images.
+GDriveFS. (run setup-gdrivefs.sh for setup and instructions).
+Note:
+pi-timolo uses low light long exposure for night motion and/or timelapse images.
 The program can detect motion during low light, although the long exposure times
 can cause blurring of moving objects.
 
@@ -49,7 +54,7 @@ sudo shutdown -h now
 Unplug and restart your Raspberry Pi.
 
 Quick Setup
------------
+===========
 SSH (putty) or Desktop Terminal login to RPI and perform the following
 
 cd ~
@@ -58,25 +63,25 @@ cd ./pi-timolo
 wget https://raw.github.com/pageauc/pi-timolo/master/pi-timolo.tar
 tar -pxvf pi-timolo.tar
 # Install dependancies and required software
-sudo ./setup.sh
+sudo ./setup-timolo.sh
 # Initialize pi-timolo.py files, motion and test motion.
 python ./pi-timolo.py
 # Verify motion then ctrl-c to exit pi-timolo.py
-# Edit pi-timolo.py to change any desired settings per comments. ctrl-x to Save
+# Edit config.py file using nano editor to change any desired settings per comments.
+# ctrl-x to Save
 nano pi-timolo.py
 # test edit changes. ctrl-c to exit pi-timolo.py
 python ./pi-timolo.py
 
-See details below for setting up run at boot init.d, crontab, grive sync Etc.
-          
-Upgrade History
----------------
-12-Dec This is a total rewrite and combines my previous pimotion, pimotion-orig and
-my long duration rpi-timelapse projects into one program.  Motion and long duration
-timelapse features can be run separately or together.  
+# If want to mount your web based google drive to a local RPI folder
+# execute the setup-gdrivefs.sh script and follow instructions
+sudo ./setup-gdrivefs.sh
 
+If you want to run pi-timolo.sh headless on boot
+See details below for setting up run init.d, crontab, rsync Etc.
+          
 Program Features
-----------------
+================
 - Time lapse and motion detection can be run together or separately
 - configuration variables are saved in a config.py file.  This allows
   pi-timolo.py to be updated without having to redo variable values.
@@ -88,11 +93,15 @@ Program Features
 - Include a makemove.py script to help create timelapse avi files from images.
 - Includes mvleavelast.sh script to move all but last file (since may still be active)
   This allows files to be moved to a folder mount point on a remote share if required.
-- Include precompiled grive for transferring files to your web based google drive.
-  This allows syncing files for viewing on web browser or google drive app (android or ios)
-- Includes a setup.sh script to install/update dependencies.
+- Includes a setup-timolo.sh script to install/update pi-timolo dependencies.
 - Includes a skeleton init.d script pi-timolo.sh if you want to start the program on boot
-- Allows logging of summary data to a file or detailed verbose data when enabled 
+- Allows logging of summary data to a file or detailed verbose data when enabled   
+- Include setup-gdrivefs.sh to mount your google drive to a RPI folder. This script
+  includes instructions.
+  use rsync to sync files between local and google mount folders
+  eg 
+cd /home/pi/pi-timolo
+rsync -vrtu motion gdrivefs/motion
 
 
 Background
@@ -104,7 +113,7 @@ http://www.amazon.com/gp/product/B004D8NZ52/ref=oh_details_o01_s00_i00?ie=UTF8&p
 Here is a larger aluminum camera case that I have a model B installed in.  
 This one has room for a usb power supply etc.
 http://www.amazon.com/Monoprice-108431-Outdoor-Camera-Switchable/dp/B007VDTTTM/ref=sr_1_72?ie=UTF8&qid=1393884556&sr=8-72&keywords=fake+security+camera
-I may do a youtube video on How To setup these cases with the
+I may do a YouTube video on How To setup these cases with the
 raspberry pi computer and camera module installed.
 
 After some work I now have the Raspberry Pi security camera's working
@@ -117,21 +126,15 @@ Using number sequencing allows limiting the number of files that need to
 get synchronized to my google drive. 
 It was too much to manage all the dated files and cleanup in google drive.  
 This method restricts the number of motion files that need to get updated
-via grive. Files are overwritten in Round robin fashion. If you need more
-history you can write a routine to save google drive files from a
-synchronized PC folder to a dated archive folder using a windows 
-robocopy freefilesync or similar program through a batch file.
-Synchronization uses a rpi compiled version of grive.  
-This requires slightly modifying the source code to make it
-compatible with the RPI.
+via the GDriveFS. It is suggested you setup a cron rsync script.
   
-The tar file is a complete setup including a precompiled grive to reduce the
-effort required to get this working. To automate the security camera
-operation, I have setup pi-timolo.py to run from a /etc/init.d/pi-timolo.sh
-bash script by copying /etc/init.d/skeleton file to pi-timolo.sh script (sample included).
-Then modified to run your pi-timolo.py script on boot. see later in post
-for more setup detail.
+The pi-timolo.tar file is a complete setup including instructions.
+To automate the camera operation, I have setup pi-timolo.py to run from
+a /etc/init.d/pi-timolo.sh bash script by copying /etc/init.d/skeleton file
+to pi-timolo.sh script (sample included).
 
+Prerequisites
+=============
 You must have a raspberry pi model A, A+, B or B+ with the latest raspbian build
 and pi camera module installed and working. There are several tutorials
 showing how to do this so it is not covered here. This assumes you know 
@@ -145,7 +148,7 @@ folder names in the scripts. If you run the script manually from the
 command line then settings and activity information can be enabled to display.
 
 Download and Setup Instructions
--------------------------------
+===============================
 Use putty to ssh into an internet connected raspberry pi and execute the
 following commands. Note change pi-timoloto a folder name of your choice
 if required.
@@ -163,11 +166,14 @@ wget https://raw.github.com/pageauc/pi-timolo/master/pi-timolo.tar
 # Extract tar files to current folder
 
 tar -pxvf pi-timolo.tar
+sudo ./setup-timolo.sh
 
-# Install required grive libraries from the internet
+# If you wish to run GDriveFS to allow mounting your web based
+# google drive to a local RPI folder then run setup command below
+# This also include setup and security configuration instructions
 # Note this will take a while so be patient
 
-sudo ./setup.sh 
+sudo ./setup-gdrivefs.sh 
 
 Change pi-timolo.py settings as required
 ---------------------------------------
@@ -181,7 +187,7 @@ Make sure you are in the correct folder containing pi-timolo.py
 pi-timolo.py reads configuration variables from a config.py file. If
 you have different configurations you can keep a template library and
 swap new settings in as needed.  There is a config-templates folder
-with various typical settings. You can copy cp the required files
+with a few typical settings. You can copy cp the required files
 to overwrite the existing config.py if required.  Make sure you
 save a copy of the config.py if you need to save those settings.
 
@@ -195,135 +201,8 @@ camera module mounting position in the fake security camera case.
 Review the various config.py settings and edit as desired.
 use ctrl-x to save file and exit nano editor.
 
-Details if you wish to compile grive yourself (Optional)
---------------------------------------------------------
-You will need to download the tar file from the web link below and extract
-it on your raspberry pi or compile a modified version of grive in order to
-sync files to your google drive see instructions from url link below.  
-Compiling takes a little while and you must edit the specified
-/home/pi/grive/libgrive/src/drive/State.cc file per the web link below. 
-If you have problems read the posts.  When you initialize grive with google
-I opened a (putty) ssh session to the raspberry pi on my windows 7 PC and
-then cut and pasted the grive -a url to chrome browser while logged
-into google.  This takes you to a screen that returns a very
-long security code.  I then cut and pasted this into the RPI session and
-everything worked just fine.  I did not login to google on the pi.  
-I only needed the PC to be logged in and paste the authentication code back
-to the pi from the PC.  I don't think you need a logged in google account
-on the pi as the post mentions.  At any rate it worked for me and I had to 
-try several times since I was trying to avoid having grive executable in the
-motion folder.  By using the -p option and copying the grive hidden
-config files to the rpi motion folder I managed to get everything to work.
-   
-http://raspberrywebserver.com/serveradmin/back-up-your-pi-to-your-google-drive.html
-
-or this link might be even better
-
-http://www.pihomeserver.fr/en/2013/08/15/raspberry-pi-home-server-synchroniser-le-raspberry-pi-avec-votre-google-drive/
-
-Once compile is successful copy the grive executable to the folder where
-pi-timolo.py and sync.sh are located
-
-Optional Setup grive security to your google account
-----------------------------------------------------
-If you want to synchronize image files to your google drive then follow the
-instructions below
-Note you must have a valid google account and google drive.
-On a PC open a web browser eg chrome and login to your google account and
-check that you have a google drive.
-
-Important
----------
-It is highly recommended that any web google drive documents you have be
-moved to a separate google drive folder eg my_files.
-This will prevent these files from getting sync'd back to the Raspberry Pi.
-Moving your web google drive documents can be done from a web browser.
-
-Initialize grive (Optional)
-The operations below can be done using a (putty) ssh session from a
-networked computer or directly from a RPI desktop terminal session and
-a RPI web browser (eg Midori or Epiphany). Just make sure you are logged into
-web google account before you start.
-Note: running setup.sh on the RPI will also show detailed instructions
-for setting up grive security token.
-
-cd ~
-cd pi-timolo   # or name of folder you created (modify subsequent paths accordingly)
-sudo ./grive -a
-
-or execute ./setup.sh for detailed security setup instructions.
-
-This will display a web browser url.
-You will need to highlight the displayed url on the RPI and paste into
-the PC or RPI web browser URL bar. 
-Note if you are using putty ssh then right click to paste RPI highlighted
-url into the PC's web browser url bar 
-The url will open a new web page and display a security hash token.  
-Copy and paste this security token into grive via ssh session on rpi. 
-In the grive -a session hit enter to accept the security token.
-grive will indicate if the operation was successful
-
-If you previously ran pi-timolo.py then a motion folder should already
-be created under the pi-timolo folder (or whatever folder you picked)
-If it does not exist run command below to create one.
-
-./pi-timolo.py
-
-or create motion or manually using mkdir command if desired.
-
-Once grive has been initialized successfully with the grive -a option then
-copy the /home/pi/pi-timolo/.grive and /home/pi/pi-timolo/.grive_state files to the
-/home/pi/pi-timolo/motion folder or your folder name per above code. 
-This will allow grive to be executed from the /home/pi/pi-timolofolder so it
-does not have to be in the motion folder.
-
-cd ~
-cd pi-timolo
-sudo cp ./.grive motion
-sudo cp ./.grive_state motion
-sudo ./sync.sh
-
-You should see grive handshake with your google account and synchronize
-files both ways between google and the RPI
-
-Test pi-timolo.py and sync.sh together
--------------------------------------
-To test you can launch pi-timolo.py from one ssh session and sync.sh from a
-second ssh terminal session. 
-Note: This can also be done from the RPI desktop using two terminal sessions.
-
-First terminal session
-----------------------
-cd ~
-cd pi-timolo # or whatever folder name you used.
-sudo ./pi-timolo.py
-
-Second terminal session
------------------------
-From a second ssh terminal run sync.sh (make sure that motion was detected
-and files are in the motion folder to sync).  
-You should see a /home/pi/pi-timolo/sync.lock file.  This is created by
-pi-timolo.py when motion photos were created.
-
-cd ~
-cd pi-timolo # or whatever folder name you used.
-sudo ./sync.sh
-
-You should see files being synchronized in both directions.  This is normal.  
-There are google drive apps for Apple, Android, Mac and PC.  Just do a
-search for google drive in the appropriate app/play store This will allow you
-to access your google drive on the web to view the raspberry pi 
-motion capture security camera images You can also download and install the
-google drive windows application to your PC.
-Make sure you have a wifi or wired network connection to the internet that
-will start when the RPI boots headless. 
-see setup for crontab and init.d setup for further details
-pymotion.py should start automatically and save images to the motion
-folder. When the crontab is executed it will initiate a sync of images to your
-google drive on the web.  
- 
 Note:
------
+=====
 I also setup a cronjob to reboot the rpi once a day but this may not be
 necessary for you. I did it since I intend to leave the rpi security camera
 run remotely and this gives a chance for system to recover should there
@@ -335,7 +214,7 @@ if you are in terminal sessions. Once you know sync.sh is working OK you
 can automate the sync by running it in as a cronjob.
 
 Setup init.d script to auto launch pi-timolo.py on boot-up of raspberry pi
--------------------------------------------------------------------------
+==========================================================================
 Note there is a copy of the init.d pi-timolo.sh in the tar file so you should
 be able to copy if instead of the skeleton file method below if you wish 
 eg in the pimotion folder execute the following then skip to edit 
@@ -358,28 +237,8 @@ sudo nano pi-timolo.sh
 sudo update-rc.d pi-timolo.sh defaults
 cd ~
 
-Optional  (Only if you have setup grive security)
-Create a crontab to automate syncronization to motion from the RPI
-------------------------------------------------------------------------
-From an logged in ssh or terminal session
-
-sudo crontab -e
-
-Paste the following line into the crontab file nano editor and modify
-folder name and frequency if required. currently executes every minute. 
-
-*/1 * * * * /home/pi/pi-timolo/sync.sh >/dev/nul
-
-ctrl-x to exit nano and save crontab file
-This cron job will run once a minute.  You can change to suit your needs.  
-If grive is already running or there are no files to process then the
-script simply exits. 
-Also if grive has been running for more than 5 minutes it is killed.  
-This can be changed in the script if you wish.
-
 Reboot RPI and test operation by triggering motion and checking images are
-successfully transmitted to your motion and optionally sync'd with your
-google drive on the internet.  
+successfully saved to your motion folder.  
 Trouble shoot problems as required.
 
 Good Luck

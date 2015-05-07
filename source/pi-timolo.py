@@ -3,13 +3,13 @@
 # pitimolo - Raspberry Pi Long Duration Timelapse, Motion Detection, with Low Light Capability
 # written by Claude Pageau Dec-2014 (original issue)
 # getStreamImage function based on utpalc code based on brainflakes lightweight motion detection code on Raspberry PI forum - Thanks
-# Complete code is available on my github repo at https://github.com/pageauc
+# Complete pi-timolo code and instructions are available on my github repo at https://github.com/pageauc
 
-progVer = "ver 1.26"
+# 2.5 released 4-May-2015  added motion quick TL and fixed video hang  and text colour text on images bug
+progVer = "ver 2.5"
 
-# Read Configuration variables from config.py file
 import os
-mypath=os.path.abspath(__file__)   # Find the full path of this python script
+mypath=os.path.abspath(__file__)       # Find the full path of this python script
 baseDir=mypath[0:mypath.rfind("/")+1]  # get the path location only (excluding script name)
 baseFileName=mypath[mypath.rfind("/")+1:mypath.rfind(".")]
 progName = os.path.basename(__file__)
@@ -21,6 +21,7 @@ if not os.path.exists(configFilePath):
     showMessage("readConfigFile", msgStr)
     quit()
 else:
+    # Read Configuration variables from config.py file
     from config import *
 
 if verbose:
@@ -28,7 +29,7 @@ if verbose:
 else:
     print("Note: verbose=False (Disabled) Set verbose=True to Display Detailed Messages.")
 
-# python libraries to load   
+# import remaining python libraries  
 import sys
 import time
 import datetime
@@ -56,13 +57,12 @@ motionNumPath = baseDir + motionPrefix + baseFileName + ".dat"  # dat file to sa
 timelapsePath = baseDir + timelapseDir  # Store Time Lapse images
 timelapseNumPath = baseDir + timelapsePrefix + baseFileName + ".dat"  # dat file to save currentCount
 lockFilePath = baseDir + baseFileName + ".sync"
-twilightThreshold = sunsetThreshold
 
 #-----------------------------------------------------------------------------------------------
 def userMotionCodeHere():
     # Users can put code here that needs to be run prior to taking motion capture images
     # Eg Notify or activate something.
-    
+
     # User code goes here
     
     return   
@@ -134,7 +134,7 @@ def takeTestImage():
     testfilepath = baseDir + testfilename
     takeDayImage(testfilepath)    
     imagetext = "%s %s" % (mytime, testfilename)
-    writeTextToImage(testfilepath, imagetext)
+    writeTextToImage(testfilepath, imagetext, daymode)
     msgStr = "imageTestPrint=%s Captured Test Image to %s " % (imageTestPrint, testfilepath)
     showMessage ("takeTestImage", msgStr)
     sys.exit(2)
@@ -151,24 +151,38 @@ def displayInfo(motioncount, timelapsecount):
         print("-------------------------------------- Settings ----------------------------------------------")
         print("Config File .. Title=%s" % configTitle)
         print("               config-template filename=%s" % configName)
-        print("Images ....... Size=%ix%i   Prefix=%s   VFlip=%s   HFlip=%s   Preview=%s" % (imageWidth, imageHeight, imageNamePrefix, imageVFlip, imageHFlip, imagePreview))
-        print("               twilightThreshold=%i  noNightShots=%s   noDayShots=%s" % (twilightThreshold, noNightShots, noDayShots))
+        print("Image Info ... Size=%ix%i   Prefix=%s   VFlip=%s   HFlip=%s   Preview=%s" % (imageWidth, imageHeight, imageNamePrefix, imageVFlip, imageHFlip, imagePreview))
         shutStr = shut2Sec(nightMaxShut)
-        print("               nightMaxShut=%s  nightMaxISO=%i   nightSleep=%i sec" % (shutStr, nightMaxISO, nightSleepSec))
-        print("Image Text ... On=%s  Bottom=%s (Top=False)   WhiteText=%s (False=Black)" % (showDateOnImage, showTextBottom, showTextWhite)) 
+        print("    Low Light. twilightThreshold=%i  nightMaxShut=%s  nightMaxISO=%i   nightSleepSec=%i sec" % (twilightThreshold, shutStr, nightMaxISO, nightSleepSec))
+        print("    No Shots . noNightShots=%s   noDayShots=%s" % (noNightShots, noDayShots))       
+        if showDateOnImage:
+            print("    Img Text . On=%s  Bottom=%s (False=Top)  WhiteText=%s (False=Black)  showTextWhiteNight=%s" % (showDateOnImage, showTextBottom, showTextWhite, showTextWhiteNight)) 
+        else:
+            print("    No Text .. showDateOnImage=%s  Text on Image Disabled"  % (showDateOnImage))
         print("Motion ....... On=%s  Prefix=%s  threshold=%i(How Much)  sensitivity=%i(How Many)  forceTimer=%i min(If No Motion)"  % (motionOn, motionPrefix, threshold, sensitivity, motionForce/60))
-        print("               videoOn=%s   videoTime=%i sec" % (motionVideoOn, motionVideoTimer))
         print("               motionPath=%s" % (motionPath))
         if motionNumOn:
-            print("Motion Num ... On=%s  current=%s   numStart=%i   numMax=%i   numRecycle=%s"  % (motionNumOn, motioncount, motionNumStart, motionNumMax, motionNumRecycle))
-            print("               numPath=%s " % (motionNumPath))
-        if createLockFile:
-            print("Grive Sync ... On=%s  Path=%s  Note: syncs for motion images only." % (createLockFile, lockFilePath))       
-        print("Time Lapse ... On=%s  Prefix=%s   Timer=%i sec   timeLapseExit=%i sec(0=Continuous)" % (timelapseOn, timelapsePrefix, timelapseTimer, timelapseExit)) 
+            print("    Num Seq .. motionNumOn=%s  current=%s   numStart=%i   numMax=%i   numRecycle=%s"  % (motionNumOn, motioncount, motionNumStart, motionNumMax, motionNumRecycle))
+            print("               motionNumPath=%s " % (motionNumPath))
+        else:
+            print("    Date-Time. motionNumOn=%s  Image Numbering Disabled" % (motionNumOn))
+        if motionQuickTLOn:
+            print("    Quick TL . motionQuickTLOn=%s   motionQuickTLTimer=%i sec  motionQuickTLInterval=%i sec (0=fastest)" % (motionQuickTLOn, motionQuickTLTimer, motionQuickTLInterval))
+        else:
+            print("    Quick TL . motionQuickTLOn=%s  Quick Time Lapse Disabled" % (motionQuickTLOn))                   
+        if motionVideoOn:
+            print("    Video .... motionVideoOn=%s   motionVideoTimer=%i sec   (superseded by QuickTL)" % (motionVideoOn, motionVideoTimer))
+        else:
+            print("    Video .... motionVideoOn=%s  Motion Video Disabled" % (motionVideoOn))        
+        print("Time Lapse ... On=%s  Prefix=%s   Timer=%i sec   timeLapseExit=%i sec (0=Continuous)" % (timelapseOn, timelapsePrefix, timelapseTimer, timelapseExit)) 
         print("               timelapsePath=%s" % (timelapsePath))
         if timelapseNumOn:
-            print("TL Numbering . On=%s  current=%s   numStart=%i   numMax=%i   numRecycle=%s"  % (timelapseNumOn, timelapsecount, timelapseNumStart, timelapseNumMax, timelapseNumRecycle))
+            print("    Num Seq .. On=%s  current=%s   numStart=%i   numMax=%i   numRecycle=%s"  % (timelapseNumOn, timelapsecount, timelapseNumStart, timelapseNumMax, timelapseNumRecycle))
             print("               numPath=%s" % (timelapseNumPath))
+        else:
+            print("    Date-Time. motionNumOn=%s  Numbering Disabled" % (timelapseNumOn))
+        if createLockFile:
+            print("Grive Sync ... On=%s  Path=%s  Note: syncs for motion images only." % (createLockFile, lockFilePath))  
         print("Logging ...... verbose=%s (Details to Console)    logDataToFile=%s  logfile=%s" % ( verbose, logDataToFile, baseDir + baseFileName + ".log" ))
         print("------------------------------------ Log Activity --------------------------------------------")
     checkConfig()        
@@ -208,15 +222,17 @@ def getCurrentCount(numberpath, numberstart):
     return numbercounter
     
 #-----------------------------------------------------------------------------------------------
-def writeTextToImage(imagename, datetoprint):
+def writeTextToImage(imagename, datetoprint, daymode):
     # function to write date/time stamp directly on top or bottom of images.
     if showTextWhite:
         FOREGROUND = ( 255, 255, 255 )  # rgb settings for white text foreground
+        textColour = "White"
     else:
         FOREGROUND = ( 0, 0, 0 )  # rgb settings for black text foreground
-    
-    if not daymode and showTextWhiteNight: # Force night Text to be white
-        FOREGROUND = ( 255, 255, 255 )  # rgb settings for white text foreground
+        textColour = "Black"       
+        if showTextWhiteNight and ( not daymode):
+            FOREGROUND = ( 255, 255, 255 )  # rgb settings for black text foreground
+            textColour = "White"       
     # centre text and compensate for graphics text being wider
     x = int((imageWidth/2) - (len(imagename)*2))
     if showTextBottom:
@@ -230,16 +246,16 @@ def writeTextToImage(imagename, datetoprint):
     img = Image.open(imagename)
     draw = ImageDraw.Draw(img)
     # draw.text((x, y),"Sample Text",(r,g,b))
-    draw.text(( x, y ),text,FOREGROUND,font=font)
+    draw.text(( x, y ), text, FOREGROUND, font=font)
     img.save(imagename)
-    msgStr = "Added Text[" + datetoprint + "] on " + imagename
+    msgStr = "Added " + textColour + " Text[" + datetoprint + "] on " + imagename
     showMessage("  writeDataToImage",msgStr)
     return
     
 #----------------------------------------------------------------------------------------------- 
-def postImageProcessing(numberon, counterstart, countermax, counter, recycle, counterpath, filename):
+def postImageProcessing(numberon, counterstart, countermax, counter, recycle, counterpath, filename, daymode):
     # If required process text to display directly on image
-    if not motionVideoOn:
+    if (not motionVideoOn):
         rightNow = datetime.datetime.now()
         if showDateOnImage:
             dateTimeText = "%04d%02d%02d_%02d:%02d:%02d" % (rightNow.year, rightNow.month, rightNow.day, rightNow.hour, rightNow.minute, rightNow.second)
@@ -249,9 +265,8 @@ def postImageProcessing(numberon, counterstart, countermax, counter, recycle, co
             else:
                 imageText = dateTimeText
             # Now put the imageText on the current image
-            writeTextToImage(filename, imageText)
-            if createLockFile:
-                createGriveLockFile(filename)
+            writeTextToImage(filename, imageText, daymode)
+
     # Process currentCount for next image if number sequence is enabled
     if numberon:
         counter += 1
@@ -276,19 +291,26 @@ def postImageProcessing(numberon, counterstart, countermax, counter, recycle, co
         msgStr = "Next Counter=" + str(writeCount) + " " + counterpath
         showMessage("  postImageProcessing", msgStr)
     return counter
-    
-#-----------------------------------------------------------------------------------------------       
-def getFileName(path, prefix, numberon, counter):
+
+def getVideoName(path, prefix, numberon, counter):
     # build image file names by number sequence or date/time
     if numberon:
-        filename = path + "/" + prefix + str(counter) + ".jpg"
         if motionVideoOn:
-            filename = path + "/" + prefix + str(counter) + ".h264"        
+            filename = path + "/" + prefix + str(counter) + ".h264" 
+    else:
+        if motionVideoOn:
+            rightNow = datetime.datetime.now()
+            filename = "%s/%s%04d%02d%02d-%02d%02d%02d.h264" % ( path, prefix ,rightNow.year, rightNow.month, rightNow.day, rightNow.hour, rightNow.minute, rightNow.second)
+    return filename    
+ 
+#-----------------------------------------------------------------------------------------------       
+def getImageName(path, prefix, numberon, counter):
+    # build image file names by number sequence or date/time
+    if numberon:
+        filename = path + "/" + prefix + str(counter) + ".jpg"        
     else:
         rightNow = datetime.datetime.now()
-        filename = "%s/%s%04d%02d%02d-%02d%02d%02d.jpg" % ( path, prefix ,rightNow.year, rightNow.month, rightNow.day, rightNow.hour, rightNow.minute, rightNow.second)
-        if motionVideoOn:
-            filename = "%s/%s%04d%02d%02d-%02d%02d%02d.h264" % ( path, prefix ,rightNow.year, rightNow.month, rightNow.day, rightNow.hour, rightNow.minute, rightNow.second)
+        filename = "%s/%s%04d%02d%02d-%02d%02d%02d.jpg" % ( path, prefix ,rightNow.year, rightNow.month, rightNow.day, rightNow.hour, rightNow.minute, rightNow.second)     
     return filename    
     
 #-----------------------------------------------------------------------------------------------
@@ -340,7 +362,25 @@ def takeNightImage(filename):
     logToFile(dataToLog)
     showMessage("  takeNightImage", msgStr)
     return        
-    
+
+#-----------------------------------------------------------------------------------------------
+def takeQuickTimeLapse(motionPath, imagePrefix, motionNumOn, motionNumCount, daymode, motionNumPath):
+    msgStr = "motion Quick Time Lapse for %i sec every %i sec" % (motionQuickTLTimer, motionQuickTLInterval)
+    showMessage("Main", msgStr)
+    checkTimeLapseTimer = datetime.datetime.now()
+    keepTakingImages = True
+    filename = getImageName(motionPath, imagePrefix, motionNumOn, motionNumCount)
+    while keepTakingImages:
+        yield filename
+        rightNow = datetime.datetime.now()
+        timelapseDiff = (rightNow - checkTimeLapseTimer).total_seconds()
+        if timelapseDiff > motionQuickTLTimer:
+            keepTakingImages=False
+        else:
+            motionNumCount = postImageProcessing(motionNumOn, motionNumStart, motionNumMax, motionNumCount, motionNumRecycle, motionNumPath, filename, daymode)    
+            filename = getImageName(motionPath, imagePrefix, motionNumOn, motionNumCount)
+            time.sleep(motionQuickTLInterval)
+        
 #-----------------------------------------------------------------------------------------------
 def takeVideo(filename):
     # Take a short motion video if required
@@ -353,7 +393,7 @@ def takeVideo(filename):
             camera.wait_recording(motionVideoTimer)
             camera.stop_recording()
     return
-    
+   
 #-----------------------------------------------------------------------------------------------    
 def createGriveLockFile(imagefilename):
     # If required create a lock file to indicate grive (sync.sh) has file(s) to process
@@ -402,7 +442,7 @@ def getStreamPixAve(streamData):
     
 #-----------------------------------------------------------------------------------------------
 def getNightCamSettings(dayPixAve):
-    # Calculate Ratio
+    # Calculate Ratio for adjusting shutter and ISO values
     if dayPixAve <= twilightThreshold:
         ratio = ((twilightThreshold - dayPixAve)/float(twilightThreshold)) 
         outShut = int(nightMaxShut * ratio)
@@ -411,7 +451,7 @@ def getNightCamSettings(dayPixAve):
         ratio = 0.0
         outShut = nightMinShut
         outISO = nightMinISO 
-    # Do some Bounds Checking to avoid problems        
+    # Do some Bounds Checking to avoid potential problems        
     if outShut < nightMinShut:
         outShut = nightMinShut
     if outShut > nightMaxShut:
@@ -488,7 +528,7 @@ def checkForMotion(data1, data2):
         motionDetected = True
     if motionDetected:
         dotCount = showDots(motionMaxDots + 2)      # New Line        
-        msgStr = "Found Motion - sensitivity=" + str(sensitivity) + " Exceeded ..."
+        msgStr = "Found Motion - threshold=" + str(threshold) + " sensitivity=" + str(sensitivity) + " Exceeded ..."
         showMessage("checkForMotion", msgStr)
     return motionDetected  
     
@@ -530,8 +570,6 @@ def Main():
     displayInfo(moCnt, tlCnt)
     if imageTestPrint:
         takeTestImage() # prints one image and exits if imageTestPrint = True in config.py
-    # image stream is taken with low light settings and if Day will be almost all white pix val >240
-    sunset = False
     daymode = False
     data1 = getStreamImage(True)
     daymode = checkIfDay(daymode, data1)
@@ -541,16 +579,15 @@ def Main():
     checkDayTimer = timelapseStart
     checkMotionTimer = timelapseStart
     forceMotion = False   # Used for forcing a motion image if no motion for motionForce time exceeded
-    msgStr = "Entering Motion Detection and Time Lapse Loop  Working ..."
+    msgStr = "Entering Motion Detect - Time Lapse Loop  Please Wait ..."
     showMessage("Main", msgStr)
     dotCount = showDots(motionMaxDots)  # reset motion dots
-    # Start main program loop here.  Use Ctl-C to exit if required.
+    # Start main program loop here.  Use Ctl-C to exit if run from terminal session.
     while True:
         daymode = checkIfDay(daymode, data1)
         data2 = getStreamImage(daymode)      # This gets the second stream of motion analysis
         rightNow = datetime.datetime.now()   # refresh rightNow time
-
-        if not timeToSleep(daymode):
+        if not timeToSleep(daymode):  # Don't take images if noNightShots or noDayShots settings are valid
             if timelapseOn:
                 takeTimeLapse = checkForTimelapse(timelapseStart)
                 if takeTimeLapse:
@@ -558,15 +595,14 @@ def Main():
                     msgStr = "Scheduled Time Lapse Image - daymode=" + str(daymode)
                     showMessage("Main", msgStr)    
                     imagePrefix = timelapsePrefix + imageNamePrefix            
-                    filename = getFileName(timelapsePath, imagePrefix, timelapseNumOn, timelapseNumCount)
+                    filename = getImageName(timelapsePath, imagePrefix, timelapseNumOn, timelapseNumCount)
                     if daymode:
                         takeDayImage(filename)    
                     else:
                         takeNightImage(filename)
-                    timelapseNumCount = postImageProcessing(timelapseNumOn, timelapseNumStart, timelapseNumMax, timelapseNumCount, timelapseNumRecycle, timelapseNumPath, filename)
-                    timelapseStart = datetime.datetime.now()  # reset timelapse timer
-                    dotCount = showDots(motionMaxDots)
-                    
+                    timelapseNumCount = postImageProcessing(timelapseNumOn, timelapseNumStart, timelapseNumMax, timelapseNumCount, timelapseNumRecycle, timelapseNumPath, filename, daymode)
+                    timelapseStart = datetime.datetime.now()  # reset time lapse timer
+                    dotCount = showDots(motionMaxDots)                  
             if motionOn:
                 # IMPORTANT - Night motion detection may not work very well due to long exposure times and low light (may try checking red instead of green)
                 # Also may need night specific threshold and sensitivity settings (Needs more testing)
@@ -583,21 +619,35 @@ def Main():
                     dotCount = showDots(motionMaxDots + 2)      # New Line 
                     checkMotionTimer = rightNow
                     if forceMotion:
-                        forceMotion = False           
-                    imagePrefix = motionPrefix + imageNamePrefix            
-                    filename = getFileName(motionPath, imagePrefix, motionNumOn, motionNumCount)
-                    if daymode:
-                        takeDayImage(filename)
-                    else:
-                        takeNightImage(filename)
-                    motionNumCount = postImageProcessing(motionNumOn, motionNumStart, motionNumMax, motionNumCount, motionNumRecycle, motionNumPath, filename)
+                        forceMotion = False            
+                    imagePrefix = motionPrefix + imageNamePrefix 
+                    # check if motion Quick Time Lapse option is On.  This option supersedes motionVideoOn 
+                    if motionQuickTLOn and daymode:
+                        filename = getImageName(motionPath, imagePrefix, motionNumOn, motionNumCount)      
+                        with picamera.PiCamera() as camera:
+                            camera.resolution = (imageWidth, imageHeight)
+                            camera.vflip = imageVFlip
+                            camera.hflip = imageHFlip
+                            time.sleep(.5)
+                            # This uses yield to loop through time lapse sequence but does not seem to be faster due to writing images
+                            camera.capture_sequence(takeQuickTimeLapse(motionPath, imagePrefix, motionNumOn, motionNumCount, daymode, motionNumPath))
+                            motionNumCount = getCurrentCount(motionNumPath, motionNumStart)
+                    else:                        
+                        if motionVideoOn:
+                            filename = getVideoName(motionPath, imagePrefix, motionNumOn, motionNumCount)
+                            takeVideo(filename)
+                        else:
+                            filename = getImageName(motionPath, imagePrefix, motionNumOn, motionNumCount)
+                            if daymode:
+                                takeDayImage(filename)
+                            else:
+                                takeNightImage(filename)
+                        motionNumCount = postImageProcessing(motionNumOn, motionNumStart, motionNumMax, motionNumCount, motionNumRecycle, motionNumPath, filename, daymode)
                     if motionFound:
                         # =========================================================================
                         # Put your user code in userMotionCodeHere() function at top of this script
                         # =========================================================================                    
                         userMotionCodeHere()
-                        if motionVideoOn:
-                           takeVideo(filename)
                         dotCount = showDots(motionMaxDots)           
                 else:
                     dotCount = showDots(dotCount)  # show progress dots when no motion found
