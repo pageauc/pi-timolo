@@ -76,6 +76,8 @@ sudo ./pi-timolo.py
 
 # If want to mount your web based google drive to a local RPI folder
 # execute the setup-gdrivefs.sh script and follow instructions
+# Also detailed instructions here
+# https://www.raspberrypi.org/forums/viewtopic.php?p=753018&sid=d937a9e30526d324992968a7f4d73e6b#p753018
 sudo ./setup-gdrivefs.sh
 
 If you want to run pi-timolo.sh headless on boot
