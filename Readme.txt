@@ -1,9 +1,9 @@
                                  pi-timolo
   Raspberry (Pi) (Ti)me Lapse, (Mo)tion Detect using (Lo)w Light Settings
-  ------------------------------------------------------------------------
+  -----------------------------------------------------------------------
 
 Note regarding Version 2.5
---------------------------
+==========================
 This version fixes a bug that caused a hang when video mode was True
 A new feature adds quick time lapse after motion detected
 The console display is cleaned up plus a number of other bug fixes
@@ -18,7 +18,7 @@ https://www.raspberrypi.org/forums/viewtopic.php?p=753018&sid=d937a9e30526d32499
 Claude ...
   
 Introduction
-------------
+============
 This is a picamara python module application using a Raspberry PI with a RPI camera
 module. Use for Long Duration Time Lapse and/or Motion Detection projects.  
 File names can be by Number Sequence or by Date/Time Naming.  Time Lapse and Motion
@@ -34,7 +34,7 @@ This application uses the picamera python module and requires the latest
 RPI firmware and updates to work properly.
 
 Important
----------
+=========
 Note if you are using an older raspbian build or previous Picamera python module
 and images are black or have problems then update Raspberry PI firmware per commands.
 From a (putty) ssh login or console terminal execute the following commands to upgrade
@@ -105,7 +105,7 @@ rsync -vrtu motion gdrivefs/motion
 
 
 Background
-----------
+==========
 I have been working on a grive capable security camera using two types of
 security camera cases. One is a small fake plastic security cam case
 from Amazon.  Model A or B fits inside with wifi only.
@@ -176,7 +176,7 @@ sudo ./setup-timolo.sh
 sudo ./setup-gdrivefs.sh 
 
 Change pi-timolo.py settings as required
----------------------------------------
+========================================
 The script allows the use of a number sequence to restrict
 the total number of files that need to get sync'd to my google drive
 using grive.  Currently set to 500 images 
