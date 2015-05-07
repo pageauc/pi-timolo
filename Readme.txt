@@ -68,10 +68,10 @@ sudo ./setup-timolo.sh
 python ./pi-timolo.py
 # Verify motion then ctrl-c to exit pi-timolo.py
 # Edit config.py file using nano editor to change any desired settings per comments.
-# ctrl-x to Save
-nano pi-timolo.py
-# test edit changes. ctrl-c to exit pi-timolo.py
-python ./pi-timolo.py
+# ctrl-x y to Save
+nano config.py
+# test edit changes.
+sudo ./pi-timolo.py
 
 # If want to mount your web based google drive to a local RPI folder
 # execute the setup-gdrivefs.sh script and follow instructions
