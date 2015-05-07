@@ -32,6 +32,7 @@ can cause blurring of moving objects.
 
 This application uses the picamera python module and requires the latest
 RPI firmware and updates to work properly.
+Here are some YouTube videos FYI https://www.youtube.com/playlist?list=PLLXJw_uJtQLa11A4qjVpn2D2T0pgfaSG0
 
 Important
 =========
