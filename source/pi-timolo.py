@@ -6,7 +6,7 @@
 # Complete pi-timolo code and instructions are available on my github repo at https://github.com/pageauc
 
 # 2.5 released 4-May-2015  added motion quick TL and fixed video hang  and text colour text on images bug
-progVer = "ver 2.5"
+progVer = "ver 2.51"
 
 import os
 mypath=os.path.abspath(__file__)       # Find the full path of this python script
@@ -266,7 +266,8 @@ def postImageProcessing(numberon, counterstart, countermax, counter, recycle, co
                 imageText = dateTimeText
             # Now put the imageText on the current image
             writeTextToImage(filename, imageText, daymode)
-
+        if createLockFile and motionOn:
+            createSyncLockFile(filename)
     # Process currentCount for next image if number sequence is enabled
     if numberon:
         counter += 1
@@ -395,16 +396,16 @@ def takeVideo(filename):
     return
    
 #-----------------------------------------------------------------------------------------------    
-def createGriveLockFile(imagefilename):
-    # If required create a lock file to indicate grive (sync.sh) has file(s) to process
+def createSyncLockFile(imagefilename):
+    # If required create a lock file to indicate file(s) to process
     if createLockFile:
         if not os.path.exists(lockFilePath):
             open(lockFilePath, 'w').close()
             msgStr = "Create grive sync.sh Lock File " + lockFilePath
-            showMessage("  createGriveLockFile", msgStr)
+            showMessage("  createSyncLockFile", msgStr)
         rightNow = datetime.datetime.now()
         now = "%04d%02d%02d-%02d%02d%02d" % ( rightNow.year, rightNow.month, rightNow.day, rightNow.hour, rightNow.minute, rightNow.second )
-        filecontents = now + " createGriveLockFile - "  + imagefilename + " Ready to sync using sudo ./sync.sh command." 
+        filecontents = now + " createSyncLockFile - "  + imagefilename + " Ready to sync using sudo ./sync.sh command." 
         f = open(lockFilePath, 'w+')
         f.write(filecontents)
         f.close()

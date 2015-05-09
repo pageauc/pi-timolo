@@ -28,9 +28,9 @@
 #
 # */15 * * * * /home/pi/rpi-timelapse/movefiles.sh
 
-files_to_check=/home/pi/pi-timolo/timelapse/*jpg
-command_to_run='mv -f '
-the_destination=/home/pi/pi-timolo/mnt
+files_to_check=/home/pi/pi-timolo/dogcam/*jpg
+command_to_run='cp -up '
+the_destination=/home/pi/pi-timolo/gdrivefs/dogcam
 
 # looking for files matching $files_to_check
 # ls -t sorts files by last modification time, most recent to oldest

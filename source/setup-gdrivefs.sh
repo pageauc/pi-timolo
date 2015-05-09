@@ -18,6 +18,7 @@ sudo apt-get install python-pip
 echo "Note the command below will take a while to install so be patient"
 sudo pip install gdrivefs
 sudo mkdir /mnt/gdrivefs
+sudo ln -s /usr/local/bin/gdfs /sbin/mount.gdfs
 echo "Once install complete We need to create authorization credentials"
 echo "with your google account on the web"
 echo "This will allow you mount your google drive onto your RPI."
