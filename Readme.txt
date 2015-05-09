@@ -2,14 +2,14 @@
   Raspberry (Pi) (Ti)me Lapse, (Mo)tion Detect using (Lo)w Light Settings
   -----------------------------------------------------------------------
 
-Note regarding Version 2.5
-==========================
+Note regarding Version 2.51
+===========================
 This version fixes a bug that caused a hang when video mode was True
-A new feature adds quick time lapse after motion detected
+Added a quick time lapse after motion detected feature
 The console display is cleaned up plus a number of other bug fixes
-Please not the older config.py is not compatible with this release
-since new variables have been added
-Note:
+Please note the older config.py is NOT compatible with this release
+since new variables have been added for quick timelapse
+IMPORTANT NOTE:
 This release does not include grive
 As of 20-Apr-2015 grive no longer works until it can be modified.
 I have included instructions for installing GDriveFS.  Here
@@ -20,23 +20,25 @@ Claude ...
 Introduction
 ============
 This is a picamara python module application using a Raspberry PI with a RPI camera
-module. Use for Long Duration Time Lapse and/or Motion Detection projects.  
+module. It is designed for Long Duration Time Lapse and/or Motion Detection projects.
+I use mine for security camera monitoring using the makedailymovie.sh to a remote NAS 
 File names can be by Number Sequence or by Date/Time Naming.  Time Lapse and Motion
-image files can be named and save images to different folders or the same folder.  
+image files can be named and saved to different folders or the same folder.  
 Optionally motion files can be uploaded to your web based google drive using a
-GDriveFS. (run setup-gdrivefs.sh for setup and instructions).
-Note:
+GDriveFS. (run setup-gdrivefs.sh for setup and instructions)
+NOTE:
 pi-timolo uses low light long exposure for night motion and/or timelapse images.
 The program can detect motion during low light, although the long exposure times
 can cause blurring of moving objects.
 
-This application uses the picamera python module and requires the latest
-RPI firmware and updates to work properly.
-Here are some YouTube videos FYI https://www.youtube.com/playlist?list=PLLXJw_uJtQLa11A4qjVpn2D2T0pgfaSG0
+This application uses the picamera python module and requires recent Raspberry PI Raspbian
+firmware and updates to work properly.
+Here are some motion and time lapse sample YouTube videos
+https://www.youtube.com/playlist?list=PLLXJw_uJtQLa11A4qjVpn2D2T0pgfaSG0
 
-Important
-=========
-Note if you are using an older raspbian build or previous Picamera python module
+Pi OS Requirements
+==================
+Note if you are using an older raspbian build or previous Picamera python module,
 and images are black or have problems then update Raspberry PI firmware per commands.
 From a (putty) ssh login or console terminal execute the following commands to upgrade
 to latest firmware. This should resolve any picamera issues. It is advised
@@ -101,12 +103,12 @@ Program Features
 - Allows logging of summary data to a file or detailed verbose data when enabled   
 - Include setup-gdrivefs.sh to mount your google drive to a RPI folder. This script
   includes instructions.
-  use rsync to sync files between local and google mount folders
-  eg 
-cd /home/pi/pi-timolo
-rsync -vrtu motion gdrivefs/motion
+  Use the sync-leavelast.sh script to sync files between local and google mount folders
+  You should edit the variables to suit your.  Note at this time gdrivefs does
+  not run headless so a terminal session must be open.  Hopefully grive will be
+  fixed or gdrivefs can be made to run headless
 
-
+  
 Background
 ==========
 I have been working on a grive capable security camera using two types of
