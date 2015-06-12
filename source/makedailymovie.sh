@@ -11,7 +11,7 @@
 # fix any copy problem to external share mount point folder.
 #
 # Mounting a network share to /home/pi/pi-timolo/mnt folder
-# it still might be updating.  This avoids a rpi-timelapse.py crash
+# it still might be updating.  This avoids a pi-timolo.py crash
 # Note change the IP and sharename path below to suit your network
 # You can mount the network share by adding
 # the appropriate entry to the /etc/fstab
@@ -42,7 +42,7 @@
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 folder_source=$DIR/motion
 folder_destination=$DIR/mnt
-moviename=$DIR/dailymovie_$(date '+%Y%m%d').avi
+moviename=$DIR/dailymovie_$(date '+%Y%m%d%h').avi
 movielist=$DIR/dailymovie.txt
 
 clear

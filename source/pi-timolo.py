@@ -1,12 +1,12 @@
 #!/usr/bin/python
 
-# pitimolo - Raspberry Pi Long Duration Timelapse, Motion Detection, with Low Light Capability
+# pi-timolo - Raspberry Pi Long Duration Timelapse, Motion Detection, with Low Light Capability
 # written by Claude Pageau Dec-2014 (original issue)
 # getStreamImage function based on utpalc code based on brainflakes lightweight motion detection code on Raspberry PI forum - Thanks
 # Complete pi-timolo code and instructions are available on my github repo at https://github.com/pageauc
 
 # 2.5 released 4-May-2015  added motion quick TL and fixed video hang  and text colour text on images bug
-progVer = "ver 2.51"
+progVer = "ver 2.6"
 
 import os
 mypath=os.path.abspath(__file__)       # Find the full path of this python script
@@ -45,6 +45,7 @@ from fractions import Fraction
 #      System Variables
 # Should not need to be customized
 #==================================
+
 SECONDS2MICRO = 1000000    # Used to convert from seconds to microseconds
 nightMaxShut = int(nightMaxShut * SECONDS2MICRO)  # default=5 sec IMPORTANT- 6 sec works sometimes but occasionally locks RPI and HARD reboot required to clear
 nightMinShut = int(nightMinShut * SECONDS2MICRO)  # lowest shut camera setting for transition from day to night (or visa versa)
@@ -473,7 +474,8 @@ def checkIfDay(currentDayMode, dataStream):
         dayPixAverage = getStreamPixAve(dataStream)
     else:
         dayStream = getStreamImage(True)
-        dayPixAverage = getStreamPixAve(dayStream)         
+        dayPixAverage = getStreamPixAve(dayStream) 
+        
     if dayPixAverage > twilightThreshold:
         currentDayMode = True
     else:
@@ -546,9 +548,10 @@ def dataLogger():
         nightPixAverage = getStreamPixAve(nightStream)
         logdata  = "nightPixAverage=%i dayPixAverage=%i twilightThreshold=%i  " % ( nightPixAverage, dayPixAverage, twilightThreshold )
         showMessage("dataLogger",logdata)
+        now = showTime()        
         logdata = now + " " + logdata
         logToFile(logdata)
-        time.sleep(60)
+        time.sleep(1)
     return    
     
 #----------------------------------------------------------------------------------------------- 
@@ -658,7 +661,10 @@ def Main():
 #-----------------------------------------------------------------------------------------------    
 if __name__ == '__main__':
     try:
-        Main()
+        if debug:
+            dataLogger()
+        else:
+            Main()
     finally:
         print("")
         print("+++++++++++++++++++++++++++++++++++")
