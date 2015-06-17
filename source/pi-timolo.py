@@ -183,7 +183,7 @@ def displayInfo(motioncount, timelapsecount):
         else:
             print("    Date-Time. motionNumOn=%s  Numbering Disabled" % (timelapseNumOn))
         if createLockFile:
-            print("Grive Sync ... On=%s  Path=%s  Note: syncs for motion images only." % (createLockFile, lockFilePath))  
+            print("gdrive Sync .. On=%s  Path=%s  Note: syncs for motion images only." % (createLockFile, lockFilePath))  
         print("Logging ...... verbose=%s (Details to Console)    logDataToFile=%s  logfile=%s" % ( verbose, logDataToFile, baseDir + baseFileName + ".log" ))
         print("------------------------------------ Log Activity --------------------------------------------")
     checkConfig()        
@@ -402,7 +402,7 @@ def createSyncLockFile(imagefilename):
     if createLockFile:
         if not os.path.exists(lockFilePath):
             open(lockFilePath, 'w').close()
-            msgStr = "Create grive sync.sh Lock File " + lockFilePath
+            msgStr = "Create gdrive sync.sh Lock File " + lockFilePath
             showMessage("  createSyncLockFile", msgStr)
         rightNow = datetime.datetime.now()
         now = "%04d%02d%02d-%02d%02d%02d" % ( rightNow.year, rightNow.month, rightNow.day, rightNow.hour, rightNow.minute, rightNow.second )

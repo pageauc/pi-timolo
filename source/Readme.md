@@ -20,30 +20,31 @@ operating system installed on min 8gb SD card with expanded file system)
 Note: If you are using an older raspbian build or previous Picamera python module,
 and images are black or have problems then update Raspberry PI firmware per optional
 firmware update command below.
-- From a (putty) SSH login or rpi console desktop terminal execute the following
+
+From a (putty) SSH login or rpi console desktop terminal execute the following
 commands to upgrade to latest firmware. This should resolve any picamera issues.
 Also it is advised you use at least an 8 GB SD card with file system
 expanded using
 
     sudo raspi-config
 
-- Update Raspbian
+ Update Raspbian
 
     sudo apt-get update
     sudo apt-get upgrade
 
-- (Optional) Update RPI firmware (optional: run if you are using older RPI
+(Optional) Update RPI firmware (optional: run if you are using older RPI
 firmware and having problems with python picamera module errors or image quality issues)  
 
 	sudo rpi-update
 
-- Hard boot to update firmware
+Hard boot to update firmware
 
     sudo shutdown -h now
 
 
-- Unplug and restart your Raspberry Pi.
-- Login and install pi-timolo
+Unplug and restart your Raspberry Pi.
+Login and install pi-timolo
 
     cd ~
     mkdir pi-timolo
@@ -53,12 +54,12 @@ firmware and having problems with python picamera module errors or image quality
     sudo ./setup-timolo.sh
     sudo ./pi-timolo.py
 
-- Verify motion (per screen log entries) then ctrl-c to exit pi-timolo.py
-- Edit config.py file using nano editor to change any desired settings per comments. ctrl-x y to Save
+Verify motion (per screen log entries) then ctrl-c to exit pi-timolo.py
+Edit config.py file using nano editor to change any desired settings per comments. ctrl-x y to Save
 
     nano config.py
 
-- Test edit changes.
+Test edit changes.
 
     sudo ./pi-timolo.py 
 
@@ -237,7 +238,7 @@ eg in the pi-timolo folder execute the following then skip to edit
     cd ~
     sudo cp pi-timolo.sh /etc/init.d
 
-- Check permissions for the /etc/init.d/pi-timolo.sh to make sure it is executable  
+Check permissions for the /etc/init.d/pi-timolo.sh to make sure it is executable  
 if required change permissions for pi-timolo.sh using chmod command 
  
     ls -al /etc/init.d/pi-timolo.sh
@@ -245,7 +246,7 @@ if required change permissions for pi-timolo.sh using chmod command
     chmod +x pi-timolo.sh
     sudo nano pi-timolo.sh
    
-- Change appropriate entries to point to your pi-timolo.py script and save
+Change appropriate entries to point to your pi-timolo.py script and save
 the file using ctrl-x.  If you copied downloaded sample script and have not
 changed the pi-timolo folder name then no editing step above should be required.
 Initialize the /etc/init.d/pi-timolo.sh script so it executes on boot.
@@ -253,7 +254,7 @@ Initialize the /etc/init.d/pi-timolo.sh script so it executes on boot.
     sudo update-rc.d pi-timolo.sh defaults
     cd ~
 
-- Reboot RPI and test operation by triggering motion and checking images are
+Reboot RPI and test operation by triggering motion and checking images are
 successfully saved to your motion folder.  
 Trouble shoot problems as required.
 
@@ -269,11 +270,11 @@ optionally install gdrive binary from source perform the following.
     cd ~
     gdrive version
 
-- Setup gdrive security for secure access to your google drive.
+Setup gdrive security for secure access to your google drive.
 Note: This assumes you have a google drive with a google account eg gmail
 and you are using a SSH terminal session logged into your Raspberry Pi computer.
 for additional details see https://github.com/odeke-em/drive
-- From a windows PC that has the Chrome browser installed and logged into your google account eg gmail.
+From a windows PC that has the Chrome browser installed and logged into your google account eg gmail.
 
     cd ~
     cd pi-timolo
@@ -292,16 +293,16 @@ for additional details see https://github.com/odeke-em/drive
 A hidden .gd subfolder will be created in the pi-timolo folder.
 .gd contains gdrive security files. For syncing purposes the pi-timolo folder
 will be considered as root.
-- To see the hidden files and folders
+To see the hidden files and folders
 
     cd ~
     ls -al
 
-- To list gdrive help type gdrive command with no parameters
+To list gdrive help type gdrive command with no parameters
 
     gdrive 
 
-- to confirm access to your google drive perform the following. 
+to confirm access to your google drive perform the following. 
 This should display the contents of your google drive root folder.
 
     sudo gdrive ls
@@ -315,12 +316,12 @@ Verify the config.py has the motion setting
     createLockFile = True
 
 The pi-timolo.sync file will then be created when motion images are created.
-- Check if a pi-timolo.sync file exists in the pi-timolo folder otherwise run
+Check if a pi-timolo.sync file exists in the pi-timolo folder otherwise run
 
     sudo ./pi-timolo.py
      
 and activate motion to create images and a new pi-timolo.sync file.
-- Run sync.sh script to test google drive syncing with specified local folder
+Run sync.sh script to test google drive syncing with specified local folder
 default is /home/pi/pi-timolo/motion. To run sync.sh executed the following
 
     sudo ./sync.sh
@@ -337,11 +338,11 @@ with the specified google drive subfolder
 - Reports if sync was successful or errors were encountered 
 
 Suggest you run this script from a crontab every 5 minutes or so.  
-- Add appropriate line to crontab using command
+Add appropriate line to crontab using command
 
     sudo crontab -e
 
-- Add example crontab entry per below then save and exit nano using ctrl-x y
+Add example crontab entry per below then save and exit nano using ctrl-x y
 
     */5 * * * * /home/pi/pi-timolo/sync.sh >/dev/nul
 
