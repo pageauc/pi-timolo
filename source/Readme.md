@@ -293,6 +293,7 @@ From a windows PC that has the Chrome browser installed and logged into your goo
 A hidden .gd subfolder will be created in the pi-timolo folder.
 .gd contains gdrive security files. For syncing purposes the pi-timolo folder
 will be considered as root.
+
 To see the hidden files and folders
 
     cd ~
