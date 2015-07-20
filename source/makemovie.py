@@ -1,5 +1,5 @@
 #!/usr/bin/python
-# written by Claude Pageau for use by pitimo.py image files.
+# written by Claude Pageau for use by pi-timolo.py image files.
 
 print("initializing ....")
 import io
