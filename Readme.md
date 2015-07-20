@@ -1,6 +1,10 @@
 # pi-timolo
 ##### Raspberry (Pi) - (Ti)me Lapse, (Mo)tion Detect, (Lo)w Light
 
+**Version 2.7 release notes**
+- Added saving of exif image metadata when writing text to images since PIL does not retain this metadata
+- setup-timolo.sh added install of python-pyexiv2 library for feature above
+
 **Version 2.6 release notes**
 
 - fixed bug that caused a hang when video mode was True
@@ -349,13 +353,14 @@ Add example crontab entry per below then save and exit nano using ctrl-x y
 
 ### Utilities
 
-There are several utilities included with pi-timolo
+There are several other utilities included with pi-timolo 
 
-- h2mp4.sh  This is a simple script to convert h264 files to mp4 format using 
-MP4Box that is downloaded as part of gpac library during setup-timolo.sh
+- h2mp4.sh  This is a simple script to convert h264 video files to mp4 format using 
+MP4Box that is downloaded an installed as part of gpac library during setup-timolo.sh
 - makemovie.py  creates avi movie from all jpg files in specified folder see code for details
 - makedailymovie.sh  creates avi movie with a unique date/time file name this is designed to be run from a crontab
 - sync.sh  uses gdrive to push sync local files with google drive. see description above for details.
+- mvleavelast.sh  Just a short script to copy all files except the latest in case file is still open
     
 Good Luck
 Claude Pageau 

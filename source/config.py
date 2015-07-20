@@ -1,6 +1,6 @@
 # User Configuration variable settings for pitimolo
 # Purpose - Motion Detection Security Cam
-# Created - 13-Dec-2014
+# Created - 20-Jul-2015 pi-timolo ver 2.7 compatible
 # Done by - Claude Pageau
  
 configTitle = "pitimolo default configuration motion and timelapse 1080p images"

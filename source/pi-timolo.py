@@ -5,8 +5,9 @@
 # getStreamImage function based on utpalc code based on brainflakes lightweight motion detection code on Raspberry PI forum - Thanks
 # Complete pi-timolo code and instructions are available on my github repo at https://github.com/pageauc
 
-# 2.5 released 4-May-2015  added motion quick TL and fixed video hang  and text colour text on images bug
-progVer = "ver 2.6"
+# 2.7 released 20-Jul-2015  added saving of exif metadata when text written to image sinc PIL does not retain this.
+
+progVer = "ver 2.7"
 
 import os
 mypath=os.path.abspath(__file__)       # Find the full path of this python script
@@ -36,6 +37,7 @@ import datetime
 import picamera
 import picamera.array
 import numpy as np
+import pyexiv2
 from PIL import Image
 from PIL import ImageFont
 from PIL import ImageDraw
@@ -244,11 +246,17 @@ def writeTextToImage(imagename, datetoprint, daymode):
     font_path = '/usr/share/fonts/truetype/freefont/FreeSansBold.ttf'
     font = ImageFont.truetype(font_path, 24, encoding='unic')
     text = TEXT.decode('utf-8')
+
+    # Read exif data since ImageDraw does not save this metadata
+    metadata = pyexiv2.ImageMetadata(imagename) 
+    metadata.read()
+    
     img = Image.open(imagename)
     draw = ImageDraw.Draw(img)
     # draw.text((x, y),"Sample Text",(r,g,b))
     draw.text(( x, y ), text, FOREGROUND, font=font)
     img.save(imagename)
+    metadata.write()    # Write previously saved exif data to image file    
     msgStr = "Added " + textColour + " Text[" + datetoprint + "] on " + imagename
     showMessage("  writeDataToImage",msgStr)
     return

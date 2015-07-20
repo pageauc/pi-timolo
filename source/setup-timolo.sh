@@ -1,7 +1,7 @@
 #!/bin/bash
 echo "    Downloading and Installing pi-timolo dependencies."
 echo "    One Moment Please ......."
-sudo apt-get install -y python-picamera  python-imaging mencoder dos2unix gpac
+sudo apt-get install -y python-picamera  python-imaging mencoder dos2unix gpac python-pyexiv2
 sudo chmod +x gdrive
 sudo cp gdrive /usr/local/bin
 echo "    Install complete."

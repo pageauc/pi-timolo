@@ -1,5 +1,5 @@
 #!/bin/bash
-# version 1.2
+# version 1.3
 # sync.sh written by Claude Pageau.  Requires /usr/local/bin/gdrive executable compiled from github source for arm
 # Note gdrive is included with pi-timolo on github at https://github.com/pageauc/pi-timolo
 # for gdrive details see https://github.com/odeke-em/drive 
