@@ -55,8 +55,8 @@ Login and install pi-timolo
     cd ./pi-timolo
     wget https://raw.github.com/pageauc/pi-timolo/master/pi-timolo.tar
     tar -pxvf pi-timolo.tar
-    sudo ./setup-timolo.sh
-    sudo ./pi-timolo.py
+    ./setup-timolo.sh
+    ./pi-timolo.py
 
 Verify motion (per screen log entries) then ctrl-c to exit pi-timolo.py
 Edit config.py file using nano editor to change any desired settings per comments. ctrl-x y to Save
@@ -65,7 +65,7 @@ Edit config.py file using nano editor to change any desired settings per comment
 
 Test edit changes.
 
-    sudo ./pi-timolo.py 
+    ./pi-timolo.py 
 
 ### Program Description
 
