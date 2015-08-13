@@ -69,7 +69,7 @@ Test edit changes.
 
 ### Program Description
 
-This is a python picamara module application for a Raspberry PI with a RPI camera
+This is a python picamera module application for a Raspberry PI with a RPI camera
 module. It is designed for Long Duration Time Lapse and/or Motion Detection projects.
 I use mine for headless security cameras using the makedailymovie.sh to a remote NAS.
 and also syncing to my google drive using gdrive.
