@@ -181,7 +181,7 @@ ssh using putty or desktop terminal session on your raspberry pi.
 Extract tar files to current folder
 
     tar -pxvf pi-timolo.tar
-    sudo ./setup-timolo.sh
+    ./setup-timolo.sh
 
 A gdrive binary will be installed to /usr/local/bin as part of the setup.
 This allows secure syncing of pi-timolo images with your google drive
