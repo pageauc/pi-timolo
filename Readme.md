@@ -252,7 +252,7 @@ eg in the pi-timolo folder execute the following then skip to edit
     cd ~
     sudo cp pi-timolo.sh /etc/init.d
 
-- Check permissions for the /etc/init.d/pi-timolo.sh to make sure it is executable  
+Check permissions for the /etc/init.d/pi-timolo.sh to make sure it is executable  
 if required change permissions for pi-timolo.sh using chmod command 
  
     ls -al /etc/init.d/pi-timolo.sh
@@ -260,7 +260,7 @@ if required change permissions for pi-timolo.sh using chmod command
     chmod +x pi-timolo.sh
     sudo nano pi-timolo.sh
    
-- Change appropriate entries to point to your pi-timolo.py script and save
+Change appropriate entries to point to your pi-timolo.py script and save
 the file using ctrl-x.  If you copied downloaded sample script and have not
 changed the pi-timolo folder name then no editing step above should be required.
 Initialize the /etc/init.d/pi-timolo.sh script so it executes on boot.
@@ -268,7 +268,7 @@ Initialize the /etc/init.d/pi-timolo.sh script so it executes on boot.
     sudo update-rc.d pi-timolo.sh defaults
     cd ~
 
-- Reboot RPI and test operation by triggering motion and checking images are
+Reboot RPI and test operation by triggering motion and checking images are
 successfully saved to your motion folder.  
 Trouble shoot problems as required.
 
