@@ -16,6 +16,7 @@ otherwise use Quick Setup Instructions.
     cd ~
     cd pi-timolo
     mv pi-timolo.py pi-timolo.py.prev
+    mv setup-timolo.sh setup-timolo.sh.prev
     wget https://raw.github.com/pageauc/pi-timolo/master/setup-timolo.sh
     chmod +x setup-timolo.sh
     ./setup-timolo.sh
