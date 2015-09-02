@@ -280,11 +280,11 @@ https://github.com/odeke-em/drive/releases/tag/v0.2.8-arm-binary or alternativel
 compile from source.  I believe it is easier just to use my binary and you can
 shasum my gdrive file if you wish.
 
-- Setup gdrive security for secure access to your google drive.
+Setup gdrive security for secure access to your google drive.
 Note: This assumes you have a google drive with a google account eg gmail
 and you are using a SSH terminal session logged into your Raspberry Pi computer.
 for additional details see https://github.com/odeke-em/drive
-- From a windows PC that has the Chrome browser installed and logged into your google account eg gmail.
+From a windows PC that has the Chrome browser installed and logged into your google account eg gmail.
 
     cd ~
     cd pi-timolo
@@ -303,16 +303,17 @@ for additional details see https://github.com/odeke-em/drive
 A hidden .gd subfolder will be created in the pi-timolo folder.
 .gd contains gdrive security files. For syncing purposes the pi-timolo folder
 will be considered as root.
-- To see the hidden files and folders
+
+To see the hidden files and folders
 
     cd ~
     ls -al
 
-- To list gdrive help type gdrive command with no parameters
+To list gdrive help type gdrive command with no parameters
 
     gdrive 
 
-- to confirm access to your google drive perform the following. 
+to confirm access to your google drive perform the following. 
 This should display the contents of your google drive root folder.
 
     sudo gdrive ls
@@ -326,17 +327,19 @@ Verify the config.py has the motion setting
     createLockFile = True
 
 The pi-timolo.sync file will then be created when motion images are created.
-- Check if a pi-timolo.sync file exists in the pi-timolo folder otherwise run
+Check if a pi-timolo.sync file exists in the pi-timolo folder otherwise run
 
     sudo ./pi-timolo.py
      
 and activate motion to create images and a new pi-timolo.sync file.
-- Run sync.sh script to test google drive syncing with specified local folder
+
+Run sync.sh script to test google drive syncing with specified local folder
 default is /home/pi/pi-timolo/motion. To run sync.sh executed the following
 
     sudo ./sync.sh
  
 The sync.sh script will perform the following
+
 - Checks if gdrive sync is already running.
 - Runs gdrive only if it is not already running and Kills gdrive processes
 if it has been running too long. default is > 600 seconds or 10 minutes.
@@ -348,11 +351,12 @@ with the specified google drive subfolder
 - Reports if sync was successful or errors were encountered 
 
 Suggest you run this script from a crontab every 5 minutes or so.  
-- Add appropriate line to crontab using command
+
+Add appropriate line to crontab using command
 
     sudo crontab -e
 
-- Add example crontab entry per below then save and exit nano using ctrl-x y
+Add example crontab entry per below then save and exit nano using ctrl-x y
 
     */5 * * * * /home/pi/pi-timolo/sync.sh >/dev/nul
 
