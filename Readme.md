@@ -39,22 +39,22 @@ expanded using
 
     sudo raspi-config
 
-- Update Raspbian
+Update Raspbian
 
     sudo apt-get update
     sudo apt-get upgrade
 
-- (Optional) Update RPI firmware (optional: run if you are using older RPI
+(Optional) Update RPI firmware (optional: run if you are using older RPI
 firmware and having problems with python picamera module errors or image quality issues)  
 
-	sudo rpi-update
+    sudo rpi-update
 
-- Hard boot to update firmware
+Hard boot to update firmware
 
     sudo shutdown -h now
 
-- Unplug and restart your Raspberry Pi.
-- Login and install pi-timolo
+Unplug and restart your Raspberry Pi.
+Login and install pi-timolo
 
     cd ~
     mkdir pi-timolo
@@ -64,12 +64,12 @@ firmware and having problems with python picamera module errors or image quality
     ./setup-timolo.sh
     ./pi-timolo.py
 
-- Verify motion (per screen log entries) then ctrl-c to exit pi-timolo.py
-- Edit config.py file using nano editor to change any desired settings per comments. ctrl-x y to Save
+Verify motion (per screen log entries) then ctrl-c to exit pi-timolo.py
+Edit config.py file using nano editor to change any desired settings per comments. ctrl-x y to Save
 
     nano config.py
 
-- Test edit changes.
+Test edit changes.
 
     ./pi-timolo.py 
 
@@ -183,7 +183,7 @@ if you wish.
     mkdir pi-timolo
     cd ./pi-timolo
 
-Download pimotion.tar file from my github account from a logged in
+Download pi-timolo.tar file from my github account from a logged in
 ssh using putty or desktop terminal session on your raspberry pi.
 
     wget https://raw.github.com/pageauc/pi-timolo/master/pi-timolo.tar
