@@ -6,8 +6,9 @@
 # Complete pi-timolo code and instructions are available on my github repo at https://github.com/pageauc
 
 # 2.7 released 20-Jul-2015  added saving of exif metadata when text written to image sinc PIL does not retain this.
+# 2.8 released 2-Aug-2015 updated gdrive and replaced mencoder with avconv
 
-progVer = "ver 2.7"
+progVer = "ver 2.8"
 
 import os
 mypath=os.path.abspath(__file__)       # Find the full path of this python script

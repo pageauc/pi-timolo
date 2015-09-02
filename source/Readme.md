@@ -1,20 +1,27 @@
 # pi-timolo
 ##### Raspberry (Pi) - (Ti)me Lapse, (Mo)tion Detect, (Lo)w Light
 
-**Version 2.7 release notes**
-- Added saving of exif image metadata when writing text to images since PIL does not retain this metadata
-- setup-timolo.sh added install of python-pyexiv2 library for feature above
+**pi-timolo Version 2.8 release notes**
 
-**Version 2.6 release notes**
+- Updated gdrive to version 2.8
+- Updated makedailymovie.sh to use avconv instead of mencoder
+- Updated setup-timolo.sh to remove mencoder, gpac and add libav-tools
+- Updated setup-timolo.sh to allow upgrading if pi-timolo.py does not exist
+- Deleted some files h2mp4.sh makemovie.py is now makemovie.sh 
+- Updated Readme.md
 
-- fixed bug that caused a hang when video mode was True
-- Added a new quick time lapse after motion detected feature.
-- cleaned up console display
-- misc bug fixes
-- Added gdrive binary for easy syncing of files with internet based google drive see https://github.com/odeke-em/drive/releases arm binary and https://github.com/odeke-em/drive for additional implementation details
+If you wish to upgrade existing installation login via SSH or GUI terminal session
+otherwise use Quick Setup Instructions.
 
+    cd ~
+    cd pi-timolo
+    mv pi-timolo.py pi-timolo.py.prev
+    wget https://raw.github.com/pageauc/pi-timolo/master/setup-timolo.sh
+    chmod +x setup-timolo.sh
+    ./setup-timolo.sh
+    
 **IMPORTANT**
-The older config.py is NOT compatible with this release
+The older versions of config.py may NOT be compatible with this release
 since new variables have been added for quick time lapse feature and debug
 
 ### Quick Setup
@@ -24,31 +31,29 @@ operating system installed on min 8gb SD card with expanded file system)
 Note: If you are using an older raspbian build or previous Picamera python module,
 and images are black or have problems then update Raspberry PI firmware per optional
 firmware update command below.
-
-From a (putty) SSH login or rpi console desktop terminal execute the following
+- From a (putty) SSH login or rpi console desktop terminal execute the following
 commands to upgrade to latest firmware. This should resolve any picamera issues.
 Also it is advised you use at least an 8 GB SD card with file system
 expanded using
 
     sudo raspi-config
 
- Update Raspbian
+- Update Raspbian
 
     sudo apt-get update
     sudo apt-get upgrade
 
-(Optional) Update RPI firmware (optional: run if you are using older RPI
+- (Optional) Update RPI firmware (optional: run if you are using older RPI
 firmware and having problems with python picamera module errors or image quality issues)  
 
 	sudo rpi-update
 
-Hard boot to update firmware
+- Hard boot to update firmware
 
     sudo shutdown -h now
 
-
-Unplug and restart your Raspberry Pi.
-Login and install pi-timolo
+- Unplug and restart your Raspberry Pi.
+- Login and install pi-timolo
 
     cd ~
     mkdir pi-timolo
@@ -58,12 +63,12 @@ Login and install pi-timolo
     ./setup-timolo.sh
     ./pi-timolo.py
 
-Verify motion (per screen log entries) then ctrl-c to exit pi-timolo.py
-Edit config.py file using nano editor to change any desired settings per comments. ctrl-x y to Save
+- Verify motion (per screen log entries) then ctrl-c to exit pi-timolo.py
+- Edit config.py file using nano editor to change any desired settings per comments. ctrl-x y to Save
 
     nano config.py
 
-Test edit changes.
+- Test edit changes.
 
     ./pi-timolo.py 
 
@@ -88,18 +93,22 @@ Here are some motion and time lapse sample YouTube videos
 
 https://www.youtube.com/playlist?list=PLLXJw_uJtQLa11A4qjVpn2D2T0pgfaSG0
 
+#### Alternative Security Camera solutions
 If you are looking for a good web based RPI camera interactive interface, I would
-highly recommend application link below.  It is easy to install and works well. But I 
-still prefer pi-timolo for remote headless camera situations since the web interface
-can be a little finicky sometimes and does not allow concurrent motion and time lapse
-as far as I can tell.
+highly recommend application links below.  They are relatively easy to install
+and works well. But I still prefer pi-timolo for remote headless camera situations since I can
+upload to my google drive and run timelapse and motion simultaneously. 
+
+The web interface below can sometimes be a little finicky and do not allow
+concurrent motion and time lapse as far as I can tell.
 
 http://elinux.org/RPi-Cam-Web-Interface
 
-This interface can also be set up to use gdrive syncing. Contact me if you need
-details.
+motionPie is run from an SD image wiki https://github.com/ccrisan/motionPie/wiki 
+https://github.com/ccrisan/motionpie
 
-### Program Features
+
+### pi-timolo Program Features
 
 - Time lapse and motion detection can be run together or separately
 - Configuration variables are saved in a config.py file. This allows 
@@ -242,7 +251,7 @@ eg in the pi-timolo folder execute the following then skip to edit
     cd ~
     sudo cp pi-timolo.sh /etc/init.d
 
-Check permissions for the /etc/init.d/pi-timolo.sh to make sure it is executable  
+- Check permissions for the /etc/init.d/pi-timolo.sh to make sure it is executable  
 if required change permissions for pi-timolo.sh using chmod command 
  
     ls -al /etc/init.d/pi-timolo.sh
@@ -250,7 +259,7 @@ if required change permissions for pi-timolo.sh using chmod command
     chmod +x pi-timolo.sh
     sudo nano pi-timolo.sh
    
-Change appropriate entries to point to your pi-timolo.py script and save
+- Change appropriate entries to point to your pi-timolo.py script and save
 the file using ctrl-x.  If you copied downloaded sample script and have not
 changed the pi-timolo folder name then no editing step above should be required.
 Initialize the /etc/init.d/pi-timolo.sh script so it executes on boot.
@@ -258,27 +267,23 @@ Initialize the /etc/init.d/pi-timolo.sh script so it executes on boot.
     sudo update-rc.d pi-timolo.sh defaults
     cd ~
 
-Reboot RPI and test operation by triggering motion and checking images are
+- Reboot RPI and test operation by triggering motion and checking images are
 successfully saved to your motion folder.  
 Trouble shoot problems as required.
 
 ### Setup gdrive sync
 
-gdrive is included with the pi-timolo.tar file but you can
-optionally install gdrive binary from source perform the following.
+gdrive 2.8 is included with the pi-timolo.tar file but you can
+optionally install gdrive binary from github source see release notes here.
+https://github.com/odeke-em/drive/releases/tag/v0.2.8-arm-binary or alternatively
+compile from source.  I believe it is easier just to use my binary and you can
+shasum my gdrive file if you wish.
 
-    cd /tmp
-    wget https://github.com/odeke-em/drive/releases/download/v0.2.2-arm-binary/drive-arm-binary
-    chmod +x drive-arm-binary
-    sudo cp drive-arm-binary /usr/local/bin/gdrive
-    cd ~
-    gdrive version
-
-Setup gdrive security for secure access to your google drive.
+- Setup gdrive security for secure access to your google drive.
 Note: This assumes you have a google drive with a google account eg gmail
 and you are using a SSH terminal session logged into your Raspberry Pi computer.
 for additional details see https://github.com/odeke-em/drive
-From a windows PC that has the Chrome browser installed and logged into your google account eg gmail.
+- From a windows PC that has the Chrome browser installed and logged into your google account eg gmail.
 
     cd ~
     cd pi-timolo
@@ -297,17 +302,16 @@ From a windows PC that has the Chrome browser installed and logged into your goo
 A hidden .gd subfolder will be created in the pi-timolo folder.
 .gd contains gdrive security files. For syncing purposes the pi-timolo folder
 will be considered as root.
-
-To see the hidden files and folders
+- To see the hidden files and folders
 
     cd ~
     ls -al
 
-To list gdrive help type gdrive command with no parameters
+- To list gdrive help type gdrive command with no parameters
 
     gdrive 
 
-to confirm access to your google drive perform the following. 
+- to confirm access to your google drive perform the following. 
 This should display the contents of your google drive root folder.
 
     sudo gdrive ls
@@ -321,12 +325,12 @@ Verify the config.py has the motion setting
     createLockFile = True
 
 The pi-timolo.sync file will then be created when motion images are created.
-Check if a pi-timolo.sync file exists in the pi-timolo folder otherwise run
+- Check if a pi-timolo.sync file exists in the pi-timolo folder otherwise run
 
     sudo ./pi-timolo.py
      
 and activate motion to create images and a new pi-timolo.sync file.
-Run sync.sh script to test google drive syncing with specified local folder
+- Run sync.sh script to test google drive syncing with specified local folder
 default is /home/pi/pi-timolo/motion. To run sync.sh executed the following
 
     sudo ./sync.sh
@@ -343,24 +347,22 @@ with the specified google drive subfolder
 - Reports if sync was successful or errors were encountered 
 
 Suggest you run this script from a crontab every 5 minutes or so.  
-Add appropriate line to crontab using command
+- Add appropriate line to crontab using command
 
     sudo crontab -e
 
-Add example crontab entry per below then save and exit nano using ctrl-x y
+- Add example crontab entry per below then save and exit nano using ctrl-x y
 
     */5 * * * * /home/pi/pi-timolo/sync.sh >/dev/nul
 
 ### Utilities
 
-There are several other utilities included with pi-timolo 
+There are several utilities included with pi-timolo
 
-- h2mp4.sh  This is a simple script to convert h264 video files to mp4 format using 
-MP4Box that is downloaded an installed as part of gpac library during setup-timolo.sh
-- makemovie.py  creates avi movie from all jpg files in specified folder see code for details
-- makedailymovie.sh  creates avi movie with a unique date/time file name this is designed to be run from a crontab
-- sync.sh  uses gdrive to push sync local files with google drive. see description above for details.
-- mvleavelast.sh  Just a short script to copy all files except the latest in case file is still open
+- makemovie.sh uses avconv to create mp4 or avi movies from all jpg files in specified folder default (timelapse) see code for details
+- makedailymovie.sh uses avconv to create mp4 or avi movies with a unique date/time file name.  
+  This is designed to be run from a crontab and is written to work with external share or remote mount.
+- sync.sh uses gdrive to push sync local files to a users google drive. see description above for details.
     
 Good Luck
 Claude Pageau 
