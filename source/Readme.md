@@ -194,7 +194,7 @@ ssh using putty or desktop terminal session on your raspberry pi.
 Extract tar files to current folder
 
     tar -pxvf pi-timolo.tar
-    sudo ./setup-timolo.sh
+    ./setup-timolo.sh
 
 A gdrive binary will be installed to /usr/local/bin as part of the setup.
 This allows secure syncing of pi-timolo images with your google drive
@@ -235,11 +235,11 @@ The init.d will runs as root so the files in the motion folder will
 be owned by root.  
 Just check to make sure you run with sudo per examples below.
 
-    sudo ./pi-timolo.py
+    ./pi-timolo.py
    
 and
 
-    sudo ./sync.sh
+    ./sync.sh
 
 Once you know sync.sh is working OK you can automate the sync using a crontab
 per instructions below.
@@ -253,6 +253,7 @@ eg in the pi-timolo folder execute the following then skip to edit
 /etc/init.d/pi-timolo.sh using nano.
 
     cd ~
+    cd pi-timolo
     sudo cp pi-timolo.sh /etc/init.d
 
 Check permissions for the /etc/init.d/pi-timolo.sh to make sure it is executable  
@@ -291,7 +292,7 @@ From a windows PC that has the Chrome browser installed and logged into your goo
 
     cd ~
     cd pi-timolo
-    sudo gdrive init
+    gdrive init
     
 - command above will display a long url in the RPI SSH session.
 - in SSH window use mouse left button to highlight the url (do NOT press enter)
@@ -310,16 +311,19 @@ will be considered as root.
 To see the hidden files and folders
 
     cd ~
+    cd pi-timolo
     ls -al
 
 To list gdrive help type gdrive command with no parameters
 
     gdrive 
 
-to confirm access to your google drive perform the following. 
+To confirm access to your google drive perform the following. 
 This should display the contents of your google drive root folder.
+either command will work
 
-    sudo gdrive ls
+    gdrive list
+    gdrive ls
 
 If you have multiple cameras syncing to google drive
 it is advised to change the motion folder name to something unique.  You will
@@ -332,7 +336,7 @@ Verify the config.py has the motion setting
 The pi-timolo.sync file will then be created when motion images are created.
 Check if a pi-timolo.sync file exists in the pi-timolo folder otherwise run
 
-    sudo ./pi-timolo.py
+    ./pi-timolo.py
      
 and activate motion to create images and a new pi-timolo.sync file.
 
@@ -369,7 +373,9 @@ There are several utilities included with pi-timolo
 
 - makemovie.sh uses avconv to create mp4 or avi movies from all jpg files in specified folder default (timelapse) see code for details
 - makedailymovie.sh uses avconv to create mp4 or avi movies with a unique date/time file name.  
-  This is designed to be run from a crontab and is written to work with external share or remote mount.
+  This is designed to be run from a crontab and is written to work with external share or remote mount. default is local daily_movies
+  movie is created in /home/pi/pi-timolo folder and then copied to specified folder_destination that can be local or network.
+  see script comments for details and settings.
 - sync.sh uses gdrive to push sync local files to a users google drive. see description above for details.
     
 Good Luck
