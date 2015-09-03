@@ -27,34 +27,37 @@ since new variables have been added for quick time lapse feature and debug
 
 ### Quick Setup
 
-(assumes raspberry pi with RPI camera module installed and tested running updated raspbian
-operating system installed on min 8gb SD card with expanded file system)
+Assumes raspberry pi with RPI camera module installed and tested running updated raspbian
+operating system installed on min 8gb SD card with expanded file system.
 Note: If you are using an older raspbian build or previous Picamera python module,
 and images are black or have problems then update Raspberry PI firmware per optional
 firmware update command below.
-- From a (putty) SSH login or rpi console desktop terminal execute the following
+
+From a (putty) SSH login or rpi console desktop terminal execute the following
 commands to upgrade to latest firmware. This should resolve any picamera issues.
 Also it is advised you use at least an 8 GB SD card with file system
-expanded using
+expanded using.
 
     sudo raspi-config
 
-Update Raspbian
+***Update Raspbian***
 
     sudo apt-get update
     sudo apt-get upgrade
 
-(Optional) Update RPI firmware (optional: run if you are using older RPI
-firmware and having problems with python picamera module errors or image quality issues)  
+***Optional Update RPI firmware***
+ 
+Run if you are using older RPI firmware and having problems with python picamera module errors or image quality issues  
 
     sudo rpi-update
 
-Hard boot to update firmware
+***Hard boot to update firmware***
 
     sudo shutdown -h now
 
 Unplug and restart your Raspberry Pi.
-Login and install pi-timolo
+
+***Login and install pi-timolo***
 
     cd ~
     mkdir pi-timolo
