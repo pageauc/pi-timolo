@@ -16,8 +16,8 @@ imageTestPrint = False     # default=False Set to True to print one image and ex
 
 # Image Settings
 imageNamePrefix = 'cam1-'  # Prefix for all image file names. Eg front-
-imageWidth = 1920          # Full Size Image Width in px  default=1980
-imageHeight = 1080         # Full Size Image Height in px default=1080
+imageWidth = 1280          # Full Size Image Width in px  default=1980
+imageHeight = 720          # Full Size Image Height in px default=1080
 imageVFlip = False         # Flip image Vertically    default=False
 imageHFlip = False         # Flip image Horizontally  default=False
 imagePreview = False       # Preview image on connected RPI Monitor default=False
@@ -66,7 +66,7 @@ timelapsePrefix = "tl-"    # Prefix timelapse images with this prefix
 timelapseExit = 0 * 60     # Will Quit program after specified seconds 0=Continuous  default=0
 timelapseNumOn = True      # True=On (filenames Sequenced by Number) otherwise date/time used for filename
 timelapseNumStart = 1000   # Start of timelapse number sequence 
-timelapseNumMax = 1000     # Max number of timelapse images desired. 0=Continuous  default=0
+timelapseNumMax = 2000     # Max number of timelapse images desired. 0=Continuous  default=2000
 timelapseNumRecycle = True # After numberMax reached restart at numberStart instead of exiting default=True   
 
 # ---------------------------------------------- End of User Variables -----------------------------------------------------

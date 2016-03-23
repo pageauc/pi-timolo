@@ -7,8 +7,9 @@
 
 # 2.7 released 20-Jul-2015  added saving of exif metadata when text written to image sinc PIL does not retain this.
 # 2.8 released 2-Aug-2015 updated gdrive and replaced mencoder with avconv
+# 2.9 release 22-Mar-2016 fixed getCurrentCount when file contains non integer data due to a write error.
 
-progVer = "ver 2.8"
+progVer = "ver 2.9"
 
 import os
 mypath=os.path.abspath(__file__)       # Find the full path of this python script
@@ -212,7 +213,7 @@ def getCurrentCount(numberpath, numberstart):
     # Create a .dat file to store currentCount or read file if it already Exists
     # Create numberPath file if it does not exist
     if not os.path.exists(numberpath):
-        msgStr = "Creating File " + numberpath + " numberstart=" + str(numberstart)
+        msgStr = "Creating New File " + numberpath + " numberstart=" + str(numberstart)
         showMessage("getCurrentCount", msgStr)   
         open(numberpath, 'w').close()
         f = open(numberpath, 'w+')
@@ -222,7 +223,18 @@ def getCurrentCount(numberpath, numberstart):
     with open(numberpath, 'r') as f:
         writeCount = f.read()
         f.closed
-        numbercounter = int(writeCount)
+        try:
+            numbercounter = int(writeCount)
+        except ValueError:
+            msgStr = "Invalid Data in File " + numberpath + " Reset numberstart=" + str(numberstart)
+            showMessage("getCurrentCount", msgStr)
+            f = open(numberpath, 'w+')
+            f.write(str(numberstart))
+            f.close()
+            f = open(numberpath, 'r')
+            writeCount = f.read()
+            f.closed
+            numbercounter = int(writeCount)
     return numbercounter
     
 #-----------------------------------------------------------------------------------------------
@@ -604,6 +616,7 @@ def Main():
             if timelapseOn:
                 takeTimeLapse = checkForTimelapse(timelapseStart)
                 if takeTimeLapse:
+                    timelapseStart = datetime.datetime.now()  # reset time lapse timer
                     dotCount = showDots(motionMaxDots + 2)      # reset motion dots              
                     msgStr = "Scheduled Time Lapse Image - daymode=" + str(daymode)
                     showMessage("Main", msgStr)    
@@ -614,7 +627,6 @@ def Main():
                     else:
                         takeNightImage(filename)
                     timelapseNumCount = postImageProcessing(timelapseNumOn, timelapseNumStart, timelapseNumMax, timelapseNumCount, timelapseNumRecycle, timelapseNumPath, filename, daymode)
-                    timelapseStart = datetime.datetime.now()  # reset time lapse timer
                     dotCount = showDots(motionMaxDots)                  
             if motionOn:
                 # IMPORTANT - Night motion detection may not work very well due to long exposure times and low light (may try checking red instead of green)

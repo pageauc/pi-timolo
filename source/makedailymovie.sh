@@ -72,7 +72,7 @@ cd $folder_working    # change to working folder
 # Create numbered soft links pointing to image files in source folder
 echo "Creating soft links for " $folder_source " files in  "$folder_working
 a=0
-ls -t $folder_source/*.jpg |
+ls $folder_source/*.jpg |
 (
   # the first line will be the most recent file so ignore it
   # since it might still be in progress

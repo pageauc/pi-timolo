@@ -1,7 +1,7 @@
 # pi-timolo
 ##### Raspberry (Pi) - (Ti)me Lapse, (Mo)tion Detect, (Lo)w Light
 
-**pi-timolo Version 2.8 release notes**
+**pi-timolo Version 2.9 release notes**
 
 - Updated gdrive to version 2.8
 - Updated makedailymovie.sh to use avconv instead of mencoder

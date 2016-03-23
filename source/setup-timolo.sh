@@ -1,6 +1,6 @@
 #!/bin/bash
 echo "=============================================="
-echo "pi-timolo ver 2.8  Install Dependencies ...."
+echo "pi-timolo ver 2.9  Install Dependencies ...."
 echo "NOTE: To upgrade pi-timolo rename pi-timolo.py and rerun this setup."
 echo "      eg mv pi-timolo.py pi-timolo.py.old"
 echo "=============================================="
