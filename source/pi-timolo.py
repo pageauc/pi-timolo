@@ -9,7 +9,7 @@
 # 2.8 released 2-Aug-2015 updated gdrive and replaced mencoder with avconv
 # 2.9 release 22-Mar-2016 fixed getCurrentCount when file contains non integer data due to a write error.
 
-progVer = "ver 2.9"
+progVer = "ver 2.91"
 
 import os
 mypath=os.path.abspath(__file__)       # Find the full path of this python script
@@ -162,6 +162,7 @@ def displayInfo(motioncount, timelapsecount):
         print("    No Shots . noNightShots=%s   noDayShots=%s" % (noNightShots, noDayShots))       
         if showDateOnImage:
             print("    Img Text . On=%s  Bottom=%s (False=Top)  WhiteText=%s (False=Black)  showTextWhiteNight=%s" % (showDateOnImage, showTextBottom, showTextWhite, showTextWhiteNight)) 
+            print("               showTextFontSize=%i px height" % (showTextFontSize))
         else:
             print("    No Text .. showDateOnImage=%s  Text on Image Disabled"  % (showDateOnImage))
         print("Motion ....... On=%s  Prefix=%s  threshold=%i(How Much)  sensitivity=%i(How Many)  forceTimer=%i min(If No Motion)"  % (motionOn, motionPrefix, threshold, sensitivity, motionForce/60))
@@ -257,7 +258,7 @@ def writeTextToImage(imagename, datetoprint, daymode):
         y = 10  # show text at top of image
     TEXT = imageNamePrefix + datetoprint
     font_path = '/usr/share/fonts/truetype/freefont/FreeSansBold.ttf'
-    font = ImageFont.truetype(font_path, 24, encoding='unic')
+    font = ImageFont.truetype(font_path, showTextFontSize, encoding='unic')
     text = TEXT.decode('utf-8')
 
     # Read exif data since ImageDraw does not save this metadata

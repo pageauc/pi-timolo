@@ -27,7 +27,7 @@ version = "ver 1.0"
 
 # Web Server settings
 web_server_root = "/home/pi/pi-timolo/motion"  # path to webserver image folder
-web_server_port = 8000                         # Web server access port eg http://192.168.1.100:8000
+web_server_port = 8080                         # Web server access port eg http://192.168.1.100:8090
 web_page_title = "pi-timolo motion images"     # web page title that browser show (not displayed on web page)
 
 # Size of Images to display 

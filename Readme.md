@@ -3,6 +3,8 @@
 
 **pi-timolo Version 2.9 release notes**
 
+- Fixed bug when .dat files have non integer data
+- Added image text font size variable
 - Updated gdrive to version 2.8
 - Updated makedailymovie.sh to use avconv instead of mencoder
 - Updated setup-timolo.sh to remove mencoder, gpac and add libav-tools

@@ -30,10 +30,11 @@ nightMinShut = .001        # default=.002 sec Lowest camera shut exposure time f
 nightMaxISO = 800          # default=800  Max cam ISO night setting
 nightMinISO = 100          # lowest ISO camera setting for transition from day to night (or visa versa)  
 nightSleepSec = 10         # default=10 Sec - Time period to allow camera to calculate low light AWB   
-twilightThreshold = 90     # New variable to replace sunset and sunrise Threshold settings
+twilightThreshold = 50     # New variable to replace sunset and sunrise Threshold settings
 
 # Date/Time Settings for Displaying info Directly on Images
 showDateOnImage = True     # Set to False for No display of date/time on image default= True
+showTextFontSize = 24      # Size of Font in pixel height
 showTextBottom = True      # Location of image Text True=Bottom False=Top
 showTextWhite = True       # Colour of image Text True=White False=Black
 showTextWhiteNight = True  # Change night text to white.  Might help if night needs white instead of black during day or visa versa
@@ -46,7 +47,7 @@ threshold = 10             # How much a pixel has to change to be counted defaul
 sensitivity = 200          # Number of changed pixels to trigger motion default=300
 motionVideoOn = False      # If set to True then video clip is taken rather than image
 motionVideoTimer = 10      # Number of seconds of video clip to take if Motion Detected default=10
-motionQuickTLOn = True     # if set to True then take a quick time lapse sequence rather than a single image (overrides motionVideoOn)
+motionQuickTLOn = False    # if set to True then take a quick time lapse sequence rather than a single image (overrides motionVideoOn)
 motionQuickTLTimer = 10    # Duration in seconds of quick time lapse sequence after initial motion detected default=10
 motionQuickTLInterval = 0  # Time between each Quick time lapse image 0 is fast as possible 
 motionForce = 60 * 60      # Force single motion image if no Motion Detected in specified seconds.  default=60*60
@@ -59,7 +60,7 @@ createLockFile = True      # default=False if True then sync.sh will call grive 
                            # Lock File is used to indicate motion images are added so sync.sh can sync in background via sudo crontab -e 
 
 # Time Lapse Settings
-timelapseOn = True         # Turns timelapse True=On  False=Off
+timelapseOn = False        # Turns timelapse True=On  False=Off
 timelapseTimer = 5 * 60    # Seconds between timelapse images  default=5*60
 timelapseDir = "timelapse" # Storage Folder for Time Lapse Images
 timelapsePrefix = "tl-"    # Prefix timelapse images with this prefix
