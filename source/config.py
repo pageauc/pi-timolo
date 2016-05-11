@@ -20,6 +20,7 @@ imageWidth = 1280          # Full Size Image Width in px  default=1980
 imageHeight = 720          # Full Size Image Height in px default=1080
 imageVFlip = False         # Flip image Vertically    default=False
 imageHFlip = False         # Flip image Horizontally  default=False
+imageRotation=0            # Rotate image. Valid values: 0, 90, 180 & 270
 imagePreview = False       # Preview image on connected RPI Monitor default=False
 noNightShots = False       # Don't Take images at Night default=False
 noDayShots = False         # Don't Take images during day time default=False  

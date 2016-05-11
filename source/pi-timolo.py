@@ -27,7 +27,6 @@ if not os.path.exists(configFilePath):
 else:
     # Read Configuration variables from config.py file
     from config import *
-    print("*** Found imageVFlip: {}".format(imageVFlip)) 
 
 if verbose:
     print("------------------------------ Loading Python Libraries --------------------------------------")
@@ -346,12 +345,12 @@ def takeDayImage(filename):
     # Take a Day image using exp=auto and awb=auto
     with picamera.PiCamera() as camera:
         camera.resolution = (imageWidth, imageHeight) 
-        # camera.rotation = cameraRotate #Note use imageVFlip and imageHFlip variables
         time.sleep(0.5)   # sleep for a little while so camera can get adjustments
         if imagePreview:
             camera.start_preview()
         camera.vflip = imageVFlip
         camera.hflip = imageHFlip
+        camera.rotation = imageRotation # setup rotation
         # Day Automatic Mode
         camera.exposure_mode = 'auto'
         camera.awb_mode = 'auto'
@@ -376,6 +375,7 @@ def takeNightImage(filename):
             camera.start_preview()
         camera.vflip = imageVFlip
         camera.hflip = imageHFlip
+        camera.rotation = imageRotation # setup rotation
         camera.framerate = Fraction(1, 6)
         camera.shutter_speed = currentShut
         camera.exposure_mode = 'off'
@@ -419,6 +419,7 @@ def takeVideo(filename):
             camera.resolution = (imageWidth, imageHeight)
             camera.vflip = imageVFlip
             camera.hflip = imageHFlip
+            camera.rotation = imageRotation # setup rotation
             camera.start_recording(filename)
             camera.wait_recording(motionVideoTimer)
             camera.stop_recording()
@@ -457,6 +458,7 @@ def getStreamImage(isDay):
                 camera.framerate = Fraction(1, 6)
                 camera.vflip = imageVFlip
                 camera.hflip = imageHFlip
+                camera.rotation = imageRotation # setup rotation
                 camera.shutter_speed = nightMaxShut
                 camera.exposure_mode = 'off'
                 camera.iso = nightMaxISO
@@ -660,6 +662,7 @@ def Main():
                         filename = getImageName(motionPath, imagePrefix, motionNumOn, motionNumCount)      
                         with picamera.PiCamera() as camera:
                             camera.resolution = (imageWidth, imageHeight)
+                            camera.rotation = imageRotation # setup rotation
                             camera.vflip = imageVFlip
                             camera.hflip = imageHFlip
                             time.sleep(.5)
