@@ -13,6 +13,7 @@ progVer = "ver 2.91"
 
 import os
 mypath=os.path.abspath(__file__)       # Find the full path of this python script
+print mypath
 baseDir=mypath[0:mypath.rfind("/")+1]  # get the path location only (excluding script name)
 baseFileName=mypath[mypath.rfind("/")+1:mypath.rfind(".")]
 progName = os.path.basename(__file__)
@@ -26,6 +27,7 @@ if not os.path.exists(configFilePath):
 else:
     # Read Configuration variables from config.py file
     from config import *
+    print("*** Found imageVFlip: {}".format(imageVFlip)) 
 
 if verbose:
     print("------------------------------ Loading Python Libraries --------------------------------------")
@@ -324,7 +326,8 @@ def getVideoName(path, prefix, numberon, counter):
     else:
         if motionVideoOn:
             rightNow = datetime.datetime.now()
-            filename = "%s/%s%04d%02d%02d-%02d%02d%02d.h264" % ( path, prefix ,rightNow.year, rightNow.month, rightNow.day, rightNow.hour, rightNow.minute, rightNow.second)
+            rn=rightNow.strftime("%Y%m%d-%H_%M_%S")
+            filename = "{}/{}-{}.h264".format(path, prefix ,rn)
     return filename    
  
 #-----------------------------------------------------------------------------------------------       
@@ -334,7 +337,8 @@ def getImageName(path, prefix, numberon, counter):
         filename = path + "/" + prefix + str(counter) + ".jpg"        
     else:
         rightNow = datetime.datetime.now()
-        filename = "%s/%s%04d%02d%02d-%02d%02d%02d.jpg" % ( path, prefix ,rightNow.year, rightNow.month, rightNow.day, rightNow.hour, rightNow.minute, rightNow.second)     
+        rn=rightNow.strftime("%Y%m%d-%H_%M_%S")
+        filename = "{}/{}-{}.h264".format(path, prefix ,rn)
     return filename    
     
 #-----------------------------------------------------------------------------------------------
@@ -413,6 +417,8 @@ def takeVideo(filename):
     if motionVideoOn:
         with picamera.PiCamera() as camera:
             camera.resolution = (imageWidth, imageHeight)
+            camera.vflip = imageVFlip
+            camera.hflip = imageHFlip
             camera.start_recording(filename)
             camera.wait_recording(motionVideoTimer)
             camera.stop_recording()
@@ -449,6 +455,8 @@ def getStreamImage(isDay):
                 # Set a framerate of 1/6fps, then set shutter
                 # speed to 6s
                 camera.framerate = Fraction(1, 6)
+                camera.vflip = imageVFlip
+                camera.hflip = imageHFlip
                 camera.shutter_speed = nightMaxShut
                 camera.exposure_mode = 'off'
                 camera.iso = nightMaxISO
