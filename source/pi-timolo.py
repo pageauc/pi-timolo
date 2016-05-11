@@ -27,7 +27,6 @@ if not os.path.exists(configFilePath):
 else:
     # Read Configuration variables from config.py file
     from config import *
-    print("*** Found imageVFlip: {}".format(imageVFlip)) 
 
 if verbose:
     print("------------------------------ Loading Python Libraries --------------------------------------")
@@ -83,8 +82,8 @@ def shut2Sec (shutspeed):
 #-----------------------------------------------------------------------------------------------    
 def showTime():
     rightNow = datetime.datetime.now()
-    currentTime = "%04d%02d%02d_%02d:%02d:%02d" % (rightNow.year, rightNow.month, rightNow.day, rightNow.hour, rightNow.minute, rightNow.second)
-    return currentTime    
+    rn=rightNow.strftime("%Y%m%d-%H_%M_%S")
+    return rn    
     
 #-----------------------------------------------------------------------------------------------    
 def showMessage(functionName, messageStr):
@@ -281,9 +280,8 @@ def writeTextToImage(imagename, datetoprint, daymode):
 def postImageProcessing(numberon, counterstart, countermax, counter, recycle, counterpath, filename, daymode):
     # If required process text to display directly on image
     if (not motionVideoOn):
-        rightNow = datetime.datetime.now()
         if showDateOnImage:
-            dateTimeText = "%04d%02d%02d_%02d:%02d:%02d" % (rightNow.year, rightNow.month, rightNow.day, rightNow.hour, rightNow.minute, rightNow.second)
+            dateTimeText = showTime()
             if numberon:
                 counterStr = "%i    "  % ( counter )
                 imageText =  counterStr + dateTimeText
@@ -325,9 +323,8 @@ def getVideoName(path, prefix, numberon, counter):
             filename = path + "/" + prefix + str(counter) + ".h264" 
     else:
         if motionVideoOn:
-            rightNow = datetime.datetime.now()
-            rn=rightNow.strftime("%Y%m%d-%H_%M_%S")
-            filename = "{}/{}-{}.h264".format(path, prefix ,rn)
+            rightNow = showTime()
+            filename = "{}/{}-{}.h264".format(path, prefix ,rightNow)
     return filename    
  
 #-----------------------------------------------------------------------------------------------       
@@ -336,8 +333,7 @@ def getImageName(path, prefix, numberon, counter):
     if numberon:
         filename = path + "/" + prefix + str(counter) + ".jpg"        
     else:
-        rightNow = datetime.datetime.now()
-        rn=rightNow.strftime("%Y%m%d-%H_%M_%S")
+        rn=showTime()
         filename = "{}/{}-{}.h264".format(path, prefix ,rn)
     return filename    
     
@@ -346,12 +342,12 @@ def takeDayImage(filename):
     # Take a Day image using exp=auto and awb=auto
     with picamera.PiCamera() as camera:
         camera.resolution = (imageWidth, imageHeight) 
-        # camera.rotation = cameraRotate #Note use imageVFlip and imageHFlip variables
         time.sleep(0.5)   # sleep for a little while so camera can get adjustments
         if imagePreview:
             camera.start_preview()
         camera.vflip = imageVFlip
         camera.hflip = imageHFlip
+        camera.rotation = imageRotation # setup rotation
         # Day Automatic Mode
         camera.exposure_mode = 'auto'
         camera.awb_mode = 'auto'
@@ -376,6 +372,7 @@ def takeNightImage(filename):
             camera.start_preview()
         camera.vflip = imageVFlip
         camera.hflip = imageHFlip
+        camera.rotation = imageRotation # setup rotation
         camera.framerate = Fraction(1, 6)
         camera.shutter_speed = currentShut
         camera.exposure_mode = 'off'
@@ -419,6 +416,7 @@ def takeVideo(filename):
             camera.resolution = (imageWidth, imageHeight)
             camera.vflip = imageVFlip
             camera.hflip = imageHFlip
+            camera.rotation = imageRotation # setup rotation
             camera.start_recording(filename)
             camera.wait_recording(motionVideoTimer)
             camera.stop_recording()
@@ -432,8 +430,7 @@ def createSyncLockFile(imagefilename):
             open(lockFilePath, 'w').close()
             msgStr = "Create gdrive sync.sh Lock File " + lockFilePath
             showMessage("  createSyncLockFile", msgStr)
-        rightNow = datetime.datetime.now()
-        now = "%04d%02d%02d-%02d%02d%02d" % ( rightNow.year, rightNow.month, rightNow.day, rightNow.hour, rightNow.minute, rightNow.second )
+        now = showTime()
         filecontents = now + " createSyncLockFile - "  + imagefilename + " Ready to sync using sudo ./sync.sh command." 
         f = open(lockFilePath, 'w+')
         f.write(filecontents)
@@ -457,6 +454,7 @@ def getStreamImage(isDay):
                 camera.framerate = Fraction(1, 6)
                 camera.vflip = imageVFlip
                 camera.hflip = imageHFlip
+                camera.rotation = imageRotation # setup rotation
                 camera.shutter_speed = nightMaxShut
                 camera.exposure_mode = 'off'
                 camera.iso = nightMaxISO
@@ -660,6 +658,7 @@ def Main():
                         filename = getImageName(motionPath, imagePrefix, motionNumOn, motionNumCount)      
                         with picamera.PiCamera() as camera:
                             camera.resolution = (imageWidth, imageHeight)
+                            camera.rotation = imageRotation # setup rotation
                             camera.vflip = imageVFlip
                             camera.hflip = imageHFlip
                             time.sleep(.5)
