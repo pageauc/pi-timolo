@@ -154,59 +154,32 @@ camera module mounting position in the fake security camera case.
 Review the various config.py settings and edit as desired.
 use ctrl-x to save file and exit nano editor.
 
-Note:
-I also setup a crontab to reboot the rpi once a day but this may not be
-necessary for you. I did it since I intend to leave the rpi security camera
-run remotely and this gives a chance for system to recover should there
-be a glitch. Also if you have problems check permissions.
-The init.d will runs as root so the files in the motion folder will
-be owned by root.  
-Just check to make sure you run with sudo per examples below.
+### Run pi-timolo.py on boot
 
-    ./pi-timolo.py
-   
-and
+To auto launch pi-timolo.py on boot-up of raspberry pi perform the following
 
-    ./sync.sh
+    sudo nano /etc/rc.local
+    
+add the following command just before the exit 0 command
 
-Once you know sync.sh is working OK you can automate the sync using a crontab
-per instructions below.
-
-### Setup init.d to run pi-timolo on boot
-
-To auto launch pi-timolo.py on boot-up of raspberry pi
-Note there is a copy of the init.d pi-timolo.sh in the tar file so you should
-be able to copy if instead of the skeleton file method below if you wish 
-eg in the pi-timolo folder execute the following then skip to edit 
-/etc/init.d/pi-timolo.sh using nano.
-
-    cd ~
-    cd pi-timolo
-    sudo cp pi-timolo.sh /etc/init.d
-
-Check permissions for the /etc/init.d/pi-timolo.sh to make sure it is executable  
-if required change permissions for pi-timolo.sh using chmod command 
- 
-    ls -al /etc/init.d/pi-timolo.sh
-    cd /etc/init.d
-    chmod +x pi-timolo.sh
-    sudo nano pi-timolo.sh
-   
-Change appropriate entries to point to your pi-timolo.py script and save
-the file using ctrl-x.  If you copied downloaded sample script and have not
-changed the pi-timolo folder name then no editing step above should be required.
-Initialize the /etc/init.d/pi-timolo.sh script so it executes on boot.
-
-    sudo update-rc.d pi-timolo.sh defaults
-    cd ~
+    /home/pi/pi-timolo/pi-timolo.sh
+    
+ctrl-x y to save and exit nano editor
 
 Reboot RPI and test operation by triggering motion and checking images are
 successfully saved to your motion folder.  
 Trouble shoot problems as required.
 
+    sudo reboot
+
+Login and check if pi-timolo.sh is running by executing
+
+    cd ~/pi-timolo
+    ./pi-timolo.sh    
+    
 ### Setup gdrive sync
 
-gdrive 2.8 is included with the pi-timolo.tar file but you can
+gdrive 2.8 is included but you can
 optionally install gdrive binary from github source see release notes here.
 https://github.com/odeke-em/drive/releases/tag/v0.2.8-arm-binary or alternatively
 compile from source.  I believe it is easier just to use my binary and you can
@@ -299,6 +272,7 @@ Add example crontab entry per below then save and exit nano using ctrl-x y
 
 There are several utilities included with pi-timolo
 
+- pi-timolo.sh is a script to launch pi-timolo.py in the background or via entry in /etc/rc.local
 - makemovie.sh uses avconv to create mp4 or avi movies from all jpg files in specified folder default (timelapse) see code for details
 - makedailymovie.sh uses avconv to create mp4 or avi movies with a unique date/time file name.  
   This is designed to be run from a crontab and is written to work with external share or remote mount. default is local daily_movies
