@@ -7,7 +7,7 @@ configTitle = "pitimolo default configuration motion and timelapse 1080p images"
 configName = "pitimolo-default-config"
 
 # These settings should both be False if this script is run as a background /etc/init.d daemon
-verbose = False            # Sends detailed logging info to console. set to False if running script as daeman
+verbose = True            # Sends detailed logging info to console. set to False if running script as daeman
 logDataToFile = False      # logs diagnostic data to a disk file for review  default=False
 debug=False                # Puts in debug mode returns pixel average data for tuning
 
@@ -15,7 +15,7 @@ debug=False                # Puts in debug mode returns pixel average data for t
 imageTestPrint = False     # default=False Set to True to print one image and exit (useful for aligning camera)
 
 # Image Settings
-imageNamePrefix = 'deck-'  # Prefix for all image file names. Eg front-
+imageNamePrefix = 'cam1-'  # Prefix for all image file names. Eg front-
 imageWidth = 1024          # Full Size Image Width in px  default=1980
 imageHeight = 768          # Full Size Image Height in px default=1080
 imageVFlip = False         # Flip image Vertically    default=False
@@ -31,7 +31,7 @@ nightMinShut = .001        # default=.002 sec Lowest camera shut exposure time f
 nightMaxISO = 800          # default=800  Max cam ISO night setting
 nightMinISO = 100          # lowest ISO camera setting for transition from day to night (or visa versa)  
 nightSleepSec = 10         # default=10 Sec - Time period to allow camera to calculate low light AWB   
-twilightThreshold = 20     # New variable to replace sunset and sunrise Threshold settings
+twilightThreshold = 40     # New variable to replace sunset and sunrise Threshold settings
 
 # Date/Time Settings for Displaying info Directly on Images
 showDateOnImage = True     # Set to False for No display of date/time on image default= True
@@ -53,11 +53,11 @@ motionQuickTLTimer = 10    # Duration in seconds of quick time lapse sequence af
 motionQuickTLInterval = 0  # Time between each Quick time lapse image 0 is fast as possible 
 motionForce = 60 * 60      # Force single motion image if no Motion Detected in specified seconds.  default=60*60
 motionNumOn = True         # True=On (filenames by sequenced Number) otherwise date/time used for filenames
-motionNumStart = 10000     # Start motion number sequence
-motionNumMax  = 2000       # Max number of motion images desired. 0=Continuous    default=0
+motionNumStart = 1000      # Start motion number sequence
+motionNumMax  = 500        # Max number of motion images desired. 0=Continuous    default=0
 motionNumRecycle = True    # After numberMax reached restart at numberStart instead of exiting default=True
 motionMaxDots = 100        # Number of motion dots before starting new line
-createLockFile = False     # default=False if True then sync.sh will call grive to sync files to your web google drive if .sync file exists
+createLockFile = False     # default=False if True then sync.sh will call gdrive to sync files to your web google drive if .sync file exists
                            # Lock File is used to indicate motion images are added so sync.sh can sync in background via sudo crontab -e 
 
 # Time Lapse Settings
