@@ -8,6 +8,7 @@
 # 2.7 released 20-Jul-2015  added saving of exif metadata when text written to image sinc PIL does not retain this.
 # 2.8 released 2-Aug-2015 updated gdrive and replaced mencoder with avconv
 # 2.9 release 22-Mar-2016 fixed getCurrentCount when file contains non integer data due to a write error.
+# 2,92 release 21-Jul-2016 changed default motion image size to 128x80 per new pi-camera default.  Added image rotation variable
 
 progVer = "ver 2.92"
 
