@@ -1,8 +1,8 @@
 # pi-timolo
 ##### Raspberry (Pi) - (Ti)me Lapse, (Mo)tion Detect, (Lo)w Light
 
-**pi-timolo Version 2.10 release notes**
-- Removed tar file and replaced with install.sh
+**pi-timolo Version 2.93 release notes**
+- Removed tar file and replaced with install.sh installation script
 
 ### Prerequisites
 
@@ -68,7 +68,7 @@ https://www.youtube.com/playlist?list=PLLXJw_uJtQLa11A4qjVpn2D2T0pgfaSG0
 #### Alternative Security Camera solutions
 If you are looking for a good web based RPI camera interactive interface, I would
 highly recommend application links below.  They are relatively easy to install
-and works well. But I still prefer pi-timolo for remote headless camera situations since I can
+and work well. But I still prefer pi-timolo for remote headless camera situations since I can
 upload to my google drive and run timelapse and motion simultaneously. 
 
 The web interface below can sometimes be a little finicky and do not allow
