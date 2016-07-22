@@ -1,5 +1,6 @@
 # pi-timolo
 ##### Raspberry (Pi) - (Ti)me Lapse, (Mo)tion Detect, (Lo)w Light
+See Wiki for more detail [pi-timolo Wiki](https://github.com/pageauc/pi-timolo/wiki)
 
 **pi-timolo Version 2.93 release notes**
 - Removed tar file and replaced with install.sh installation script
@@ -44,6 +45,25 @@ Test edit changes.
 
     ./pi-timolo.py 
 
+### pi-timolo Program Features
+
+* Time lapse and motion detection can be run together or separately
+* Configuration variables are saved in a config.py file. This allows 
+  pi-timolo.py to be updated without having to redo variable values.
+  This also allows swapping in different saved configurations.
+* Auto detects day, night and twilight changes without using a clock.
+  This is useful if the RPI reboots without an internet connection.
+* Image date/time and name can be put directly on images. Position and color
+  can be specified.
+* Night motion and images use low light long exposure
+* Includes a makemovie.py script to help create time lapse avi files from images.
+* Includes mvleavelast.sh script to move all but last file (since may still be active)
+  This allows files to be moved to a folder mount point on a remote share if required.
+* Includes a install.sh script to install/update pi-timolo code and dependencies.
+* Includes a pi-timolo.sh if you want to start the program on boot or background task
+* Allows logging of summary data to a file or detailed verbose data when enabled   
+* Includes gdrive binary to sync files with your google drive using sync.sh script
+    
 ### Program Description
 
 This is a python picamara module application for a Raspberry PI with a RPI camera
@@ -79,26 +99,6 @@ http://elinux.org/RPi-Cam-Web-Interface
 motionPie is run from an SD image wiki https://github.com/ccrisan/motionPie/wiki 
 https://github.com/ccrisan/motionpie
 
-
-### pi-timolo Program Features
-
-- Time lapse and motion detection can be run together or separately
-- Configuration variables are saved in a config.py file. This allows 
-  pi-timolo.py to be updated without having to redo variable values.
-  This also allows swapping in different saved configurations.
-- Auto detects day, night and twilight changes without using a clock.
-  This is useful if the RPI reboots without an internet connection.
-- Image date/time and name can be put directly on images. Position and color
-  can be specified.
-- Night motion and images use low light long exposure
-- Includes a makemovie.py script to help create time lapse avi files from images.
-- Includes mvleavelast.sh script to move all but last file (since may still be active)
-  This allows files to be moved to a folder mount point on a remote share if required.
-- Includes a setup-timolo.sh script to install/update pi-timolo dependencies.
-- Includes a skeleton init.d script pi-timolo.sh if you want to start the program on boot
-- Allows logging of summary data to a file or detailed verbose data when enabled   
-- Includes gdrive binary to sync files with your google drive using sync.sh script
-  
 ### Background History
 
 I have been working on a headless internet capable security camera using two types of
