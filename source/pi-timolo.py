@@ -9,7 +9,7 @@
 # 2.8 released 2-Aug-2015 updated gdrive and replaced mencoder with avconv
 # 2.9 release 22-Mar-2016 fixed getCurrentCount when file contains non integer data due to a write error.
 
-progVer = "ver 2.91"
+progVer = "ver 2.92"
 
 import os
 mypath=os.path.abspath(__file__)       # Find the full path of this python script
@@ -54,8 +54,8 @@ from fractions import Fraction
 SECONDS2MICRO = 1000000    # Used to convert from seconds to microseconds
 nightMaxShut = int(nightMaxShut * SECONDS2MICRO)  # default=5 sec IMPORTANT- 6 sec works sometimes but occasionally locks RPI and HARD reboot required to clear
 nightMinShut = int(nightMinShut * SECONDS2MICRO)  # lowest shut camera setting for transition from day to night (or visa versa)
-testWidth = 100            # width of rgb image stream used for motion detection and day/night changes
-testHeight = 75            # height of rgb image stream used for motion detection and day/night changes
+testWidth = 128            # width of rgb image stream used for motion detection and day/night changes
+testHeight = 80            # height of rgb image stream used for motion detection and day/night changes
 daymode = False            # default should always be False.
 progNameVer = "%s %s" %(progName, progVer)
 motionPath = baseDir + motionDir  # Store Motion images
