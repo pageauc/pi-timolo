@@ -7,14 +7,13 @@
 
 # 2.7 released 20-Jul-2015  added saving of exif metadata when text written to image sinc PIL does not retain this.
 # 2.8 released 2-Aug-2015 updated gdrive and replaced mencoder with avconv
-# 2.9 release 22-Mar-2016 fixed getCurrentCount when file contains non integer data due to a write error.
-# 2,92 release 21-Jul-2016 changed default motion image size to 128x80 per new pi-camera default.  Added image rotation variable
+# 2.92 release 22-Mar-2016 fixed getCurrentCount when file contains non integer data due to a write error or corruption.
+# 2.93 release 21-Jul-2016 improved getCurrentCount logic and changed default motion image size to 128x80 per picamra default
 
-progVer = "ver 2.92"
+progVer = "ver 2.93"
 
 import os
 mypath=os.path.abspath(__file__)       # Find the full path of this python script
-print mypath
 baseDir=mypath[0:mypath.rfind("/")+1]  # get the path location only (excluding script name)
 baseFileName=mypath[mypath.rfind("/")+1:mypath.rfind(".")]
 progName = os.path.basename(__file__)
@@ -36,6 +35,7 @@ else:
 
 # import remaining python libraries  
 import sys
+import glob
 import time
 import datetime
 import picamera
@@ -83,8 +83,8 @@ def shut2Sec (shutspeed):
 #-----------------------------------------------------------------------------------------------    
 def showTime():
     rightNow = datetime.datetime.now()
-    rn=rightNow.strftime("%Y%m%d-%H_%M_%S")
-    return rn    
+    currentTime = "%04d%02d%02d_%02d:%02d:%02d" % (rightNow.year, rightNow.month, rightNow.day, rightNow.hour, rightNow.minute, rightNow.second)
+    return currentTime    
     
 #-----------------------------------------------------------------------------------------------    
 def showMessage(functionName, messageStr):
@@ -167,7 +167,8 @@ def displayInfo(motioncount, timelapsecount):
             print("               showTextFontSize=%i px height" % (showTextFontSize))
         else:
             print("    No Text .. showDateOnImage=%s  Text on Image Disabled"  % (showDateOnImage))
-        print("Motion ....... On=%s  Prefix=%s  threshold=%i(How Much)  sensitivity=%i(How Many)  forceTimer=%i min(If No Motion)"  % (motionOn, motionPrefix, threshold, sensitivity, motionForce/60))
+        print("Motion ....... On=%s  Prefix=%s  threshold=%i(How Much)  sensitivity=%i(How Many)"  % (motionOn, motionPrefix, threshold, sensitivity))
+        print("               forceTimer=%i min(If No Motion)"  % (motionForce/60))
         print("               motionPath=%s" % (motionPath))
         if motionNumOn:
             print("    Num Seq .. motionNumOn=%s  current=%s   numStart=%i   numMax=%i   numRecycle=%s"  % (motionNumOn, motioncount, motionNumStart, motionNumMax, motionNumRecycle))
@@ -191,7 +192,8 @@ def displayInfo(motioncount, timelapsecount):
             print("    Date-Time. motionNumOn=%s  Numbering Disabled" % (timelapseNumOn))
         if createLockFile:
             print("gdrive Sync .. On=%s  Path=%s  Note: syncs for motion images only." % (createLockFile, lockFilePath))  
-        print("Logging ...... verbose=%s (Details to Console)    logDataToFile=%s  logfile=%s" % ( verbose, logDataToFile, baseDir + baseFileName + ".log" ))
+        print("Logging ...... verbose=%s (Details to Console)    logDataToFile=%s" % ( verbose, logDataToFile ))
+        print("               logfilePath=%s" % ( baseDir + baseFileName + ".log" ))
         print("------------------------------------ Log Activity --------------------------------------------")
     checkConfig()        
     return            
@@ -222,22 +224,39 @@ def getCurrentCount(numberpath, numberstart):
         f = open(numberpath, 'w+')
         f.write(str(numberstart))
         f.close()
-      # Read the numberPath file to get the last sequence number
+    # Read the numberPath file to get the last sequence number
     with open(numberpath, 'r') as f:
         writeCount = f.read()
         f.closed
         try:
             numbercounter = int(writeCount)
-        except ValueError:
-            msgStr = "Invalid Data in File " + numberpath + " Reset numberstart=" + str(numberstart)
+        except ValueError:   # Found Corrupt dat file since cannot convert to integer
+            # Try to determine if this is motion or timelapse
+            if numberpath.find(motionPrefix) > 0:
+                filePath = motionPath + "/*.jpg"
+                fprefix = motionPath + motionPrefix + imageNamePrefix
+            else:
+                filePath = timelapsePath + "/*.jpg"
+                fprefix = timelapsePath + timelapsePrefix + imageNamePrefix
+            try:
+               # Scan image folder for most recent file and try to extract numbercounter
+                newest = max(glob.iglob(filePath), key=os.path.getctime)
+                writeCount = newest[len(fprefix)+1:newest.find(".jpg")]
+            except:
+                writeCount = numberstart
+            try:
+                numbercounter = int(writeCount)+1
+            except ValueError:
+                numbercounter = numberstart
+            msgStr = "Invalid Data in File " + numberpath + " Reset numbercounter to " + str(numbercounter)
             showMessage("getCurrentCount", msgStr)
-            f = open(numberpath, 'w+')
-            f.write(str(numberstart))
-            f.close()
-            f = open(numberpath, 'r')
-            writeCount = f.read()
-            f.closed
-            numbercounter = int(writeCount)
+        f = open(numberpath, 'w+')
+        f.write(str(numbercounter))
+        f.close()
+        f = open(numberpath, 'r')
+        writeCount = f.read()
+        f.closed
+        numbercounter = int(writeCount)
     return numbercounter
     
 #-----------------------------------------------------------------------------------------------
@@ -281,8 +300,9 @@ def writeTextToImage(imagename, datetoprint, daymode):
 def postImageProcessing(numberon, counterstart, countermax, counter, recycle, counterpath, filename, daymode):
     # If required process text to display directly on image
     if (not motionVideoOn):
+        rightNow = datetime.datetime.now()
         if showDateOnImage:
-            dateTimeText = showTime()
+            dateTimeText = "%04d%02d%02d_%02d:%02d:%02d" % (rightNow.year, rightNow.month, rightNow.day, rightNow.hour, rightNow.minute, rightNow.second)
             if numberon:
                 counterStr = "%i    "  % ( counter )
                 imageText =  counterStr + dateTimeText
@@ -324,8 +344,8 @@ def getVideoName(path, prefix, numberon, counter):
             filename = path + "/" + prefix + str(counter) + ".h264" 
     else:
         if motionVideoOn:
-            rightNow = showTime()
-            filename = "{}/{}-{}.h264".format(path, prefix ,rightNow)
+            rightNow = datetime.datetime.now()
+            filename = "%s/%s%04d%02d%02d-%02d%02d%02d.h264" % ( path, prefix ,rightNow.year, rightNow.month, rightNow.day, rightNow.hour, rightNow.minute, rightNow.second)
     return filename    
  
 #-----------------------------------------------------------------------------------------------       
@@ -334,8 +354,8 @@ def getImageName(path, prefix, numberon, counter):
     if numberon:
         filename = path + "/" + prefix + str(counter) + ".jpg"        
     else:
-        rn=showTime()
-        filename = "{}/{}-{}.h264".format(path, prefix ,rn)
+        rightNow = datetime.datetime.now()
+        filename = "%s/%s%04d%02d%02d-%02d%02d%02d.jpg" % ( path, prefix ,rightNow.year, rightNow.month, rightNow.day, rightNow.hour, rightNow.minute, rightNow.second)     
     return filename    
     
 #-----------------------------------------------------------------------------------------------
@@ -343,12 +363,12 @@ def takeDayImage(filename):
     # Take a Day image using exp=auto and awb=auto
     with picamera.PiCamera() as camera:
         camera.resolution = (imageWidth, imageHeight) 
+        # camera.rotation = cameraRotate #Note use imageVFlip and imageHFlip variables
         time.sleep(0.5)   # sleep for a little while so camera can get adjustments
         if imagePreview:
             camera.start_preview()
         camera.vflip = imageVFlip
         camera.hflip = imageHFlip
-        camera.rotation = imageRotation # setup rotation
         # Day Automatic Mode
         camera.exposure_mode = 'auto'
         camera.awb_mode = 'auto'
@@ -373,7 +393,6 @@ def takeNightImage(filename):
             camera.start_preview()
         camera.vflip = imageVFlip
         camera.hflip = imageHFlip
-        camera.rotation = imageRotation # setup rotation
         camera.framerate = Fraction(1, 6)
         camera.shutter_speed = currentShut
         camera.exposure_mode = 'off'
@@ -415,9 +434,6 @@ def takeVideo(filename):
     if motionVideoOn:
         with picamera.PiCamera() as camera:
             camera.resolution = (imageWidth, imageHeight)
-            camera.vflip = imageVFlip
-            camera.hflip = imageHFlip
-            camera.rotation = imageRotation # setup rotation
             camera.start_recording(filename)
             camera.wait_recording(motionVideoTimer)
             camera.stop_recording()
@@ -431,7 +447,8 @@ def createSyncLockFile(imagefilename):
             open(lockFilePath, 'w').close()
             msgStr = "Create gdrive sync.sh Lock File " + lockFilePath
             showMessage("  createSyncLockFile", msgStr)
-        now = showTime()
+        rightNow = datetime.datetime.now()
+        now = "%04d%02d%02d-%02d%02d%02d" % ( rightNow.year, rightNow.month, rightNow.day, rightNow.hour, rightNow.minute, rightNow.second )
         filecontents = now + " createSyncLockFile - "  + imagefilename + " Ready to sync using sudo ./sync.sh command." 
         f = open(lockFilePath, 'w+')
         f.write(filecontents)
@@ -453,9 +470,6 @@ def getStreamImage(isDay):
                 # Set a framerate of 1/6fps, then set shutter
                 # speed to 6s
                 camera.framerate = Fraction(1, 6)
-                camera.vflip = imageVFlip
-                camera.hflip = imageHFlip
-                camera.rotation = imageRotation # setup rotation
                 camera.shutter_speed = nightMaxShut
                 camera.exposure_mode = 'off'
                 camera.iso = nightMaxISO
@@ -612,7 +626,7 @@ def Main():
     checkDayTimer = timelapseStart
     checkMotionTimer = timelapseStart
     forceMotion = False   # Used for forcing a motion image if no motion for motionForce time exceeded
-    msgStr = "Entering Motion Detect - Time Lapse Loop  Please Wait ..."
+    msgStr = "Entering Loop for Time Lapse and/or Motion Detect  Please Wait ..."
     showMessage("Main", msgStr)
     dotCount = showDots(motionMaxDots)  # reset motion dots
     # Start main program loop here.  Use Ctl-C to exit if run from terminal session.
@@ -659,7 +673,6 @@ def Main():
                         filename = getImageName(motionPath, imagePrefix, motionNumOn, motionNumCount)      
                         with picamera.PiCamera() as camera:
                             camera.resolution = (imageWidth, imageHeight)
-                            camera.rotation = imageRotation # setup rotation
                             camera.vflip = imageVFlip
                             camera.hflip = imageHFlip
                             time.sleep(.5)

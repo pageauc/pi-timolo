@@ -1,13 +1,13 @@
 # User Configuration variable settings for pitimolo
 # Purpose - Motion Detection Security Cam
-# Created - 20-Jul-2015 pi-timolo ver 2.7 compatible
+# Created - 20-Jul-2015 pi-timolo ver 2.8 compatible
 # Done by - Claude Pageau
  
-configTitle = "pitimolo default configuration motion and timelapse 1080p images"
+configTitle = "pitimolo default configuration motion and timelapse 720p images"
 configName = "pitimolo-default-config"
 
 # These settings should both be False if this script is run as a background /etc/init.d daemon
-verbose = True            # Sends detailed logging info to console. set to False if running script as daeman
+verbose = True             # Sends detailed logging info to console. set to False if running script as daeman
 logDataToFile = False      # logs diagnostic data to a disk file for review  default=False
 debug=False                # Puts in debug mode returns pixel average data for tuning
 
@@ -16,8 +16,8 @@ imageTestPrint = False     # default=False Set to True to print one image and ex
 
 # Image Settings
 imageNamePrefix = 'cam1-'  # Prefix for all image file names. Eg front-
-imageWidth = 1024          # Full Size Image Width in px  default=1980
-imageHeight = 768          # Full Size Image Height in px default=1080
+imageWidth = 1024          # Full Size Image Width in px  default=1024
+imageHeight = 768          # Full Size Image Height in px default=768
 imageVFlip = False         # Flip image Vertically    default=False
 imageHFlip = False         # Flip image Horizontally  default=False
 imageRotation=0            # Rotate image. Valid values: 0, 90, 180 & 270
@@ -26,16 +26,17 @@ noNightShots = False       # Don't Take images at Night default=False
 noDayShots = False         # Don't Take images during day time default=False  
 
 # Low Light Night Settings
-nightMaxShut = 5.8         # default=5 sec Highest cam shut exposure time. IMPORTANT 6 sec works sometimes but occasionally locks RPI and HARD reboot required to clear
+nightMaxShut = 5.5         # default=5.5 sec Highest cam shut exposure time. 
+                           # IMPORTANT 6 sec works sometimes but occasionally locks RPI and HARD reboot required to clear
 nightMinShut = .001        # default=.002 sec Lowest camera shut exposure time for transition from day to night (or visa versa)
 nightMaxISO = 800          # default=800  Max cam ISO night setting
 nightMinISO = 100          # lowest ISO camera setting for transition from day to night (or visa versa)  
 nightSleepSec = 10         # default=10 Sec - Time period to allow camera to calculate low light AWB   
-twilightThreshold = 40     # New variable to replace sunset and sunrise Threshold settings
+twilightThreshold = 40     # default=40 Light level to trigger day/night transition at twilight 
 
 # Date/Time Settings for Displaying info Directly on Images
 showDateOnImage = True     # Set to False for No display of date/time on image default= True
-showTextFontSize = 24      # Size of Font in pixel height
+showTextFontSize = 20      # Size of image Font in pixel height
 showTextBottom = True      # Location of image Text True=Bottom False=Top
 showTextWhite = True       # Colour of image Text True=White False=Black
 showTextWhiteNight = True  # Change night text to white.  Might help if night needs white instead of black during day or visa versa
