@@ -1,72 +1,38 @@
 # pi-timolo
 ##### Raspberry (Pi) - (Ti)me Lapse, (Mo)tion Detect, (Lo)w Light
 
-**pi-timolo Version 2.9 release notes**
+**pi-timolo Version 2.10 release notes**
+- Removed tar file and replaced with install.sh
 
-- Fixed bug when .dat files have non integer data
-- Added image text font size variable
-- Updated gdrive to version 2.8
-- Updated makedailymovie.sh to use avconv instead of mencoder
-- Updated setup-timolo.sh to remove mencoder, gpac and add libav-tools
-- Updated setup-timolo.sh to allow upgrading if pi-timolo.py does not exist
-- Deleted some files h2mp4.sh makemovie.py is now makemovie.sh 
-- Updated Readme.md
+### Prerequisites
 
-If you wish to upgrade existing installation login via SSH or GUI terminal session
-otherwise use Quick Setup Instructions.
+You must have a raspberry pi model A, A+, B, B+, B-2 or 3 with the latest raspbian build
+and a pi camera module installed and working. There are several tutorials
+showing how to do this so it is not covered here. This assumes you know 
+how to cut and paste into nano or similar text editor on the pi using
+ssh (putty). You also need an operational internet connection via wifi
+or wired connection. Wifi needs to be setup to work on boot with no desktop in
+order for the camera to sync unattended with your google drive.  
+I have written the pi-timolo python script and bash sync scripts to make it
+somewhat independent of the folder names etc. This minimizes hard coding
+folder names in the scripts. If you run the script manually from the
+command line then settings and activity information can be enabled to display.
 
-    cd ~
-    cd pi-timolo
-    mv pi-timolo.py pi-timolo.py.prev
-    mv setup-timolo.sh setup-timolo.sh.prev
-    wget https://raw.github.com/pageauc/pi-timolo/master/setup-timolo.sh
-    chmod +x setup-timolo.sh
-    ./setup-timolo.sh
-    
-**IMPORTANT**
-The older versions of config.py may NOT be compatible with this release
-since new variables have been added for quick time lapse feature and debug
+### How to Install or Upgrade pi-timolo
 
-### Quick Setup
-
-Assumes raspberry pi with RPI camera module installed and tested running updated raspbian
-operating system installed on min 8gb SD card with expanded file system.
-Note: If you are using an older raspbian build or previous Picamera python module,
-and images are black or have problems then update Raspberry PI firmware per optional
-firmware update command below.
-
-From a (putty) SSH login or rpi console desktop terminal execute the following
-commands to upgrade to latest firmware. This should resolve any picamera issues.
-Also it is advised you use at least an 8 GB SD card with file system
-expanded using.
-
-    sudo raspi-config
-
-***Update Raspbian***
-
-    sudo apt-get update
-    sudo apt-get upgrade
-
-***Optional Update RPI firmware***
- 
-Run if you are using older RPI firmware and having problems with python picamera module errors or image quality issues  
-
-    sudo rpi-update
-
-***Hard boot to update firmware***
-
-    sudo shutdown -h now
-
-Unplug and restart your Raspberry Pi.
-
-***Login and install pi-timolo***
+From a (putty) SSH login or rpi desktop terminal execute the following
 
     cd ~
-    mkdir pi-timolo
-    cd ./pi-timolo
-    wget https://raw.github.com/pageauc/pi-timolo/master/pi-timolo.tar
-    tar -pxvf pi-timolo.tar
-    ./setup-timolo.sh
+    wget https://raw.github.com/pageauc/pi-timolo/master/source/install.sh
+    chmod +x install.sh
+    ./install.sh
+
+You may delete the /home/pi/install.sh once install is complete.
+
+To Run pi-timolo perform the following commands.  This will create required 
+image storage folder(s).    
+
+    cd ~/pi-timolo
     ./pi-timolo.py
 
 Verify motion (per screen log entries) then ctrl-c to exit pi-timolo.py
@@ -162,46 +128,6 @@ The pi-timolo.tar file is a complete setup including instructions.
 To automate the camera operation, I have setup pi-timolo.py to run from
 a /etc/init.d/pi-timolo.sh bash script by copying /etc/init.d/skeleton file
 to pi-timolo.sh script (sample included).
-
-### Prerequisites
-
-You must have a raspberry pi model A, A+, B, B+ or B-2 with the latest raspbian build
-and a pi camera module installed and working. There are several tutorials
-showing how to do this so it is not covered here. This assumes you know 
-how to cut and paste into nano or similar text editor on the pi using
-ssh (putty). You also need an operational internet connection via wifi
-or wired connection. Wifi needs to be setup to work on boot with no desktop in
-order for the camera to sync unattended with your google drive.  
-I have written the pi-timolo python script and bash sync scripts to make it
-somewhat independent of the folder names etc. This minimizes hard coding
-folder names in the scripts. If you run the script manually from the
-command line then settings and activity information can be enabled to display.
-
-### Detailed Setup Instructions
-
-Use putty to ssh into an internet connected raspberry pi and execute the
-following commands. Note you can change pi-timolo folder to a name of your choice
-if you wish.
-
-    sudo apt-get update
-    cd ~
-    mkdir pi-timolo
-    cd ./pi-timolo
-
-Download pi-timolo.tar file from my github account from a logged in
-ssh using putty or desktop terminal session on your raspberry pi.
-
-    wget https://raw.github.com/pageauc/pi-timolo/master/pi-timolo.tar
-
-Extract tar files to current folder
-
-    tar -pxvf pi-timolo.tar
-    ./setup-timolo.sh
-
-A gdrive binary will be installed to /usr/local/bin as part of the setup.
-This allows secure syncing of pi-timolo images with your google drive
-using the sync.sh script.  The setup-timolo.sh script includes instructions
-for configuring gdrive security also
 
 ### Change pi-timolo.py settings
 
@@ -379,6 +305,9 @@ There are several utilities included with pi-timolo
   movie is created in /home/pi/pi-timolo folder and then copied to specified folder_destination that can be local or network.
   see script comments for details and settings.
 - sync.sh uses gdrive to push sync local files to a users google drive. see description above for details.
+- myip.sh displays active ip addresses of the Raspberry pi (needed if you access webserver.py
+- webserver.py This is a console web server (does not run in background). Execute and access images from another LAN connected computer web browser. 
+
     
 Good Luck
 Claude Pageau 
