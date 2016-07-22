@@ -1,6 +1,6 @@
 # pi-timolo
-#### Raspberry (Pi) - (Ti)melapse, (Mo)tion, (Lo)wlight
-##### See Wiki for more detail [pi-timolo Wiki](https://github.com/pageauc/pi-timolo/wiki)
+### Raspberry (Pi) - (Ti)melapse, (Mo)tion, (Lo)wlight
+### See Wiki for more detail [pi-timolo Wiki](https://github.com/pageauc/pi-timolo/wiki)
 
 **pi-timolo Version 2.93 release notes**
 - Removed tar file and replaced with install.sh installation script
