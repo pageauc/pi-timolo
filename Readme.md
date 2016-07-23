@@ -1,5 +1,5 @@
 # pi-timolo
-### Raspberry (Pi) - TImelapse, MOtion, LOwlight
+### Raspberry (Pi) - (Ti)melapse, (Mo)tion, (Lo)wlight
 ### For details see [pi-timolo Wiki](https://github.com/pageauc/pi-timolo/wiki) and [YouTube Videos](https://www.youtube.com/playlist?list=PLLXJw_uJtQLa11A4qjVpn2D2T0pgfaSG0)
 
 **pi-timolo Version 2.93 release notes**
