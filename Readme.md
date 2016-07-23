@@ -1,6 +1,6 @@
 # pi-timolo
 ### Raspberry (Pi) - TImelapse, MOtion, LOwlight
-### For details see [pi-timolo Wiki](https://github.com/pageauc/pi-timolo/wiki)
+### For details see [pi-timolo Wiki](https://github.com/pageauc/pi-timolo/wiki)  [YouTube Videos](https://www.youtube.com/playlist?list=PLLXJw_uJtQLa11A4qjVpn2D2T0pgfaSG0)
 
 **pi-timolo Version 2.93 release notes**
 - Removed tar file and replaced with install.sh installation script
