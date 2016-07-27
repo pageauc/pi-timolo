@@ -28,7 +28,8 @@ From a (putty) SSH login or rpi desktop terminal execute the following
     chmod +x install.sh
     ./install.sh
 
-You may delete the /home/pi/install.sh once install is complete.
+You should delete the /home/pi/install.sh once install is complete since a
+a copy of install.sh will be in the pi-timolo folder.
 
 To Run pi-timolo perform the following commands.  This will create required 
 image storage folder(s).    
@@ -37,11 +38,16 @@ image storage folder(s).
     ./pi-timolo.py
 
 Verify motion (per screen log entries) then ctrl-c to exit pi-timolo.py
-Edit config.py file using nano editor to change any desired settings per comments. ctrl-x y to Save
+Edit config.py file using nano editor to change any desired settings per comments.
+If camera is over of under exposed during twilight then adjust the
+twilightThreshold variable.  Higher for bright sky and street lighting and lower for
+darker ambient conditions like in shade or indoors. Review the motion settings
+if not picking up motion as expected. 
+ctrl-x y to Save
 
     nano config.py
 
-Test edit changes.
+Test edit changes. 
 
     ./pi-timolo.py 
 
