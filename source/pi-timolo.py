@@ -9,8 +9,8 @@
 # 2.8 released 2-Aug-2015 updated gdrive and replaced mencoder with avconv
 # 2.92 release 22-Mar-2016 fixed getCurrentCount when file contains non integer data due to a write error or corruption.
 # 2.93 release 21-Jul-2016 improved getCurrentCount logic and changed default motion image size to 128x80 per picamra default
-
-progVer = "ver 2.93"
+# 2.94 release 14-Aug-2016 implemented camera.rotation = cameraRotate but not yet fully tested
+progVer = "ver 2.94"
 
 import os
 mypath=os.path.abspath(__file__)       # Find the full path of this python script
@@ -363,12 +363,12 @@ def takeDayImage(filename):
     # Take a Day image using exp=auto and awb=auto
     with picamera.PiCamera() as camera:
         camera.resolution = (imageWidth, imageHeight) 
-        # camera.rotation = cameraRotate #Note use imageVFlip and imageHFlip variables
         time.sleep(0.5)   # sleep for a little while so camera can get adjustments
         if imagePreview:
             camera.start_preview()
         camera.vflip = imageVFlip
         camera.hflip = imageHFlip
+        camera.rotation = cameraRotate #Note use imageVFlip and imageHFlip variables        
         # Day Automatic Mode
         camera.exposure_mode = 'auto'
         camera.awb_mode = 'auto'
@@ -393,6 +393,7 @@ def takeNightImage(filename):
             camera.start_preview()
         camera.vflip = imageVFlip
         camera.hflip = imageHFlip
+        camera.rotation = cameraRotate #Note use imageVFlip and imageHFlip variables        
         camera.framerate = Fraction(1, 6)
         camera.shutter_speed = currentShut
         camera.exposure_mode = 'off'
