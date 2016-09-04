@@ -368,7 +368,7 @@ def takeDayImage(filename):
             camera.start_preview()
         camera.vflip = imageVFlip
         camera.hflip = imageHFlip
-        camera.rotation = cameraRotate #Note use imageVFlip and imageHFlip variables        
+        camera.rotation = imageRotation #Note use imageVFlip and imageHFlip variables        
         # Day Automatic Mode
         camera.exposure_mode = 'auto'
         camera.awb_mode = 'auto'
@@ -393,7 +393,7 @@ def takeNightImage(filename):
             camera.start_preview()
         camera.vflip = imageVFlip
         camera.hflip = imageHFlip
-        camera.rotation = cameraRotate #Note use imageVFlip and imageHFlip variables        
+        camera.rotation = imageRotation #Note use imageVFlip and imageHFlip variables        
         camera.framerate = Fraction(1, 6)
         camera.shutter_speed = currentShut
         camera.exposure_mode = 'off'
