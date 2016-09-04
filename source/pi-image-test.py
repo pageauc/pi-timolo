@@ -599,7 +599,10 @@ def dataLogger():
 #----------------------------------------------------------------------------------------------- 
 def Main():
     data1 = getStreamImage(True)
+    dataAvg = np.copy(data1)*100
     print np.ma.shape(data1)
+    print data1[0][0][0]
+    print dataAvg[0][0][0]
     return
 
 
