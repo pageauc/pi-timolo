@@ -598,6 +598,12 @@ def dataLogger():
     
 #----------------------------------------------------------------------------------------------- 
 def Main():
+    data1 = getStreamImage(True)
+    print np.ma.shape(data1)
+    return
+
+
+def Main2():
     # Main program initialization and logic loop
     dotCount = 0   # Counter for showDots() display if not motion found (shows system is working)
     checkImagePath()
