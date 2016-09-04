@@ -3,10 +3,11 @@
 # pi-timolo - Raspberry Pi Long Duration Timelapse, Motion Detection, with Low Light Capability
 # written by Claude Pageau Dec-2014 (original issue)
 # getStreamImage function based on utpalc code based on brainflakes lightweight motion detection code on Raspberry PI forum - Thanks
-# Complete pi-timolo code and instructions are available on github repo at https://github.com/pageauc
+# Complete pi-timolo code and instructions are available on my github repo at https://github.com/pageauc
 
-# copied from pi-timolo version 2.94
+# Copied from ver 2.94, by Myall, August 2016
 
+progVer = "ver 2.94"
 
 import os
 mypath=os.path.abspath(__file__)       # Find the full path of this python script
@@ -42,9 +43,7 @@ from PIL import Image
 from PIL import ImageFont
 from PIL import ImageDraw
 from fractions import Fraction
-
-
-
+  
 #==================================
 #      System Variables
 # Should not need to be customized
@@ -366,7 +365,7 @@ def takeDayImage(filename):
             camera.start_preview()
         camera.vflip = imageVFlip
         camera.hflip = imageHFlip
-        camera.rotation = cameraRotate #Note use imageVFlip and imageHFlip variables        
+        camera.rotation = imageRotation #Note use imageVFlip and imageHFlip variables        
         # Day Automatic Mode
         camera.exposure_mode = 'auto'
         camera.awb_mode = 'auto'
@@ -391,7 +390,7 @@ def takeNightImage(filename):
             camera.start_preview()
         camera.vflip = imageVFlip
         camera.hflip = imageHFlip
-        camera.rotation = cameraRotate #Note use imageVFlip and imageHFlip variables        
+        camera.rotation = imageRotation #Note use imageVFlip and imageHFlip variables        
         camera.framerate = Fraction(1, 6)
         camera.shutter_speed = currentShut
         camera.exposure_mode = 'off'
@@ -562,7 +561,7 @@ def checkForMotion(data1, data2):
         for h in range(0, testHeight):
             # get the diff of the pixel. Conversion to int
             # is required to avoid unsigned short overflow.
-            pixDiff = abs(int(data1[h][w][pixColor]) - int(data2[h][w][pixColor]))
+            pixDiff = abs(int(data1[h][w][pixColor]/100) - int(data2[h][w][pixColor]))
             if  pixDiff > threshold:
                 pixChanges += 1
             if pixChanges > sensitivity:
@@ -575,6 +574,7 @@ def checkForMotion(data1, data2):
         dotCount = showDots(motionMaxDots + 2)      # New Line        
         msgStr = "Found Motion - threshold=" + str(threshold) + " sensitivity=" + str(sensitivity) + " Exceeded ..."
         showMessage("checkForMotion", msgStr)
+    data1 = data1 - data1/100 + data2
     return motionDetected  
     
 #----------------------------------------------------------------------------------------------- 
@@ -603,6 +603,7 @@ def Main():
     checkImagePath()
     timelapseNumCount = 0
     motionNumCount = 0
+    motionAvgCount = 0
     moCnt = "non"
     tlCnt = "non"
     if timelapseOn:
@@ -621,6 +622,7 @@ def Main():
     daymode = checkIfDay(daymode, data1)
     if not daymode:
         data1 = getStreamImage(False)
+    dataAvg = np.copy(data1)*100
     timelapseStart = datetime.datetime.now()
     checkDayTimer = timelapseStart
     checkMotionTimer = timelapseStart
@@ -652,7 +654,7 @@ def Main():
             if motionOn:
                 # IMPORTANT - Night motion detection may not work very well due to long exposure times and low light (may try checking red instead of green)
                 # Also may need night specific threshold and sensitivity settings (Needs more testing)
-                motionFound = checkForMotion(data1, data2)
+                motionFound = checkForMotion(dataAvg, data2)
                 rightNow = datetime.datetime.now()
                 timeDiff = (rightNow - checkMotionTimer).total_seconds()
                 if timeDiff > motionForce:
@@ -698,6 +700,10 @@ def Main():
                 else:
                     dotCount = showDots(dotCount)  # show progress dots when no motion found
         data1 = data2
+        im = Image.fromarray(dataAvg/100)
+        motionAvgCount += 1
+        im.save('testAvg'+str(motionAvgCount)+'.png')
+        
     return
     
 #-----------------------------------------------------------------------------------------------    
@@ -713,3 +719,5 @@ if __name__ == '__main__':
         print("%s - Exiting Program" % progName)
         print("+++++++++++++++++++++++++++++++++++")
         print("")
+    
+    
