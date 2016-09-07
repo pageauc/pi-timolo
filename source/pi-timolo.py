@@ -373,7 +373,7 @@ def takeDayImage(filename):
         # Day Automatic Mode
         camera.exposure_mode = 'auto'
         camera.awb_mode = 'auto'
-        camera.capture(filename, use_video_port=True)
+        camera.capture(filename, use_video_port=useVideoPort)
     msgStr = "Size=%ix%i exp=auto awb=auto %s"  % (imageWidth, imageHeight, filename)
     dataToLog = showTime() + " takeDayImage " + msgStr + "\n"
     logToFile(dataToLog)
@@ -467,6 +467,7 @@ def getStreamImage(isDay):
             if isDay:
                 camera.exposure_mode = 'auto'
                 camera.awb_mode = 'auto' 
+                camera.capture(stream, format='rgb', use_video_port=useVideoPort)
             else:
                 # Take Low Light image            
                 # Set a framerate of 1/6fps, then set shutter
@@ -478,7 +479,7 @@ def getStreamImage(isDay):
                 # Give the camera a good long time to measure AWB
                 # (you may wish to use fixed AWB instead)
                 time.sleep( nightSleepSec )
-            camera.capture(stream, format='rgb', use_video_port=True)
+                camera.capture(stream, format='rgb')
             return stream.array
     
 #-----------------------------------------------------------------------------------------------
@@ -608,6 +609,11 @@ def Main():
             motionAverage = 1
     except NameError:
         motionAverage = 1
+    try:
+        global useVideoPort
+        useVideoPort = useVideoPort
+    except NameError:
+        useVideoPort = False
     moCnt = "non"
     tlCnt = "non"
     if timelapseOn:
