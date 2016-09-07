@@ -364,7 +364,7 @@ def takeDayImage(filename):
     # Take a Day image using exp=auto and awb=auto
     with picamera.PiCamera() as camera:
         camera.resolution = (imageWidth, imageHeight) 
-        time.sleep(0.2)   # sleep for a little while so camera can get adjustments
+        time.sleep(0.5)   # sleep for a little while so camera can get adjustments
         if imagePreview:
             camera.start_preview()
         camera.vflip = imageVFlip
@@ -373,7 +373,7 @@ def takeDayImage(filename):
         # Day Automatic Mode
         camera.exposure_mode = 'auto'
         camera.awb_mode = 'auto'
-        camera.capture(filename,use_video_port=True)
+        camera.capture(filename, use_video_port=True)
     msgStr = "Size=%ix%i exp=auto awb=auto %s"  % (imageWidth, imageHeight, filename)
     dataToLog = showTime() + " takeDayImage " + msgStr + "\n"
     logToFile(dataToLog)
@@ -461,7 +461,7 @@ def createSyncLockFile(imagefilename):
 def getStreamImage(isDay):
     # Capture an image stream to memory based on daymode
     with picamera.PiCamera() as camera:
-        time.sleep(0.3)
+        time.sleep(0.5)
         camera.resolution = (testWidth, testHeight)
         with picamera.array.PiRGBArray(camera) as stream:
             if isDay:
@@ -478,7 +478,7 @@ def getStreamImage(isDay):
                 # Give the camera a good long time to measure AWB
                 # (you may wish to use fixed AWB instead)
                 time.sleep( nightSleepSec )
-            camera.capture(stream, format='rgb')
+            camera.capture(stream, format='rgb', use_video_port=True)
             return stream.array
     
 #-----------------------------------------------------------------------------------------------
