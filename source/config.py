@@ -47,6 +47,8 @@ motionPrefix = "mo-"       # Prefix Motion Detection images
 motionDir = "motion"       # Storage Folder for Motion Detect Images
 threshold = 20             # How much a pixel has to change to be counted default=10 (1-200)
 sensitivity = 300          # Number of changed pixels to trigger motion default=300
+motionAverage = 100        # Number of images to average to check for motion: 1 = just use last image. Default=100
+useVideoPort = False       # Use the video port to capture motion images - faster than the image port. Default=False
 motionVideoOn = False      # If set to True then video clip is taken rather than image
 motionVideoTimer = 10      # Number of seconds of video clip to take if Motion Detected default=10
 motionQuickTLOn = False    # if set to True then take a quick time lapse sequence rather than a single image (overrides motionVideoOn)

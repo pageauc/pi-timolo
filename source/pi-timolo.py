@@ -169,6 +169,8 @@ def displayInfo(motioncount, timelapsecount):
             print("    No Text .. showDateOnImage=%s  Text on Image Disabled"  % (showDateOnImage))
         print("Motion ....... On=%s  Prefix=%s  threshold=%i(How Much)  sensitivity=%i(How Many)"  % (motionOn, motionPrefix, threshold, sensitivity))
         print("               forceTimer=%i min(If No Motion)"  % (motionForce/60))
+        print("               Number of previous images to use to check for motion =%i"  % (motionAverage))
+        print("               Use video port for motion image capture? %s"  % (useVideoPort))
         print("               motionPath=%s" % (motionPath))
         if motionNumOn:
             print("    Num Seq .. motionNumOn=%s  current=%s   numStart=%i   numMax=%i   numRecycle=%s"  % (motionNumOn, motioncount, motionNumStart, motionNumMax, motionNumRecycle))
@@ -368,11 +370,11 @@ def takeDayImage(filename):
             camera.start_preview()
         camera.vflip = imageVFlip
         camera.hflip = imageHFlip
-        camera.rotation = cameraRotate #Note use imageVFlip and imageHFlip variables        
+        camera.rotation = imageRotation #Note use imageVFlip and imageHFlip variables        
         # Day Automatic Mode
         camera.exposure_mode = 'auto'
         camera.awb_mode = 'auto'
-        camera.capture(filename)
+        camera.capture(filename, use_video_port=useVideoPort)
     msgStr = "Size=%ix%i exp=auto awb=auto %s"  % (imageWidth, imageHeight, filename)
     dataToLog = showTime() + " takeDayImage " + msgStr + "\n"
     logToFile(dataToLog)
@@ -393,7 +395,7 @@ def takeNightImage(filename):
             camera.start_preview()
         camera.vflip = imageVFlip
         camera.hflip = imageHFlip
-        camera.rotation = cameraRotate #Note use imageVFlip and imageHFlip variables        
+        camera.rotation = imageRotation #Note use imageVFlip and imageHFlip variables        
         camera.framerate = Fraction(1, 6)
         camera.shutter_speed = currentShut
         camera.exposure_mode = 'off'
@@ -466,6 +468,7 @@ def getStreamImage(isDay):
             if isDay:
                 camera.exposure_mode = 'auto'
                 camera.awb_mode = 'auto' 
+                camera.capture(stream, format='rgb', use_video_port=useVideoPort)
             else:
                 # Take Low Light image            
                 # Set a framerate of 1/6fps, then set shutter
@@ -477,7 +480,7 @@ def getStreamImage(isDay):
                 # Give the camera a good long time to measure AWB
                 # (you may wish to use fixed AWB instead)
                 time.sleep( nightSleepSec )
-            camera.capture(stream, format='rgb')
+                camera.capture(stream, format='rgb')
             return stream.array
     
 #-----------------------------------------------------------------------------------------------
@@ -558,24 +561,16 @@ def checkForTimelapse (timelapseStart):
 def checkForMotion(data1, data2):
     # Find motion between two data streams based on sensitivity and threshold
     motionDetected = False
-    pixChanges = 0;
-    pixColor = 1 # red=0 green=1 blue=2
-    for w in range(0, testWidth):
-        for h in range(0, testHeight):
-            # get the diff of the pixel. Conversion to int
-            # is required to avoid unsigned short overflow.
-            pixDiff = abs(int(data1[h][w][pixColor]) - int(data2[h][w][pixColor]))
-            if  pixDiff > threshold:
-                pixChanges += 1
-            if pixChanges > sensitivity:
-                break; # break inner loop
-        if pixChanges > sensitivity:
-            break; #break outer loop.
+    pixColor = 3 # red=0 green=1 blue=2 all=3  default=1
+    if pixColor == 3:
+        pixChanges = (np.absolute(data1-data2)>threshold).sum()/3
+    else:
+        pixChanges = (np.absolute(data1[...,pixColor]-data2[...,pixColor])>threshold).sum()
     if pixChanges > sensitivity:
         motionDetected = True
     if motionDetected:
         dotCount = showDots(motionMaxDots + 2)      # New Line        
-        msgStr = "Found Motion - threshold=" + str(threshold) + " sensitivity=" + str(sensitivity) + " Exceeded ..."
+        msgStr = "Found Motion - threshold=" + str(threshold) + " sensitivity=" + str(sensitivity) + " changes=" + str(pixChanges)
         showMessage("checkForMotion", msgStr)
     return motionDetected  
     
@@ -605,6 +600,21 @@ def Main():
     checkImagePath()
     timelapseNumCount = 0
     motionNumCount = 0
+    try:  #if motionAverage hasn't been included in config file (so it works with previous versions)
+        global motionAverage
+        if motionAverage > 1:
+            resetSensitivity = sensitivity*150   # number of changed pixels to trigger reset of background average
+            if resetSensitivity > testHeight*testWidth*2:
+                resetSensitivity = testHeight*testWidth*2  #limit the resetSensitivity
+        else:
+            motionAverage = 1
+    except NameError:
+        motionAverage = 1
+    try:
+        global useVideoPort
+        useVideoPort = useVideoPort
+    except NameError:
+        useVideoPort = False
     moCnt = "non"
     tlCnt = "non"
     if timelapseOn:
@@ -619,10 +629,11 @@ def Main():
     if imageTestPrint:
         takeTestImage() # prints one image and exits if imageTestPrint = True in config.py
     daymode = False
-    data1 = getStreamImage(True)
+    data1 = getStreamImage(True).astype(float)  #All functions should still work with float instead of int - just takes more memory
     daymode = checkIfDay(daymode, data1)
+    data2 = getStreamImage(daymode)  # initialise data2 to use in main loop
     if not daymode:
-        data1 = getStreamImage(False)
+        data1 = data2.astype(float)
     timelapseStart = datetime.datetime.now()
     checkDayTimer = timelapseStart
     checkMotionTimer = timelapseStart
@@ -632,8 +643,13 @@ def Main():
     dotCount = showDots(motionMaxDots)  # reset motion dots
     # Start main program loop here.  Use Ctl-C to exit if run from terminal session.
     while True:
-        daymode = checkIfDay(daymode, data1)
-        data2 = getStreamImage(daymode)      # This gets the second stream of motion analysis
+        # use data2 to check daymode as data1 may be average that changes slowly, and data1 may not be updated
+        if daymode != checkIfDay(daymode, data2):  # if daymode has changed, reset background, to avoid false motion trigger
+            daymode = not daymode
+            data2 = getStreamImage(daymode)  #get new stream
+            data1 = data2.astype(float)    #reset background
+        else:
+            data2 = getStreamImage(daymode)      # This gets the second stream of motion analysis
         rightNow = datetime.datetime.now()   # refresh rightNow time
         if not timeToSleep(daymode):  # Don't take images if noNightShots or noDayShots settings are valid
             if timelapseOn:
@@ -655,6 +671,10 @@ def Main():
                 # IMPORTANT - Night motion detection may not work very well due to long exposure times and low light (may try checking red instead of green)
                 # Also may need night specific threshold and sensitivity settings (Needs more testing)
                 motionFound = checkForMotion(data1, data2)
+                if motionAverage > 1 and (np.absolute(data2-data1)>threshold).sum() > resetSensitivity:
+                    data1 = data2.astype(float)
+                else:
+                    data1 = data1+(data2-data1)/motionAverage
                 rightNow = datetime.datetime.now()
                 timeDiff = (rightNow - checkMotionTimer).total_seconds()
                 if timeDiff > motionForce:
@@ -699,7 +719,6 @@ def Main():
                         dotCount = showDots(motionMaxDots)           
                 else:
                     dotCount = showDots(dotCount)  # show progress dots when no motion found
-        data1 = data2
     return
     
 #-----------------------------------------------------------------------------------------------    
