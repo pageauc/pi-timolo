@@ -631,8 +631,9 @@ def Main():
     daymode = False
     data1 = getStreamImage(True).astype(float)  #All functions should still work with float instead of int - just takes more memory
     daymode = checkIfDay(daymode, data1)
+    data2 = getStreamImage(daymode)  # initialise data2 to use in main loop
     if not daymode:
-        data1 = getStreamImage(False).astype(float)
+        data1 = data2.astype(float)
     timelapseStart = datetime.datetime.now()
     checkDayTimer = timelapseStart
     checkMotionTimer = timelapseStart
@@ -642,7 +643,8 @@ def Main():
     dotCount = showDots(motionMaxDots)  # reset motion dots
     # Start main program loop here.  Use Ctl-C to exit if run from terminal session.
     while True:
-        if daymode != checkIfDay(daymode, data1):  # if daymode has changed, reset background, to avoid false motion trigger
+        # use data2 to check daymode as data1 may be average that changes slowly, and data1 may not be updated
+        if daymode != checkIfDay(daymode, data2):  # if daymode has changed, reset background, to avoid false motion trigger
             daymode = not daymode
             data2 = getStreamImage(daymode)  #get new stream
             data1 = data2.astype(float)    #reset background
