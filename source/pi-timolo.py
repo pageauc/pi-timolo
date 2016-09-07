@@ -569,7 +569,7 @@ def checkForMotion(data1, data2):
         motionDetected = True
     if motionDetected:
         dotCount = showDots(motionMaxDots + 2)      # New Line        
-        msgStr = "Found Motion - threshold=" + str(threshold) + " sensitivity=" + str(sensitivity) + " changed=" + str(pixChanges)
+        msgStr = "Found Motion - threshold=" + str(threshold) + " sensitivity=" + str(sensitivity) + " changes=" + str(pixChanges)
         showMessage("checkForMotion", msgStr)
     return motionDetected  
     
