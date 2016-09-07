@@ -170,6 +170,7 @@ def displayInfo(motioncount, timelapsecount):
         print("Motion ....... On=%s  Prefix=%s  threshold=%i(How Much)  sensitivity=%i(How Many)"  % (motionOn, motionPrefix, threshold, sensitivity))
         print("               forceTimer=%i min(If No Motion)"  % (motionForce/60))
         print("               Number of previous images to use to check for motion =%i"  % (motionAverage))
+        print("               Use video port for motion image capture? %s"  % (useVideoPort))
         print("               motionPath=%s" % (motionPath))
         if motionNumOn:
             print("    Num Seq .. motionNumOn=%s  current=%s   numStart=%i   numMax=%i   numRecycle=%s"  % (motionNumOn, motioncount, motionNumStart, motionNumMax, motionNumRecycle))
