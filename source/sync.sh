@@ -65,14 +65,14 @@ if [ -z "$(pgrep gdrive)" ] ; then
     if [ -e $SYNC_FILE_PATH ] ; then
       # Run gdrive for files in folder specified by variable $SYNC_DIR
       echo "---------------------- PROCESSING ---------------------------------"
-      echo "Found sync lock file $DIR/$SYNC_FILE"
+      echo "Found sync lock file $SYNC_FILE_PATH"
       echo "Starting gdrive Push From $DIR/$SYNC_DIR"
-      echo "                      To  google drive subfolder $SYNC_DIR"
+      echo "                      To  google drive subfolder $DIR/$SYNC_DIR"
       echo "-------------------------------------------------------------------"
       do_gdrive_sync
     else
-      echo "Sync lock File Not Found at $SYNC_FILE"
-      echo "  No files to process in $SYNC_DIR"
+      echo "Sync lock File Not Found at $SYNC_FILE_PATH"
+      echo "  No files to process in $DIR/$SYNC_DIR"
       echo ""
     fi
   else
