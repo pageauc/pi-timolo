@@ -54,8 +54,10 @@ function do_gdrive_sync()
     END=$(date +%s)
     DIFF=$((END - START))
     echo "Processing took $DIFF seconds"
-    echo "  Deleting lock file $SYNC_FILE"
-    rm -f $SYNC_FILE
+    if [ -e $SYNC_FILE_PATH ] ; then    
+      echo "  Deleting sync lock file $SYNC_FILE_PATH"
+      rm -f $SYNC_FILE_PATH
+    fi
   fi
 }
 
