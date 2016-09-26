@@ -5,23 +5,25 @@ echo "$0 version 1.5 by Claude Pageau"
 # Note gdrive is included with pi-timolo on github at https://github.com/pageauc/pi-timolo
 # for gdrive details see https://github.com/odeke-em/drive
 # To manually install gdrive binary perform the following.
-# cd /tmp
-# wget https://github.com/odeke-em/drive/releases/download/v0.2.2-arm-binary/drive-arm-binary
-# chmod +x drive-arm-binary
-# sudo cp drive-arm-binary /usr/local/bin/gdrive
+# cd ~
+# wget -O gdrive -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/gdrive
+# chmod +x gdrive
+# sudo cp gdrive /usr/local/bin/
+# rm gdrive
 # cd ~
 # gdrive version
-# Follow instructions for initializing gdrive for pi-timolo
+# Follow instructions for initializing gdrive for pi-timolo see pi-timolo wiki
 # gdrive init
 #
 # This script will perform the following
 # Runs gdrive only if it is not already running
 # Looks for pi-timolo.sync file created by pi-timolo.py indicating there are new files to sync
-# Kills gdrive process if it has been running too long. default is > 600 seconds or 10 minutes
+# if CHECK_FOR_SYNC_FILE=true
+# Kills gdrive process if it has been running too long. default is > 4000 seconds or 67 minutes
 # Suggest you run this script from a crontab every 5 minutes or so.
 # Add appropriate line to crontab using command sudo crontab -e
 # example crontab entry below without # comment char
-# */5 * * * * /home/pi/sync.sh >/dev/nul
+# */5 * * * * /home/pi/pi-timolo/sync.sh >/dev/nul
 # --------------------------------------------------------------------
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )" # folder location of this script
 
