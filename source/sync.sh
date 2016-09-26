@@ -1,5 +1,5 @@
 #!/bin/bash
-echo "$0 version 1.5 by Claude Pageau"
+echo "$0 version 1.6 by Claude Pageau"
 # --------------------------------------------------------------------
 # Requires /usr/local/bin/gdrive executable compiled from github source for arm
 # Note gdrive is included with pi-timolo on github at https://github.com/pageauc/pi-timolo
