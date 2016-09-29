@@ -5,6 +5,15 @@
 **pi-timolo Version 2.93 release notes**
 - Removed tar file and replaced with install.sh installation script
 
+See pi-timolo GitHub Wiki here https://github.com/pageauc/pi-timolo/wiki
+
+For easy pi-timolo install onto raspbian RPI. From a computer logged into the RPI
+via ssh(Putty) session use mouse to highlight command below, right click, copy.  
+Then select ssh(Putty) window and mouse right click, paste.  The command should 
+download and execute the github install.sh script for pi-timolo.
+
+    curl -L https://raw.github.com/pageauc/pi-timolo/master/source/install.sh | bash
+
 ### Prerequisites
 
 You must have a raspberry pi model A, A+, B, B+, B-2 or 3 with the latest raspbian build
@@ -21,7 +30,13 @@ command line then settings and activity information can be enabled to display.
 
 ### How to Install or Upgrade pi-timolo
 
-From a (putty) SSH login or rpi desktop terminal execute the following
+From a (putty) SSH login or rpi desktop terminal execute the following command.  
+Note - You can cut and paste command below into RPI ssh session.  Also this will
+perform a RPI update and upgrade so it may take a while to complete
+
+    curl -L https://raw.github.com/pageauc/pi-timolo/master/source/install.sh | bash
+    
+or
 
     cd ~
     wget https://raw.github.com/pageauc/pi-timolo/master/source/install.sh
