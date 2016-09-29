@@ -9,6 +9,7 @@ From a computer logged into the RPI via ssh(Putty) session use mouse to highligh
 Then select ssh(Putty) window, mouse right click, paste.  The command should 
 download and execute the github install.sh script for pi-timolo.
 
+### Description
 pi-timolo is a python picamara module application for a Raspberry PI computer.
 A RPI camera module must be attached. It can take timelapse and motion detection
 images separately or together. Takes Long exposure Night (lowlight) images for
