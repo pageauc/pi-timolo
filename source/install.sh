@@ -36,7 +36,6 @@ if [ $? -ne 0 ] ;  then
   wget -O myip.sh https://raw.github.com/pageauc/pi-timolo/master/source/myip.sh
   wget -O gdrive https://raw.github.com/pageauc/pi-timolo/master/source/gdrive
 else
-  wget -O config.py -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/config.py
   wget -O pi-timolo.py -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/pi-timolo.py
   wget -O pi-timolo.sh -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/pi-timolo.sh
   wget -O Readme.md -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/Readme.md
