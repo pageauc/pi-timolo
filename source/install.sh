@@ -1,6 +1,6 @@
 #!/bin/sh
 # Convenient speed2 install.sh script written by Claude Pageau 1-Jul-2016
-ver="2.10"
+ver="2.2"
 echo "-------------------------------------------------------------"
 echo "      pi-timolo Install.sh script ver $ver"
 echo "Install or Upgrade pi-timolo Pi, Timelapse, Motion, Low Light"
@@ -22,17 +22,33 @@ if [ -e config.py ]; then
   cp config.py config.py.prev  
 fi
 wget -O config.py -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/config.py
-wget -O pi-timolo.py -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/pi-timolo.py
-wget -O pi-timolo.sh -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/pi-timolo.sh
-wget -O Readme.md -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/Readme.md
-wget -O install.sh -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/install.sh
-wget -O sync.sh -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/sync.sh
-wget -O webserver.py -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/webserver.py
-wget -O makedailymovie.sh -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/makedailymovie.sh
-wget -O makemovie.sh -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/makemovie.sh
-wget -O mvleavelast.sh -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/mvleavelast.sh
-wget -O myip.sh -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/myip.sh
-wget -O gdrive -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/gdrive
+if [ $? -ne 0 ] ;  then
+  wget -O config.py https://raw.github.com/pageauc/pi-timolo/master/source/config.py
+  wget -O pi-timolo.py https://raw.github.com/pageauc/pi-timolo/master/source/pi-timolo.py
+  wget -O pi-timolo.sh https://raw.github.com/pageauc/pi-timolo/master/source/pi-timolo.sh
+  wget -O Readme.md https://raw.github.com/pageauc/pi-timolo/master/Readme.md
+  wget -O install.sh https://raw.github.com/pageauc/pi-timolo/master/source/install.sh
+  wget -O sync.sh https://raw.github.com/pageauc/pi-timolo/master/source/sync.sh
+  wget -O webserver.py https://raw.github.com/pageauc/pi-timolo/master/source/webserver.py
+  wget -O makedailymovie.sh https://raw.github.com/pageauc/pi-timolo/master/source/makedailymovie.sh
+  wget -O makemovie.sh https://raw.github.com/pageauc/pi-timolo/master/source/makemovie.sh
+  wget -O mvleavelast.sh https://raw.github.com/pageauc/pi-timolo/master/source/mvleavelast.sh
+  wget -O myip.sh https://raw.github.com/pageauc/pi-timolo/master/source/myip.sh
+  wget -O gdrive https://raw.github.com/pageauc/pi-timolo/master/source/gdrive
+else
+  wget -O config.py -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/config.py
+  wget -O pi-timolo.py -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/pi-timolo.py
+  wget -O pi-timolo.sh -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/pi-timolo.sh
+  wget -O Readme.md -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/Readme.md
+  wget -O install.sh -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/install.sh
+  wget -O sync.sh -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/sync.sh
+  wget -O webserver.py -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/webserver.py
+  wget -O makedailymovie.sh -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/makedailymovie.sh
+  wget -O makemovie.sh -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/makemovie.sh
+  wget -O mvleavelast.sh -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/mvleavelast.sh
+  wget -O myip.sh -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/myip.sh
+  wget -O gdrive -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/gdrive
+fi  
 echo "Done"
 echo "-------------------------------------------------------------"
 echo "3 - Make required Files Executable"
