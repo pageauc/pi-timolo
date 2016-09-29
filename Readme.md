@@ -6,7 +6,7 @@ For easy pi-timolo install onto raspbian RPI.
     curl -L https://raw.github.com/pageauc/pi-timolo/master/source/install.sh | bash
 
 From a computer logged into the RPI via ssh(Putty) session use mouse to highlight command above, right click, copy.  
-Then select ssh(Putty) window, right mouse right, paste.  The command should 
+Then select ssh(Putty) window, mouse right click, paste.  The command should 
 download and execute the github install.sh script for pi-timolo.
 
 ### For details see [pi-timolo Wiki](https://github.com/pageauc/pi-timolo/wiki) and [YouTube Videos](https://www.youtube.com/playlist?list=PLLXJw_uJtQLa11A4qjVpn2D2T0pgfaSG0)
