@@ -166,7 +166,7 @@ To auto launch pi-timolo.py on boot-up of raspberry pi perform the following
 
     sudo nano /etc/rc.local
     
-add the following command just before the exit 0 command
+add the following command before the exit 0 command
 
     /home/pi/pi-timolo/pi-timolo.sh
     
