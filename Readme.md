@@ -1,19 +1,17 @@
 # pi-timolo
 ### Raspberry (Pi) - (Ti)melapse, (Mo)tion, (Lo)wlight
-### For details see [pi-timolo Wiki](https://github.com/pageauc/pi-timolo/wiki) and [YouTube Videos](https://www.youtube.com/playlist?list=PLLXJw_uJtQLa11A4qjVpn2D2T0pgfaSG0)
 
-**pi-timolo Version 2.93 release notes**
-- Removed tar file and replaced with install.sh installation script
-
-See pi-timolo GitHub Wiki here https://github.com/pageauc/pi-timolo/wiki
-
-For easy pi-timolo install onto raspbian RPI. From a computer logged into the RPI
-via ssh(Putty) session use mouse to highlight command below, right click, copy.  
-Then select ssh(Putty) window and mouse right click, paste.  The command should 
-download and execute the github install.sh script for pi-timolo.
+For easy pi-timolo install onto raspbian RPI. 
 
     curl -L https://raw.github.com/pageauc/pi-timolo/master/source/install.sh | bash
 
+From a computer logged into the RPI via ssh(Putty) session use mouse to highlight command above, right click, copy.  
+Then select ssh(Putty) window, right mouse right, paste.  The command should 
+download and execute the github install.sh script for pi-timolo.
+
+### For details see [pi-timolo Wiki](https://github.com/pageauc/pi-timolo/wiki) and [YouTube Videos](https://www.youtube.com/playlist?list=PLLXJw_uJtQLa11A4qjVpn2D2T0pgfaSG0)
+    
+    
 ### Prerequisites
 
 You must have a raspberry pi model A, A+, B, B+, B-2 or 3 with the latest raspbian build
