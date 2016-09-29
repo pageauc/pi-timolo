@@ -3,7 +3,7 @@ import cgi, os, SocketServer, sys, time, urllib
 from SimpleHTTPServer import SimpleHTTPRequestHandler
 from StringIO import StringIO
 
-version = "ver 1.0"
+version = "ver 1.1"
 # SimpleHTTPServer python program to allow selection of images from right panel and display in an iframe left panel
 # Use for local network use only since this is not guaranteed to be a secure web server.
 # based on original code by zeekay and modified by Claude Pageau Nov-2015 for use with pi-timolo.py on a Raspberry Pi
@@ -29,6 +29,7 @@ version = "ver 1.0"
 web_server_root = "/home/pi/pi-timolo/motion"  # path to webserver image folder
 web_server_port = 8080                         # Web server access port eg http://192.168.1.100:8090
 web_page_title = "pi-timolo motion images"     # web page title that browser show (not displayed on web page)
+web_page_refresh_sec ="60"                     # Refresh page time default=60 seconds
 
 # Size of Images to display 
 image_width = "1280"
@@ -62,6 +63,7 @@ class DirectoryHandler(SimpleHTTPRequestHandler):
         displaypath = cgi.escape(urllib.unquote(self.path))
         # Start HTML formatting code
         f.write('<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">')
+        f.write('<head><meta http-equiv="refresh" content=%s></head>' % (web_page_refresh_sec))
         f.write("<html>\n<title>%s %s</title>\n" % (web_page_title, displaypath))
         f.write("<body>\n")
         # Start Left iframe Image Panel
