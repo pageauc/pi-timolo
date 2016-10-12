@@ -1,6 +1,6 @@
 #!/bin/bash
 # Convenient pi-timolo-install.sh script written by Claude Pageau 1-Jul-2016
-ver="2.3"
+ver="2.4"
 TIMOLO_DIR='pi-timolo'  # Default folder install location
 
 cd ~
@@ -106,6 +106,11 @@ if [ "$DIR" != "$INSTALL_PATH" ]; then
     rm pi-timolo-install.sh
   fi
 fi
+if [ -e 'install.sh' ]; then
+  echo "$STATUS Delete Old install.sh"
+  rm install.sh
+fi
+
 echo "Done Dependencies"
 echo "-----------------------------------------------"
 echo "7 - $STATUS Complete"
