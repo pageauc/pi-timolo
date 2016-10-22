@@ -1,5 +1,5 @@
 #!/bin/bash
-echo "$0 version 1.9 by Claude Pageau"
+echo "$0 version 1.91 by Claude Pageau"
 echo "--------------------------------------"
 # --------------------------------------------------------------------
 # Requires /usr/local/bin/gdrive executable compiled from github source for arm
@@ -44,7 +44,8 @@ if [ ! -d "$DIR/$SYNC_DIR" ] ; then
 fi
 
 # Check for matching files to sync in folder
-if [ ! -e "$DIR/$SYNC_DIR/$FILES_TO_SYNC" ] ; then
+ls -1 $DIR/$SYNC_DIR/$FILES_TO_SYNC > /dev/null 2>&1
+if [ ! "$?" = "0" ] ; then
   echo "ERROR - No Matching $FILES_TO_SYNC Files Found in $DIR/$SYNC_DIR"
   exit 1
 fi
@@ -52,15 +53,13 @@ fi
 # Check if a matching remote folder exists
 # and if Not then create one
 /usr/local/bin/gdrive file-id $SYNC_DIR
-if [ $? -eq 0 ] ; then
-  echo "Remote folder $SYNC_DIR Exists"
-else
-  echo "Remote folder $SYNC_DIR Does Not Exist"
-  echo "Create Remote Folder $SYNC_DIR"
+if [ ! $? -eq 0 ] ; then
+  echo "WARN - Remote folder $SYNC_DIR Does Not Exist"
+  echo "  Creating Remote Folder $SYNC_DIR"
   /usr/local/bin/gdrive new --folder $SYNC_DIR
   /usr/local/bin/gdrive file-id $SYNC_DIR
   if [ $? -eq 0 ] ; then
-    echo "Remote folder $SYNC_DIR Created Successully"
+    echo "Success - Remote folder $SYNC_DIR Created."
   else
     echo "ERROR - Problem Creating Remote Folder $SYNC_DIR"
     echo "        Please investigate problem"
