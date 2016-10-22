@@ -46,7 +46,7 @@ if [ $? -ne 0 ] ;  then
   wget -O makemovie.sh https://raw.github.com/pageauc/pi-timolo/master/source/makemovie.sh
   wget -O mvleavelast.sh https://raw.github.com/pageauc/pi-timolo/master/source/mvleavelast.sh
   wget -O myip.sh https://raw.github.com/pageauc/pi-timolo/master/source/myip.sh
-  wget -O gdrive https://raw.github.com/pageauc/pi-timolo/master/source/gdrive
+  wget -O gdrive https://raw.github.com/pageauc/pi-timolo/master/source/drive_armv6
 else
   wget -O pi-timolo.py -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/pi-timolo.py
   wget -O pi-timolo.sh -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/pi-timolo.sh
@@ -58,7 +58,7 @@ else
   wget -O makemovie.sh -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/makemovie.sh
   wget -O mvleavelast.sh -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/mvleavelast.sh
   wget -O myip.sh -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/myip.sh
-  wget -O gdrive -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/gdrive
+  wget -O gdrive -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/drive_armv6
 fi  
 echo "Done Download"
 echo "-------------------------------------------------------------"
