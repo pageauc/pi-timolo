@@ -63,7 +63,7 @@ function do_gdrive_sync()
 
 # check if gdrive is already running to avoid multiple instances
 if [ -z "$(pgrep gdrive)" ] ; then
-  if [ $CHECK_FOR_SYNC_FILE ; then
+  if [ $CHECK_FOR_SYNC_FILE ]; then
     if [ -e $SYNC_FILE_PATH ] ; then
       # Run gdrive for files in folder specified by variable $SYNC_DIR
       echo "---------------------- PROCESSING ---------------------------------"
