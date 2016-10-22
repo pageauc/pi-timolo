@@ -1,5 +1,5 @@
 #!/bin/bash
-echo "$0 version 1.8 by Claude Pageau"
+echo "$0 version 1.9 by Claude Pageau"
 echo "--------------------------------------"
 # --------------------------------------------------------------------
 # Requires /usr/local/bin/gdrive executable compiled from github source for arm
@@ -29,38 +29,40 @@ echo "--------------------------------------"
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )" # folder location of this script
 
 # -------------------  User Variables ------------------
-SYNC_DIR=motion      # folder location of files to sync
+SYNC_DIR=motion          # folder location of files to sync
 FILES_TO_SYNC='*jpg'     # Set the type of files to sync * for all
 CHECK_FOR_SYNC_FILE=true # true if sync file required otherwise set to false
 SYNC_FILE_PATH=$DIR/pi-timolo.sync  # name of pi-timolo sync lock filename
 FORCE_REBOOT=false       # true to reboot if pi-timolo not running otherwise set to false
 # ------------------------------------------------------
 
-
-# check if SYNC_DIR folder exists
+# Check if SYNC_DIR folder exists
 if [ ! -d "$DIR/$SYNC_DIR" ] ; then
   echo "ERROR - Local Folder $DIR/$SYNC_DIR Does Not Exist"
   echo "  Please check SYNC_DIR variable and/or Local Folder PATH"
   exit 1
 fi
 
+# Check for matching files to sync in folder
 if [ ! -e "$DIR/$SYNC_DIR/$FILES_TO_SYNC" ] ; then
   echo "ERROR - No Matching $FILES_TO_SYNC Files Found in $DIR/$SYNC_DIR"
   exit 1
 fi
 
-gdrive file-id $SYNC_DIR
+# Check if a matching remote folder exists
+# and if Not then create one
+/usr/local/bin/gdrive file-id $SYNC_DIR
 if [ $? -eq 0 ] ; then
   echo "Remote folder $SYNC_DIR Exists"
 else
   echo "Remote folder $SYNC_DIR Does Not Exist"
   echo "Create Remote Folder $SYNC_DIR"
-  gdrive new --folder $SYNC_DIR
-  gdrive file-id $SYNC_DIR
+  /usr/local/bin/gdrive new --folder $SYNC_DIR
+  /usr/local/bin/gdrive file-id $SYNC_DIR
   if [ $? -eq 0 ] ; then
     echo "Remote folder $SYNC_DIR Created Successully"
   else
-    echo "ERROR - Problem creating remote folder $SYNC_DIR"
+    echo "ERROR - Problem Creating Remote Folder $SYNC_DIR"
     echo "        Please investigate problem"
     exit 1
   fi
