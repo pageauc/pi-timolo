@@ -1,5 +1,5 @@
 #!/bin/bash
-echo "$0 version 1.6 by Claude Pageau"
+echo "$0 version 1.7 by Claude Pageau"
 # --------------------------------------------------------------------
 # Requires /usr/local/bin/gdrive executable compiled from github source for arm
 # Note gdrive is included with pi-timolo on github at https://github.com/pageauc/pi-timolo
@@ -41,7 +41,7 @@ function do_gdrive_sync()
   date
   echo "Start synchronization ....."
   START=$(date +%s)
-  echo "sudo /usr/local/bin/gdrive push -no-prompt -ignore-conflict $SYNC_DIR/*jpg"
+  echo "sudo /usr/local/bin/gdrive push -no-prompt -ignore-conflict $SYNC_DIR/$FILES_TO_SYNC"
   sudo /usr/local/bin/gdrive push -no-prompt -ignore-conflict $SYNC_DIR/$FILES_TO_SYNC
   # Check if gdrive sync was successfully
   if [ $? -ne 0 ] ;  then
@@ -63,7 +63,7 @@ function do_gdrive_sync()
 
 # check if gdrive is already running to avoid multiple instances
 if [ -z "$(pgrep gdrive)" ] ; then
-  if [ $CHECK_FOR_SYNC_FILE ]; then
+  if $CHECK_FOR_SYNC_FILE ; then
     if [ -e $SYNC_FILE_PATH ] ; then
       # Run gdrive for files in folder specified by variable $SYNC_DIR
       echo "---------------------- PROCESSING ---------------------------------"
@@ -78,6 +78,11 @@ if [ -z "$(pgrep gdrive)" ] ; then
       echo ""
     fi
   else
+      echo "---------------------- PROCESSING ---------------------------------"
+      echo "CHECK_FOR_SYNC_FILE=false So No sync file required"
+      echo "Starting gdrive Push From $DIR/$SYNC_DIR"
+      echo "                      To  google drive subfolder $DIR/$SYNC_DIR"
+      echo "-------------------------------------------------------------------"  
     do_gdrive_sync
   fi
   cd $DIR
