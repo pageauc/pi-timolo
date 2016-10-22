@@ -4,10 +4,10 @@ echo "--------------------------------------"
 # --------------------------------------------------------------------
 # Requires /usr/local/bin/gdrive executable compiled from github source for arm
 # Note gdrive is included with pi-timolo on github at https://github.com/pageauc/pi-timolo
-# for gdrive details see https://github.com/odeke-em/drive
+# for gdrive details see https://github.com/odeke-em/drive/releases
 # To manually install gdrive binary perform the following.
 # cd ~
-# wget -O gdrive -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/gdrive
+# wget -O gdrive -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/gdrive_armv6
 # chmod +x gdrive
 # sudo cp gdrive /usr/local/bin/
 # rm gdrive
