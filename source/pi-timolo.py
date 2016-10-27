@@ -127,7 +127,7 @@ def logToFile(dataToAppend):
             msgStr = "Create New Data Log File %s" % logFilePath
             showMessage("  logToFile", msgStr)
         filecontents = dataToAppend
-        f = open(logFilePath, 'ab')
+        f = open(logFilePath, 'w+')
         f.write(filecontents)
         f.close()
     return
