@@ -579,7 +579,7 @@ def dataLogger():
     # Replace main() with this function to log day/night pixAve to a file.
     # Note variable logDataToFile must be set to True in config.py  
     # You may want to delete pi-timolo.log to clear old data.
-    print "dataLogger - One Moment Please ...."
+    print("dataLogger - One Moment Please ....")
     while True:
         dayStream = getStreamImage(True)
         dayPixAverage = getStreamPixAve(dayStream)    
