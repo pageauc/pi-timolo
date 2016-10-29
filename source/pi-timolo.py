@@ -41,7 +41,7 @@ import datetime
 import picamera
 import picamera.array
 import numpy as np
-import pyexiv2
+# import pyexiv2
 from PIL import Image
 from PIL import ImageFont
 from PIL import ImageDraw
