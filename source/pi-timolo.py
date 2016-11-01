@@ -41,7 +41,7 @@ import datetime
 import picamera
 import picamera.array
 import numpy as np
-# import pyexiv2
+import pyexiv2
 from PIL import Image
 from PIL import ImageFont
 from PIL import ImageDraw
@@ -286,17 +286,14 @@ def writeTextToImage(imagename, datetoprint, daymode):
 
     # Read exif data since ImageDraw does not save this metadata
     img = Image.open(imagename)
-    exif = img.info['exif']
-    # metadata = pyexiv2.ImageMetadata(imagename) 
-    # metadata.read()
+    metadata = pyexiv2.ImageMetadata(imagename) 
+    metadata.read()
     
-    # img = Image.open(imagename)
     draw = ImageDraw.Draw(img)
     # draw.text((x, y),"Sample Text",(r,g,b))
     draw.text(( x, y ), text, FOREGROUND, font=font)
-    # img.save(imagename)
-    img.save(imagename, exif=exif)
-    # metadata.write()    # Write previously saved exif data to image file    
+    img.save(imagename)
+    metadata.write()    # Write previously saved exif data to image file    
     msgStr = "Added " + textColour + " Text[" + datetoprint + "] on " + imagename
     showMessage("  writeDataToImage",msgStr)
     return
