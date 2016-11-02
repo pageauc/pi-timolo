@@ -102,7 +102,7 @@ if [ -z "$(pgrep gdrive)" ] ; then
       echo "---------------------- PROCESSING ---------------------------------"
       echo "Found sync lock file $SYNC_FILE_PATH"
       echo "Starting gdrive Push From $DIR/$SYNC_DIR"
-      echo "                      To  google drive subfolder $DIR/$SYNC_DIR"
+      echo "                      To  google drive subfolder /$SYNC_DIR"
       echo "-------------------------------------------------------------------"
       do_gdrive_sync
     else
