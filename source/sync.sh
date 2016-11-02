@@ -1,5 +1,5 @@
 #!/bin/bash
-echo "$0 version 1.91 by Claude Pageau"
+echo "$0 version 1.92 by Claude Pageau"
 echo "--------------------------------------"
 # --------------------------------------------------------------------
 # Requires /usr/local/bin/gdrive executable compiled from github source for arm
@@ -140,7 +140,8 @@ if $FORCE_REBOOT ; then  # check if reboot required
     echo "pi-timolo.py is NOT running so reboot"
     sudo reboot
   else
-    echo "  pi-timolo.py is Running"
+    TIMOLOPID=$(pgrep pi-timolo.py)
+    echo "  pi-timolo.py is Running PID $TIMOLOPID"
   fi
   echo "Done ..."
 fi
