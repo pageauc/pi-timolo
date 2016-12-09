@@ -71,7 +71,7 @@ class DirectoryHandler(SimpleHTTPRequestHandler):
         f.write('src="%s" name="imgbox" id="imgbox" alt="%s">' % (list[0], web_page_title))  # display first image in list
         f.write('<p>iframes are not supported by your browser.</p></iframe>')
         # Start Right File selection List Panel
-        list_style = '<div style="height: ' + list_height + 'px; overflow: auto;">'
+        list_style = '<div style="height: ' + list_height + 'px; overflow: auto; white-space: nowrap; ">'
         f.write(list_style)
         f.write('<center><b>%s</b></center><hr><ul>' % list_title)
         # Create the formatted list of right panel hyperlinks to files in the specified directory
