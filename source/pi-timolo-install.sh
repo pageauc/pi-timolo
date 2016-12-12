@@ -1,6 +1,6 @@
 #!/bin/bash
 # Convenient pi-timolo-install.sh script written by Claude Pageau 1-Jul-2016
-ver="2.6"
+ver="2.7"
 TIMOLO_DIR='pi-timolo'  # Default folder install location
 
 cd ~
@@ -37,9 +37,9 @@ wget -O config.py -q --show-progress https://raw.github.com/pageauc/pi-timolo/ma
 if [ $? -ne 0 ] ;  then
   wget -O config.py https://raw.github.com/pageauc/pi-timolo/master/source/config.py
   wget -O pi-timolo.py https://raw.github.com/pageauc/pi-timolo/master/source/pi-timolo.py
+  wget -O pi-timolo.sh https://raw.github.com/pageauc/pi-timolo/master/source/pi-timolo.sh  
   wget -O pi-timolo-install.sh https://raw.github.com/pageauc/pi-timolo/master/source/pi-timolo-install.sh
   wget -O Readme.md https://raw.github.com/pageauc/pi-timolo/master/Readme.md
-  wget -O install.sh https://raw.github.com/pageauc/pi-timolo/master/source/install.sh
   wget -O sync.sh https://raw.github.com/pageauc/pi-timolo/master/source/sync.sh
   wget -O webserver.py https://raw.github.com/pageauc/pi-timolo/master/source/webserver.py
   wget -O webserver.sh https://raw.github.com/pageauc/pi-timolo/master/source/webserver.sh  
@@ -51,8 +51,8 @@ if [ $? -ne 0 ] ;  then
 else
   wget -O pi-timolo.py -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/pi-timolo.py
   wget -O pi-timolo.sh -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/pi-timolo.sh
+  wget -O pi-timolo-install.sh -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/pi-timolo-install.sh  
   wget -O Readme.md -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/Readme.md
-  wget -O pi-timolo-install.sh -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/pi-timolo-install.sh
   wget -O sync.sh -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/sync.sh
   wget -O webserver.py -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/webserver.py
   wget -O webserver.sh -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/webserver.sh 
