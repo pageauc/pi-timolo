@@ -33,12 +33,12 @@ fi
 if [ -z "$( pgrep -f $progname )" ]; then
     echo "$progname is Not Running ..."
     echo "To Start $progname execute command below"
-    echo "sudo $0 start"
+    echo "$0 start"
   else
     webserverPID=$(pgrep -f $progname)
     echo "$progname is Running ..."
     echo "PID is $webserverPID"
     echo "To Stop $progname execute command below"
-    echo "sudo $0 stop"
+    echo "$0 stop"
 fi
 echo "Bye"
