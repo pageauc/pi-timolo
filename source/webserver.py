@@ -3,22 +3,28 @@ import cgi, os, SocketServer, sys, time, urllib
 from SimpleHTTPServer import SimpleHTTPRequestHandler
 from StringIO import StringIO
 
-version = "ver 1.3"
+version = "ver 1.4"
 # SimpleHTTPServer python program to allow selection of images from right panel and display in an iframe left panel
 # Use for local network use only since this is not guaranteed to be a secure web server.
 # based on original code by zeekay and modified by Claude Pageau Nov-2015 for use with pi-timolo.py on a Raspberry Pi
 # from http://stackoverflow.com/questions/8044873/python-how-to-override-simplehttpserver-to-show-timestamp-in-directory-listing
 
 # 1 - Use nano editor to change webserver.py web_server_root and other variables to suit
-# 2 - On Terminal session execute
-# python ./webserver.py
-# 3 - On a web browser url bar input the server ip address and port number
-# eg 192.168.1.110:8080
-# 4 - To Run this script as a background daemon execute the following command
-#     ./webserver.sh start
-#     or to check status   
-#     ./webserver.sh
-#     You can then close the console session.
+#   nano webserver.py
+#     ctrl-x y to save changes
+#
+# 2 - On Terminal session execute command below.  This will display file access information
+#   ./webserver.py
+#     ctrl-c to stop web server.  Note if you close terminal session webserver.py will stop.
+#
+# 3 - To Run this script as a background daemon execute the command below.
+#     Once running you can close the console and webserver will continue to run.
+#   ./webserver.sh start
+#     To check status of webserver type command below with no parameter   
+#   ./webserver.sh
+#
+# 4 - On a LAN computer web browser url bar, input this RPI ip address and port number per example below.
+#   http://192.168.1.110:8080
 
 # Web Server settings
 web_server_root = "/home/pi/pi-timolo/motion"  # path to webserver image folder
@@ -29,7 +35,7 @@ web_page_refresh_sec ="60"                     # Refresh page time default=60 se
 # Size of Images to display 
 image_width = "1280"
 image_height = "720"
-image_max_listing = 0     # 0=All or Specify Max left side entries
+image_max_listing = 0     # 0 = All or Specify Max left side file entries to show (must be > 1)
 
 # Left side image iframe settings to same as image dimensions 
 image_frame_width = image_width   
@@ -59,7 +65,7 @@ class DirectoryHandler(SimpleHTTPRequestHandler):
     def list_directory(self, path):
         try:
             list = os.listdir(path)
-            list_len = len(list)           
+            all_entries = len(list)           
         except os.error:
             self.send_error(404, "No permission to list directory")
             return None
@@ -85,12 +91,11 @@ class DirectoryHandler(SimpleHTTPRequestHandler):
         f.write('<ul name="menu" id="menu">')        
         # Create the formatted list of right panel hyperlinks to files in the specified directory
         
-        list_counter = 0
-        total_entries = 0
+        display_entries = 0
         for name in list:
+            display_entries += 1
             if image_max_listing > 1:
-                list_counter += 1
-                if list_counter > image_max_listing:
+                if display_entries >= image_max_listing:
                     break
             fullname = os.path.join(path, name)
             displayname = linkname = name
@@ -102,11 +107,13 @@ class DirectoryHandler(SimpleHTTPRequestHandler):
             if os.path.islink(fullname):
                 displayname = name + "@"
                 # Note: a link to a directory displays with @ and links with /
-            total_entries += 1                
             f.write('<li><a href="%s" target="imgbox">%s</a> - %s</li>\n'
                         % ( urllib.quote(linkname), cgi.escape(displayname), date_modified))
         f.write('</ul><hr></div>')
-        f.write('<p><center><b>%s  ( Total Entries=%i ) </b></center></p>' % (web_server_root, total_entries))
+        if image_max_listing > 1:
+            f.write('<p><center><b>Listing Only %i of %i Files in Folder %s</b></center></p>' % (display_entries, all_entries, web_server_root))
+        else:
+            f.write('<p><center><b>Listing All %i Files in Folder %s</b></center></p>' % (display_entries, web_server_root))
         length = f.tell()
         f.seek(0)
         self.send_response(200)
