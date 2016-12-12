@@ -1,6 +1,6 @@
 #!/bin/bash
 # Convenient pi-timolo-install.sh script written by Claude Pageau 1-Jul-2016
-ver="2.5"
+ver="2.6"
 TIMOLO_DIR='pi-timolo'  # Default folder install location
 
 cd ~
@@ -42,6 +42,7 @@ if [ $? -ne 0 ] ;  then
   wget -O install.sh https://raw.github.com/pageauc/pi-timolo/master/source/install.sh
   wget -O sync.sh https://raw.github.com/pageauc/pi-timolo/master/source/sync.sh
   wget -O webserver.py https://raw.github.com/pageauc/pi-timolo/master/source/webserver.py
+  wget -O webserver.py https://raw.github.com/pageauc/pi-timolo/master/source/webserver.sh  
   wget -O makedailymovie.sh https://raw.github.com/pageauc/pi-timolo/master/source/makedailymovie.sh
   wget -O makemovie.sh https://raw.github.com/pageauc/pi-timolo/master/source/makemovie.sh
   wget -O mvleavelast.sh https://raw.github.com/pageauc/pi-timolo/master/source/mvleavelast.sh
@@ -54,6 +55,7 @@ else
   wget -O pi-timolo-install.sh -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/pi-timolo-install.sh
   wget -O sync.sh -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/sync.sh
   wget -O webserver.py -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/webserver.py
+  wget -O webserver.py -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/webserver.sh 
   wget -O makedailymovie.sh -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/makedailymovie.sh
   wget -O makemovie.sh -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/makemovie.sh
   wget -O mvleavelast.sh -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/mvleavelast.sh
