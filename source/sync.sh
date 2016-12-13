@@ -136,7 +136,7 @@ fi
 
 if $FORCE_REBOOT ; then  # check if reboot required
   echo "Check pi-timolo.py Run Status ..."
-  if [ -z "$(pgrep pi-timolo)" ] ; then
+  if [ -z "$(pgrep -f pi-timolo.py )" ] ; then
     echo "pi-timolo.py is NOT running so reboot"
     sudo reboot
   else

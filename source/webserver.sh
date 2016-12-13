@@ -7,7 +7,7 @@
 progpath="/home/pi/pi-timolo"
 progname="webserver.py"
 
-echo "$0 ver 1.0 written by Claude Pageau"
+echo "$0 ver 1.1 written by Claude Pageau"
 echo "-----------------------------------------------"
 cd $progpath
 
@@ -19,14 +19,14 @@ fi
 
 if [ -z "$( pgrep -f $progname )" ]; then
   if [ "$1" = "start" ]; then
-     echo "Starting $progname ...."
+     echo "Start $progname in Background ..."
      ./$progname >/dev/null 2>&1 &
   fi
 else
   if [ "$1" = "stop" ]; then
     echo "Stopping $progname ...."
-    webserverPID=$( pgrep -f $progname )
-    sudo kill $webserverPID
+    progPID=$( pgrep -f $progname )
+    sudo kill $progPID
   fi
 fi
 
@@ -35,9 +35,9 @@ if [ -z "$( pgrep -f $progname )" ]; then
     echo "To Start $progname execute command below"
     echo "$0 start"
   else
-    webserverPID=$(pgrep -f $progname)
+    progPID=$(pgrep -f $progname)
     echo "$progname is Running ..."
-    echo "PID is $webserverPID"
+    echo "PID is $progPID"
     echo "To Stop $progname execute command below"
     echo "$0 stop"
 fi

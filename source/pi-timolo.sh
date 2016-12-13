@@ -10,30 +10,54 @@
 #        the parameters below
 # This script avoids launching the pi-timolo.py script more than once
 # since the pi camera hardware cannot be run more than once sumultaneously.
-progpath=/home/pi/pi-timolo
-progname=pi-timolo.py
-proglog=verbose.log
 
-if [ -z "$(ps -ef | grep $progname | grep -v grep)" ]
-then
-   echo "Start $progpath/$progname   Waiting 10 seconds"
-   # delay for boot to complete if running from /etc/rc.local
-   sleep 10
-   echo "Starting $progpath/$progname in background"
-   # If you want to redirect output then comment out below
-   # comment command below for no redirection of console output
-   $progpath/$progname &  
-   # then uncomment line below for logging 
-   # python -u $progpath/$progname  > $progpath/$proglog &
-   echo "$progpath/$progname started per process PID below"
-   ps -ef | grep $progname | grep -v grep
-   echo
-   echo "If not running then Check setup and permissions"
-else
-  echo "$progpath/$progname Already Running"
-  ps -ef | grep $progname | grep -v grep
-  echo
-  echo "To end task kill PID above eg sudo kill 1234"
+progpath="/home/pi/pi-timolo"
+progname="pi-timolo.py"
+proglog="verbose.log"
+progsleep=10
+
+echo "$0 ver 1.1 written by Claude Pageau"
+echo "-----------------------------------------------"
+cd $progpath
+
+# Check if progname exists
+if [ ! -e $progname ] ; then
+  echo "ERROR - Could Not Find $progname"
+  exit 1
 fi
-echo "Done"
-exit
+
+if [ -z "$( pgrep -f $progname )" ]; then
+  if [ "$1" = "start" ]; then
+    echo "Start $progpath/$progname in Background"
+    # delay for boot to complete if running from /etc/rc.local
+    echo "Waiting $progsleep seconds ...."
+    sleep $progsleep
+
+    # comment line below for no redirection of console output
+    $progpath/$progname  >/dev/null 2>&1 &
+    # NOTE set verbose = True in config.py then
+    # then uncomment line below for logging 
+    # echo "Start $progpath/$progname with log to $progpath/$proglog"
+    # python -u $progpath/$progname  > $progpath/$proglog &
+  fi
+else
+  if [ "$1" = "stop" ]; then
+    echo "Stopping $progname ...."
+    progPID=$( pgrep -f $progname )
+    sudo kill $progPID
+  fi
+fi
+
+if [ -z "$( pgrep -f $progname )" ]; then
+    echo "$progname is Not Running ..."
+    echo "To Start $progname execute command below"
+    echo "$0 start"
+  else
+    progPID=$(pgrep -f $progname)
+    echo "$progname is Running ..."
+    echo "PID is $progPID"
+    echo "To Stop $progname execute command below"
+    echo "$0 stop"
+fi
+echo "Bye"
+
