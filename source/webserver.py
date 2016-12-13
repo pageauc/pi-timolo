@@ -35,7 +35,7 @@ web_page_refresh_sec ="60"                     # Refresh page time default=60 se
 # Size of Images to display 
 image_width = "1280"
 image_height = "720"
-image_max_listing = 0     # 0 = All or Specify Max left side file entries to show (must be > 1)
+image_max_listing = 0     # 0 = All or Specify Max right side file entries to show (must be > 1)
 
 # Left side image iframe settings to same as image dimensions 
 image_frame_width = image_width   
@@ -70,7 +70,8 @@ class DirectoryHandler(SimpleHTTPRequestHandler):
             self.send_error(404, "No permission to list directory")
             return None
         if show_by_datetime:
-            list.sort(key=lambda x: os.stat(os.path.join(path, x)).st_mtime,reverse=sort_descending)   # Sort by most recent modified date/time first
+            # Sort by most recent modified date/time first
+            list.sort(key=lambda x: os.stat(os.path.join(path, x)).st_mtime,reverse=sort_descending)
         else:
             list.sort(key=lambda a: a.lower(),reverse=sort_descending)
         f = StringIO()
@@ -81,8 +82,10 @@ class DirectoryHandler(SimpleHTTPRequestHandler):
         f.write("<html>\n<title>%s %s</title>\n" % (web_page_title, displaypath))
         f.write("<body>\n")
         # Start Left iframe Image Panel
-        f.write('<iframe width="%s" height="%s" align="left"' % (image_frame_width, image_frame_height))
-        f.write('src="%s" name="imgbox" id="imgbox" alt="%s">' % (list[1], web_page_title))  # display first image in list
+        f.write('<iframe width="%s" height="%s" align="left"' 
+                        % (image_frame_width, image_frame_height))
+        f.write('src="%s" name="imgbox" id="imgbox" alt="%s">' 
+                        % (list[1], web_page_title))  # display first image in list
         f.write('<p>iframes are not supported by your browser.</p></iframe>')
         # Start Right File selection List Panel
         list_style = '<div style="height: ' + list_height + 'px; overflow: auto; white-space: nowrap; ">'
@@ -111,9 +114,11 @@ class DirectoryHandler(SimpleHTTPRequestHandler):
                         % ( urllib.quote(linkname), cgi.escape(displayname), date_modified))
         f.write('</ul><hr></div>')
         if image_max_listing > 1:
-            f.write('<p><center><b>Listing Only %i of %i Files in Folder %s</b></center></p>' % (display_entries, all_entries, web_server_root))
+            f.write('<p><center><b>Listing Only %i of %i Files in Folder %s</b></center></p>' 
+                                  % (display_entries, all_entries, web_server_root))
         else:
-            f.write('<p><center><b>Listing All %i Files in Folder %s</b></center></p>' % (display_entries, web_server_root))
+            f.write('<p><center><b>Listing All %i Files in Folder %s</b></center></p>' 
+                                  % (display_entries, web_server_root))
         length = f.tell()
         f.seek(0)
         self.send_response(200)
