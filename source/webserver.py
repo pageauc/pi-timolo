@@ -3,7 +3,7 @@ import cgi, os, SocketServer, sys, time, urllib
 from SimpleHTTPServer import SimpleHTTPRequestHandler
 from StringIO import StringIO
 
-version = "ver 1.5"
+version = "ver 1.6"
 # SimpleHTTPServer python program to allow selection of images from right panel and display in an iframe left panel
 # Use for local network use only since this is not guaranteed to be a secure web server.
 # based on original code by zeekay and modified by Claude Pageau Nov-2015 for use with pi-timolo.py on a Raspberry Pi
@@ -29,7 +29,7 @@ version = "ver 1.5"
 # Web Server settings
 web_server_root = "motion"    # webserver root path to webserver image folder
 web_server_port = 8080        # Web server access port eg http://192.168.1.100:8090
-web_page_title = "Deck Cam  Motion Images"     # web page title that browser show (not displayed on web page)
+web_page_title = "Pi-Timolo Motion Images"     # web page title that browser show (not displayed on web page)
 web_page_refresh_on = True    # False=Off (never)  Refresh True=On (per seconds below)       
 web_page_refresh_sec ="120"   # Refresh page time default=120 seconds (two minutes)
 
@@ -123,17 +123,21 @@ class DirectoryHandler(SimpleHTTPRequestHandler):
             else:
                 f.write('<li><a href="%s" target="imgbox">%s</a> - %s</li>\n'
                           % ( urllib.quote(linkname), cgi.escape(displayname), date_modified))
-        f.write('</ul><hr></div>')
-        if image_max_listing > 1:
-            f.write('<p><center><b>Listing Only %i of %i Files in %s</b></center>' 
-                                  % ( display_entries, all_entries, web_server_root + self.path ))
+        f.write('</ul><hr></div><p><b>')
+        f.write('<div style="float: left; padding-left: 40px;">Web Root is [ %s ]</div>' % ( web_server_root )) 
+        f.write('<div style="text-align: center;">%s</div>' % ( web_page_title ))
+
+        if web_page_refresh_on:
+             f.write('<div style="float: left; padding-left: 40px;">Auto Refresh [ %s sec ]</div>' % ( web_page_refresh_sec ))                         
+
+        if image_max_listing > 1: 
+            f.write('<div style="text-align: right; padding-right: 40px;">Listing Only %i of %i Files in [ %s ]</div>'
+                                      % ( display_entries, all_entries, self.path ))
         else:
-            f.write('<p><center><b>Listing All %i Files in %s</b></center>' 
-                                  % ( display_entries, web_server_root +  self.path ))
+            f.write('<div style="text-align: right; padding-right: 50px;">Listing All %i Files in [ %s ]</div>'
+                                      % ( all_entries, self.path ))
         # Display web refresh info only if setting is turned on
-        if web_page_refresh_on:                                 
-            f.write('<center>Page Refreshes Every %s sec</center></p>' % ( web_page_refresh_sec )) 
-        f.write('</p>') 
+        f.write('</b></p>')
         length = f.tell()
         f.seek(0)
         self.send_response(200)
