@@ -1,5 +1,5 @@
 #!/bin/bash
-echo "$0 version 1.92 by Claude Pageau"
+echo "$0 version 1.93 by Claude Pageau"
 echo "--------------------------------------"
 # --------------------------------------------------------------------
 # Requires /usr/local/bin/gdrive executable compiled from github source for arm
@@ -29,12 +29,15 @@ echo "--------------------------------------"
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )" # folder location of this script
 
 # -------------------  User Variables ------------------
-SYNC_DIR=motion          # folder location of files to sync
+SYNC_DIR=motion          # relative folder location of files to sync
 FILES_TO_SYNC='*jpg'     # Set the type of files to sync * for all
 CHECK_FOR_SYNC_FILE=true # true if sync file required otherwise set to false
 SYNC_FILE_PATH=$DIR/pi-timolo.sync  # name of pi-timolo sync lock filename
 FORCE_REBOOT=false       # true to reboot if pi-timolo not running otherwise set to false
 # ------------------------------------------------------
+
+# Change directory to match google drive root (required for crontab operation
+cd $DIR
 
 # Check if SYNC_DIR folder exists
 if [ ! -d "$DIR/$SYNC_DIR" ] ; then
@@ -136,7 +139,7 @@ fi
 
 if $FORCE_REBOOT ; then  # check if reboot required
   echo "Check pi-timolo.py Run Status ..."
-  if [ -z "$(pgrep -f pi-timolo.py )" ] ; then
+  if [ -z "$(pgrep pi-timolo)" ] ; then
     echo "pi-timolo.py is NOT running so reboot"
     sudo reboot
   else
