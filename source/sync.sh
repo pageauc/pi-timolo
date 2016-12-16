@@ -1,5 +1,5 @@
 #!/bin/bash
-echo "$0 version 1.95 by Claude Pageau"
+echo "$0 version 1.96 by Claude Pageau"
 echo "--------------------------------------"
 # --------------------------------------------------------------------
 # Requires /usr/local/bin/gdrive executable compiled from github source for arm
@@ -29,7 +29,7 @@ echo "--------------------------------------"
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )" # folder location of this script
 
 # -------------------  User Variables ------------------
-SYNC_DIR=motion          # relative to this script folder - location of files to sync
+SYNC_DIR=motion  # relative to this script folder - location of files to sync
 FILES_TO_SYNC='*jpg'     # Set the type of files to sync * for all
 CHECK_FOR_SYNC_FILE=true # true if sync file required otherwise set to false
 SYNC_FILE_PATH=$DIR/pi-timolo.sync  # name of pi-timolo sync lock filename
@@ -127,16 +127,18 @@ if [ -z "$(pgrep -f gdrive)" ] ; then
     fi
 else
     # gdrive is already running so check how long and kill if past time limit
-    sudo kill $GDRIVEPID
+    GDRIVEPID=$(pgrep gdrive)
     if [ -z "$(sudo ps axh -O etimes | grep gdrive | grep -v grep | sed 's/^ *//'| awk '{if ($2 >= 4000) print $1}')" ]
     then
         RUNTIME=$(sudo ps axh -O etimes | grep gdrive | grep -v grep | sed 's/^ *//' | awk '{if ($2 > 0) print $2}' | head -1)
         echo "STATUS  - Another sync.sh has run for "$RUNTIME" seconds."
-        echo "          Will kill if greater than 4000 seconds."
+        echo "STATUS  - Will kill if greater than 4000 seconds."
+        echo "STATUS  - gdrive PID is $GDRIVEPID"
     else
-        GDRIVEPID=$(pgrep gdrive)
         echo "WARNING - gdrive has run longer than 4000 seconds so kill PID $GDRIVEPID"
-        echo "          Killing $GDRIVEPID"
+        echo "          Killing $GDRIVEPID in 5 seconds"
+        sleep 5
+        sudo kill $GDRIVEPID
     fi
 fi
 
@@ -151,8 +153,8 @@ if $FORCE_REBOOT ; then  # check if reboot required
         sleep 5
         sudo reboot
     else
-        APPPID=$(pgrep -f pi-timolo.py)
-        echo "STATUS  - pi-timolo.py is Running PID $APPPID"
+        APP_PID=$(pgrep -f pi-timolo.py)
+        echo "STATUS  - pi-timolo.py is Running PID $APP_PID"
     fi
 fi
 echo ""
