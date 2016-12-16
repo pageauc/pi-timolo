@@ -1,5 +1,5 @@
 #!/bin/bash
-echo "$0 version 1.96 by Claude Pageau"
+echo "$0 version 1.97 by Claude Pageau"
 echo "--------------------------------------"
 # --------------------------------------------------------------------
 # Requires /usr/local/bin/gdrive executable compiled from github source for arm
@@ -80,7 +80,7 @@ function do_gdrive_sync()
     echo "STATUS  - Local Source Folder - $DIR/$SYNC_DIR"
     echo "STATUS  - Remote Destn Folder - /$SYNC_DIR"
     echo "STATUS  - Files $FILES_TO_SYNC"
-    echo "STATUS  - Running"
+    echo "STATUS  - Running  This May Take Some Time ....."
     echo "STATUS  - sudo /usr/local/bin/gdrive push -no-prompt -ignore-conflict $SYNC_DIR/$FILES_TO_SYNC"
     echo "------------------------------------------"
     date
@@ -118,7 +118,7 @@ if [ -z "$(pgrep -f gdrive)" ] ; then
             do_gdrive_sync
         else
             echo "STATUS  - File Not Found $SYNC_FILE_PATH"
-            echo "STATUS  - Sync Not Required."
+            echo "STATUS  - No Files to Sync at this Time."
         fi
     else
         echo "STATUS  - CHECK_FOR_SYNC_FILE=false (script variable)"
