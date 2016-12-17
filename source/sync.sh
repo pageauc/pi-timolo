@@ -1,5 +1,5 @@
 #!/bin/bash
-echo "$0 version 1.97 by Claude Pageau"
+echo "$0 version 1.98 by Claude Pageau"
 echo "--------------------------------------"
 # --------------------------------------------------------------------
 # Requires /usr/local/bin/gdrive executable compiled from github source for arm
@@ -29,11 +29,12 @@ echo "--------------------------------------"
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )" # folder location of this script
 
 # -------------------  User Variables ------------------
-SYNC_DIR=motion  # relative to this script folder - location of files to sync
-FILES_TO_SYNC='*jpg'     # Set the type of files to sync * for all
-CHECK_FOR_SYNC_FILE=true # true if sync file required otherwise set to false
+SYNC_DIR=motion              # relative to this script folder - location of files to sync
+FILES_TO_SYNC='*jpg'         # Set the type of files to sync * for all
+CHECK_FOR_SYNC_FILE=true     # true if sync file required otherwise set to false
 SYNC_FILE_PATH=$DIR/pi-timolo.sync  # name of pi-timolo sync lock filename
-FORCE_REBOOT=false       # true to reboot if pi-timolo not running otherwise set to false
+FORCE_REBOOT=false           # true to reboot if pi-timolo not running otherwise set to false
+WATCH_APP='pi-timolo.py'     # App to monitor for FORCE_REBOOT if Not Running
 # ------------------------------------------------------
 
 # Change directory to match google drive root (required for crontab operation
@@ -111,7 +112,7 @@ function do_gdrive_sync()
 # check if gdrive is already running to avoid multiple instances
 if [ -z "$(pgrep -f gdrive)" ] ; then
     if [ $CHECK_FOR_SYNC_FILE ] ; then
-        echo "STATUS  - CHECK_FOR_SYNC_FILE=true (script variable)"
+        echo "STATUS  - Script Variable Setting CHECK_FOR_SYNC_FILE=true"
         if [ -e $SYNC_FILE_PATH ] ; then
             # Run gdrive for files in folder specified by variable $SYNC_DIR
             echo "STATUS  - Found File $SYNC_FILE_PATH"
@@ -121,7 +122,7 @@ if [ -z "$(pgrep -f gdrive)" ] ; then
             echo "STATUS  - No Files to Sync at this Time."
         fi
     else
-        echo "STATUS  - CHECK_FOR_SYNC_FILE=false (script variable)"
+        echo "STATUS  - Script Variable Setting CHECK_FOR_SYNC_FILE=false"
         echo "WARNING - No Sync Lock File $SYNC_FILE_PATH Required"
         do_gdrive_sync
     fi
@@ -143,18 +144,19 @@ else
 fi
 
 if $FORCE_REBOOT ; then  # check if reboot required
-    echo "STATUS  - Check pi-timolo.py Run Status ..."
-    if [ -z "$(pgrep -f pi-timolo.py)" ] ; then
-        echo "STATUS  - pi-timolo.py is NOT Running so reboot"
-        echo "STATUS  - ctrl-c to Abort Reboot."
-        echo "STATUS  - Reboot in 15 seconds Waiting ...."
+    echo "------------------------------------------"
+    echo "STATUS  - Check $WATCH_APP Run Status ..."
+    if [ -z "$(pgrep -f $WATCH_APP)" ] ; then
+        echo "STATUS  - $WATCH_APP is NOT Running so reboot"
+        echo "WARNING - Reboot in 15 seconds Waiting ...."
+        echo "          ctrl-c to Abort Reboot."
         sleep 10
         echo "WARNING - Rebooting in 5 seconds"
         sleep 5
         sudo reboot
     else
-        APP_PID=$(pgrep -f pi-timolo.py)
-        echo "STATUS  - pi-timolo.py is Running PID $APP_PID"
+        APP_PID=$(pgrep -f $WATCH_APP)
+        echo "STATUS  - $WATCH_APP is Running PID is $APP_PID"
     fi
 fi
 echo ""
