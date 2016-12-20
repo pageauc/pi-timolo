@@ -10,7 +10,7 @@
 # 2.92 release 22-Mar-2016 fixed getCurrentCount when file contains non integer data due to a write error or corruption.
 # 2.93 release 21-Jul-2016 improved getCurrentCount logic and changed default motion image size to 128x80 per picamra default
 # 2.94 release 14-Aug-2016 implemented camera.rotation = cameraRotate but not yet fully tested
-progVer = "ver 2.94"
+progVer = "ver 2.95"
 
 import datetime
 import glob
