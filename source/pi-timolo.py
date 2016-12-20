@@ -118,19 +118,6 @@ def showDots(dotcnt):
 def checkConfig():
     if not motionOn and not timelapseOn:
         logger.info("Warning - Both Motion and Timelapse are turned OFF - motionOn=%s timelapseOn=%s", motionOn, timelapseOn)
-    return 
-
-#-----------------------------------------------------------------------------------------------    
-def logToFile(dataToAppend):
-    if logDataToFile:
-        logFilePath = os.path.join(baseDir, baseFileName + ".log")
-        if not os.path.exists(logFilePath):
-            open(logFilePath, 'w').close()
-        logger.info("Create New Data Log File %s" % logFilePath)
-        filecontents = dataToAppend
-        f = open(logFilePath, 'a')
-        f.write(filecontents)
-        f.close()
     return
 
 #-----------------------------------------------------------------------------------------------   
@@ -369,10 +356,7 @@ def takeDayImage(filename):
         camera.exposure_mode = 'auto'
         camera.awb_mode = 'auto'
         camera.capture(filename, use_video_port=useVideoPort)
-    msgStr = "Size=%ix%i exp=auto awb=auto %s" % (imageWidth, imageHeight, filename)
-    logger.info(msgStr)
-    dataToLog = showTime() + " takeDayImage " + msgStr + "\n"
-    logToFile(dataToLog)
+    logger.info("Size=%ix%i exp=auto awb=auto %s" % (imageWidth, imageHeight, filename))
     return
 
 #-----------------------------------------------------------------------------------------------   
@@ -399,10 +383,7 @@ def takeNightImage(filename):
         time.sleep(nightSleepSec)
         camera.capture(filename)
     shutSec = shut2Sec(currentShut)
-    msgStr = "Size=%ix%i dayPixAve=%i ISO=%i shut=%s %s" % (imageWidth, imageHeight, dayPixAve, currentISO, shutSec, filename)
-    logger.info(msgStr)
-    dataToLog = showTime() + " takeNightImage " + msgStr + "\n"
-    logToFile(dataToLog)
+    logger.info("Size=%ix%i dayPixAve=%i ISO=%i shut=%s %s" % (imageWidth, imageHeight, dayPixAve, currentISO, shutSec, filename))
     return
 
 #-----------------------------------------------------------------------------------------------
@@ -575,11 +556,7 @@ def dataLogger():
         dayPixAverage = getStreamPixAve(dayStream)
         nightStream = getStreamImage(False)
         nightPixAverage = getStreamPixAve(nightStream)
-        logdata  = "nightPixAverage=%i dayPixAverage=%i twilightThreshold=%i  " % ( nightPixAverage, dayPixAverage, twilightThreshold )
-        logger.info(logdata)
-        now = showTime()
-        logdata = now + " " + logdata
-        logToFile(logdata)
+        logger.info("nightPixAverage=%i dayPixAverage=%i twilightThreshold=%i " % (nightPixAverage, dayPixAverage, twilightThreshold))
         time.sleep(1)
     return
 
@@ -710,24 +687,22 @@ def Main():
 
 def init_logging():
     global logger
-    logging.basicConfig(level=logging.DEBUG,
+    logging.basicConfig(level=logging.INFO,
                         format='%(asctime)s %(funcName)-12s %(levelname)-8s %(message)s',
                         filename='/tmp/pi-timolo.log',
                         filemode='w')
-    # define handler that logs to stdout
-    console = logging.StreamHandler()
-    # add the handler to the root logger
-    logger = logging.getLogger('')
-    logger.addHandler(console)
+    if verbose:
+        # define handler that logs to stdout
+        console = logging.StreamHandler()
+        # add the handler to the root logger
+        logger = logging.getLogger('')
+        logger.addHandler(console)
 
 #-----------------------------------------------------------------------------------------------    
 if __name__ == '__main__':
     init_logging()
     try:
-        if debug:
-            dataLogger()
-        else:
-            Main()
+        Main()
     finally:
         print("")
         print("+++++++++++++++++++++++++++++++++++")
