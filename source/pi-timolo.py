@@ -13,13 +13,13 @@
 progVer = "ver 2.94"
 
 import os
-mypath=os.path.abspath(__file__)       # Find the full path of this python script
-baseDir=mypath[0:mypath.rfind("/")+1]  # get the path location only (excluding script name)
-baseFileName=mypath[mypath.rfind("/")+1:mypath.rfind(".")]
+mypath = os.path.abspath(__file__)  # Find the full path of this python script
+baseDir = os.path.dirname(mypath)  # get the path location only (excluding script name)
+baseFileName = os.path.splitext(os.path.basename(mypath)[0]
 progName = os.path.basename(__file__)
 
 # Check for variable file to import and error out if not found.
-configFilePath = baseDir + "config.py"
+configFilePath = os.path.join(baseDir, "config.py")
 if not os.path.exists(configFilePath):
     msgStr = "ERROR - Missing config.py file - Could not find Configuration file %s" % (configFilePath)
     showMessage("readConfigFile", msgStr)
@@ -59,11 +59,11 @@ testWidth = 128            # width of rgb image stream used for motion detection
 testHeight = 80            # height of rgb image stream used for motion detection and day/night changes
 daymode = False            # default should always be False.
 progNameVer = "%s %s" %(progName, progVer)
-motionPath = baseDir + motionDir  # Store Motion images
-motionNumPath = baseDir + motionPrefix + baseFileName + ".dat"  # dat file to save currentCount
-timelapsePath = baseDir + timelapseDir  # Store Time Lapse images
-timelapseNumPath = baseDir + timelapsePrefix + baseFileName + ".dat"  # dat file to save currentCount
-lockFilePath = baseDir + baseFileName + ".sync"
+motionPath = os.path.join(baseDir, motionDir)  # Store Motion images
+motionNumPath = os.path.join(baseDir, motionPrefix, baseFileName + ".dat")  # dat file to save currentCount
+timelapsePath = os.path.join(baseDir, timelapseDir)  # Store Time Lapse images
+timelapseNumPath = os.path.join(baseDir, timelapsePrefix, baseFileName + ".dat")  # dat file to save currentCount
+lockFilePath = os.path.join(baseDir, baseFileName + ".sync")
 
 #-----------------------------------------------------------------------------------------------
 def userMotionCodeHere():
@@ -121,7 +121,7 @@ def checkConfig():
 #-----------------------------------------------------------------------------------------------    
 def logToFile(dataToAppend):
     if logDataToFile:
-        logFilePath = baseDir + baseFileName + ".log"
+        logFilePath = os.path.join(baseDir, baseFileName + ".log")
         if not os.path.exists(logFilePath):
             open(logFilePath, 'w').close()
             msgStr = "Create New Data Log File %s" % logFilePath
@@ -138,7 +138,7 @@ def takeTestImage():
     # This is useful for taking a single image for aligning camera without editing script settings.
     mytime=showTime()
     testfilename = "takeTestImage.jpg"
-    testfilepath = baseDir + testfilename
+    testfilepath = os.path.join(baseDir, testfilename)
     takeDayImage(testfilepath)    
     imagetext = "%s %s" % (mytime, testfilename)
     writeTextToImage(testfilepath, imagetext, daymode)
@@ -195,7 +195,7 @@ def displayInfo(motioncount, timelapsecount):
         if createLockFile:
             print("gdrive Sync .. On=%s  Path=%s  Note: syncs for motion images only." % (createLockFile, lockFilePath))  
         print("Logging ...... verbose=%s (Details to Console)    logDataToFile=%s" % ( verbose, logDataToFile ))
-        print("               logfilePath=%s" % ( baseDir + baseFileName + ".log" ))
+        print("               logfilePath=%s" % ( os.path.join(baseDir, baseFileName + ".log" ))
         print("------------------------------------ Log Activity --------------------------------------------")
     checkConfig()        
     return            
