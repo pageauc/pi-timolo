@@ -334,12 +334,32 @@ def getVideoName(path, prefix, numberon, counter):
 #-----------------------------------------------------------------------------------------------
 def getImageName(path, prefix, numberon, counter):
     # build image file names by number sequence or date/time
+    if dateSubdir:
+        path = createDirectoryWithDate(path)
+    rightNow = datetime.datetime.now()
     if numberon:
         filename = os.path.join(path, prefix + str(counter) + ".jpg")   
     else:
-        rightNow = datetime.datetime.now()
-        filename = "%s/%s%04d%02d%02d-%02d%02d%02d.jpg" % ( path, prefix ,rightNow.year, rightNow.month, rightNow.day, rightNow.hour, rightNow.minute, rightNow.second)     
+        filename = "%s%04d%02d%02d-%02d%02d%02d.jpg" % (prefix, rightNow.year, rightNow.month, rightNow.day, rightNow.hour, rightNow.minute, rightNow.second)
+        filename = os.path.join(path, filename)    
     return filename
+
+#-----------------------------------------------------------------------------------------------
+def createDirectoryWithDate(directory):
+    ''' Make sure the :param directory: exists, if not create it'''
+    now = datetime.datetime.now()
+    path = '{0}/{1}/{2}'.format(now.year, now.month, now.day)
+    path = os.path.join(directory, path)
+    if not os.path.exists(path):
+        try:
+            os.makedirs(path)
+        except OSError as err:
+            logger.error('Cannot create directory %s - %s, using default location.', path, err)
+            return directory
+        else:
+            logger.info('Creating directory %s', path)
+
+    return path
 
 #-----------------------------------------------------------------------------------------------
 def takeDayImage(filename):
