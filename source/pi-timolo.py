@@ -329,7 +329,7 @@ def getVideoName(path, prefix, numberon, counter):
             filename = os.path.join(path, prefix + str(counter) + ".h264")
     else:
         if motionVideoOn:
-            filename = "%s.h264" % (prefix, makeDateTimeString())
+            filename = "%s%s.h264" % (prefix, makeDateTimeString())
             filename = os.path.join(path, filename)
     return filename
 
@@ -341,7 +341,7 @@ def getImageName(path, prefix, numberon, counter):
     if numberon:
         filename = os.path.join(path, prefix + str(counter) + ".jpg")   
     else:
-        filename = "%s%04d%02d%02d-%02d%02d%02d.jpg" % (prefix, makeDateTimeString())
+        filename = "%s%s.jpg" % (prefix, makeDateTimeString())
         filename = os.path.join(path, filename)
     return filename
 
