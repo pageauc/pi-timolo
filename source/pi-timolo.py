@@ -86,7 +86,7 @@ def shut2Sec (shutspeed):
 #-----------------------------------------------------------------------------------------------    
 def showTime():
     rightNow = datetime.datetime.now()
-    currentTime = "%04d%02d%02d_%02d:%02d:%02d" % (rightNow.year, rightNow.month, rightNow.day, rightNow.hour, rightNow.minute, rightNow.second)
+    currentTime = datetime.datetime.strftime(datetime.datetime.now(), '%Y%m%d-%H:%M:%S')
     return currentTime
 
 #-----------------------------------------------------------------------------------------------    
@@ -95,6 +95,9 @@ def showMessage(functionName, messageStr):
         now = showTime()
         print ("%s %s - %s " % (now, functionName, messageStr))
     return
+
+def makeDateTimeString():
+    return datetime.datetime.strftime(datetime.datetime.now(), '%Y%m%d-%H%M%S')
 
 #-----------------------------------------------------------------------------------------------
 def showDots(dotcnt):
@@ -285,9 +288,8 @@ def writeTextToImage(imagename, datetoprint, daymode):
 def postImageProcessing(numberon, counterstart, countermax, counter, recycle, counterpath, filename, daymode):
     # If required process text to display directly on image
     if (not motionVideoOn):
-        rightNow = datetime.datetime.now()
         if showDateOnImage:
-            dateTimeText = "%04d%02d%02d_%02d:%02d:%02d" % (rightNow.year, rightNow.month, rightNow.day, rightNow.hour, rightNow.minute, rightNow.second)
+            dateTimeText = showTime()
             if numberon:
                 counterStr = "%i    "  % ( counter )
                 imageText =  counterStr + dateTimeText
@@ -327,8 +329,8 @@ def getVideoName(path, prefix, numberon, counter):
             filename = os.path.join(path, prefix + str(counter) + ".h264")
     else:
         if motionVideoOn:
-            rightNow = datetime.datetime.now()
-            filename = "%s/%s%04d%02d%02d-%02d%02d%02d.h264" % ( path, prefix ,rightNow.year, rightNow.month, rightNow.day, rightNow.hour, rightNow.minute, rightNow.second)
+            filename = "%s.h264" % (prefix, makeDateTimeString())
+            filename = os.path.join(path, filename)
     return filename
 
 #-----------------------------------------------------------------------------------------------
@@ -336,12 +338,11 @@ def getImageName(path, prefix, numberon, counter):
     # build image file names by number sequence or date/time
     if dateSubdir:
         path = createDirectoryWithDate(path)
-    rightNow = datetime.datetime.now()
     if numberon:
         filename = os.path.join(path, prefix + str(counter) + ".jpg")   
     else:
-        filename = "%s%04d%02d%02d-%02d%02d%02d.jpg" % (prefix, rightNow.year, rightNow.month, rightNow.day, rightNow.hour, rightNow.minute, rightNow.second)
-        filename = os.path.join(path, filename)    
+        filename = "%s%04d%02d%02d-%02d%02d%02d.jpg" % (prefix, makeDateTimeString())
+        filename = os.path.join(path, filename)
     return filename
 
 #-----------------------------------------------------------------------------------------------
@@ -443,8 +444,7 @@ def createSyncLockFile(imagefilename):
         if not os.path.exists(lockFilePath):
             open(lockFilePath, 'w').close()
             logger.info("Create gdrive sync.sh Lock File %s", lockFilePath)
-        rightNow = datetime.datetime.now()
-        now = "%04d%02d%02d-%02d%02d%02d" % ( rightNow.year, rightNow.month, rightNow.day, rightNow.hour, rightNow.minute, rightNow.second )
+        now = makeDateTimeString()
         filecontents = now + " createSyncLockFile - "  + imagefilename + " Ready to sync using sudo ./sync.sh command." 
         f = open(lockFilePath, 'w+')
         f.write(filecontents)
