@@ -1,5 +1,5 @@
 #!/bin/bash
-echo "$0 version 2.00 by Claude Pageau"
+echo "$0 version 2.2 by Claude Pageau"
 echo "------------------------------------------"
 
 # --------------------------------------------------------------------
@@ -58,23 +58,22 @@ function restart_pi_timolo ()
 {
     echo "------------------------------------------"
     echo "START   - restart_pi_timolo"
-    echo "INFO    - Starting pi-timolo"     
+    echo "INFO    - Starting pi-timolo"
     $PROG_DIR/pi-timolo.sh start
     sleep 5
     if [ -z "$(pgrep -f pi-timolo.py)" ] ; then
-        # pi-timolo did not start    
-        echo "WARN    - Failed to Restart pi-timolo"            
+        # pi-timolo did not start
+        echo "WARN    - Failed to Restart pi-timolo"
     else
-        echo "INFO    - Successfully restarted pi-timolo"          
+        echo "INFO    - Successfully restarted pi-timolo"
     fi
 }
 
 # ------------------------------------------------------
 function do_gdrive_sync ()
 {
-    # function to perform a gdrive sync between RPI local folder (exit if not found) and 
+    # function to perform a gdrive sync between RPI local folder (exit if not found) and
     # a matching google drive folder. (Create remote folder if required)
-    
     # Check if Local SYNC_DIR folder exists
     if [ ! -d "$PROG_DIR/$SYNC_DIR" ] ; then
         echo "ERROR   - Local Folder $PROG_DIR/$SYNC_DIR Does Not Exist"
@@ -148,9 +147,9 @@ function start_sync ()
 {
     # function to check and perform gdrive sync push of local files to
     # remote google drive folder
-    
+
     echo "------------------------------------------"
-    echo "START   - start_sync - Local Files with Remote Folder"  
+    echo "START   - start_sync - Local Files with Remote Folder"
     # check if gdrive is already running to avoid multiple instances
     if [ -z "$(pgrep -f gdrive)" ] ; then
         if [ $CHECK_FOR_SYNC_FILE ] ; then
@@ -193,22 +192,34 @@ function do_config_sync ()
     # and restart pi-timolo and verify successful otherwise restore orig config.py
 
     echo "------------------------------------------"
-    echo "START   - do_config_sync - Remote Configuration Checks"    
+    echo "START   - do_config_sync - Remote Configuration Checks"
     echo "INFO    - Look for new pi-timolo $LOCAL_CONFIG_FILE file on google drive"
     echo "          at $REMOTE_CONFIG_DIR/$REMOTE_CONFIG_FILE (remote)"
 
     # check if folder exists locally and if not create one
     if [ ! -d $PROG_DIR/$REMOTE_CONFIG_DIR ] ; then
-        echo "STATUS - mkdir $REMOTE_CONFIG_DIR  (local)" 
-        mkdir $PROG_DIR/$REMOTE_CONFIG_DIR 
-        cp $PROG_DIR/$LOCAL_CONFIG_FILE $PROG_DIR/$REMOTE_CONFIG_DIR/$REMOTE_CONFIG_FILE.orig
+        echo "STATUS  - Creating Remote Folder /$REMOTE_CONFIG_DIR"
+        echo "------------------------------------------"
+        /usr/local/bin/gdrive new --folder $REMOTE_CONFIG_DIR
+        /usr/local/bin/gdrive file-id $REMOTE_CONFIG_DIR
+        if [ $? -ne 0 ] ; then
+            echo "------------------------------------------"
+            echo "ERROR   -  Could Not Create Remote $REMOTE_CONFIG_DIR"
+            echo "          1 Lost Internet Connection"
+            echo "          2 Some Other Reason."
+        else
+            echo "STATUS - mkdir $REMOTE_CONFIG_DIR  (local)"
+            mkdir $PROG_DIR/$REMOTE_CONFIG_DIR
+            cp $PROG_DIR/$LOCAL_CONFIG_FILE $PROG_DIR/$REMOTE_CONFIG_DIR/$REMOTE_CONFIG_FILE.orig
+
+            echo "GDRIVE  - Sync push Local /$LOCAL_CONFIG_DIR Files to Local to $REMOTE_CONFIG_DIR"
+            /usr/local/bin/gdrive push -no-prompt -ignore-conflict $REMOTE_CONFIG_DIR/$REMOTE_CONFIG_FILE.orig
+       fi
     fi
 
-    echo "GDRIVE  - Check Remote File Exists - /$REMOTE_CONFIG_DIR/$REMOTE_CONFIG_FILE"     
+    echo "GDRIVE  - Check Remote File Exists - /$REMOTE_CONFIG_DIR/$REMOTE_CONFIG_FILE"
     /usr/local/bin/gdrive pull -no-prompt -ignore-conflict $REMOTE_CONFIG_DIR/$REMOTE_CONFIG_FILE
-    
-    # Check if gdrive exited successfully
-    if [ $? -ne 0 ] ; then
+    if [ $? -ne 0 ] ; then   # Check if gdrive exited successfully
         echo "------------------------------------------"
         echo "WARN    - Remote Configuration Check Failed"
         echo "          See gdrive message above for Details."
@@ -224,7 +235,7 @@ function do_config_sync ()
             echo "          to $PROG_DIR/$REMOTE_CONFIG_DIR/$REMOTE_CONFIG_FILE  (local)"
             echo "BACKUP  - $PROG_DIR/$LOCAL_CONFIG_FILE $PROG_DIR/$LOCAL_CONFIG_FILE.prev  (local)"
             cp $PROG_DIR/$LOCAL_CONFIG_FILE $PROG_DIR/$LOCAL_CONFIG_FILE.prev
-            cp $PROG_DIR/$LOCAL_CONFIG_FILE $PROG_DIR/$REMOTE_CONFIG_DIR/$REMOTE_CONFIG_FILE.prev    
+            cp $PROG_DIR/$LOCAL_CONFIG_FILE $PROG_DIR/$REMOTE_CONFIG_DIR/$REMOTE_CONFIG_FILE.prev
 
             echo "COPY    - $REMOTE_CONFIG_DIR/$REMOTE_CONFIG_FILE $PROG_DIR/$LOCAL_CONFIG_FILE (local)"
             cp $PROG_DIR/$REMOTE_CONFIG_DIR/$REMOTE_CONFIG_FILE $PROG_DIR/$LOCAL_CONFIG_FILE
@@ -234,25 +245,25 @@ function do_config_sync ()
             echo "DELETE  - $PROG_DIR/$REMOTE_CONFIG_DIR/$REMOTE_CONFIG_FILE  (local)"
             rm $PROG_DIR/$REMOTE_CONFIG_DIR/$REMOTE_CONFIG_FILE
             echo "SUCCESS - $PROG_DIR/$LOCAL_CONFIG_FILE updated successfully."
-            echo "------------------------------------------"     
+            echo "------------------------------------------"
             echo "GDRIVE  - Sync push Local /$LOCAL_CONFIG_DIR Files to Local to $REMOTE_CONFIG_DIR"
-            /usr/local/bin/gdrive push -no-prompt -ignore-conflict $REMOTE_CONFIG_DIR                        
+            /usr/local/bin/gdrive push -no-prompt -ignore-conflict $REMOTE_CONFIG_DIR
             echo "TRASH   - Empty gdrive trash  (local)"
             /usr/local/bin/gdrive emptytrash -no-prompt
-            echo "------------------------------------------"             
+            echo "------------------------------------------"
             echo "WARN    - Sync Complete Restarting pi-timolo"
             restart_pi_timolo
             if [ -z "$(pgrep -f pi-timolo.py)" ] ; then
-                # pi-timolo did not start so restore prev config.py            
-                cp $PROG_DIR/$LOCAL_CONFIG_FILE.prev $PROG_DIR/$LOCAL_CONFIG_FILE 
-                echo "WARN    - Stopping pi-timolo.py"     
-                $PROG_DIR/pi-timolo.sh stop             
-                restart_pi_timolo  
+                # pi-timolo did not start so restore prev config.py
+                cp $PROG_DIR/$LOCAL_CONFIG_FILE.prev $PROG_DIR/$LOCAL_CONFIG_FILE
+                echo "WARN    - Stopping pi-timolo.py"
+                $PROG_DIR/pi-timolo.sh stop
+                restart_pi_timolo
             fi
         else
             echo "GDRIVE  - $REMOTE_CONFIG_DIR/$REMOTE_CONFIG_FILE Not Found (local)"
             echo "STATUS  - $PROG_DIR/$LOCAL_CONFIG_FILE Configuration Not Updated."
-        fi     
+        fi
     fi
 }
 
@@ -263,9 +274,9 @@ function watch_app ()
     echo "START   - watch_app - Check $WATCH_APP Run Status ..."
     if [ -z "$(pgrep -f $WATCH_APP)" ] ; then
         if $FORCE_REBOOT ; then
-            echo "STATUS  - $WATCH_APP is NOT Running so reboot"       
+            echo "STATUS  - $WATCH_APP is NOT Running so reboot"
             echo "WARNING - Reboot in 15 seconds Waiting ...."
-            echo "          ctrl-c to Abort Reboot."        
+            echo "          ctrl-c to Abort Reboot."
             sleep 10
             echo "WARNING - Rebooting in 5 seconds"
             sleep 5
@@ -283,7 +294,7 @@ function watch_app ()
 # Main script processing
 
 if $SYNC_ON ; then # Check and Sync Files From Local To Remote Folder.
-    start_sync 
+    start_sync
 fi
 
 if $REMOTE_CONFIG_ON ; then  # Check if remote configuration feature is on
@@ -291,9 +302,10 @@ if $REMOTE_CONFIG_ON ; then  # Check if remote configuration feature is on
 fi
 
 if $WATCH_APP_ON ; then # check if watch app feature is on
-    watch_app  
+    watch_app
 fi
 echo "------------------------------------------"
 echo ""
 echo "Done ..."
 exit
+
