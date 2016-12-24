@@ -22,15 +22,15 @@ cd $progpath
 
 # Check if progname exists
 if [ ! -e $progname ] ; then
-  echo "ERROR - Could Not Find $progname"
+  echo "ERROR  - Could Not Find $progname"
   exit 1
 fi
 
 if [ -z "$( pgrep -f $progname )" ]; then
   if [ "$1" = "start" ]; then
-    echo "Start $progpath/$progname in Background"
+    echo "START   - Start $progpath/$progname in Background"
     # delay for boot to complete if running from /etc/rc.local
-    echo "Waiting $progsleep seconds ...."
+    echo "STATUS  - Waiting $progsleep seconds ...."
     sleep $progsleep
 
     # comment line below for no redirection of console output
@@ -42,22 +42,21 @@ if [ -z "$( pgrep -f $progname )" ]; then
   fi
 else
   if [ "$1" = "stop" ]; then
-    echo "Stopping $progname ...."
+    echo "STATUS  - Stopping $progname ...."
     progPID=$( pgrep -f $progname )
     sudo kill $progPID
   fi
 fi
 
 if [ -z "$( pgrep -f $progname )" ]; then
-    echo "$progname is Not Running ..."
-    echo "To Start $progname execute command below"
-    echo "$0 start"
+    echo "STATUS  - $progname is Not Running ..."
+    echo "INFO    - To Start $progname execute command below"
+    echo "INFO    - $0 start"
   else
     progPID=$(pgrep -f $progname)
-    echo "$progname is Running ..."
-    echo "PID is $progPID"
-    echo "To Stop $progname execute command below"
-    echo "$0 stop"
+    echo "STATUS  - $progname is Running ..."
+    echo "STATUS  - PID is $progPID"
+    echo "INFO    - To Stop $progname execute command below"
+    echo "INFO    - $0 stop"
 fi
-echo "Bye"
 
