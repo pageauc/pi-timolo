@@ -728,7 +728,7 @@ if __name__ == '__main__':
             dataLogger()
         else:
             Main()
-    finally:
+    except:
         print("")
         print("+++++++++++++++++++++++++++++++++++")
         print("%s - Exiting Program" % progName)

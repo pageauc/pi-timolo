@@ -1,6 +1,6 @@
 # User Configuration variable settings for pitimolo
 # Purpose - Motion Detection Security Cam
-# Created - 20-Jul-2015 pi-timolo ver 2.8 compatible
+# Created - 20-Jul-2015 pi-timolo ver 2.94 compatible or greater
 # Done by - Claude Pageau
  
 configTitle = "pitimolo default configuration motion and timelapse 720p images"
@@ -45,9 +45,9 @@ showTextWhiteNight = True  # Change night text to white.  Might help if night ne
 motionOn = True            # True = motion capture is turned on.  False= No motion detection
 motionPrefix = "mo-"       # Prefix Motion Detection images
 motionDir = "motion"       # Storage Folder for Motion Detect Images
-threshold = 20             # How much a pixel has to change to be counted default=10 (1-200)
+threshold = 20             # How much a pixel has to change to be counted default=20 (1-200)
 sensitivity = 300          # Number of changed pixels to trigger motion default=300
-motionAverage = 100        # Number of images to average to check for motion: 1 = just use last image. Default=100
+motionAverage = 1          # Number of images to average for motion verification: 1=last image only or 100=Med 300=High Average Etc.
 useVideoPort = False       # Use the video port to capture motion images - faster than the image port. Default=False
 motionVideoOn = False      # If set to True then video clip is taken rather than image
 motionVideoTimer = 10      # Number of seconds of video clip to take if Motion Detected default=10
