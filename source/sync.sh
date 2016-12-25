@@ -17,12 +17,11 @@ echo "------------------------------------------"
 # Follow instructions for initializing gdrive for pi-timolo see pi-timolo wiki
 # gdrive init
 #
-# This script will perform the following
-# Runs gdrive only if it is not already running
-# Looks for pi-timolo.sync file created by pi-timolo.py indicating there are new files to sync
-# if CHECK_FOR_SYNC_FILE=true
-# Kills gdrive process if it has been running too long. default is > 4000 seconds or 67 minutes
-# Suggest you run this script from a crontab every 5 minutes or so.
+# Edit the sync.sh variables to enable and customize features
+# For more details see my github wiki pages here
+# https://github.com/pageauc/pi-timolo/wiki/How-to-Setup-pi-timolo-gdrive-sync
+# https://github.com/pageauc/pi-timolo/wiki/sync.sh---Automate-gdrive-Uploads-and-More
+# https://github.com/pageauc/pi-timolo/wiki/How-to-Setup-config.py-Remote-Configuration
 # Add appropriate line to crontab using command sudo crontab -e
 # example crontab entry below without # comment char to run every 5 minutes
 # */5 * * * * /home/pi/pi-timolo/sync.sh >/dev/nul
