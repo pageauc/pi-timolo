@@ -11,8 +11,9 @@
 # 2.93 release 21-Jul-2016 improved getCurrentCount logic and changed default motion image size to 128x80 per picamra default
 # 2.94 release 14-Aug-2016 implemented camera.rotation = cameraRotate but not yet fully tested
 # 2.95 release 20-Dec-2016 Updated logging to be more pythonic and minor bug fix
+# 2.96 release 26-Dec-2016 Fixed fatal bug error in logging when verbose = False 
 
-progVer = "ver 2.95"
+progVer = "ver 2.96"
 
 import datetime
 import glob
@@ -693,18 +694,20 @@ def init_logging():
                         format='%(asctime)s %(funcName)-12s %(levelname)-8s %(message)s',
                         filename='/tmp/pi-timolo.log',
                         filemode='w')
-    if verbose:
-        # define handler that logs to stdout
-        console = logging.StreamHandler()
-        # add the handler to the root logger
-        logger = logging.getLogger('')
-        logger.addHandler(console)
+    # define handler that logs to stdout
+    console = logging.StreamHandler()
+    # add the handler to the root logger
+    logger = logging.getLogger('')
+    logger.addHandler(console)
 
 #-----------------------------------------------------------------------------------------------    
 if __name__ == '__main__':
     init_logging()
     try:
-        Main()
+        if debug:
+            dataLogger()
+        else:
+            Main()
     finally:
         print("")
         print("+++++++++++++++++++++++++++++++++++")
