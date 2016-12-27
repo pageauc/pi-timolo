@@ -34,8 +34,8 @@ web_page_refresh_on = True    # False=Off (never)  Refresh True=On (per seconds 
 web_page_refresh_sec ="120"   # Refresh page time default=120 seconds (two minutes)
 
 # Left Image Frame Settings
-image_frame_width = "1280"      # Desired frame width to display images. Scroll bars if images larger 
-image_frame_height = "720"      # Desired frame height to display images. Scroll bars if image larger   
+image_frame_width = "1024"      # Desired frame width to display images. Scroll bars if images larger 
+image_frame_height = "768"      # Desired frame height to display images. Scroll bars if image larger   
 image_max_listing = 0           # 0 = All or Specify Max right side file entries to show (must be > 1)
 
 # Right Frame List Settings
