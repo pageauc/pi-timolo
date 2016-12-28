@@ -3,8 +3,8 @@
 # Created - 20-Jul-2015 pi-timolo ver 2.94 compatible or greater
 # Done by - Claude Pageau
  
-configTitle = "pitimolo default configuration motion and timelapse 720p images"
-configName = "pitimolo-default-config"
+configTitle = "pi-timolo default config motion"
+configName = "pi-timolo-default-config"
 
 # These settings should both be False if this script is run as a background /etc/init.d daemon
 verbose = True             # Sends detailed logging info to console. set to False if running script as daeman
@@ -20,7 +20,7 @@ imageWidth = 1024          # Full Size Image Width in px  default=1024
 imageHeight = 768          # Full Size Image Height in px default=768
 imageVFlip = False         # Flip image Vertically    default=False
 imageHFlip = False         # Flip image Horizontally  default=False
-imageRotation=0            # Rotate image. Valid values: 0, 90, 180 & 270
+imageRotation = 0          # Rotate image. Valid values: 0, 90, 180 & 270
 imagePreview = False       # Preview image on connected RPI Monitor default=False
 noNightShots = False       # Don't Take images at Night default=False
 noDayShots = False         # Don't Take images during day time default=False  
@@ -36,7 +36,7 @@ twilightThreshold = 40     # default=40 Light level to trigger day/night transit
 
 # Date/Time Settings for Displaying info Directly on Images
 showDateOnImage = True     # Set to False for No display of date/time on image default= True
-showTextFontSize = 20      # Size of image Font in pixel height
+showTextFontSize = 18      # Size of image Font in pixel height
 showTextBottom = True      # Location of image Text True=Bottom False=Top
 showTextWhite = True       # Colour of image Text True=White False=Black
 showTextWhiteNight = True  # Change night text to white.  Might help if night needs white instead of black during day or visa versa
@@ -45,9 +45,9 @@ showTextWhiteNight = True  # Change night text to white.  Might help if night ne
 motionOn = True            # True = motion capture is turned on.  False= No motion detection
 motionPrefix = "mo-"       # Prefix Motion Detection images
 motionDir = "motion"       # Storage Folder for Motion Detect Images
-threshold = 20             # How much a pixel has to change to be counted default=20 (1-200)
+threshold = 40             # How much a pixel has to change to be counted default=20 (1-200)
 sensitivity = 300          # Number of changed pixels to trigger motion default=300
-motionAverage = 1          # Number of images to average for motion verification: 1=last image only or 100=Med 300=High Average Etc.
+motionAverage = 2          # Number of images to average for motion verification: 1=last image only or 100=Med 300=High Average Etc.
 useVideoPort = False       # Use the video port to capture motion images - faster than the image port. Default=False
 motionVideoOn = False      # If set to True then video clip is taken rather than image
 motionVideoTimer = 10      # Number of seconds of video clip to take if Motion Detected default=10
