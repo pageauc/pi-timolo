@@ -23,7 +23,8 @@ imageHFlip = False         # Flip image Horizontally  default=False
 imageRotation = 0          # Rotate image. Valid values: 0, 90, 180 & 270
 imagePreview = False       # Preview image on connected RPI Monitor default=False
 noNightShots = False       # Don't Take images at Night default=False
-noDayShots = False         # Don't Take images during day time default=False  
+noDayShots = False         # Don't Take images during day time default=False
+dateSubdir = True          # Store images in subdirectory year/month/day default=True
 
 # Low Light Night Settings
 nightMaxShut = 5.5         # default=5.5 sec Highest cam shut exposure time. 
