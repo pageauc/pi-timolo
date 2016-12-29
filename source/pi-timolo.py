@@ -12,8 +12,9 @@
 # 2.94 release 14-Aug-2016 implemented camera.rotation = cameraRotate but not yet fully tested
 # 2.95 release 20-Dec-2016 Updated logging to be more pythonic and minor bug fix
 # 2.96 release 26-Dec-2016 Fixed fatal bug error in logging when verbose = False 
-
-progVer = "ver 2.96"
+# 2.97 release 28-Dec-2016 Modified logging setup to simplify and better display messages
+ 
+progVer = "ver 2.97"
 
 import datetime
 import glob
@@ -26,24 +27,41 @@ mypath = os.path.abspath(__file__)  # Find the full path of this python script
 baseDir = os.path.dirname(mypath)  # get the path location only (excluding script name)
 baseFileName = os.path.splitext(os.path.basename(mypath))[0]
 progName = os.path.basename(__file__)
+logFilePath = os.path.join(baseDir, baseFileName + ".log")
+print("----------------------------------------------------------------------------------------------")
+print("%s %s" %( progName, progVer ))
 
 # Check for variable file to import and error out if not found.
 configFilePath = os.path.join(baseDir, "config.py")
 if not os.path.exists(configFilePath):
-    msgStr = "ERROR - Missing config.py file - Could not find Configuration file %s" % (configFilePath)
-    showMessage("readConfigFile", msgStr)
+    print("ERROR - Cannot Import Configuration Variables. Missing Configuration File %s" % ( configFilePath ))
     quit()
 else:
     # Read Configuration variables from config.py file
+    print("Importing Configuration Variables from File %s" % ( configFilePath ))    
     from config import *
-
-if verbose:
-    print("------------------------------ Loading Python Libraries --------------------------------------")
+  
+# Now that variable are imported from config.py Setup Logging 
+if logDataToFile:
+    print("Sending Logging Data to %s  (Console Messages Disabled)" %( logFilePath ))
+    logging.basicConfig(level=logging.DEBUG,
+                    format='%(asctime)s %(levelname)-8s %(funcName)-10s %(message)s',
+                    datefmt='%Y-%m-%d %H:%M:%S',
+                    filename=logFilePath,
+                    filemode='w')   
+elif verbose:
+    print("Logging to Console per Variable verbose=True")    
+    logging.basicConfig(level=logging.DEBUG,
+                    format='%(asctime)s %(levelname)-8s %(funcName)-10s %(message)s',
+                    datefmt='%Y-%m-%d %H:%M:%S')
 else:
-    print("Note: verbose=False (Disabled) Set verbose=True to Display Detailed Messages.")
+    print("Logging Disabled per Variable verbose=False")
+    logging.basicConfig(level=logging.CRITICAL,
+                    format='%(asctime)s %(levelname)-8s %(funcName)-10s %(message)s',
+                    datefmt='%Y-%m-%d %H:%M:%S')
 
+print("Loading Python Libraries ...")                   
 # import remaining python libraries  
-
 import picamera
 import picamera.array
 import numpy as np
@@ -64,7 +82,6 @@ nightMinShut = int(nightMinShut * SECONDS2MICRO)  # lowest shut camera setting f
 testWidth = 128            # width of rgb image stream used for motion detection and day/night changes
 testHeight = 80            # height of rgb image stream used for motion detection and day/night changes
 daymode = False            # default should always be False.
-progNameVer = "%s %s" %(progName, progVer)
 motionPath = os.path.join(baseDir, motionDir)  # Store Motion images
 motionNumPath = os.path.join(baseDir, motionPrefix + baseFileName + ".dat")  # dat file to save currentCount
 timelapsePath = os.path.join(baseDir, timelapseDir)  # Store Time Lapse images
@@ -89,15 +106,8 @@ def shut2Sec (shutspeed):
 #-----------------------------------------------------------------------------------------------    
 def showTime():
     rightNow = datetime.datetime.now()
-    currentTime = "%04d%02d%02d_%02d:%02d:%02d" % (rightNow.year, rightNow.month, rightNow.day, rightNow.hour, rightNow.minute, rightNow.second)
+    currentTime = "%04d-%02d-%02d %02d:%02d:%02d" % (rightNow.year, rightNow.month, rightNow.day, rightNow.hour, rightNow.minute, rightNow.second)
     return currentTime
-
-#-----------------------------------------------------------------------------------------------    
-def showMessage(functionName, messageStr):
-    if verbose:
-        now = showTime()
-        print ("%s %s - %s " % (now, functionName, messageStr))
-    return
 
 #-----------------------------------------------------------------------------------------------
 def showDots(dotcnt):
@@ -120,7 +130,7 @@ def showDots(dotcnt):
 #-----------------------------------------------------------------------------------------------    
 def checkConfig():
     if not motionOn and not timelapseOn:
-        logger.info("Warning - Both Motion and Timelapse are turned OFF - motionOn=%s timelapseOn=%s", motionOn, timelapseOn)
+        logging.warn("Both Motion and Timelapse are turned OFF - motionOn=%s timelapseOn=%s", motionOn, timelapseOn)
     return
 
 #-----------------------------------------------------------------------------------------------   
@@ -133,18 +143,13 @@ def takeTestImage():
     takeDayImage(testfilepath)    
     imagetext = "%s %s" % (mytime, testfilename)
     writeTextToImage(testfilepath, imagetext, daymode)
-    logger.info("imageTestPrint=%s Captured Test Image to %s " % (imageTestPrint, testfilepath))
+    logging.info("imageTestPrint=%s Captured Test Image to %s " % (imageTestPrint, testfilepath))
     sys.exit(2)
     return
 
 #-----------------------------------------------------------------------------------------------
 def displayInfo(motioncount, timelapsecount):
-    if verbose:
-        print("")
-        print("Note: To Send Full Output to File Use command -   python -u ./%s | tee -a log.txt" % progName)
-        print("      Set logDataToFile=True to Send checkIfDay Data to File %s.log" % progName)
-        print("")
-        print("%s" % progNameVer)     
+    if verbose:  
         print("-------------------------------------- Settings ----------------------------------------------")
         print("Config File .. Title=%s" % configTitle)
         print("               config-template filename=%s" % configName)
@@ -159,7 +164,7 @@ def displayInfo(motioncount, timelapsecount):
             print("    No Text .. showDateOnImage=%s  Text on Image Disabled"  % (showDateOnImage))
         print("Motion ....... On=%s  Prefix=%s  threshold=%i(How Much)  sensitivity=%i(How Many)"  % (motionOn, motionPrefix, threshold, sensitivity))
         print("               forceTimer=%i min(If No Motion)"  % (motionForce/60))
-        print("               Number of previous images to use to check for motion =%i"  % (motionAverage))
+        print("               Number of previous images to use to check for motion=%i"  % (motionAverage))
         print("               Use video port for motion image capture? %s"  % (useVideoPort))
         print("               motionPath=%s" % (motionPath))
         if motionNumOn:
@@ -184,8 +189,8 @@ def displayInfo(motioncount, timelapsecount):
             print("    Date-Time. motionNumOn=%s  Numbering Disabled" % (timelapseNumOn))
         if createLockFile:
             print("gdrive Sync .. On=%s  Path=%s  Note: syncs for motion images only." % (createLockFile, lockFilePath))  
-        print("Logging ...... verbose=%s (Details to Console)    logDataToFile=%s" % ( verbose, logDataToFile ))
-        print("               logfilePath=%s" % (os.path.join(baseDir, baseFileName + ".log")))
+        print("Logging ...... verbose=%s (True = Log To Console)" % ( verbose ))
+        print("               logDataToFile=%s  logFilePath=%s" % ( logDataToFile, logFilePath ))
         print("------------------------------------ Log Activity --------------------------------------------")
     checkConfig()
     return
@@ -195,11 +200,11 @@ def checkImagePath():
     # Checks for image folders and creates them if they do not already exist.
     if motionOn:
         if not os.path.isdir(motionPath):
-            logger.info("Creating Image Motion Detection Storage Folder %s", motionPath)
+            logging.info("Creating Image Motion Detection Storage Folder %s", motionPath)
             os.makedirs(motionPath)
     if timelapseOn:
         if not os.path.isdir(timelapsePath):
-            logger.info("Creating Time Lapse Image Storage Folder %s", timelapsePath)
+            logging.info("Creating Time Lapse Image Storage Folder %s", timelapsePath)
             os.makedirs(timelapsePath)
     return
 
@@ -208,7 +213,7 @@ def getCurrentCount(numberpath, numberstart):
     # Create a .dat file to store currentCount or read file if it already Exists
     # Create numberPath file if it does not exist
     if not os.path.exists(numberpath):
-        logger.info("Creating New File %s numberstart= %s", numberpath, numberstart)
+        logging.info("Creating New File %s numberstart= %s", numberpath, numberstart)
         open(numberpath, 'w').close()
         f = open(numberpath, 'w+')
         f.write(str(numberstart))
@@ -237,7 +242,7 @@ def getCurrentCount(numberpath, numberstart):
                 numbercounter = int(writeCount)+1
             except ValueError:
                 numbercounter = numberstart
-            logger.error("Invalid Data in File %s Reset numbercounter to %s", numberpath, numbercounter)
+            logging.error("Invalid Data in File %s Reset numbercounter to %s", numberpath, numbercounter)
 
         f = open(numberpath, 'w+')
         f.write(str(numbercounter))
@@ -281,7 +286,7 @@ def writeTextToImage(imagename, datetoprint, daymode):
     draw.text(( x, y ), text, FOREGROUND, font=font)
     img.save(imagename)
     metadata.write()    # Write previously saved exif data to image file
-    logger.info("Added %s Text[%s] on %s", textColour, datetoprint, imagename)
+    logging.info("Added %s Text[%s] on %s", textColour, datetoprint, imagename)
     return
 
 #----------------------------------------------------------------------------------------------- 
@@ -315,12 +320,12 @@ def postImageProcessing(numberon, counterstart, countermax, counter, recycle, co
         currentTime = showTime()        
         writeCount = str(counter)
         if not os.path.exists(counterpath):
-            logger.info("Create New Counter File writeCount=%s %s", writeCount, counterpath)
+            logging.info("Create New Counter File writeCount=%s %s", writeCount, counterpath)
             open(counterpath, 'w').close()
         f = open(counterpath, 'w+')
         f.write(str(writeCount))
         f.close()
-        logger.info("Next Counter=%s %s", writeCount, counterpath)
+        logging.info("Next Counter=%s %s", writeCount, counterpath)
     return counter
 
 def getVideoName(path, prefix, numberon, counter):
@@ -359,7 +364,7 @@ def takeDayImage(filename):
         camera.exposure_mode = 'auto'
         camera.awb_mode = 'auto'
         camera.capture(filename, use_video_port=useVideoPort)
-    logger.info("Size=%ix%i exp=auto awb=auto %s" % (imageWidth, imageHeight, filename))
+    logging.info("Size=%ix%i exp=auto awb=auto %s" % (imageWidth, imageHeight, filename))
     return
 
 #-----------------------------------------------------------------------------------------------   
@@ -386,12 +391,12 @@ def takeNightImage(filename):
         time.sleep(nightSleepSec)
         camera.capture(filename)
     shutSec = shut2Sec(currentShut)
-    logger.info("Size=%ix%i dayPixAve=%i ISO=%i shut=%s %s" % (imageWidth, imageHeight, dayPixAve, currentISO, shutSec, filename))
+    logging.info("Size=%ix%i dayPixAve=%i ISO=%i shut=%s %s" % (imageWidth, imageHeight, dayPixAve, currentISO, shutSec, filename))
     return
 
 #-----------------------------------------------------------------------------------------------
 def takeQuickTimeLapse(motionPath, imagePrefix, motionNumOn, motionNumCount, daymode, motionNumPath):
-    logger.info("motion Quick Time Lapse for %i sec every %i sec" % (motionQuickTLTimer, motionQuickTLInterval))
+    logging.info("motion Quick Time Lapse for %i sec every %i sec" % (motionQuickTLTimer, motionQuickTLInterval))
 
     checkTimeLapseTimer = datetime.datetime.now()
     keepTakingImages = True
@@ -410,7 +415,7 @@ def takeQuickTimeLapse(motionPath, imagePrefix, motionNumOn, motionNumCount, day
 #-----------------------------------------------------------------------------------------------
 def takeVideo(filename):
     # Take a short motion video if required
-    logger.info("Size %ix%i for %i sec %s" % (imageWidth, imageHeight, motionVideoTimer, filename))
+    logging.info("Size %ix%i for %i sec %s" % (imageWidth, imageHeight, motionVideoTimer, filename))
     if motionVideoOn:
         with picamera.PiCamera() as camera:
             camera.resolution = (imageWidth, imageHeight)
@@ -425,7 +430,7 @@ def createSyncLockFile(imagefilename):
     if createLockFile:
         if not os.path.exists(lockFilePath):
             open(lockFilePath, 'w').close()
-            logger.info("Create gdrive sync.sh Lock File %s", lockFilePath)
+            logging.info("Create gdrive sync.sh Lock File %s", lockFilePath)
         rightNow = datetime.datetime.now()
         now = "%04d%02d%02d-%02d%02d%02d" % ( rightNow.year, rightNow.month, rightNow.day, rightNow.hour, rightNow.minute, rightNow.second )
         filecontents = now + " createSyncLockFile - "  + imagefilename + " Ready to sync using sudo ./sync.sh command." 
@@ -485,7 +490,7 @@ def getNightCamSettings(dayPixAve):
         outISO = nightMinISO
     if outISO > nightMaxISO:
         outISO = nightMaxISO
-    logger.info("dayPixAve=%i ratio=%.3f ISO=%i shut=%i %s" % ( dayPixAve, ratio, outISO, outShut, shut2Sec(outShut)))
+    logging.info("dayPixAve=%i ratio=%.3f ISO=%i shut=%i %s" % ( dayPixAve, ratio, outISO, outShut, shut2Sec(outShut)))
     return outShut, outISO
 
 #-----------------------------------------------------------------------------------------------    
@@ -545,7 +550,7 @@ def checkForMotion(data1, data2):
         motionDetected = True
     if motionDetected:
         dotCount = showDots(motionMaxDots + 2)      # New Line
-        logger.info("Found Motion - threshold=%s  sensitivity=%s changes=%s", threshold, sensitivity, pixChanges)
+        logging.info("Found Motion - threshold=%s  sensitivity=%s changes=%s", threshold, sensitivity, pixChanges)
     return motionDetected  
 
 #----------------------------------------------------------------------------------------------- 
@@ -559,7 +564,7 @@ def dataLogger():
         dayPixAverage = getStreamPixAve(dayStream)
         nightStream = getStreamImage(False)
         nightPixAverage = getStreamPixAve(nightStream)
-        logger.info("nightPixAverage=%i dayPixAverage=%i twilightThreshold=%i " % (nightPixAverage, dayPixAverage, twilightThreshold))
+        logging.info("nightPixAverage=%i dayPixAverage=%i twilightThreshold=%i " % (nightPixAverage, dayPixAverage, twilightThreshold))
         time.sleep(1)
     return
 
@@ -608,7 +613,7 @@ def Main():
     checkDayTimer = timelapseStart
     checkMotionTimer = timelapseStart
     forceMotion = False   # Used for forcing a motion image if no motion for motionForce time exceeded
-    logger.info("Entering Loop for Time Lapse and/or Motion Detect  Please Wait ...")
+    logging.info("Entering Loop for Time Lapse and/or Motion Detect  Please Wait ...")
     dotCount = showDots(motionMaxDots)  # reset motion dots
     # Start main program loop here.  Use Ctl-C to exit if run from terminal session.
     while True:
@@ -626,7 +631,7 @@ def Main():
                 if takeTimeLapse:
                     timelapseStart = datetime.datetime.now()  # reset time lapse timer
                     dotCount = showDots(motionMaxDots + 2)      # reset motion dots
-                    logger.info("Scheduled Time Lapse Image - daymode=%s", daymode)
+                    logging.info("Scheduled Time Lapse Image - daymode=%s", daymode)
                     imagePrefix = timelapsePrefix + imageNamePrefix
                     filename = getImageName(timelapsePath, imagePrefix, timelapseNumOn, timelapseNumCount)
                     if daymode:
@@ -647,7 +652,7 @@ def Main():
                 timeDiff = (rightNow - checkMotionTimer).total_seconds()
                 if timeDiff > motionForce:
                     dotCount = showDots(motionMaxDots + 2)      # New Line
-                    logger.info("No Motion Detected for %s minutes. Taking Forced Motion Image.", (motionForce / 60))
+                    logging.info("No Motion Detected for %s minutes. Taking Forced Motion Image.", (motionForce / 60))
                     checkMotionTimer = rightNow
                     forceMotion = True
                 if motionFound or forceMotion:
@@ -688,21 +693,8 @@ def Main():
                     dotCount = showDots(dotCount)  # show progress dots when no motion found
     return
 
-def init_logging():
-    global logger
-    logging.basicConfig(level=logging.INFO,
-                        format='%(asctime)s %(funcName)-12s %(levelname)-8s %(message)s',
-                        filename='/tmp/pi-timolo.log',
-                        filemode='w')
-    # define handler that logs to stdout
-    console = logging.StreamHandler()
-    # add the handler to the root logger
-    logger = logging.getLogger('')
-    logger.addHandler(console)
-
 #-----------------------------------------------------------------------------------------------    
 if __name__ == '__main__':
-    init_logging()
     try:
         if debug:
             dataLogger()
