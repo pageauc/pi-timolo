@@ -130,7 +130,7 @@ def showDots(dotcnt):
 #-----------------------------------------------------------------------------------------------    
 def checkConfig():
     if not motionOn and not timelapseOn:
-        logging.warn("Both Motion and Timelapse are turned OFF - motionOn=%s timelapseOn=%s", motionOn, timelapseOn)
+        logging.warning("Both Motion and Timelapse are turned OFF - motionOn=%s timelapseOn=%s", motionOn, timelapseOn)
     return
 
 #-----------------------------------------------------------------------------------------------   
