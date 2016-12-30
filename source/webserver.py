@@ -3,7 +3,7 @@ import cgi, os, SocketServer, sys, time, urllib
 from SimpleHTTPServer import SimpleHTTPRequestHandler
 from StringIO import StringIO
 
-version = "ver 1.7"
+version = "ver 1.8 by Claude Pageau"
 # SimpleHTTPServer python program to allow selection of images from right panel and display in an iframe left panel
 # Use for local network use only since this is not guaranteed to be a secure web server.
 # based on original code by zeekay and modified by Claude Pageau Nov-2015 for use with pi-timolo.py on a Raspberry Pi
@@ -26,6 +26,13 @@ version = "ver 1.7"
 # 4 - On a LAN computer web browser url bar, input this RPI ip address and port number per example below.
 #   http://192.168.1.110:8080
 
+# Left iFrame Image Settings
+image_width = "1280"           # width of images to display in px
+image_height = "720"           # height of images to display in px
+image_frame_width = "100%"     # Desired frame width to display images. can be eg percent "80%" or px "1280"
+image_frame_height = "100%"    # Desired frame height to display images. Scroll bars if image larger (percent or px) 
+image_max_listing = 0          # 0 = All or Specify Max right side file entries to show (must be > 1)
+
 # Web Server settings
 web_server_root = "motion/tx-deck-cam"    # webserver root path to webserver image folder
 web_server_port = 8080        # Web server access port eg http://192.168.1.100:8090
@@ -33,22 +40,12 @@ web_page_title = "Pi-Timolo Motion Images"     # web page title that browser sho
 web_page_refresh_on = True    # False=Off (never)  Refresh True=On (per seconds below)       
 web_page_refresh_sec ="180"   # Refresh page time default=180 seconds (three minutes)
 
-image_width = "1280"          # width of images to display in px
-image_height = "720"          # height of images to display in px
+web_iframe_width = "80%"         # Left Pane - Sets % of screen width allowed for image frame with rest for right list
+web_list_height = image_height   # Right List - side menu height in px (link selection)
 
-# Left Image Frame Settings
-image_frame_width = "100%"      # Desired frame width to display images. can be eg percent "80%" or px "1280"
-image_frame_height = "100%"     # Desired frame height to display images. Scroll bars if image larger (percent or px) 
-image_max_listing = 0           # 0 = All or Specify Max right side file entries to show (must be > 1)
-
-iframe_width = "80%"            # Sets % of screen allowed for left image frame and gives room for right list
-
-# Right Frame List Settings
-web_list_height = image_height   # Right side menu height in px (link select)
-                                 # You can also make this equal to the image_height variable
 # Settings for right side files list
-show_by_datetime = True           # True=datetime False=filename
-sort_descending = True            # reverse sort order (filename or datetime per show_by_date setting
+show_by_datetime = True          # True=datetime False=filename
+sort_descending = True           # reverse sort order (filename or datetime per show_by_date setting
 
 if show_by_datetime:
     dir_sort = 'DateTime'
@@ -95,17 +92,17 @@ class DirectoryHandler(SimpleHTTPRequestHandler):
         f.write("<body>")
         # Start Left iframe Image Panel
         f.write('<iframe width="%s" height="%s" align="left"' 
-                        % (iframe_width, image_height))
+                        % (web_iframe_width, image_height))
         f.write('src="%s" name="imgbox" id="imgbox" alt="%s">' 
                         % (list[1], web_page_title)) 
                         # display second entry in right list since list[0] may still be in progress                        
         f.write('<p>iframes are not supported by your browser.</p></iframe>')
         # Start Right File selection List Panel
-        list_style = '<div style="height: ' + web_list_height + 'px; overflow: auto; white-space: nowrap; ">'
+        list_style = '<div style="height: ' + web_list_height + 'px; overflow: auto; white-space: nowrap;">'
         f.write(list_style)
-        f.write('<center><b>%s</b></center>' % (self.path))
-        f.write('<center><b>%s</b></center><hr>' % (list_title))
-        f.write('<ul name="menu" id="menu" style="list-style-type:none" >')        
+        # f.write('<center><b>%s</b></center>' % (self.path))
+        f.write('<center><b>%s</b></center>' % (list_title))
+        f.write('<ul name="menu" id="menu" style="list-style-type:none; padding-left: 4px">')        
         # Create the formatted list of right panel hyperlinks to files in the specified directory
         
         display_entries = 0
@@ -130,7 +127,7 @@ class DirectoryHandler(SimpleHTTPRequestHandler):
             else:
                 f.write('<li><a href="%s" target="imgbox">%s</a> - %s</li>\n'
                           % ( urllib.quote(linkname), cgi.escape(displayname), date_modified))
-        f.write('</ul><hr></div><p><b>')
+        f.write('</ul></div><p><b>')
         f.write('<div style="float: left; padding-left: 40px;">Web Root is [ %s ]</div>' % ( web_server_root )) 
         f.write('<div style="text-align: center;">%s</div>' % ( web_page_title ))
 
@@ -159,6 +156,7 @@ os.chdir(web_server_root)
 SocketServer.TCPServer.allow_reuse_address = True
 httpd = SocketServer.TCPServer(("", web_server_port), DirectoryHandler)
 print("---------------------------- Settings --------------------------")
+print("webserver.py %s" % (version))
 print("Server - web_server_root=%s" % ( web_server_root ))
 print("         web_server_port=%i  version=%s" % ( web_server_port, version ))
 print("Images - image_frame_width=%s  image_frame_height=%s" % ( image_frame_width, image_frame_height ))
