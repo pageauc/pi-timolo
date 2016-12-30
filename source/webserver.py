@@ -3,7 +3,7 @@ import cgi, os, SocketServer, sys, time, urllib
 from SimpleHTTPServer import SimpleHTTPRequestHandler
 from StringIO import StringIO
 
-version = "ver 1.6"
+version = "ver 1.7"
 # SimpleHTTPServer python program to allow selection of images from right panel and display in an iframe left panel
 # Use for local network use only since this is not guaranteed to be a secure web server.
 # based on original code by zeekay and modified by Claude Pageau Nov-2015 for use with pi-timolo.py on a Raspberry Pi
@@ -27,28 +27,33 @@ version = "ver 1.6"
 #   http://192.168.1.110:8080
 
 # Web Server settings
-web_server_root = "motion"    # webserver root path to webserver image folder
+web_server_root = "motion/tx-deck-cam"    # webserver root path to webserver image folder
 web_server_port = 8080        # Web server access port eg http://192.168.1.100:8090
 web_page_title = "Pi-Timolo Motion Images"     # web page title that browser show (not displayed on web page)
 web_page_refresh_on = True    # False=Off (never)  Refresh True=On (per seconds below)       
-web_page_refresh_sec ="120"   # Refresh page time default=120 seconds (two minutes)
+web_page_refresh_sec ="180"   # Refresh page time default=180 seconds (three minutes)
+
+image_width = "1280"          # width of images to display in px
+image_height = "720"          # height of images to display in px
 
 # Left Image Frame Settings
-image_frame_width = "1024"      # Desired frame width to display images. Scroll bars if images larger 
-image_frame_height = "768"      # Desired frame height to display images. Scroll bars if image larger   
+image_frame_width = "100%"      # Desired frame width to display images. can be eg percent "80%" or px "1280"
+image_frame_height = "100%"     # Desired frame height to display images. Scroll bars if image larger (percent or px) 
 image_max_listing = 0           # 0 = All or Specify Max right side file entries to show (must be > 1)
 
+iframe_width = "80%"            # Sets % of screen allowed for left image frame and gives room for right list
+
 # Right Frame List Settings
-web_list_height = image_frame_height   # Right side menu height in px (link select)
-                                       # You can also make this equal to the image_frame_height variable
+web_list_height = image_height   # Right side menu height in px (link select)
+                                 # You can also make this equal to the image_height variable
 # Settings for right side files list
 show_by_datetime = True           # True=datetime False=filename
 sort_descending = True            # reverse sort order (filename or datetime per show_by_date setting
 
 if show_by_datetime:
-    dir_sort = 'Date Time'
+    dir_sort = 'DateTime'
 else:
-    dir_sort = 'File Name'
+    dir_sort = 'FileName'
 
 if sort_descending:
     dir_order = 'Descend'
@@ -77,18 +82,20 @@ class DirectoryHandler(SimpleHTTPRequestHandler):
         displaypath = cgi.escape(urllib.unquote(self.path))
         # Start HTML formatting code
         f.write('<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">')
-
+        f.write('<head>')
+        # Setup Meta Tags
+        f.write('<meta "Content-Type" content="txt/html; charset=ISO-8859-1" />')
+        f.write('<meta name="viewport" content="width=device-width, initial-scale=1.0" />')
         if web_page_refresh_on:
-            f.write('<head><meta http-equiv="refresh" content=%s></head>' % (web_page_refresh_sec))
-        else:
-            f.write('<head></head>')
+            f.write('<meta http-equiv="refresh" content="%s" />' % ( web_page_refresh_sec ))
+        f.write('</head>')
         
         tpath, cur_folder = os.path.split(self.path)
-        f.write("<html><title>%s %s</title>" % (web_page_title, self.path))
+        f.write("<html><title>%s %s</title>" % ( web_page_title, self.path ))
         f.write("<body>")
         # Start Left iframe Image Panel
         f.write('<iframe width="%s" height="%s" align="left"' 
-                        % (image_frame_width, image_frame_height))
+                        % (iframe_width, image_height))
         f.write('src="%s" name="imgbox" id="imgbox" alt="%s">' 
                         % (list[1], web_page_title)) 
                         # display second entry in right list since list[0] may still be in progress                        
@@ -98,7 +105,7 @@ class DirectoryHandler(SimpleHTTPRequestHandler):
         f.write(list_style)
         f.write('<center><b>%s</b></center>' % (self.path))
         f.write('<center><b>%s</b></center><hr>' % (list_title))
-        f.write('<ul name="menu" id="menu">')        
+        f.write('<ul name="menu" id="menu" style="list-style-type:none" >')        
         # Create the formatted list of right panel hyperlinks to files in the specified directory
         
         display_entries = 0
@@ -109,7 +116,7 @@ class DirectoryHandler(SimpleHTTPRequestHandler):
                     break
             fullname = os.path.join(path, name)
             displayname = linkname = name
-            date_modified = time.ctime(os.path.getmtime(fullname))
+            date_modified = time.strftime('%H:%M:%S %d-%M-%Y', time.gmtime(os.path.getmtime(fullname)))
             # Append / for directories or @ for symbolic links
             if os.path.islink(fullname):
                 displayname = name + "@"
