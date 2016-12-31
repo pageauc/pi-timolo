@@ -3,7 +3,7 @@ import cgi, os, SocketServer, sys, time, urllib
 from SimpleHTTPServer import SimpleHTTPRequestHandler
 from StringIO import StringIO
 
-version = "ver 1.9 by Claude Pageau"
+version = "ver 1.91 by Claude Pageau"
 # SimpleHTTPServer python program to allow selection of images from right panel and display in an iframe left panel
 # Use for local network use only since this is not guaranteed to be a secure web server.
 # based on original code by zeekay and modified by Claude Pageau Nov-2015 for use with pi-timolo.py on a Raspberry Pi
@@ -27,8 +27,8 @@ version = "ver 1.9 by Claude Pageau"
 #   http://192.168.1.110:8080
 
 # Left iFrame Image Settings
-image_width = "1280"           # width of images to display in px
-image_height = "720"           # height of images to display in px
+image_width = "1024"           # width of images to display in px
+image_height = "768"           # height of images to display in px
 image_frame_width = "100%"     # Desired frame width to display images. can be eg percent "80%" or px "1280"
 image_frame_height = "100%"    # Desired frame height to display images. Scroll bars if image larger (percent or px) 
 image_max_listing = 0          # 0 = All or Specify Max right side file entries to show (must be > 1)
