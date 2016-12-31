@@ -3,7 +3,7 @@ import cgi, os, SocketServer, sys, time, urllib
 from SimpleHTTPServer import SimpleHTTPRequestHandler
 from StringIO import StringIO
 
-version = "ver 1.8 by Claude Pageau"
+version = "ver 1.9 by Claude Pageau"
 # SimpleHTTPServer python program to allow selection of images from right panel and display in an iframe left panel
 # Use for local network use only since this is not guaranteed to be a secure web server.
 # based on original code by zeekay and modified by Claude Pageau Nov-2015 for use with pi-timolo.py on a Raspberry Pi
@@ -34,7 +34,7 @@ image_frame_height = "100%"    # Desired frame height to display images. Scroll 
 image_max_listing = 0          # 0 = All or Specify Max right side file entries to show (must be > 1)
 
 # Web Server settings
-web_server_root = "motion/tx-deck-cam"    # webserver root path to webserver image folder
+web_server_root = "motion"    # webserver root path to webserver image folder
 web_server_port = 8080        # Web server access port eg http://192.168.1.100:8090
 web_page_title = "Pi-Timolo Motion Images"     # web page title that browser show (not displayed on web page)
 web_page_refresh_on = True    # False=Off (never)  Refresh True=On (per seconds below)       
@@ -113,7 +113,7 @@ class DirectoryHandler(SimpleHTTPRequestHandler):
                     break
             fullname = os.path.join(path, name)
             displayname = linkname = name
-            date_modified = time.strftime('%H:%M:%S %d-%M-%Y', time.gmtime(os.path.getmtime(fullname)))
+            date_modified = time.strftime('%H:%M:%S %d-%b-%Y', time.localtime(os.path.getmtime(fullname)))
             # Append / for directories or @ for symbolic links
             if os.path.islink(fullname):
                 displayname = name + "@"
