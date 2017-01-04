@@ -10,14 +10,16 @@
 # To Automate Add a crontab entry to crontab per the below.  
 # make sure convid.sh is executable eg sudo chmod +x convid.sh
 #
-# sudo crontab -e
+# crontab -e
 #
 # Add similar crontab entry as line below (excluding the #). 
-# This would execute convid.sh every 15 minutes
+# This would execute convid.sh every minute
 #
-# */15 * * * * /home/pi/pi-timolo/convid.sh
+# */1 * * * * /home/pi/pi-timolo/convid.sh > /dev/null
 
-ver="0.5"
+ver="0.6"
+
+cd /home/pi/pi-timolo   # change directory
 
 del_h264=true   # delete=true rename=false
 source_files=/home/pi/pi-timolo/motion/*h264
