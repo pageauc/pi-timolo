@@ -13,8 +13,9 @@
 # 2.95 release 20-Dec-2016 Updated logging to be more pythonic and minor bug fix
 # 2.96 release 26-Dec-2016 Fixed fatal bug error in logging when verbose = False 
 # 2.97 release 28-Dec-2016 Modified logging setup to simplify and better display messages
- 
-progVer = "ver 2.97"
+# 2.98 release 04-Jan-2017 Added convid.sh and associated changes.  Added flip to video option 
+
+progVer = "ver 2.98"
 
 import datetime
 import glob
@@ -419,6 +420,9 @@ def takeVideo(filename):
     if motionVideoOn:
         with picamera.PiCamera() as camera:
             camera.resolution = (imageWidth, imageHeight)
+            camera.vflip = imageVFlip
+            camera.hflip = imageHFlip
+            camera.rotation = imageRotation #Note use imageVFlip and imageHFlip variables            
             camera.start_recording(filename)
             camera.wait_recording(motionVideoTimer)
             camera.stop_recording()

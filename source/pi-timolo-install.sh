@@ -1,6 +1,6 @@
 #!/bin/bash
 # Convenient pi-timolo-install.sh script written by Claude Pageau 1-Jul-2016
-ver="2.7"
+ver="2.8"
 TIMOLO_DIR='pi-timolo'  # Default folder install location
 
 cd ~
@@ -44,6 +44,7 @@ if [ $? -ne 0 ] ;  then
   wget -O webserver.py https://raw.github.com/pageauc/pi-timolo/master/source/webserver.py
   wget -O webserver.sh https://raw.github.com/pageauc/pi-timolo/master/source/webserver.sh  
   wget -O makedailymovie.sh https://raw.github.com/pageauc/pi-timolo/master/source/makedailymovie.sh
+  wget -O convid.sh https://raw.github.com/pageauc/pi-timolo/master/source/convid.sh  
   wget -O makemovie.sh https://raw.github.com/pageauc/pi-timolo/master/source/makemovie.sh
   wget -O mvleavelast.sh https://raw.github.com/pageauc/pi-timolo/master/source/mvleavelast.sh
   wget -O myip.sh https://raw.github.com/pageauc/pi-timolo/master/source/myip.sh
@@ -57,6 +58,7 @@ else
   wget -O webserver.py -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/webserver.py
   wget -O webserver.sh -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/webserver.sh 
   wget -O makedailymovie.sh -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/makedailymovie.sh
+  wget -O convid.sh -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/convid.sh 
   wget -O makemovie.sh -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/makemovie.sh
   wget -O mvleavelast.sh -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/mvleavelast.sh
   wget -O myip.sh -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/myip.sh
@@ -95,6 +97,7 @@ echo ""
 echo "5 - Installing pi-timolo Dependencies"
 echo ""
 sudo apt-get install -yq python-picamera python-imaging dos2unix python-pyexiv2 libav-tools
+sudo apt-get install -yq gpac   # required for MP4Box video converter
 sudo apt-get install -yq fonts-freefont-ttf # Required for Jessie Lite Only
 if [ -e gdrive ]; then
   echo "-------------------------------------------------------------"
