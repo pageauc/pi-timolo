@@ -3,7 +3,7 @@ import cgi, os, SocketServer, sys, time, urllib
 from SimpleHTTPServer import SimpleHTTPRequestHandler
 from StringIO import StringIO
 
-version = "ver 1.91 by Claude Pageau"
+version = "ver 1.93 by Claude Pageau"
 # SimpleHTTPServer python program to allow selection of images from right panel and display in an iframe left panel
 # Use for local network use only since this is not guaranteed to be a secure web server.
 # based on original code by zeekay and modified by Claude Pageau Nov-2015 for use with pi-timolo.py on a Raspberry Pi
@@ -38,8 +38,9 @@ web_server_root = "motion"    # webserver root path to webserver image folder
 web_server_port = 8080        # Web server access port eg http://192.168.1.100:8090
 web_page_title = "Pi-Timolo Motion Images"     # web page title that browser show (not displayed on web page)
 web_page_refresh_on = True    # False=Off (never)  Refresh True=On (per seconds below)       
-web_page_refresh_sec ="180"   # Refresh page time default=180 seconds (three minutes)
-
+web_page_refresh_sec = "180"   # Refresh page time default=180 seconds (three minutes)
+web_page_blank = True          # Start left image with a blank page until a right menu item is selected
+                               # Otherwise False displays second list[1] item since first may be in progress
 web_iframe_width = "80%"         # Left Pane - Sets % of screen width allowed for image frame with rest for right list
 web_list_height = image_height   # Right List - side menu height in px (link selection)
 
@@ -93,9 +94,15 @@ class DirectoryHandler(SimpleHTTPRequestHandler):
         # Start Left iframe Image Panel
         f.write('<iframe width="%s" height="%s" align="left"' 
                         % (web_iframe_width, image_height))
-        f.write('src="%s" name="imgbox" id="imgbox" alt="%s">' 
-                        % (list[1], web_page_title)) 
-                        # display second entry in right list since list[0] may still be in progress                        
+        if web_page_blank:
+            f.write('src="%s" name="imgbox" id="imgbox" alt="%s">' 
+                          % ("about:blank", web_page_title)) 
+                          # display second entry in right list since list[0] may still be in progress                        
+        else:
+            f.write('src="%s" name="imgbox" id="imgbox" alt="%s">' 
+                          % (list[1], web_page_title)) 
+                          # display second entry in right list since list[0] may still be in progress                               
+
         f.write('<p>iframes are not supported by your browser.</p></iframe>')
         # Start Right File selection List Panel
         list_style = '<div style="height: ' + web_list_height + 'px; overflow: auto; white-space: nowrap;">'
