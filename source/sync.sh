@@ -1,5 +1,5 @@
 #!/bin/bash
-echo "$0 version 2.2 by Claude Pageau"
+echo "$0 version 2.23 by Claude Pageau"
 echo "------------------------------------------"
 
 # --------------------------------------------------------------------
@@ -150,8 +150,8 @@ function start_sync ()
     echo "------------------------------------------"
     echo "START   - start_sync - Local Files with Remote Folder"
     # check if gdrive is already running to avoid multiple instances
-    if [ -z "$(pgrep -f gdrive)" ] ; then
-        if [ $CHECK_FOR_SYNC_FILE ] ; then
+    if [ -z "$(pgrep -f gdrive)" ] ; then 
+        if [ "$CHECK_FOR_SYNC_FILE" = true ] ; then
             echo "STATUS  - Script Variable CHECK_FOR_SYNC_FILE=true"
             if [ -e $SYNC_FILE_PATH ] ; then
                 # Run gdrive for files in folder specified by variable $SYNC_DIR

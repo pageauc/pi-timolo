@@ -16,11 +16,15 @@
 # This would execute convid.sh every minute
 #
 # */1 * * * * /home/pi/pi-timolo/convid.sh > /dev/null
-
 ver="0.6"
+
+echo "$0 version $ver by Claude Pageau"
+echo "Batch Convert h264 to MP4 using MP4Box"
+echo "------------------------------------------"
 
 cd /home/pi/pi-timolo   # change directory
 
+# Variable Settings
 del_h264=true   # delete=true rename=false
 source_files=/home/pi/pi-timolo/motion/*h264
 
@@ -29,10 +33,6 @@ command_to_run='/usr/bin/MP4Box -add '
 # looking for files matching $source_files
 # ls -t sorts files by last modification time, most recent to oldest
 # IMPORTANT  - The latest file will not be processed since it may be being written to
-#
-
-echo "$0 ver $ver written by Claude Pageau"
-echo "Batch Convert h264 to MP4 using MP4Box"
 
 ls -t $source_files |
 (
