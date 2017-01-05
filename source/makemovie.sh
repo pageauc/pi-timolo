@@ -32,6 +32,8 @@
 
 #            ------------- Start Script ------------------
 # get current working folder that this script was launched from
+ver="2.9"
+
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 # User Settings for source and destination folders
@@ -51,7 +53,7 @@ vid_size='1280x720'  # Output video size width x height
 a_ratio=16:9         # Output video aspect ratio
 
 clear
-echo $0 " version 2.8 Working ..."
+echo $0 " version $ver Working ..."
 echo "====================== SETTINGS =========================================="
 echo "Movie Name  =" $moviename
 echo "Source      =" $folder_source
@@ -91,12 +93,12 @@ cd $DIR      # Return back to launch folder
 echo "=========================================================================="
 echo "Making Movie ... "$moviename "from images in " $folder_source
 echo "=========================================================================="
-sudo /usr/bin/avconv -y -f image2 -r $fps -i $folder_working/%5d.jpg -aspect $a_ratio -s $vid_size $DIR/$moviename
+sudo /usr/bin/avconv -y -f image2 -r $fps -i $folder_working/%5d.jpg -aspect $a_ratio -s $vid_size $folder_destination/$moviename
 if [ $? -ne 0 ]; then
   echo "========================== ERROR ========================================="
-  echo "avconv Encoding Failed for " $DIR/$moviename " Please Investigate Problem"
+  echo "avconv Encoding Failed for " $folder_destination/$moviename " Please Investigate Problem"
   echo "Review avconv output for error messages and correct problem"
-  echo "ERROR - avconv Encoding Failed for " $DIR/$moviename >> $error_log_file  
+  echo "ERROR - avconv Encoding Failed for " $folder_destination/$moviename >> $error_log_file  
   exit 1
 else
   echo "Processing Completed Successfully ..."
@@ -107,8 +109,9 @@ else
     echo "Check for permissions or other possible problems" 
     echo "============================ ERROR +======================================"           
     exit 1
-  else        
+  else 
     echo "=========================== SUCCESS ======================================"
+    echo "STATUS- Video Saved to $folder_destination/$moviename"     
   fi    
 fi    
 #               ------------------ End Script ----------------------------
