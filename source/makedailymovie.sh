@@ -1,6 +1,6 @@
 #!/bin/bash
-
-# makedailymovie.sh version 2.8 - written by Claude Pageau.
+ver="2.9"
+# makedailymovie.sh version 2.9 - written by Claude Pageau.
 # To install/update avconv execute the following command in RPI terminal session
 #
 # sudo apt-get install libav-tools
@@ -29,6 +29,9 @@
 # This would execute makedailymovie.sh at 10pm every day
 #
 # 01 20 * * * /home/pi/pi-timolo/makedailymovie.sh
+#
+# For more details see GitHub Wiki here
+# https://github.com/pageauc/pi-timolo/wiki/Utilities
 
 #            ------------- Start Script ------------------
 # get current working folder that this script was launched from
@@ -41,6 +44,10 @@ folder_destination=$DIR/daily_movies  # destination movies folder (will be creat
 folder_working=$DIR/avconv_tmp
 error_log_file=$DIR/makedailymovie_error.log
 
+delete_source_files=false     # Use with EXTREME CAUTION since source image files will be DELETED after encoding
+                              # If something goes wrong you may end up with no source images and a bad encode.
+                              # delete=true  noAction=false (default)   Note no spaces between variable and value
+
 # Output video path with a unique daily name by date and time.
 # Video can be specified as avi or mp4
 moviename=dailymovie_$(date '+%Y%m%d-%H%M').mp4
@@ -51,26 +58,34 @@ vid_size='1280x720'  # Output video size width x height
 a_ratio=16:9         # Output video aspect ratio
 
 clear
-echo $0 " version 2.8 Working ..."
+echo "$0 version $ver written by Claude Pageau"
+echo "Working ..."
 echo "====================== SETTINGS =========================================="
-echo "Movie Name  =" $moviename
-echo "Source      =" $folder_source
-echo "Destination =" $folder_destination
-echo "Working     =" $folder_working
+echo "Movie Name    =" $moviename
+echo "Source        =" $folder_source
+echo "Destination   =" $folder_destination
+echo "Working       =" $folder_working
+echo "Delete Source =" $delete_source_files
 echo "=========================================================================="
+
+if [ ! -e $folder_source/*jpg ] ; then
+    echo "ERROR - No Files Found $folder_source/*jpg"
+    echo "ERROR - Please Investigate and Try Again"
+    exit 1
+fi
 
 # Remove old working folder if it exists
 if [ -d $folder_working ]; then
-  echo "Removing previous working folder " $folder_working 
+  echo "WARN  - Removing previous working folder " $folder_working 
   sudo rm -R $folder_working
 fi
 
 # Create a new working folder
-echo "Creating Temporary Working Folder " $folder_working
+echo "STATUS- Creating Temporary Working Folder " $folder_working
 mkdir $folder_working
 cd $folder_working    # change to working folder
 # Create numbered soft links pointing to image files in source folder
-echo "Creating soft links for " $folder_source " files in  "$folder_working
+echo "STATUS- Creating soft links for " $folder_source " files in  "$folder_working
 a=0
 ls $folder_source/*.jpg |
 (
@@ -94,8 +109,8 @@ echo "==========================================================================
 sudo /usr/bin/avconv -y -f image2 -r $fps -i $folder_working/%5d.jpg -aspect $a_ratio -s $vid_size $DIR/$moviename
 if [ $? -ne 0 ]; then
   echo "========================== ERROR ========================================="
-  echo "avconv Encoding Failed for " $DIR/$moviename " Please Investigate Problem"
-  echo "Review avconv output for error messages and correct problem"
+  echo "ERROR - avconv Encoding Failed for " $DIR/$moviename " Please Investigate Problem"
+  echo "ERROR - Review avconv output for error messages and correct problem"
   echo "ERROR - avconv Encoding Failed for " $DIR/$moviename >> $error_log_file  
   exit 1
 else
@@ -104,9 +119,9 @@ else
     if [ "$?" -ne 0]; then
       echo "============================ ERROR +======================================" 
       echo "ERROR - Problem Creating Destination Folder " $folder_destination
-      echo "If destination is a remote folder or mount then check network, destination IP address, permissions, Etc"
-      echo "Logging event to Error Log ....."
-      echo "mkdir Failed - " $folder_destination " Could NOT be Created. Please investigate ..." >> $error_log_file
+      echo "ERROR - If destination is a remote folder or mount then check network, destination IP address, permissions, Etc"
+      echo "ERROR - Logging event to Error Log ....."
+      echo "ERROR - mkdir Failed - " $folder_destination " Could NOT be Created. Please investigate ..." >> $error_log_file
       exit 1
     fi     
   fi
@@ -115,32 +130,37 @@ else
   if [ $? -ne 0 ]; then
     echo "============================= ERROR +======================================" 
     echo "ERROR - Problem copying " $DIR/$moviename " to " $folder_destination/$moviename
-    echo "If destination is a remote folder or mount then check network, destination IP address, permissions, Etc"
-    echo "Logging event to Error Log ....."
-    echo "Copy Failed - " $DIR/$moviename " to " $folder_destination/$moviename " Please investigate ..." >> $error_log_file
+    echo "ERROR - If destination is a remote folder or mount then check network, destination IP address, permissions, Etc"
+    echo "ERROR - Logging event to Error Log ....."
+    echo "ERROR - Copy Failed - " $DIR/$moviename " to " $folder_destination/$moviename " Please investigate ..." >> $error_log_file
     exit 1
   else
     if [ -e $folder_destination/$moviename ]; then
       echo "=========================================================================="   
       echo "Success - Daily Movie Saved to " $folder_destination/$moviename
       sudo rm $DIR/$moviename
-      echo "Processing Completed Successfully ..."
-      echo "Deleting Working Folder " $folder_working
+      echo "STATUS- Processing Completed Successfully ..."
+      echo "STATUS- Deleting Working Folder " $folder_working
       sudo rm -R $folder_working
       if [ $? -ne 0 ]; then 
         echo "ERROR - Could not Delete Working Folder " $folder_working " Please Investigate ..."
-        echo "Check for permissions or other possible problems" 
+        echo "ERROR - Check for permissions or other possible problems" 
         echo "============================ ERROR +======================================"           
         exit 1
-      else        
+      else 
+        if [ "$delete_source_files" = true ] ; then
+            echo "WARN  - Deleting Source Files $folder_source/*jpg"
+            sudo rm $folder_source/*jpg
+        fi
         echo "=========================== SUCCESS ======================================"
+        echo "STATUS- Video Saved to $folder_destination/$moviename"        
       fi
     else
       echo "============================ ERROR +======================================"    
       echo "ERROR - Problem copying " $DIR/$moviename " to " $folder_destination/$moviename
-      echo "If destination is a remote folder or mount then check network, destination IP address, permissions, Etc"
-      echo "Logging event to Error Log ....."
-      echo "Copy Failed - " $DIR/$moviename " to " $folder_destination/$moviename " Please investigate ..." >> $error_log_file
+      echo "ERROR - If destination is a remote folder or mount then check network, destination IP address, permissions, Etc"
+      echo "ERROR - Logging event to Error Log ....."
+      echo "ERROR - Copy Failed - " $DIR/$moviename " to " $folder_destination/$moviename " Please investigate ..." >> $error_log_file
       exit 1
     fi     
   fi    
