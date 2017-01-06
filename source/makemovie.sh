@@ -1,34 +1,12 @@
 #!/bin/bash
 
-# avconv_makemovie.sh version 2.8 - written by Claude Pageau.
+# avconv_makemovie.sh version 3.0 - written by Claude Pageau.
 # To install/update avconv execute the following command in RPI terminal session
 #
 # sudo apt-get install libav-tools
 #
-# Mounting a network share to /home/pi/pi-timolo/mnt folder
-# Note change the IP and sharename path below to suit your network
-# You can mount the network share by adding
-# the appropriate entry to the /etc/fstab
-# example
-#
-# sudo nano /etc/fstab
-#
-# Add a similar line below to the fstab.
-# This example mounts an external Hard Drive share
-# on a RPI running openelec xbmc.
-# Change the IP address, share name and paths appropriately (exclude the #)
-#
-# //192.168.1.154/sharename/Media/Images /home/pi/pi-timolo/mnt cifs username=root,password=openelec,uid=pi,gid=pi, 0 0
-#
-# Add a crontab entry to the root crontab per the below.
-# make sure makedailymovie.sh is executable eg sudo chmod +x makedailymovie.sh
-#
-# sudo crontab -e
-#
-# Add similar crontab entry as line below (excluding the #).
-# This would execute makedailymovie.sh at 10pm every day
-#
-# 01 20 * * * /home/pi/pi-timolo/makedailymovie.sh
+# For Details see GitHub Wiki
+# here https://github.com/pageauc/pi-timolo/wiki/Utilities
 
 #            ------------- Start Script ------------------
 ver="3.0"
