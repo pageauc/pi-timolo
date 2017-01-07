@@ -22,11 +22,11 @@ a_ratio=16:9         # Output video aspect ratio
 # Note destination folder will be created if it does not exist
 video_prefix="TL_"
 folder_destination=$DIR/video  # destination folder default $DIR/video (will be created if it does not exist)
-folder_source=$DIR/motion      # location of source jpg images for video.  default $DIR/timelapse
-delete_source_files=true       # Use with EXTREME CAUTION. true will DELETE source files after encoding
+folder_source=$DIR/timelapse   # location of source jpg images for video.  default $DIR/timelapse
+delete_source_files=false      # default false Use with EXTREME CAUTION since true will DELETE source files after encoding
                                # If something goes wrong you may end up with no source images and a bad encode.
                                # delete=true  noAction=false (default)   Note no spaces between variable and value
-share_copy_on=true             # default=false true copies video to the network share via mount location below
+share_copy_on=false            # default=false true copies video to the network share via mount location below
 share_destination=$DIR/mnt     # A valid network share mount point to copy video to
                                # IMPORTANT - Make sure share is mounted or you will have files copied to the folder
                                #             This will prevent mounting of share until the files in the folder are moved/deleted.
