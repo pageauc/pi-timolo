@@ -1,6 +1,6 @@
 #!/bin/bash
-echo "$0 version 2.23 by Claude Pageau"
-echo "------------------------------------------"
+echo "=================================================================="
+echo "$0 version 2.3 by Claude Pageau"
 
 # --------------------------------------------------------------------
 # Requires /usr/local/bin/gdrive executable compiled from github source for arm
@@ -29,8 +29,6 @@ echo "------------------------------------------"
 
 PROG_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )" # folder location of this script
 cd $PROG_DIR
-echo "START   - Processing"
-echo "STATUS  - Current pi-timolo working dir is $PROG_DIR"
 
 # ---------------  Local to Remote File Sync Settings --------------
 SYNC_ON=true                 # true - Do Remote Sync  false - Non
@@ -51,6 +49,25 @@ LOCAL_CONFIG_FILE='config.py'          # pi-timolo configuration variables file 
 WATCH_APP_ON=false           # false - off  true - Check if app is running and restart or reboot
 WATCH_APP='pi-timolo.py'     # App filename to monitor for Run Status
 FORCE_REBOOT=false           # false - Restart pi-timolo.py if not running    true - Reboot if not running (Use with Caution)  
+
+echo "==================== Variable Settings ==========================="
+echo "SYNC_ON             =" $SYNC_ON
+echo "SYNC_DIR            =" $SYNC_DIR
+echo "FILES_TO_SYNC       =" $FILES_TO_SYNC
+echo "CHECK_FOR_SYNC_FILE =" $CHECK_FOR_SYNC_FILE
+echo "SYNC_FILE_PATH      =" $SYNC_FILE_PATH
+echo ""
+echo "REMOTE_CONFIG_ON    =" $REMOTE_CONFIG_ON
+echo "REMOTE_CONFIG_DIR   =" $REMOTE_CONFIG_DIR
+echo "REMOTE_CONFIG_FILE  =" $REMOTE_CONFIG_FILE
+echo "LOCAL_CONFIG_FILE   =" $LOCAL_CONFIG_FILE
+echo ""
+echo "WATCH_APP_ON        =" $WATCH_APP_ON
+echo "WATCH_APP           =" $WATCH_APP
+echo "FORCE_REBOOT        =" $FORCE_REBOOT
+echo "=================================================================="
+echo "STATUS  - Current pi-timolo working dir is $PROG_DIR"
+echo "START   - Processing"
 
 # ------------------------------------------------------
 function restart_pi_timolo ()
