@@ -1,6 +1,6 @@
 #!/bin/bash
 # Convenient pi-timolo-install.sh script written by Claude Pageau 1-Jul-2016
-ver="2.9"
+ver="3.0"
 TIMOLO_DIR='pi-timolo'  # Default folder install location
 
 cd ~
@@ -43,9 +43,8 @@ if [ $? -ne 0 ] ;  then
   wget -O sync.sh https://raw.github.com/pageauc/pi-timolo/master/source/sync.sh
   wget -O webserver.py https://raw.github.com/pageauc/pi-timolo/master/source/webserver.py
   wget -O webserver.sh https://raw.github.com/pageauc/pi-timolo/master/source/webserver.sh  
-  wget -O makedailymovie.sh https://raw.github.com/pageauc/pi-timolo/master/source/makedailymovie.sh
   wget -O convid.sh https://raw.github.com/pageauc/pi-timolo/master/source/convid.sh  
-  wget -O makemovie.sh https://raw.github.com/pageauc/pi-timolo/master/source/makemovie.sh
+  wget -O makevideo.sh https://raw.github.com/pageauc/pi-timolo/master/source/makevideo.sh
   wget -O mvleavelast.sh https://raw.github.com/pageauc/pi-timolo/master/source/mvleavelast.sh
   wget -O myip.sh https://raw.github.com/pageauc/pi-timolo/master/source/myip.sh
   wget -O gdrive https://raw.github.com/pageauc/pi-timolo/master/source/drive_armv6
@@ -57,9 +56,8 @@ else
   wget -O sync.sh -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/sync.sh
   wget -O webserver.py -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/webserver.py
   wget -O webserver.sh -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/webserver.sh 
-  wget -O makedailymovie.sh -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/makedailymovie.sh
   wget -O convid.sh -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/convid.sh 
-  wget -O makemovie.sh -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/makemovie.sh
+  wget -O makevideo.sh -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/makevideo.sh
   wget -O mvleavelast.sh -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/mvleavelast.sh
   wget -O myip.sh -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/myip.sh
   wget -O gdrive -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/drive_armv6
@@ -120,9 +118,20 @@ if [ "$DIR" != "$INSTALL_PATH" ]; then
     rm pi-timolo-install.sh
   fi
 fi
+
 if [ -e 'install.sh' ]; then
   echo "$STATUS Delete Old install.sh"
   rm install.sh
+fi
+
+if [ -e 'makemovie.sh' ]; then
+  echo "$STATUS Delete Old makemovie.sh"
+  rm makemovie.sh
+fi
+
+if [ -e 'makedailymovie.sh' ]; then
+  echo "$STATUS Delete Old makedailymovie.sh"
+  rm makedailymovie.sh
 fi
 
 echo "Done Dependencies"
@@ -148,6 +157,11 @@ echo ""
 echo "-------------------------------------------------------------"
 echo "See Readme.md or GitHub wiki for Further Details"
 echo ""
+echo "IMPORTANT"
+echo "makemovie.sh and makedailymovie.sh have been deleted"
+echo "They are Now Replaced by makevideo.sh"
+echo "For makevideo.sh usage see GitHub wiki"
+echo "at https://github.com/pageauc/pi-timolo/wiki/Utilities"
 echo $TIMOLO_DIR "Good Luck Claude ..."
 echo "Bye"
 
