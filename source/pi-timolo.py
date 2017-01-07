@@ -3,7 +3,7 @@
 # pi-timolo - Raspberry Pi Long Duration Timelapse, Motion Detection, with Low Light Capability
 # written by Claude Pageau Dec-2014 (original issue)
 # getStreamImage function based on utpalc code based on brainflakes lightweight motion detection code on Raspberry PI forum - Thanks
-# Complete pi-timolo code and instructions are available on my github repo at https://github.com/pageauc
+# Complete pi-timolo code and wiki instructions are available on my github repo at https://github.com/pageauc/pi-timolo
 
 # 2.7 released 20-Jul-2015  added saving of exif metadata when text written to image sinc PIL does not retain this.
 # 2.8 released 2-Aug-2015 updated gdrive and replaced mencoder with avconv
@@ -14,8 +14,9 @@
 # 2.96 release 26-Dec-2016 Fixed fatal bug error in logging when verbose = False 
 # 2.97 release 28-Dec-2016 Modified logging setup to simplify and better display messages
 # 2.98 release 04-Jan-2017 Added convid.sh and associated changes.  Added flip to video option 
+# 2.99 release 06-Jan-2017 Added sync_lock option to motion video
 
-progVer = "ver 2.98"
+progVer = "ver 2.99"
 
 import datetime
 import glob
@@ -426,6 +427,7 @@ def takeVideo(filename):
             camera.start_recording(filename)
             camera.wait_recording(motionVideoTimer)
             camera.stop_recording()
+        createSyncLockFile(filename)           
     return
 
 #-----------------------------------------------------------------------------------------------    
