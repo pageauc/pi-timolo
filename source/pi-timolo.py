@@ -423,7 +423,8 @@ def takeVideo(filename):
             camera.resolution = (imageWidth, imageHeight)
             camera.vflip = imageVFlip
             camera.hflip = imageHFlip
-            camera.rotation = imageRotation #Note use imageVFlip and imageHFlip variables            
+            camera.rotation = imageRotation #Note use imageVFlip and imageHFlip variables 
+            time.sleep(0.5)   # sleep for a little while so camera can get adjustments         
             camera.start_recording(filename)
             camera.wait_recording(motionVideoTimer)
             camera.stop_recording()
