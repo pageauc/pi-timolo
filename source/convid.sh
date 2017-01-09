@@ -22,7 +22,9 @@ echo "$0 version $ver by Claude Pageau"
 echo "Batch Convert h264 to MP4 using MP4Box"
 echo "------------------------------------------"
 
-cd /home/pi/pi-timolo   # change directory
+# Get current folder of this script
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+cd $DIR
 
 # Variable Settings
 del_h264=true     # delete=true rename=false
@@ -53,7 +55,7 @@ function convert ()  #Convert h264 file to MP4
                 echo "sudo apt-get -y install gpac"
                 exit 1
             else
-                touch -r $file $MP4filename.mp4
+                /bin/touch -r $file $MP4filename.mp4
                 if [ "$del_h264" = true ]; then
                     echo "STATUS - Deleting $not_the_most_recent_file"
                     rm $file
