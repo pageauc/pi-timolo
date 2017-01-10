@@ -430,7 +430,6 @@ def takeVideo(filename):
             camera.start_recording(filename)
             camera.wait_recording(motionVideoTimer)
             camera.stop_recording()
-        createSyncLockFile(filename)
         # This creates a subprocess that runs convid.sh with the filename as a parameter
         try:
             convid = "%s/convid.sh %s" % ( baseDir, filename )        
@@ -440,6 +439,7 @@ def takeVideo(filename):
             print("subprocess %s failed" %s ( convid ))
         else:        
             print("unidentified error")
+        createSyncLockFile(filename)            
     return
 
 #-----------------------------------------------------------------------------------------------    

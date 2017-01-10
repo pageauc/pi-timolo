@@ -57,7 +57,7 @@ function convert ()  #Convert h264 file to MP4
             else
                 /bin/touch -r $file $MP4filename.mp4
                 if [ "$del_h264" = true ]; then
-                    echo "STATUS - Deleting $not_the_most_recent_file"
+                    echo "STATUS - Deleting" $file
                     rm $file
                 else
                     echo "STATUS - Rename $file $file.done"
@@ -65,7 +65,7 @@ function convert ()  #Convert h264 file to MP4
                     mv $file $file.done
                 fi
             fi
-            echo "DONE   - Processing of $file"
+            echo "DONE   - Processing of" $file
             echo "================================================"
         fi
     else
