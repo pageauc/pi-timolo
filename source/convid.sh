@@ -16,7 +16,7 @@
 # This would execute convid.sh every minute
 #
 # */1 * * * * /home/pi/pi-timolo/convid.sh > /dev/null
-ver="0.8"
+ver="0.9"
 
 echo "$0 version $ver by Claude Pageau"
 echo "Batch Convert h264 to MP4 using MP4Box"
@@ -72,6 +72,12 @@ function convert ()  #Convert h264 file to MP4
         echo "MP4Box is Already Running ..."
     fi
 }
+
+# Process single file file passed as parameter
+if [ ! -z "$1" ] ; then
+    convert $1
+    exit 0
+fi
 
 #Check if there are files to process
 if ls $source_files 1> /dev/null 2>&1; then

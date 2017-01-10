@@ -15,8 +15,9 @@
 # 2.97 release 28-Dec-2016 Modified logging setup to simplify and better display messages
 # 2.98 release 04-Jan-2017 Added convid.sh and associated changes.  Added flip to video option 
 # 2.99 release 06-Jan-2017 Added sync_lock option to motion video
+# 3.00 release 09-Jan-2017 Added takeVideo subprocess to convert h264
 
-progVer = "ver 2.99"
+progVer = "ver 3.00"
 
 import datetime
 import glob
@@ -24,6 +25,7 @@ import logging
 import os
 import sys
 import time
+import subprocess
 
 mypath = os.path.abspath(__file__)  # Find the full path of this python script
 baseDir = os.path.dirname(mypath)  # get the path location only (excluding script name)
@@ -330,6 +332,7 @@ def postImageProcessing(numberon, counterstart, countermax, counter, recycle, co
         logging.info("Next Counter=%s %s", writeCount, counterpath)
     return counter
 
+#-----------------------------------------------------------------------------------------------    
 def getVideoName(path, prefix, numberon, counter):
     # build image file names by number sequence or date/time
     if numberon:
@@ -423,12 +426,20 @@ def takeVideo(filename):
             camera.resolution = (imageWidth, imageHeight)
             camera.vflip = imageVFlip
             camera.hflip = imageHFlip
-            camera.rotation = imageRotation #Note use imageVFlip and imageHFlip variables 
-            time.sleep(0.5)   # sleep for a little while so camera can get adjustments         
+            camera.rotation = imageRotation #Note use imageVFlip and imageHFlip variables            
             camera.start_recording(filename)
             camera.wait_recording(motionVideoTimer)
             camera.stop_recording()
-        createSyncLockFile(filename)           
+        createSyncLockFile(filename)
+        # This creates a subprocess that runs convid.sh with the filename as a parameter
+        try:
+            convid = "%s/convid.sh %s" % ( baseDir, filename )        
+            proc = subprocess.Popen(convid, shell=True,
+                             stdin=None, stdout=None, stderr=None, close_fds=True) 
+        except IOError:
+            print("subprocess %s failed" %s ( convid ))
+        else:        
+            print("unidentified error")
     return
 
 #-----------------------------------------------------------------------------------------------    
