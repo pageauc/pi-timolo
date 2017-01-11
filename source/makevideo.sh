@@ -1,6 +1,6 @@
 #!/bin/bash
-ver="3.1"
-# makedailymovie.sh version 2.9 - written by Claude Pageau.
+ver="3.2"
+# makedailymovie.sh - written by Claude Pageau.
 # To install/update avconv execute the following command in RPI terminal session
 #
 # sudo apt-get install libav-tools
@@ -60,9 +60,9 @@ if [ ! -d $folder_source ] ; then
 fi
 
 # Check if source files exist
-source_files=$folder_source"/*jpg"
-if [ ! -e $folder_files ] ; then
-    echo "ERROR - No Source Files Found" $folder_files
+source_files=$folder_source/*jpg
+if [ ! -e $source_files ] ; then
+    echo "ERROR - No Source Files Found in" $source_files
     echo "ERROR - Please Investigate and Try Again"
     exit 1
 fi
