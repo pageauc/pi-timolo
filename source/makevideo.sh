@@ -1,5 +1,5 @@
 #!/bin/bash
-ver="3.2"
+ver="3.3"
 # makedailymovie.sh - written by Claude Pageau.
 # To install/update avconv execute the following command in RPI terminal session
 #
@@ -26,6 +26,7 @@ folder_source=$DIR/timelapse   # location of source jpg images for video.  defau
 delete_source_files=false      # default false Use with EXTREME CAUTION since true will DELETE source files after encoding
                                # If something goes wrong you may end up with no source images and a bad encode.
                                # delete=true  noAction=false (default)   Note no spaces between variable and value
+source_files=$folder_source/*jpg  # Files wildcard that we are looking for
 share_copy_on=false            # default=false true copies video to the network share via mount location below
 share_destination=$DIR/mnt     # A valid network share mount point to copy video to
                                # IMPORTANT - Make sure share is mounted or you will have files copied to the folder
@@ -44,6 +45,7 @@ echo "$0 version $ver written by Claude Pageau"
 echo "====================== SETTINGS =========================================="
 echo "videoname            =" $videoname
 echo "folder_source        =" $folder_source
+echo "source_files         =" $source_files
 echo "folder_destination   =" $folder_destination
 echo "delete_source_files  =" $delete_source_files
 echo "share_copy_on        =" $share_copy_on
@@ -51,7 +53,7 @@ echo "share_destination    =" $share_destination
 echo "=========================================================================="
 echo "Working ..."
 
-# Create destination folder if it does note exist
+# Check if source folder exists
 if [ ! -d $folder_source ] ; then
     echo "ERROR - Source Folder" $folder_source "Does Not Exist"
     echo "ERROR - Check $0 Variable folder_source and Try Again"
@@ -60,8 +62,7 @@ if [ ! -d $folder_source ] ; then
 fi
 
 # Check if source files exist
-source_files=$folder_source/*jpg
-if [ ! -e $source_files ] ; then
+if ! ls $source_files 1> /dev/null 2>&1 ; then
     echo "ERROR - No Source Files Found in" $source_files
     echo "ERROR - Please Investigate and Try Again"
     exit 1
