@@ -1,5 +1,5 @@
 #!/bin/bash
-ver="3.3"
+ver="3.4"
 # makedailymovie.sh - written by Claude Pageau.
 # To install/update avconv execute the following command in RPI terminal session
 #
@@ -21,7 +21,7 @@ a_ratio=16:9         # Output video aspect ratio
 # User Settings for source and destination folders
 # Note destination folder will be created if it does not exist
 video_prefix="TL_"
-folder_destination=$DIR/video  # destination folder default $DIR/video (will be created if it does not exist)
+folder_destination=$DIR/videos # destination folder default $DIR/video (will be created if it does not exist)
 folder_source=$DIR/timelapse   # location of source jpg images for video.  default $DIR/timelapse
 delete_source_files=false      # default false Use with EXTREME CAUTION since true will DELETE source files after encoding
                                # If something goes wrong you may end up with no source images and a bad encode.
