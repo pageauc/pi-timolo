@@ -16,90 +16,243 @@
 # This would execute convid.sh every minute
 #
 # */1 * * * * /home/pi/pi-timolo/convid.sh > /dev/null
-ver="0.9"
-
-echo "$0 version $ver by Claude Pageau"
-echo "Batch Convert h264 to MP4 using MP4Box"
-echo "------------------------------------------"
+ver="1.3"
+echo "================================================"
+echo "$0 version $ver  written by Claude Pageau"
 
 # Get current folder of this script
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 cd $DIR
 
-# Variable Settings
+# H264 Conversion Variable Settings
+#----------------------------------
+source_h264=/home/pi/pi-timolo/motion/*h264  # Path and file type of source files to convert
 del_h264=true     # delete=true rename=false
-source_files=/home/pi/pi-timolo/motion/*h264
 
-command_to_run='/usr/bin/MP4Box -add '
+# MP4 Join Variables Settings
+#----------------------------
+max_joins=12   # Number of videos to join before starting New Join
+source_mp4="/home/pi/pi-timolo/motion" 
+dest_mp4=/home/pi/pi-timolo/videos
+video_prefix=convid  # Prefix of output join file
+command_to_run='/usr/bin/MP4Box -add '  # Command for converting video format
 
-# looking for files matching $source_files
-# ls -t sorts files by last modification time, most recent to oldest
-# IMPORTANT  - The latest file will not be processed since it may be being written to
-
-function convert ()  #Convert h264 file to MP4
+#---------------------------------------------
+function convert ()  # Convert param single h264 file to MP4
 {
-     file=$1
-     if [ -z "$( pgrep -f MP4Box )" ]; then   # Does file exist
-        if [ ! -e $file ]; then
-            echo "ERROR  - Could Not Find File $file"
-            echo "         Please Investigate"
-        else
-            echo "START  - Converting $file"
-            MP4filename=$(echo $file | cut -f 1 -d '.')
-            $command_to_run $file $MP4filename.mp4
-            if [ $? -ne 0 ] ; then
-                echo "------------------------------------------"
-                echo "ERROR   -  Problem running $command_to_run"
-                echo "           Check if command exists"
-                echo "To install MP4Box"
-                echo "sudo apt-get -y install gpac"
-                exit 1
-            else
-                /bin/touch -r $file $MP4filename.mp4
-                if [ "$del_h264" = true ]; then
-                    echo "STATUS - Deleting" $file
-                    rm $file
-                else
-                    echo "STATUS - Rename $file $file.done"
-                    rm -f $file.done
-                    mv $file $file.done
-                fi
-            fi
-            echo "DONE   - Processing of" $file
-            echo "================================================"
-        fi
+    fileparam=$1
+
+    if [ ! -e $fileparam ]; then
+        echo "ERROR  - Could Not Find File" $fileparam
+        echo "         Please Investigate"
     else
-        echo "MP4Box is Already Running ..."
+        echo "STATUS - Now Converting $fileparam"
+        MP4filename=$(echo $fileparam | cut -f 1 -d '.')
+        $command_to_run $fileparam $MP4filename.mp4
+        if [ $? -ne 0 ] ; then
+            echo "ERROR   -  Problem running $command_to_run"
+            echo "           Check if command exists"
+            echo "To install MP4Box"
+            echo "sudo apt-get -y install gpac"
+            exit 1
+        else
+           # sync mp4 file dates from corresponding h264 file
+           /bin/touch -r $fileparam $MP4filename.mp4
+           if [ "$del_h264" = true ]; then
+                echo "STATUS - Deleting" $fileparam
+                rm $fileparam
+            else
+                echo "STATUS - Rename" $fileparam
+                echo "STATUS -   To  " $fileparam".done"
+                rm -f $fileparam.done
+                mv $fileparam $fileparam.done
+            fi
+        fi
+        echo "STATUS - Successfully Converted" $fileparam
+        echo "================================================"             
     fi
 }
 
-# Process single file file passed as parameter
-if [ ! -z "$1" ] ; then
+#---------------------------------------------
+function convertall ()
+{
+    echo "Start Batch Convert of All h264 to mp4"
+    echo "================================================" 
+    if ls $source_h264 1> /dev/null 2>&1; then    
+        echo "The most recent file may still be Recording so"
+        echo "Wait 15 seconds Before Processing."
+        sleep 15   # Wait in case video is in progress 
+        
+        # Convert all h264 files to mp4 and optionally delete h264
+        if ls $source_h264 1> /dev/null 2>&1; then
+            echo "STATUS- Found $source_h264 Files"
+            ls -t $source_h264 |
+            (
+              while read next_h264_file
+              do
+                 if [ -e $next_h264_file ] ; then
+                     convert $next_h264_file
+                 else
+                     echo "WARN  - File Not Found" $next_h264_file
+                 fi
+              done
+            )               
+        else
+            echo "WARN  - No" $source_h264 "Files Found to Process."
+        fi
+    else
+        echo "STATUS - No" $source_h264 "Files Found to Process."
+    fi    
+}
+
+#---------------------------------------------
+function joinvideo ()
+{
+    echo "Batch Join MP4 Videos Using MP4Box"
+    echo "================================================"
+    if ls $source_mp4/*mp4 1> /dev/null 2>&1 ; then
+        total_mp4=$(ls $source_mp4 | grep mp4 -wc)    
+        if [ $total_mp4 -le 2 ] ; then
+            echo "ERROR  - You Must Have at Least Two mp4 Files to Join"
+            exit 1
+        fi
+    else
+        echo "WARN  - No $source_mp4 Files Found to Process."
+        exit 0
+    fi
+    
+    ls -t $source_mp4/*mp4 |
+    (
+      # the first line will be the most recent file
+      read the_first_mp4
+      # Create a file name based on the date of current file
+      # This keeps video file name date time more in line with original record date time
+      date=$(stat $the_first_mp4 | grep Modify | cut -f 2 -d ' ')
+      year=$(echo $date | cut -f 1 -d '-')
+      month=$(echo $date | cut -f 2 -d '-')
+      day=$(echo $date | cut -f 3 -d '-')
+      time=$(stat $the_first_mp4 | grep Modify | cut -f 3 -d ' ' | cut -f 1 -d '.')
+      H=$(echo $time | cut -f 1 -d ':')
+      M=$(echo $time | cut -f 2 -d ':')
+      S=$(echo $time | cut -f 3 -d ':')     
+      videoname=$video_prefix"_"$year$month$day"_"$H$M$S".mp4"
+      total_mp4=$(ls $source_mp4/*mp4 | grep mp4 -wc)
+      echo "STATUS - Input Files" $source_mp4"/*mp4"
+      echo "STATUS - Output File" $dest_mp4/$videoname 
+      echo "STATUS - max_joins="$max_joins "per Output Video File"
+      echo "==============================================="
+      echo $the_first_mp4 "May Still be Recording"
+      echo "STATUS - Wait 15 seconds Before Processing."
+      sleep 15   # Wait in case video is in progress
+      echo "==============================================="
+      echo "STATUS - Start Processing Video Joins"
+      echo "STATUS - Initialize Join with" $the_first_mp4      
+      cp $the_first_mp4 $DIR/$videoname
+      cp $DIR/$videoname $DIR/tmp_$videoname
+      rm $the_first_mp4
+      cur_joins=2
+      loop_cnt=2
+      # Process the rest of the files
+      while read the_next_mp4
+      do    
+        if [ $loop_cnt -ge $total_mp4 ]; then 
+            echo "STATUS - Total  " $loop_cnt "of" $total_mp4
+            echo "STATUS - Current" $cur_joins "of" $max_joins
+            echo "STATUS - Next File " $the_next_mp4
+            echo "STATUS - Joining To" $DIR/$videoname
+            echo "==============================================="
+            /usr/bin/MP4Box -add $the_next_mp4 -cat $DIR/$videoname -new $DIR/tmp_$videoname
+            echo "==============================================="       
+            echo "STATUS - Moving" $DIR/$videoname
+            echo "STATUS -   To  " $dest_mp4/$videoname
+            rm $the_next_mp4            
+            rm $DIR/$videoname           
+            mv $DIR/tmp_$videoname $dest_mp4/$videoname
+            if [ -e $dest_mp4/$videoname ] ; then
+                echo "STATUS - Success ...." 
+                echo "STATUS - Video Saved To" $dest_mp4/$videoname                
+            else
+                echo "ERROR  - Problem Moving" $DIR/tmp_$videoname
+                echo "ERROR  - Please Investigate Problem"                
+            fi            
+            echo "==============================================="          
+        elif [ $cur_joins -ge $max_joins ] ; then
+            # Move current Ouput video and Prepare next Output Video
+            /bin/touch -r $the_next_mp4 $DIR/$videoname
+            echo "STATUS - Moving" $DIR/$videoname
+            echo "           To  " $dest_mp4/$videoname
+            mv $DIR/$videoname $dest_mp4/$videoname
+            date=$(stat $the_next_mp4 | grep Modify | cut -f 2 -d ' ')
+            year=$(echo $date | cut -f 1 -d '-')
+            month=$(echo $date | cut -f 2 -d '-')
+            day=$(echo $date | cut -f 3 -d '-')
+            time=$(stat $the_next_mp4 | grep Modify | cut -f 3 -d ' ' | cut -f 1 -d '.')
+            H=$(echo $time | cut -f 1 -d ':')
+            M=$(echo $time | cut -f 2 -d ':')
+            S=$(echo $time | cut -f 3 -d ':')
+            videoname=$video_prefix"_"$year$month$day"_"$H$M$S".mp4"
+            echo "STATUS - Next Output Video is" $DIR/$videoname
+            echo "STATUS - Initialize Join with" $the_next_mp4
+            cp $the_next_mp4 $DIR/$videoname
+            cp $DIR/$videoname $DIR/tmp_$videoname
+            rm $the_next_mp4
+            # Process loop and join counters
+            loop_cnt=$[$loop_cnt +1]
+            cur_joins=2          
+        else
+            # Join Source mp4's to Output mp4         
+            cur_joins=$[$cur_joins +1]
+            loop_cnt=$[$loop_cnt +1]            
+            echo "STATUS - Total  " $loop_cnt "of" $total_mp4
+            echo "STATUS - Current" $cur_joins "of" $max_joins
+            echo "STATUS - Next File " $the_next_mp4
+            echo "STATUS - Joining To" $DIR/$videoname
+            echo "==============================================="
+            /usr/bin/MP4Box -add $the_next_mp4 -cat $DIR/$videoname -new $DIR/tmp_$videoname
+            echo "==============================================="
+            rm $DIR/$videoname
+            mv $DIR/tmp_$videoname $DIR/$videoname
+            rm $the_next_mp4       
+        fi
+      done
+    )
+}
+
+# ------------------ Start Main Script ------------------
+if [ -z $1 ] ;  then
+   echo "================================================"
+   echo "This utility can"
+   echo "1) convert h264 files to mp4 format"
+   echo "   Individually or for all files in specified folder per source_h264 variable"
+   echo "   To remove original h264 set variable del_h264=true (default)"
+   echo ""
+   echo "2) Joins specified number of mp4 videos into larger video files"
+   echo "   based on variable setting max_joins=" $max_joins
+   echo "   IMPORTANT - Original mp4's Will be Deleted After the Join"
+   echo ""
+   echo "           $0  Syntax"
+   echo ""
+   echo "You Must Specify a Valid Parameter per"
+   echo ""
+   echo "filepath of h264 File to Convert  NOTE - Original filename will be preserved"
+   echo "all  - Converts all" $source_h264 "Files in Folder"
+   echo "join - Joins all mp4 files into a dated mp4 per specified max_joins variable"
+   echo ""
+   echo "Examples"
+   echo "           ./convid motion/mo-cam1-1234.h264"
+   echo "           ./convid convert"
+   echo "           ./convid join"
+   echo ""
+   echo "For More Details See pi-timolo Wiki Here https://github.com/pageauc/pi-timolo/wiki"
+   
+elif [ "$1" = "join" ] ; then
+    joinvideo
+elif [ "$1" = "convert" ] ; then
+    convertall  
+elif [ -e $1 ] ; then
     convert $1
-    exit 0
-fi
-
-#Check if there are files to process
-if ls $source_files 1> /dev/null 2>&1; then
-    echo "STATUS- Found $source_files Files"
 else
-    echo "WARN  - No $source_files Files Found to Process."
-    exit
+   echo "STATUS - $1 File Not Found"
 fi
-
-ls -t $source_files |
-(
-  # the first line will be the most recent file
-  read the_most_recent_file
-  echo $the_most_recent_file "May Still be Recording"
-  echo "Wait 15 seconds Before Processing."
-  sleep 15   # Wait in case video is in progress
-  convert $the_most_recent_file
-  # Process the rest of the files
-  while read not_the_most_recent_file
-  do
-     convert $not_the_most_recent_file
-  done
-)
-
+echo ""
 echo "$0 Done"
