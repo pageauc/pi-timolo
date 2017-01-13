@@ -1,6 +1,6 @@
 #!/bin/bash
 # Convenient pi-timolo-install.sh script written by Claude Pageau 1-Jul-2016
-ver="3.2"
+ver="3.21"
 TIMOLO_DIR='pi-timolo'  # Default folder install location
 
 cd ~
@@ -69,7 +69,7 @@ echo "-------------------------------------------------------------"
 echo "2 - Make Required Files Executable"
 echo ""
 chmod +x *py
-chmod -x config.py
+chmod -x config*py
 chmod +x *sh
 echo "Done Permissions"
 echo "-------------------------------------------------------------"
