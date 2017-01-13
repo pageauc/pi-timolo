@@ -1,5 +1,5 @@
 #!/bin/bash
-ver="3.4"
+ver="3.5"
 # makedailymovie.sh - written by Claude Pageau.
 # To install/update avconv execute the following command in RPI terminal session
 #
@@ -45,7 +45,7 @@ echo "$0 version $ver written by Claude Pageau"
 echo "====================== SETTINGS =========================================="
 echo "videoname            =" $videoname
 echo "folder_source        =" $folder_source
-echo "source_files         =" $source_files
+echo "source_files         = $source_files"
 echo "folder_destination   =" $folder_destination
 echo "delete_source_files  =" $delete_source_files
 echo "share_copy_on        =" $share_copy_on
@@ -129,7 +129,7 @@ if [ $? -ne 0 ] ; then
 else
   echo "=========================================================================="
   echo "STATUS- Video Saved to" $folder_destination/$videoname
-  
+
   if [ "$delete_source_files" = true ] ; then
     echo "WARN  - Variable delete_source_files="$delete_source_files
     echo "WARN  - Deleting Source Files $folder_source/*jpg"
@@ -144,17 +144,17 @@ else
       do
         sudo rm $not_the_most_recent_file
       done
-    )    
+    )
   fi
-  
+
   echo "STATUS- Deleting Working Folder" $folder_working
   sudo rm -R $folder_working
-  if [ $? -ne 0 ] ; then 
+  if [ $? -ne 0 ] ; then
     echo "ERROR - Could not Delete Working Folder" $folder_working
     echo "ERROR - Check for permissions or other possible problems"
     echo "ERROR - Could not Delete Working Folder" $folder_working >> $error_log_file
     exit 1
-  fi 
+  fi
 fi
 
 # Check if video file is to be copied to a network share
@@ -173,8 +173,8 @@ if [ "$share_copy_on" = true ] ; then
     echo "ERROR - Failed to Copy" $folder_destination/$videoname "to" $share_destination "Because It is NOT Mounted" >> $error_log_file
     exit 1
   fi
-  
-  cp $folder_destination/$videoname $share_destination 
+
+  cp $folder_destination/$videoname $share_destination
   if [ $? -ne 0 ]; then
     echo "ERROR - Copy Failed $folder_destination/$videoname to" $share_destination/$videoname
     echo "ERROR - If destination is a remote folder or mount then check network, destination IP address, permissions, Etc"
@@ -199,7 +199,7 @@ if [ "$share_copy_on" = true ] ; then
       echo "ERROR - Copy Failed from" $folder_destination/$videoname "to" $share_destination/$videoname >> $error_log_file
       exit 1
     fi
-  fi    
+  fi
 fi
 echo "STATUS- Processing Completed Successfully ..."
 echo "=========================================================================="
