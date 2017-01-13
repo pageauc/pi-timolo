@@ -16,8 +16,9 @@
 # 2.98 release 04-Jan-2017 Added convid.sh and associated changes.  Added flip to video option 
 # 2.99 release 06-Jan-2017 Added sync_lock option to motion video
 # 3.00 release 09-Jan-2017 Added takeVideo subprocess to convert h264
+# 3.10 release 12-Jan-2017 Added takeVideo annotate datetime text using image text settings on and size.  
 
-progVer = "ver 3.00"
+progVer = "ver 3.10"
 
 import datetime
 import glob
@@ -26,6 +27,7 @@ import os
 import sys
 import time
 import subprocess
+
 
 mypath = os.path.abspath(__file__)  # Find the full path of this python script
 baseDir = os.path.dirname(mypath)  # get the path location only (excluding script name)
@@ -426,7 +428,14 @@ def takeVideo(filename):
             camera.resolution = (imageWidth, imageHeight)
             camera.vflip = imageVFlip
             camera.hflip = imageHFlip
-            camera.rotation = imageRotation #Note use imageVFlip and imageHFlip variables            
+            camera.rotation = imageRotation #Note use imageVFlip and imageHFlip variables
+            if showDateOnImage:
+                rightNow = datetime.datetime.now()            
+                dateTimeText = " Started at %04d-%02d-%02d %02d:%02d:%02d " % (rightNow.year, rightNow.month, rightNow.day, rightNow.hour, rightNow.minute, rightNow.second)
+                camera.annotate_text_size = showTextFontSize
+                camera.annotate_foreground = picamera.Color('black')
+                camera.annotate_background = picamera.Color('white')               
+                camera.annotate_text = dateTimeText              
             camera.start_recording(filename)
             camera.wait_recording(motionVideoTimer)
             camera.stop_recording()
