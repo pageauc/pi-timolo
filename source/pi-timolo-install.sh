@@ -33,7 +33,7 @@ if [ -e config.py ]; then
   echo "Backup config.py to config.py.prev"
   cp config.py config.py.prev  
 fi
-wget -O config.py -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/config.py
+wget -O config_new.py -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/config.py
 if [ $? -ne 0 ] ;  then
   wget -O config_new.py https://raw.github.com/pageauc/pi-timolo/master/source/config.py
   wget -O pi-timolo.py https://raw.github.com/pageauc/pi-timolo/master/source/pi-timolo.py
@@ -49,7 +49,7 @@ if [ $? -ne 0 ] ;  then
   wget -O myip.sh https://raw.github.com/pageauc/pi-timolo/master/source/myip.sh
   wget -O gdrive https://raw.github.com/pageauc/pi-timolo/master/source/drive_armv6
 else
-  wget -O pi-timolo_new.py -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/pi-timolo.py
+  wget -O pi-timolo.py -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/pi-timolo.py
   wget -O pi-timolo.sh -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/pi-timolo.sh
   wget -O pi-timolo-install.sh -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/pi-timolo-install.sh  
   wget -O Readme.md -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/Readme.md
