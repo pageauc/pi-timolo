@@ -1,6 +1,6 @@
 #!/bin/bash
 # Convenient pi-timolo-install.sh script written by Claude Pageau 1-Jul-2016
-ver="3.1"
+ver="3.2"
 TIMOLO_DIR='pi-timolo'  # Default folder install location
 
 cd ~
@@ -31,7 +31,9 @@ if [ -e config.py ]; then
      cp config.py config.py.orig
   fi
   echo "Backup config.py to config.py.prev"
-  cp config.py config.py.prev  
+  cp config.py config.py.prev
+else
+  wget -O config.py -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/config.py     
 fi
 wget -O config_new.py -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/config.py
 if [ $? -ne 0 ] ;  then
