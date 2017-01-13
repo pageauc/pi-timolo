@@ -71,7 +71,7 @@ fi
 # Create destination folder if it does note exist
 if [ ! -d $folder_destination ] ; then
     mkdir $folder_destination
-    if [ "$?" -ne 0]; then
+    if [ "$?" -ne 0 ]; then
         echo "ERROR - Problem Creating Destination Folder" $folder_destination
         echo "ERROR - If destination is a remote folder or mount then check network, destination IP address, permissions, Etc"
         echo "ERROR - mkdir Failed - $folder_destination Could NOT be Created." >> $error_log_file
