@@ -1,6 +1,6 @@
 #!/bin/bash
 # Convenient pi-timolo-install.sh script written by Claude Pageau 1-Jul-2016
-ver="3.0"
+ver="3.1"
 TIMOLO_DIR='pi-timolo'  # Default folder install location
 
 cd ~
@@ -35,7 +35,7 @@ if [ -e config.py ]; then
 fi
 wget -O config.py -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/config.py
 if [ $? -ne 0 ] ;  then
-  wget -O config.py https://raw.github.com/pageauc/pi-timolo/master/source/config.py
+  wget -O config_new.py https://raw.github.com/pageauc/pi-timolo/master/source/config.py
   wget -O pi-timolo.py https://raw.github.com/pageauc/pi-timolo/master/source/pi-timolo.py
   wget -O pi-timolo.sh https://raw.github.com/pageauc/pi-timolo/master/source/pi-timolo.sh  
   wget -O pi-timolo-install.sh https://raw.github.com/pageauc/pi-timolo/master/source/pi-timolo-install.sh
@@ -49,7 +49,7 @@ if [ $? -ne 0 ] ;  then
   wget -O myip.sh https://raw.github.com/pageauc/pi-timolo/master/source/myip.sh
   wget -O gdrive https://raw.github.com/pageauc/pi-timolo/master/source/drive_armv6
 else
-  wget -O pi-timolo.py -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/pi-timolo.py
+  wget -O pi-timolo_new.py -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/pi-timolo.py
   wget -O pi-timolo.sh -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/pi-timolo.sh
   wget -O pi-timolo-install.sh -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/pi-timolo-install.sh  
   wget -O Readme.md -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/Readme.md
