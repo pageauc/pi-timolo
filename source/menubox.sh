@@ -1,6 +1,6 @@
 #!/bin/bash
 
-ver="4.00"
+ver="4.02"
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 cd $DIR
@@ -58,6 +58,7 @@ function do_pi_timolo ()
           whiptail --msgbox "Failed to Stop pi-timolo.py   Please Investigate Problem" 20 70     
       fi    
   fi
+  do_main_menu
 }
 
 #------------------------------------------------------------------------------
@@ -75,6 +76,7 @@ function do_webserver ()
         whiptail --msgbox "Failed to Stop webserver.py   Please Investigate Problem." 20 70     
      fi      
   fi
+  do_main_menu
 }
 
 #------------------------------------------------------------------------------
@@ -212,8 +214,6 @@ function do_edit_save ()
          echo "$configfile" >> $filename_conf
       fi
     done < $pyconfigfile
-    clear
-    echo "Saving Changes To File $pyconfigfile   Please Wait ...."
     cp $filename_conf $pyconfigfile    
   fi
   rm $filename_temp
@@ -252,8 +252,6 @@ function do_edit_variable ()
            elif [ $exitstatus -eq 0 ] ; then
              echo "do_edit_variable - Cancel was pressed"
              if echo "${value}" | grep --quiet "${newvalue}" ; then
-                rm $filename_temp
-                rm $filename_conf
                 do_settings_menu
              else
                 do_edit_save
@@ -262,8 +260,6 @@ function do_edit_variable ()
         fi
      fi
   fi
-  rm $filename_temp
-  rm $filename_conf
   do_settings_menu 
 }
 
@@ -410,7 +406,8 @@ function do_main_menu ()
       f\ *) do_settings_menu ;; 
       g\ *) do_upgrade ;;           
       h\ *) do_about ;;
-      q\ *) exit 0 ;;
+      q\ *) clear
+            exit 0 ;;
          *) whiptail --msgbox "Programmer error: unrecognized option" 20 60 1 ;;
     esac || whiptail --msgbox "There was an error running selection $SELECTION" 20 60 1
   fi
