@@ -28,7 +28,7 @@
 #
 # */15 * * * * /home/pi/rpi-timelapse/movefiles.sh
 
-files_to_check=/home/pi/pi-timolo/timelapse/*jpg
+files_to_check=/home/pi/pi-timolo/media/timelapse/*jpg
 command_to_run='mv -f '
 the_destination=/home/pi/pi-timolo/mnt
 
