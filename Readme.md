@@ -32,16 +32,22 @@ Default is motion only see config.py for detailed settings
 
 * NOTE - You may have to run sudo ./pi-timolo.py depending on permissions
 see Wiki for More Details https://github.com/pageauc/pi-timolo/wiki        
-    
+ 
+### Menubox
+The lastest version of pi-timolo has a whiptail admin menu system.  The menu's allow
+start/stop of pi-timolo.py and webserver.py as background tasks, as well as
+editing configuration files, making timelapse videos from jpg images, converting or joining mp4 files
+ ![menubox main menu](menubox.png)
+ 
 ### Description
 pi-timolo is a python picamara module application for a Raspberry PI computer.
 A RPI camera module must be attached. It can take timelapse and motion detection
 images separately or together. Takes Long exposure Night (lowlight) images for
 Time Lapse and/or Motion. Has smooth twilight transitions based on a threshold light
-setting, so a real time clock is not required. Customization settings are saved in a config.py file.
-The application is primarily designed for headless operation and include sync.sh that
+setting, so a real time clock is not required. Customization settings are saved in a config.py and conf files.
+The application is primarily designed for headless operation and includes sync.sh that
 can securely synchronize files with a users google drive.  This works well for remote security
-cameras.  
+cameras. Camera settings can also be administered remotely sync.sh
  
 ### Reference Links  
 Detailed pi-timolo Wiki https://github.com/pageauc/pi-timolo/wiki  
