@@ -7,7 +7,7 @@ configTitle = "pi-timolo Default Config Settings"
 configName = "pi-timolo-default-config"
 
 #======================================
-# Webserver.py Settings
+#       pi-timolo.py Settings
 #======================================
 
 # These settings should both be False if this script is run as a background /etc/init.d daemon
@@ -79,7 +79,7 @@ timelapseNumMax = 2000     # Max number of timelapse images desired. 0=Continuou
 timelapseNumRecycle = True # After numberMax reached restart at numberStart instead of exiting default=True   
 
 #======================================
-# Webserver.py Settings
+#       webserver.py Settings
 #======================================
 
 # Left iFrame Image Settings
@@ -89,7 +89,7 @@ web_iframe_height = "100%"    # Desired frame height to display images. Scroll b
 web_max_list_entries = 0          # 0 = All or Specify Max right side file entries to show (must be > 1)
 
 # Web Server settings
-web_server_root = "media"     # webserver root path to webserver image folder
+web_server_root = "/homw/pi/media"     # webserver root path to webserver image folder
 web_server_port = 8080        # Web server access port eg http://192.168.1.100:8090
 web_page_title = "Pi-Timolo Media"     # web page title that browser show (not displayed on web page)
 web_page_refresh_on = True    # False=Off (never)  Refresh True=On (per seconds below)       

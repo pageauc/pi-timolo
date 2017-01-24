@@ -1,6 +1,6 @@
 #!/bin/bash
 # Convenient pi-timolo-install.sh script written by Claude Pageau 1-Jul-2016
-ver="4.02"
+ver="4.03"
 TIMOLO_DIR='pi-timolo'  # Default folder install location
 
 cd ~
@@ -11,6 +11,7 @@ else
   echo "New rpi-speed-camera Install"
   STATUS="New Install"
   mkdir -p $TIMOLO_DIR
+  mkdir -p $TIMOLO_DIR/media
   echo "$TIMOLO_DIR Folder Created"
 fi 
 
@@ -35,7 +36,9 @@ if [ -e config.py ]; then
 else
   wget -O config.py -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/config.py     
 fi
+
 wget -O config_new.py -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/config.py
+wget -O pi-timolo/media/webserver.txt https://raw.github.com/pageauc/pi-timolo/master/source/webserver.txt
 if [ $? -ne 0 ] ;  then
   wget -O config.py https://raw.github.com/pageauc/pi-timolo/master/source/config.py
   wget -O menubox https://raw.github.com/pageauc/pi-timolo/master/source/menubox.sh  
@@ -69,7 +72,8 @@ else
   wget -O mvleavelast.sh -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/mvleavelast.sh
   wget -O myip.sh -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/myip.sh
   wget -O gdrive -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/drive_armv6
-fi  
+fi
+  
 echo "Done Download"
 echo "-------------------------------------------------------------"
 echo "2 - Make Required Files Executable"
@@ -166,7 +170,7 @@ echo "    cp config.py.prev config.py   to restore previous settings"
 echo "    otherwise edit the existing config.py to restore prev settings"
 echo "3 - A new menubox.sh has been added to make admin easier"
 echo "4 - Variable settings are now stored in .conf files or config.py"
-echo "    This allow upgrading without loosing settings"
+echo "    This allows upgrading without loosing settings"
 echo "5 - motion, timelapse, video now in media folder"
 echo "------------------------------------------------------------------"
 echo "For further details See Readme.md or GitHub wiki"
