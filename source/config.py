@@ -1,6 +1,6 @@
 # User Configuration variable settings for pitimolo
 # Purpose - Motion Detection Security Cam
-# Created - 20-Jul-2015 pi-timolo ver 2.94 compatible or greater
+# Created - 20-Jul-2015 pi-timolo ver 4.02 compatible or greater
 # Done by - Claude Pageau
  
 configTitle = "pi-timolo Default Config Settings"
@@ -10,7 +10,7 @@ configName = "pi-timolo-default-config"
 #       pi-timolo.py Settings
 #======================================
 
-# These settings should be False if this script is run as a background /etc/init.d daemon
+# These settings should be False if this script is run as a background /etc/rc.local
 verbose = True             # Sends detailed logging info to console. set to False if running script as daeman
 logDataToFile = False      # logs diagnostic data to a disk file for review  default=False
 debug = False              # Puts in debug mode returns pixel average data for tuning
@@ -25,9 +25,9 @@ imageHeight = 768          # Full Size Image Height in px default=768
 imageVFlip = False         # Flip image Vertically    default=False
 imageHFlip = False         # Flip image Horizontally  default=False
 imageRotation = 0          # Rotate image. Valid values: 0, 90, 180 & 270
-imagePreview = False       # Preview image on connected RPI Monitor default=False
 noNightShots = False       # Don't Take images at Night default=False
 noDayShots = False         # Don't Take images during day time default=False  
+imagePreview = False       # Preview image on connected RPI Monitor default=False
 
 # Low Light Night Settings
 twilightThreshold = 40     # default=40 Light level to trigger day/night transition at twilight 
@@ -102,8 +102,6 @@ web_page_refresh_on = True    # False=Off (never)  Refresh True=On (per seconds 
 web_page_refresh_sec = "180"  # seconds to wait for web page refresh default=180 seconds (three minutes)
 web_page_blank = True         # Start left image with a blank page until a right menu item is selected
                               # Otherwise False displays second list[1] item since first may be in progress
-
-
 
 # ---------------------------------------------- End of User Variables -----------------------------------------------------
 
