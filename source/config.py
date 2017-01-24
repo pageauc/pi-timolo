@@ -10,7 +10,7 @@ configName = "pi-timolo-default-config"
 #       pi-timolo.py Settings
 #======================================
 
-# These settings should both be False if this script is run as a background /etc/init.d daemon
+# These settings should be False if this script is run as a background /etc/init.d daemon
 verbose = True             # Sends detailed logging info to console. set to False if running script as daeman
 logDataToFile = False      # logs diagnostic data to a disk file for review  default=False
 debug = False              # Puts in debug mode returns pixel average data for tuning
@@ -30,17 +30,17 @@ noNightShots = False       # Don't Take images at Night default=False
 noDayShots = False         # Don't Take images during day time default=False  
 
 # Low Light Night Settings
+twilightThreshold = 40     # default=40 Light level to trigger day/night transition at twilight 
+nightSleepSec = 10         # default=10 Sec - Time period to allow camera to calculate low light AWB 
 nightMaxShut = 5.5         # default=5.5 sec Highest cam shut exposure time. 
                            # IMPORTANT 6 sec works sometimes but occasionally locks RPI and HARD reboot required to clear
 nightMinShut = .001        # default=.002 sec Lowest camera shut exposure time for transition from day to night (or visa versa)
 nightMaxISO = 800          # default=800  Max cam ISO night setting
 nightMinISO = 100          # lowest ISO camera setting for transition from day to night (or visa versa)  
-nightSleepSec = 10         # default=10 Sec - Time period to allow camera to calculate low light AWB   
-twilightThreshold = 40     # default=40 Light level to trigger day/night transition at twilight 
-
+ 
 # Date/Time Settings for Displaying info Directly on Images
-showDateOnImage = True     # Set to False for No display of date/time on image default= True
 showTextFontSize = 18      # Size of image Font in pixel height
+showDateOnImage = True     # Set to False for No display of date/time on image default= True
 showTextBottom = True      # Location of image Text True=Bottom False=Top
 showTextWhite = True       # Colour of image Text True=White False=Black
 showTextWhiteNight = True  # Change night text to white.  Might help if night needs white instead of black during day or visa versa
@@ -69,39 +69,41 @@ createLockFile = False     # default=False if True then sync.sh will call gdrive
 
 # Time Lapse Settings
 timelapseOn = False        # Turns timelapse True=On  False=Off
-timelapseTimer = 300    # Seconds between timelapse images  default=300 5 min
-timelapseDir = "media/timelapse" # Storage Folder for Time Lapse Images
 timelapsePrefix = "tl-"    # Prefix timelapse images with this prefix
-timelapseExit = 0          # Will Quit program after specified seconds 0=Continuous  default=0
+timelapseDir = "media/timelapse" # Storage Folder for Time Lapse Images
+timelapseTimer = 300       # Seconds between timelapse images  default=300 5 min
 timelapseNumOn = True      # True=On (filenames Sequenced by Number) otherwise date/time used for filename
 timelapseNumStart = 1000   # Start of timelapse number sequence 
 timelapseNumMax = 2000     # Max number of timelapse images desired. 0=Continuous  default=2000
 timelapseNumRecycle = True # After numberMax reached restart at numberStart instead of exiting default=True   
+timelapseExit = 0          # Will Quit program after specified seconds 0=Continuous  default=0
 
 #======================================
 #       webserver.py Settings
 #======================================
 
 # Left iFrame Image Settings
-web_image_height = "768"      # px height of images to display in iframe default 768
-web_iframe_width = "100%"     # Desired frame width to display images. can be eg percent "80%" or px "1280"
-web_iframe_height = "100%"    # Desired frame height to display images. Scroll bars if image larger (percent or px) 
-web_max_list_entries = 0          # 0 = All or Specify Max right side file entries to show (must be > 1)
+web_image_height = "768"       # px height of images to display in iframe default 768
+web_iframe_width_usage = "75%" # Left Pane - Sets % of total screen width allowed for iframe. Rest for right list
+web_iframe_width = "100%"      # Desired frame width to display images. can be eg percent "80%" or px "1280"
+web_iframe_height = "100%"     # Desired frame height to display images. Scroll bars if image larger (percent or px) 
+
+# Right Side Files List
+web_max_list_entries = 0         # 0 = All or Specify Max right side file entries to show (must be > 1)
+web_list_height = web_image_height  # Right List - side menu height in px (link selection)
+web_list_by_datetime = True      # True=datetime False=filename
+web_list_sort_descending = True  # reverse sort order (filename or datetime per show_by_date setting
 
 # Web Server settings
 web_server_root = "media"     # webserver root path to webserver image folder
 web_server_port = 8080        # Web server access port eg http://192.168.1.100:8090
 web_page_title = "Pi-Timolo Media"     # web page title that browser show (not displayed on web page)
 web_page_refresh_on = True    # False=Off (never)  Refresh True=On (per seconds below)       
-web_page_refresh_sec = "180"   # seconds to wait for web page refresh default=180 seconds (three minutes)
-web_page_blank = True          # Start left image with a blank page until a right menu item is selected
-                               # Otherwise False displays second list[1] item since first may be in progress
-web_iframe_width_usage = "75%"       # Left Pane - Sets % of total screen width allowed for iframe with rest for right list
-web_list_height = web_image_height   # Right List - side menu height in px (link selection)
+web_page_refresh_sec = "180"  # seconds to wait for web page refresh default=180 seconds (three minutes)
+web_page_blank = True         # Start left image with a blank page until a right menu item is selected
+                              # Otherwise False displays second list[1] item since first may be in progress
 
-# Settings for right side files list
-web_list_by_datetime = True          # True=datetime False=filename
-web_list_sort_descending = True           # reverse sort order (filename or datetime per show_by_date setting
+
 
 # ---------------------------------------------- End of User Variables -----------------------------------------------------
 
