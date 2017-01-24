@@ -1,6 +1,6 @@
 #!/bin/bash
 # Convenient pi-timolo-install.sh script written by Claude Pageau 1-Jul-2016
-ver="4.01"
+ver="4.02"
 TIMOLO_DIR='pi-timolo'  # Default folder install location
 
 cd ~
@@ -47,13 +47,9 @@ if [ $? -ne 0 ] ;  then
   wget -O webserver.py https://raw.github.com/pageauc/pi-timolo/master/source/webserver.py
   wget -O webserver.sh https://raw.github.com/pageauc/pi-timolo/master/source/webserver.sh  
   wget -O convid.sh https://raw.github.com/pageauc/pi-timolo/master/source/convid.sh 
-  if [ -e convid.conf ] ; then
-    wget -O convid.conf https://raw.github.com/pageauc/pi-timolo/master/source/convid.conf
-  fi    
+  wget https://raw.github.com/pageauc/pi-timolo/master/source/convid.conf 
   wget -O makevideo.sh https://raw.github.com/pageauc/pi-timolo/master/source/makevideo.sh
-  if [ -e makevideo.conf ] ; then
-    wget -O makevideo.conf https://raw.github.com/pageauc/pi-timolo/master/source/makevideo.conf 
-  fi
+  wget https://raw.github.com/pageauc/pi-timolo/master/source/makevideo.conf 
   wget -O mvleavelast.sh https://raw.github.com/pageauc/pi-timolo/master/source/mvleavelast.sh
   wget -O myip.sh https://raw.github.com/pageauc/pi-timolo/master/source/myip.sh
   wget -O gdrive https://raw.github.com/pageauc/pi-timolo/master/source/drive_armv6
@@ -67,13 +63,9 @@ else
   wget -O webserver.py -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/webserver.py
   wget -O webserver.sh -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/webserver.sh 
   wget -O convid.sh -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/convid.sh
-  if [ -e convid.conf ] ; then
-    wget -O convid.conf -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/convid.conf
-  fi
+  wget -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/convid.conf
   wget -O makevideo.sh -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/makevideo.sh
-  if [ -e makevideo.conf ] ; then
-    wget -O makevideo.conf -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/makevideo.conf
-  fi 
+  wget -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/makevideo.conf
   wget -O mvleavelast.sh -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/mvleavelast.sh
   wget -O myip.sh -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/myip.sh
   wget -O gdrive -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/drive_armv6
