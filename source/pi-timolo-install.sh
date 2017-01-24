@@ -38,7 +38,7 @@ else
 fi
 
 wget -O config_new.py -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/config.py
-wget -O pi-timolo/media/webserver.txt https://raw.github.com/pageauc/pi-timolo/master/source/webserver.txt
+wget -O media/webserver.txt https://raw.github.com/pageauc/pi-timolo/master/source/webserver.txt
 if [ $? -ne 0 ] ;  then
   wget -O config.py https://raw.github.com/pageauc/pi-timolo/master/source/config.py
   wget -O menubox https://raw.github.com/pageauc/pi-timolo/master/source/menubox.sh  
