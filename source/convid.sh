@@ -25,7 +25,7 @@
 #
 # 0 22 * * * su pi -c "/home/pi/pi-timolo/convid.sh join > /dev/null"
 
-ver="1.4"
+ver="4.00"
 echo "================================================"
 echo "$0 version $ver  written by Claude Pageau"
 
@@ -33,18 +33,22 @@ echo "$0 version $ver  written by Claude Pageau"
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 cd $DIR
 
-# H264 Conversion Variable Settings
-#----------------------------------
-source_h264=/home/pi/pi-timolo/motion/*h264  # Path and file type of source files to convert
-del_h264=true     # delete=true rename=false
-
-# MP4 Join Variables Settings
-#----------------------------
-max_joins=12   # Number of videos to join before starting New Join
-source_mp4="/home/pi/pi-timolo/motion" 
-dest_mp4=/home/pi/pi-timolo/videos
-video_prefix=convid  # Prefix of output join file
-command_to_run='/usr/bin/MP4Box -add '  # Command for converting video format
+if [ -e convid.conf ] ; then
+   source $DIR/convid.conf
+else
+   echo "INFO  - Attempting to download convid.conf from GitHub"
+   echo "INFO  - Please Wait ...."
+   wget https://raw.github.com/pageauc/pi-timolo/master/source/convid.conf
+   if [ -e convid.conf ] ; then
+      source $DIR/convid.conf
+   else
+      echo "ERROR  - $DIR/convid.conf File Not Found."
+      echo "ERROR  - Could Not Import $0 variables"
+      echo "ERROR  - Please Investigate or Download file from GitHub Repo"
+      echo "ERROR  - https://github.com/pageauc/pi-timolo"
+      exit 1
+    fi
+fi
 
 #---------------------------------------------
 function convert ()  # Convert param single h264 file to MP4
@@ -229,6 +233,22 @@ function joinvideo ()
 
 # ------------------ Start Main Script ------------------
 if [ -z $1 ] ;  then
+
+   # Display convid.sh Variable Settings
+   echo ""
+   echo "         H264 Conversion Variable Settings"
+   echo "         ---------------------------------"
+   echo "source_h264="$source_h264
+   echo "del_h264="$del_h264
+   echo ""
+   echo "           MP4 Join Variable Settings"
+   echo "           --------------------------"
+   echo "max_joins="$max_joins
+   echo "source_mp4="$source_mp4
+   echo "dest_mp4="$dest_mp4
+   echo "video_prefix="$video_prefix
+   echo "command_to_run="$command_to_run
+   echo ""
    echo "================================================"
    echo "This utility can"
    echo "1) convert - h264 files to mp4 format"

@@ -16,9 +16,10 @@
 # 2.98 release 04-Jan-2017 Added convid.sh and associated changes.  Added flip to video option 
 # 2.99 release 06-Jan-2017 Added sync_lock option to motion video
 # 3.00 release 09-Jan-2017 Added takeVideo subprocess to convert h264
-# 3.10 release 12-Jan-2017 Added takeVideo annotate datetime text using image text settings on and size.  
+# 3.10 release 12-Jan-2017 Added takeVideo annotate datetime text using image text settings on and size.
+# 4.00 release 23-Jan-2014 Added menubox.sh and sh config vars stored in conf files so upgrades won't delete settings  
 
-progVer = "ver 3.10"
+progVer = "ver 4.00"
 
 import datetime
 import glob
@@ -27,7 +28,6 @@ import os
 import sys
 import time
 import subprocess
-
 
 mypath = os.path.abspath(__file__)  # Find the full path of this python script
 baseDir = os.path.dirname(mypath)  # get the path location only (excluding script name)

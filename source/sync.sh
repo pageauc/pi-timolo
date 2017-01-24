@@ -1,6 +1,6 @@
 #!/bin/bash
 echo "=================================================================="
-echo "$0 version 2.3 by Claude Pageau"
+echo "$0 version 4.00 by Claude Pageau"
 
 # --------------------------------------------------------------------
 # Requires /usr/local/bin/gdrive executable compiled from github source for arm
@@ -32,7 +32,7 @@ cd $PROG_DIR
 
 # ---------------  Local to Remote File Sync Settings --------------
 SYNC_ON=true                 # true - Do Remote Sync  false - Non
-SYNC_DIR='motion'            # relative to this script folder - location of files to sync
+SYNC_DIR='media/motion'            # relative to this script folder - location of files to sync
 FILES_TO_SYNC='*jpg'         # Set the type of files to sync * for all
 CHECK_FOR_SYNC_FILE=true     # true if sync file below is required otherwise set to false always sync
 SYNC_FILE_PATH=$PROG_DIR/pi-timolo.sync  # name of pi-timolo sync lock filename

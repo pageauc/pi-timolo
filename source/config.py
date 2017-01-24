@@ -3,8 +3,12 @@
 # Created - 20-Jul-2015 pi-timolo ver 2.94 compatible or greater
 # Done by - Claude Pageau
  
-configTitle = "pi-timolo default config motion"
+configTitle = "pi-timolo Default Config Settings"
 configName = "pi-timolo-default-config"
+
+#======================================
+# Webserver.py Settings
+#======================================
 
 # These settings should both be False if this script is run as a background /etc/init.d daemon
 verbose = True             # Sends detailed logging info to console. set to False if running script as daeman
@@ -44,7 +48,7 @@ showTextWhiteNight = True  # Change night text to white.  Might help if night ne
 # Motion Detect Settings
 motionOn = True            # True = motion capture is turned on.  False= No motion detection
 motionPrefix = "mo-"       # Prefix Motion Detection images
-motionDir = "motion"       # Storage Folder for Motion Detect Images
+motionDir = "media/motion"       # Storage Folder for Motion Detect Images
 threshold = 35             # How much a pixel has to change to be counted default=35 (1-200)
 sensitivity = 100          # Number of changed pixels to trigger motion default=100
 motionAverage = 2          # Number of images to average for motion verification: 1=last image only or 100=Med 300=High Average Etc.
@@ -66,7 +70,7 @@ createLockFile = False     # default=False if True then sync.sh will call gdrive
 # Time Lapse Settings
 timelapseOn = False        # Turns timelapse True=On  False=Off
 timelapseTimer = 5 * 60    # Seconds between timelapse images  default=5*60
-timelapseDir = "timelapse" # Storage Folder for Time Lapse Images
+timelapseDir = "media/timelapse" # Storage Folder for Time Lapse Images
 timelapsePrefix = "tl-"    # Prefix timelapse images with this prefix
 timelapseExit = 0 * 60     # Will Quit program after specified seconds 0=Continuous  default=0
 timelapseNumOn = True      # True=On (filenames Sequenced by Number) otherwise date/time used for filename
@@ -74,4 +78,34 @@ timelapseNumStart = 1000   # Start of timelapse number sequence
 timelapseNumMax = 2000     # Max number of timelapse images desired. 0=Continuous  default=2000
 timelapseNumRecycle = True # After numberMax reached restart at numberStart instead of exiting default=True   
 
+#======================================
+# Webserver.py Settings
+#======================================
+
+# Left iFrame Image Settings
+web_image_height = "768"      # px height of images to display in iframe default 768
+web_iframe_width = "100%"     # Desired frame width to display images. can be eg percent "80%" or px "1280"
+web_iframe_height = "100%"    # Desired frame height to display images. Scroll bars if image larger (percent or px) 
+web_max_list_entries = 0          # 0 = All or Specify Max right side file entries to show (must be > 1)
+
+# Web Server settings
+web_server_root = "media"     # webserver root path to webserver image folder
+web_server_port = 8080        # Web server access port eg http://192.168.1.100:8090
+web_page_title = "Pi-Timolo Media"     # web page title that browser show (not displayed on web page)
+web_page_refresh_on = True    # False=Off (never)  Refresh True=On (per seconds below)       
+web_page_refresh_sec = "180"   # seconds to wait for web page refresh default=180 seconds (three minutes)
+web_page_blank = True          # Start left image with a blank page until a right menu item is selected
+                               # Otherwise False displays second list[1] item since first may be in progress
+web_iframe_width_usage = "80%"       # Left Pane - Sets % of total screen width allowed for iframe with rest for right list
+web_list_height = web_image_height   # Right List - side menu height in px (link selection)
+
+# Settings for right side files list
+web_list_by_datetime = True          # True=datetime False=filename
+web_list_sort_descending = True           # reverse sort order (filename or datetime per show_by_date setting
+
 # ---------------------------------------------- End of User Variables -----------------------------------------------------
+
+
+
+
+

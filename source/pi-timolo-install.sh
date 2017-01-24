@@ -1,6 +1,6 @@
 #!/bin/bash
 # Convenient pi-timolo-install.sh script written by Claude Pageau 1-Jul-2016
-ver="3.21"
+ver="4.00"
 TIMOLO_DIR='pi-timolo'  # Default folder install location
 
 cd ~
@@ -37,7 +37,8 @@ else
 fi
 wget -O config_new.py -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/config.py
 if [ $? -ne 0 ] ;  then
-  wget -O config_new.py https://raw.github.com/pageauc/pi-timolo/master/source/config.py
+  wget -O config.py https://raw.github.com/pageauc/pi-timolo/master/source/config.py
+  wget -O menubox https://raw.github.com/pageauc/pi-timolo/master/source/menubox.sh  
   wget -O pi-timolo.py https://raw.github.com/pageauc/pi-timolo/master/source/pi-timolo.py
   wget -O pi-timolo.sh https://raw.github.com/pageauc/pi-timolo/master/source/pi-timolo.sh  
   wget -O pi-timolo-install.sh https://raw.github.com/pageauc/pi-timolo/master/source/pi-timolo-install.sh
@@ -45,12 +46,19 @@ if [ $? -ne 0 ] ;  then
   wget -O sync.sh https://raw.github.com/pageauc/pi-timolo/master/source/sync.sh
   wget -O webserver.py https://raw.github.com/pageauc/pi-timolo/master/source/webserver.py
   wget -O webserver.sh https://raw.github.com/pageauc/pi-timolo/master/source/webserver.sh  
-  wget -O convid.sh https://raw.github.com/pageauc/pi-timolo/master/source/convid.sh  
+  wget -O convid.sh https://raw.github.com/pageauc/pi-timolo/master/source/convid.sh 
+  if [ $ -e "convid.conf" ] ; then
+    wget -O convid.conf https://raw.github.com/pageauc/pi-timolo/master/source/convid.conf
+  fi    
   wget -O makevideo.sh https://raw.github.com/pageauc/pi-timolo/master/source/makevideo.sh
+  if [ $ -e "makevideo.conf" ] ; then
+    wget -O makevideo.conf https://raw.github.com/pageauc/pi-timolo/master/source/makevideo.conf 
+  fi
   wget -O mvleavelast.sh https://raw.github.com/pageauc/pi-timolo/master/source/mvleavelast.sh
   wget -O myip.sh https://raw.github.com/pageauc/pi-timolo/master/source/myip.sh
   wget -O gdrive https://raw.github.com/pageauc/pi-timolo/master/source/drive_armv6
 else
+  wget -O menubox.sh -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/menubox.sh
   wget -O pi-timolo.py -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/pi-timolo.py
   wget -O pi-timolo.sh -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/pi-timolo.sh
   wget -O pi-timolo-install.sh -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/pi-timolo-install.sh  
@@ -58,8 +66,14 @@ else
   wget -O sync.sh -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/sync.sh
   wget -O webserver.py -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/webserver.py
   wget -O webserver.sh -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/webserver.sh 
-  wget -O convid.sh -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/convid.sh 
+  wget -O convid.sh -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/convid.sh
+  if [ $ -e "convid.conf" ] ; then
+    wget -O convid.conf -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/convid.conf
+  fi
   wget -O makevideo.sh -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/makevideo.sh
+  if [ $ -e "makevideo.conf" ] ; then
+    wget -O makevideo.conf -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/makevideo.conf
+  fi 
   wget -O mvleavelast.sh -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/mvleavelast.sh
   wget -O myip.sh -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/myip.sh
   wget -O gdrive -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/drive_armv6
@@ -140,30 +154,31 @@ echo "Done Dependencies"
 echo "-----------------------------------------------"
 echo "7 - $STATUS Complete"
 echo "-----------------------------------------------"
-echo ""
-echo "See Readme.md for pi-timolo Program"
-echo "Requirements, Configuration and Setting up gdrive security token"
-echo
 echo "Note:"
 echo "1 - Reboot RPI if there are significant Raspbian system updates."
 echo "2 - If config.py already exists then old file named config.py.prev"
-echo "3 - Check pi-timolo variable settings in config.py. See comments for details."
+echo "3 - Check pi-timolo variable settings in config.py per comments"
 echo "    cd ~/pi-timolo"
 echo "    nano config.py"
 echo "    ctrl-x y to save and quit nano editor"
 echo "4 - To Run pi-timolo perform the following in SSH or terminal session"
-echo ""
 echo "    cd ~/pi-timolo"
 echo "    ./pi-timolo.py"
-echo ""
 echo "-------------------------------------------------------------"
-echo "See Readme.md or GitHub wiki for Further Details"
-echo ""
-echo "IMPORTANT"
-echo "makemovie.sh and makedailymovie.sh have been deleted"
-echo "They are Now Replaced by makevideo.sh"
-echo "For makevideo.sh usage see GitHub wiki"
-echo "at https://github.com/pageauc/pi-timolo/wiki/Utilities"
+echo "              IMPORTANT UPGRADE INFORMATION"
+echo "1 - makemovie.sh and makedailymovie.sh have been deleted"
+echo "    They are Now Replaced by makevideo.sh and convid.sh"
+echo "2 - If this is an upgrade then config.py will be replaced."
+echo "    If config.py.prev has webserver variables then you can"
+echo "    cp config.py.prev config.py   to restore previous settings"
+echo "    otherwise edit the existing config.py to restore prev settings"
+echo "3 - A new menubox.sh has been added to make admin easier"
+echo "4 - Variable settings are now stored in .conf files or config.py"
+echo "    This allow upgrading without loosing settings"
+echo "5 - motion, timelapse, video now in media folder"
+echo "------------------------------------------------------------------"
+echo "For further details See Readme.md or GitHub wiki"
+echo "here https://github.com/pageauc/pi-timolo/wiki"
 echo $TIMOLO_DIR "Good Luck Claude ..."
 echo "Bye"
 
