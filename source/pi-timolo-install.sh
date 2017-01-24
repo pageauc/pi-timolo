@@ -1,6 +1,6 @@
 #!/bin/bash
 # Convenient pi-timolo-install.sh script written by Claude Pageau 1-Jul-2016
-ver="4.04"
+ver="4.05"
 TIMOLO_DIR='pi-timolo'  # Default folder install location
 
 cd ~
@@ -171,7 +171,9 @@ echo "    otherwise edit the existing config.py to restore prev settings"
 echo "3 - A new menubox.sh has been added to make admin easier"
 echo "4 - Variable settings are now stored in .conf files or config.py"
 echo "    This allows upgrading without loosing settings"
-echo "5 - motion, timelapse, video now in media folder"
+echo "5 - motion, timelapse, video folder are now in media folder"
+echo "6 - Existing config files will Not be overwritten.  New files will be"
+echo "    .1, .2 etc or config.py new file will be config_new.py"
 echo "------------------------------------------------------------------"
 echo "For further details See Readme.md or GitHub wiki"
 echo "here https://github.com/pageauc/pi-timolo/wiki"
@@ -182,6 +184,21 @@ if ! grep -q "web_server_root" config.py ; then
    echo "IMPORTANT:  Your config.py has been Upgraded"
    echo "and Replaced with config_new.py"
    echo "Your previous settings are in config.py.prev"
+fi
+echo "====================================================="
+if [ ! -e /usr/bin/mc ]; then
+   echo "Do you want to install mc (Midnight Commander)"
+   echo "Interactive Console File Manager"
+   echo "Can utilize mouse/function keys in SSH sessions"
+   echo ""
+   read -p "Install Midnight Commander (y/n)?" choice
+   case "$choice" in 
+     y|Y ) echo "yes"
+       sudo apt-get install mc
+       echo "type mc to start";;
+     n|N ) echo "no";;
+     * ) echo "invalid";;
+   esac
 fi
 echo $TIMOLO_DIR "Good Luck Claude ..."
 echo "Bye"
