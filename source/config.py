@@ -58,7 +58,7 @@ motionVideoTimer = 10      # Number of seconds of video clip to take if Motion D
 motionQuickTLOn = False    # if set to True then take a quick time lapse sequence rather than a single image (overrides motionVideoOn)
 motionQuickTLTimer = 10    # Duration in seconds of quick time lapse sequence after initial motion detected default=10
 motionQuickTLInterval = 0  # Time between each Quick time lapse image 0 is fast as possible 
-motionForce = 60 * 60      # Force single motion image if no Motion Detected in specified seconds.  default=60*60
+motionForce = 3600         # Force single motion image if no Motion Detected in specified seconds.  default=3600 1 hr
 motionNumOn = True         # True=On (filenames by sequenced Number) otherwise date/time used for filenames
 motionNumStart = 1000      # Start motion number sequence
 motionNumMax  = 500        # Max number of motion images desired. 0=Continuous    default=0
@@ -69,10 +69,10 @@ createLockFile = False     # default=False if True then sync.sh will call gdrive
 
 # Time Lapse Settings
 timelapseOn = False        # Turns timelapse True=On  False=Off
-timelapseTimer = 5 * 60    # Seconds between timelapse images  default=5*60
+timelapseTimer = 300    # Seconds between timelapse images  default=300 5 min
 timelapseDir = "media/timelapse" # Storage Folder for Time Lapse Images
 timelapsePrefix = "tl-"    # Prefix timelapse images with this prefix
-timelapseExit = 0 * 60     # Will Quit program after specified seconds 0=Continuous  default=0
+timelapseExit = 0          # Will Quit program after specified seconds 0=Continuous  default=0
 timelapseNumOn = True      # True=On (filenames Sequenced by Number) otherwise date/time used for filename
 timelapseNumStart = 1000   # Start of timelapse number sequence 
 timelapseNumMax = 2000     # Max number of timelapse images desired. 0=Continuous  default=2000
