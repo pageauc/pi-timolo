@@ -22,8 +22,8 @@ folder structure but remember each folder will
 open a new tab.	 
 
 This browser can only access local raspberry pi
-files. It cannot access to internet web pages.
+files. It cannot access internet web pages.
 
-see github wiki for more details
+see pi-timolo github wiki for more details
 
 https://github.com/pageauc/pi-timolo/wiki
