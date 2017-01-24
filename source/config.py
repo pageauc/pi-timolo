@@ -89,14 +89,14 @@ web_iframe_height = "100%"    # Desired frame height to display images. Scroll b
 web_max_list_entries = 0          # 0 = All or Specify Max right side file entries to show (must be > 1)
 
 # Web Server settings
-web_server_root = "/homw/pi/media"     # webserver root path to webserver image folder
+web_server_root = "media"     # webserver root path to webserver image folder
 web_server_port = 8080        # Web server access port eg http://192.168.1.100:8090
 web_page_title = "Pi-Timolo Media"     # web page title that browser show (not displayed on web page)
 web_page_refresh_on = True    # False=Off (never)  Refresh True=On (per seconds below)       
 web_page_refresh_sec = "180"   # seconds to wait for web page refresh default=180 seconds (three minutes)
 web_page_blank = True          # Start left image with a blank page until a right menu item is selected
                                # Otherwise False displays second list[1] item since first may be in progress
-web_iframe_width_usage = "80%"       # Left Pane - Sets % of total screen width allowed for iframe with rest for right list
+web_iframe_width_usage = "75%"       # Left Pane - Sets % of total screen width allowed for iframe with rest for right list
 web_list_height = web_image_height   # Right List - side menu height in px (link selection)
 
 # Settings for right side files list
