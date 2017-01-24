@@ -1,6 +1,6 @@
 #!/bin/bash
 # Convenient pi-timolo-install.sh script written by Claude Pageau 1-Jul-2016
-ver="4.03"
+ver="4.04"
 TIMOLO_DIR='pi-timolo'  # Default folder install location
 
 cd ~
@@ -175,6 +175,14 @@ echo "5 - motion, timelapse, video now in media folder"
 echo "------------------------------------------------------------------"
 echo "For further details See Readme.md or GitHub wiki"
 echo "here https://github.com/pageauc/pi-timolo/wiki"
+
+if ! grep -q "web_server_root" config.py ; then
+   cp config_new.py config.py
+   echo ""   
+   echo "IMPORTANT:  Your config.py has been Upgraded"
+   echo "and Replaced with config_new.py"
+   echo "Your previous settings are in config.py.prev"
+fi
 echo $TIMOLO_DIR "Good Luck Claude ..."
 echo "Bye"
 
