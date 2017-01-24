@@ -47,11 +47,11 @@ if [ $? -ne 0 ] ;  then
   wget -O webserver.py https://raw.github.com/pageauc/pi-timolo/master/source/webserver.py
   wget -O webserver.sh https://raw.github.com/pageauc/pi-timolo/master/source/webserver.sh  
   wget -O convid.sh https://raw.github.com/pageauc/pi-timolo/master/source/convid.sh 
-  if [ $ -e "convid.conf" ] ; then
+  if [ $ -e convid.conf ] ; then
     wget -O convid.conf https://raw.github.com/pageauc/pi-timolo/master/source/convid.conf
   fi    
   wget -O makevideo.sh https://raw.github.com/pageauc/pi-timolo/master/source/makevideo.sh
-  if [ $ -e "makevideo.conf" ] ; then
+  if [ $ -e makevideo.conf ] ; then
     wget -O makevideo.conf https://raw.github.com/pageauc/pi-timolo/master/source/makevideo.conf 
   fi
   wget -O mvleavelast.sh https://raw.github.com/pageauc/pi-timolo/master/source/mvleavelast.sh
@@ -67,11 +67,11 @@ else
   wget -O webserver.py -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/webserver.py
   wget -O webserver.sh -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/webserver.sh 
   wget -O convid.sh -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/convid.sh
-  if [ $ -e "convid.conf" ] ; then
+  if [ $ -e convid.conf ] ; then
     wget -O convid.conf -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/convid.conf
   fi
   wget -O makevideo.sh -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/makevideo.sh
-  if [ $ -e "makevideo.conf" ] ; then
+  if [ $ -e makevideo.conf ] ; then
     wget -O makevideo.conf -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/makevideo.conf
   fi 
   wget -O mvleavelast.sh -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/mvleavelast.sh
