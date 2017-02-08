@@ -1,6 +1,6 @@
 #!/bin/bash
 # Convenient pi-timolo-install.sh script written by Claude Pageau 1-Jul-2016
-ver="4.05"
+ver="4.1"
 TIMOLO_DIR='pi-timolo'  # Default folder install location
 
 cd ~
@@ -41,7 +41,7 @@ wget -O config_new.py -q --show-progress https://raw.github.com/pageauc/pi-timol
 wget -O media/webserver.txt https://raw.github.com/pageauc/pi-timolo/master/source/webserver.txt
 if [ $? -ne 0 ] ;  then
   wget -O config.py https://raw.github.com/pageauc/pi-timolo/master/source/config.py
-  wget -O menubox https://raw.github.com/pageauc/pi-timolo/master/source/menubox.sh  
+  wget -O menubox.sh https://raw.github.com/pageauc/pi-timolo/master/source/menubox.sh  
   wget -O pi-timolo.py https://raw.github.com/pageauc/pi-timolo/master/source/pi-timolo.py
   wget -O pi-timolo.sh https://raw.github.com/pageauc/pi-timolo/master/source/pi-timolo.sh  
   wget -O pi-timolo-install.sh https://raw.github.com/pageauc/pi-timolo/master/source/pi-timolo-install.sh
