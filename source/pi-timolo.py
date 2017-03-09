@@ -17,9 +17,10 @@
 # 2.99 release 06-Jan-2017 Added sync_lock option to motion video
 # 3.00 release 09-Jan-2017 Added takeVideo subprocess to convert h264
 # 3.10 release 12-Jan-2017 Added takeVideo annotate datetime text using image text settings on and size.
-# 4.00 release 23-Jan-2014 Added menubox.sh and sh config vars stored in conf files so upgrades won't delete settings  
+# 4.00 release 23-Jan-2017 Added menubox.sh and sh config vars stored in conf files so upgrades won't delete settings  
+# 4.10 release 09-Mar-2017 Moved position of camera.exposure_mode = 'off' for night shots
 
-progVer = "ver 4.00"
+progVer = "ver 4.10"
 
 import datetime
 import glob
@@ -391,11 +392,11 @@ def takeNightImage(filename):
         camera.rotation = imageRotation #Note use imageVFlip and imageHFlip variables
         camera.framerate = Fraction(1, 6)
         camera.shutter_speed = currentShut
-        camera.exposure_mode = 'off'
         camera.iso = currentISO
         # Give the camera a good long time to measure AWB
         # (you may wish to use fixed AWB instead)
         time.sleep(nightSleepSec)
+        camera.exposure_mode = 'off'        
         camera.capture(filename)
     shutSec = shut2Sec(currentShut)
     logging.info("Size=%ix%i dayPixAve=%i ISO=%i shut=%s %s" % (imageWidth, imageHeight, dayPixAve, currentISO, shutSec, filename))
@@ -483,11 +484,11 @@ def getStreamImage(isDay):
                 # speed to 6s
                 camera.framerate = Fraction(1, 6)
                 camera.shutter_speed = nightMaxShut
-                camera.exposure_mode = 'off'
                 camera.iso = nightMaxISO
                 # Give the camera a good long time to measure AWB
                 # (you may wish to use fixed AWB instead)
                 time.sleep( nightSleepSec )
+                camera.exposure_mode = 'off'                
                 camera.capture(stream, format='rgb')
             return stream.array
 
