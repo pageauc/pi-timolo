@@ -19,8 +19,9 @@
 # 3.10 release 12-Jan-2017 Added takeVideo annotate datetime text using image text settings on and size.
 # 4.00 release 23-Jan-2017 Added menubox.sh and sh config vars stored in conf files so upgrades won't delete settings  
 # 4.10 release 09-Mar-2017 Moved position of camera.exposure_mode = 'off' for night shots
+# 4.20 release 13-Mar-2017 Updated takeNightImage settings
 
-progVer = "ver 4.10"
+progVer = "ver 4.20"
 
 import datetime
 import glob
@@ -383,20 +384,20 @@ def takeNightImage(filename):
     # Take low light Night image (including twilight zones)
     with picamera.PiCamera() as camera:
         # Take Low Light image
-        # Set a framerate of 1/6fps, then set shutter
+        # Set a framerate_range then set shutter
         camera.resolution = (imageWidth, imageHeight)
-        if imagePreview:
-            camera.start_preview()
+        camera.framerate_range = (Fraction(1, 6), Fraction(30, 1))
+        camera.sensor_mode = 3
         camera.vflip = imageVFlip
         camera.hflip = imageHFlip
         camera.rotation = imageRotation #Note use imageVFlip and imageHFlip variables
-        camera.framerate = Fraction(1, 6)
         camera.shutter_speed = currentShut
         camera.iso = currentISO
         # Give the camera a good long time to measure AWB
-        # (you may wish to use fixed AWB instead)
         time.sleep(nightSleepSec)
-        camera.exposure_mode = 'off'        
+        camera.exposure_mode = 'off'
+        if imagePreview:
+            camera.start_preview()        
         camera.capture(filename)
     shutSec = shut2Sec(currentShut)
     logging.info("Size=%ix%i dayPixAve=%i ISO=%i shut=%s %s" % (imageWidth, imageHeight, dayPixAve, currentISO, shutSec, filename))
@@ -471,23 +472,24 @@ def createSyncLockFile(imagefilename):
 def getStreamImage(isDay):
     # Capture an image stream to memory based on daymode
     with picamera.PiCamera() as camera:
-        time.sleep(0.5)
         camera.resolution = (testWidth, testHeight)
         with picamera.array.PiRGBArray(camera) as stream:
             if isDay:
+                time.sleep(0.5)            
                 camera.exposure_mode = 'auto'
                 camera.awb_mode = 'auto' 
                 camera.capture(stream, format='rgb', use_video_port=useVideoPort)
             else:
                 # Take Low Light image            
-                # Set a framerate of 1/6fps, then set shutter
+                # Set a framerate_range then set shutter
                 # speed to 6s
-                camera.framerate = Fraction(1, 6)
+                camera.framerate_range = (Fraction(1, 6), Fraction(30, 1))
+                camera.sensor_mode = 3                
                 camera.shutter_speed = nightMaxShut
                 camera.iso = nightMaxISO
                 # Give the camera a good long time to measure AWB
-                # (you may wish to use fixed AWB instead)
-                time.sleep( nightSleepSec )
+                # Note sleep time is hard coded and not set by nightSleepSec
+                time.sleep( 10 )
                 camera.exposure_mode = 'off'                
                 camera.capture(stream, format='rgb')
             return stream.array

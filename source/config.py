@@ -31,7 +31,7 @@ imagePreview = False       # Preview image on connected RPI Monitor default=Fals
 
 # Low Light Night Settings
 twilightThreshold = 40     # default=40 Light level to trigger day/night transition at twilight 
-nightSleepSec = 10         # default=10 Sec - Time period to allow camera to calculate low light AWB 
+nightSleepSec = 20         # default=20 Sec - Time period to allow camera to calculate low light AWB 
 nightMaxShut = 5.5         # default=5.5 sec Highest cam shut exposure time. 
                            # IMPORTANT 6 sec works sometimes but occasionally locks RPI and HARD reboot required to clear
 nightMinShut = .001        # default=.002 sec Lowest camera shut exposure time for transition from day to night (or visa versa)
