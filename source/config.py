@@ -34,7 +34,7 @@ twilightThreshold = 40     # default=40 Light level to trigger day/night transit
 nightSleepSec = 20         # default=20 Sec - Time period to allow camera to calculate low light AWB 
 nightMaxShut = 5.5         # default=5.5 sec Highest cam shut exposure time. 
                            # IMPORTANT 6 sec works sometimes but occasionally locks RPI and HARD reboot required to clear
-nightMinShut = .001        # default=.002 sec Lowest camera shut exposure time for transition from day to night (or visa versa)
+nightMinShut = .002        # default=.002 sec Lowest camera shut exposure time for transition from day to night (or visa versa)
 nightMaxISO = 800          # default=800  Max cam ISO night setting
 nightMinISO = 100          # lowest ISO camera setting for transition from day to night (or visa versa)  
  
