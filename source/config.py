@@ -100,7 +100,7 @@ web_server_port = 8080        # Web server access port eg http://192.168.1.100:8
 web_page_title = "Pi-Timolo Media"     # web page title that browser show (not displayed on web page)
 web_page_refresh_on = True    # False=Off (never)  Refresh True=On (per seconds below)       
 web_page_refresh_sec = "180"  # seconds to wait for web page refresh default=180 seconds (three minutes)
-web_page_blank = True         # Start left image with a blank page until a right menu item is selected
+web_page_blank = False        # Start left image with a blank page until a right menu item is selected
                               # Otherwise False displays second list[1] item since first may be in progress
 
 # ---------------------------------------------- End of User Variables -----------------------------------------------------
