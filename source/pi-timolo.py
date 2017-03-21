@@ -20,8 +20,8 @@
 # 4.00 release 23-Jan-2017 Added menubox.sh and sh config vars stored in conf files so upgrades won't delete settings
 # 4.10 release 09-Mar-2017 Moved position of camera.exposure_mode = 'off' for night shots
 # 4.20 release 13-Mar-2017 Updated takeNightImage settings
-
-progVer = "ver 4.20"
+# 4.30 release 21-Mar-2017 Updated Motion Detection to reduce false positives
+progVer = "ver 4.30"
 
 import datetime
 import glob
