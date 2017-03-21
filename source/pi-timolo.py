@@ -840,7 +840,7 @@ def Main():
                 if ((vectorCount % motionVectors.shape[0]) == 0):
                     vectorCount = 0
                     (mu, sigma2) = updateDistribution(motionVectors, mu, sigma2)
-                    print (mu, sigma2)
+                
 
                 #if probability that everything is normal is less than requiredProbability
                 #then we'll go ahead and mark it as movement.
