@@ -1,14 +1,14 @@
 #!/bin/bash
 # Convenient pi-timolo-install.sh script written by Claude Pageau 1-Jul-2016
-ver="4.3"
+ver="4.4"
 TIMOLO_DIR='pi-timolo'  # Default folder install location
 
 cd ~
 if [ -d "$TIMOLO_DIR" ] ; then
   STATUS="Upgrade"
-  echo "Upgrade rpi-speed-camera files"
+  echo "Upgrade pi-timolo files"
 else  
-  echo "New rpi-speed-camera Install"
+  echo "New pi-timolo Install"
   STATUS="New Install"
   mkdir -p $TIMOLO_DIR
   mkdir -p $TIMOLO_DIR/media
