@@ -28,6 +28,7 @@ imageRotation = 0          # Rotate image. Valid values: 0, 90, 180 & 270
 noNightShots = False       # Don't Take images at Night default=False
 noDayShots = False         # Don't Take images during day time default=False
 imagePreview = False       # Preview image on connected RPI Monitor default=False
+useVideoPort = True        # Use the video port to capture motion images - faster than the image port. Default=False
 
 # Low Light Night Settings
 twilightThreshold = 20     # default=35 Light level to trigger day/night transition at twilight
@@ -52,7 +53,6 @@ motionDir = "media/motion"       # Storage Folder for Motion Detect Images
 threshold = 35             # How much a pixel has to change to be counted default=35 (1-200)
 sensitivity = 100          # Number of changed pixels to trigger motion default=100
 motionAverage = 20         # Number of images to average for motion verification: 1=last image only or 100=Med 300=High Average Etc.
-useVideoPort = True        # Use the video port to capture motion images - faster than the image port. Default=False
 motionVideoOn = False      # If set to True then video clip is taken rather than image
 motionVideoTimer = 10      # Number of seconds of video clip to take if Motion Detected default=10
 motionQuickTLOn = False    # if set to True then take a quick time lapse sequence rather than a single image (overrides motionVideoOn)
