@@ -1,6 +1,6 @@
 #!/bin/bash
 echo "=================================================================="
-echo "$0 version 4.10 by Claude Pageau"
+echo "$0 version 4.20 by Claude Pageau"
 
 # --------------------------------------------------------------------
 # Requires /usr/local/bin/gdrive executable compiled from github source for arm
@@ -94,15 +94,14 @@ function do_gdrive_sync ()
     if [ ! -d "$PROG_DIR/$SYNC_DIR" ] ; then
         echo "ERROR   - Local Folder $PROG_DIR/$SYNC_DIR Does Not Exist"
         echo "          Please Check SYNC_DIR variable and/or Local Folder PATH"
-        exit 1
+        return 1
     fi
 
     # Check for matching files to sync in folder
     ls -1 $PROG_DIR/$SYNC_DIR/$FILES_TO_SYNC > /dev/null 2>&1
     if [ ! "$?" = "0" ] ; then
         echo "WARNING - No Matching $FILES_TO_SYNC Files Found in $PROG_DIR/$SYNC_DIR"
-        echo "STATUS  - Continue in 10 seconds. Please Wait...."
-        sleep 10
+        return 1
     fi
 
     # Check if a matching remote folder exists
@@ -123,7 +122,7 @@ function do_gdrive_sync ()
             echo "------------------------------------------"
             echo "ERROR   - Problem Creating Remote Folder $SYNC_DIR"
             echo "          Please Investigate Problem"
-            exit 1
+            return 1
         fi
     fi
     echo "------------------------------------------"
