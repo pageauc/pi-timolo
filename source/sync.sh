@@ -101,7 +101,6 @@ function do_gdrive_sync ()
     ls -1 $PROG_DIR/$SYNC_DIR/$FILES_TO_SYNC > /dev/null 2>&1
     if [ ! "$?" = "0" ] ; then
         echo "ERROR   - No Matching $FILES_TO_SYNC Files Found in $PROG_DIR/$SYNC_DIR"
-        exit 1
     fi
 
     # Check if a matching remote folder exists
