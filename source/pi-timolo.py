@@ -372,6 +372,7 @@ def takeDayImage(filename):
         # Day Automatic Mode
         camera.exposure_mode = 'auto'
         camera.awb_mode = 'auto'
+        time.sleep(2)   # sleep for a little while to messure AWB
         camera.capture(filename, use_video_port=useVideoPort)
     logging.info("Size=%ix%i exp=auto awb=auto %s" % (imageWidth, imageHeight, filename))
     return
