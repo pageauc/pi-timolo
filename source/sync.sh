@@ -1,6 +1,6 @@
 #!/bin/bash
 echo "=================================================================="
-echo "$0 version 4.00 by Claude Pageau"
+echo "$0 version 4.10 by Claude Pageau"
 
 # --------------------------------------------------------------------
 # Requires /usr/local/bin/gdrive executable compiled from github source for arm
@@ -100,8 +100,9 @@ function do_gdrive_sync ()
     # Check for matching files to sync in folder
     ls -1 $PROG_DIR/$SYNC_DIR/$FILES_TO_SYNC > /dev/null 2>&1
     if [ ! "$?" = "0" ] ; then
-        echo "ERROR   - No Matching $FILES_TO_SYNC Files Found in $PROG_DIR/$SYNC_DIR"
-        exit 1
+        echo "WARNING - No Matching $FILES_TO_SYNC Files Found in $PROG_DIR/$SYNC_DIR"
+        echo "STATUS  - Continue in 10 seconds. Please Wait...."
+        sleep 10
     fi
 
     # Check if a matching remote folder exists
