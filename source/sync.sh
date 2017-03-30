@@ -8,7 +8,7 @@ echo "$0 version 4.20 by Claude Pageau"
 # for gdrive details see https://github.com/odeke-em/drive/releases
 # To manually install gdrive binary perform the following.
 # cd ~
-# wget -O gdrive -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/gdrive_armv6
+# wget -O gdrive -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/drive_armv6
 # chmod +x gdrive
 # sudo cp gdrive /usr/local/bin/
 # rm gdrive
