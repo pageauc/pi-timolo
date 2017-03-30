@@ -1,6 +1,6 @@
 #!/bin/bash
 # Convenient pi-timolo-install.sh script written by Claude Pageau 1-Jul-2016
-ver="4.4"
+ver="4.5"
 TIMOLO_DIR='pi-timolo'  # Default folder install location
 
 cd ~
@@ -37,8 +37,8 @@ else
   wget -O config.py -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/config.py     
 fi
 
-wget -O config_new.py -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/config.py
 wget -O media/webserver.txt https://raw.github.com/pageauc/pi-timolo/master/source/webserver.txt
+wget -O config_new.py -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/config.py
 if [ $? -ne 0 ] ;  then
   wget -O config.py https://raw.github.com/pageauc/pi-timolo/master/source/config.py
   wget -O menubox.sh https://raw.github.com/pageauc/pi-timolo/master/source/menubox.sh  
@@ -57,6 +57,7 @@ if [ $? -ne 0 ] ;  then
   wget -O myip.sh https://raw.github.com/pageauc/pi-timolo/master/source/myip.sh
   wget -O gdrive https://raw.github.com/pageauc/pi-timolo/master/source/drive_armv6
 else
+  wget -O config.py -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/config.py
   wget -O menubox.sh -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/menubox.sh
   wget -O pi-timolo.py -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/pi-timolo.py
   wget -O pi-timolo.sh -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/pi-timolo.sh
@@ -153,7 +154,7 @@ echo "7 - $STATUS Complete"
 echo "-----------------------------------------------"
 echo "Note:"
 echo "1 - Reboot RPI if there are significant Raspbian system updates."
-echo "2 - If config.py already exists then old file named config.py.prev"
+echo "2 - If config.py already exists then old file is config.py.prev"
 echo "3 - Check pi-timolo variable settings in config.py per comments"
 echo "    cd ~/pi-timolo"
 echo "    nano config.py"
@@ -166,9 +167,10 @@ echo "              IMPORTANT UPGRADE INFORMATION"
 echo "1 - makemovie.sh and makedailymovie.sh have been deleted"
 echo "    They are Now Replaced by makevideo.sh and convid.sh"
 echo "2 - If this is an upgrade then config.py will be replaced."
-echo "    If config.py.prev has webserver variables then you can"
-echo "    cp config.py.prev config.py   to restore previous settings"
-echo "    otherwise edit the existing config.py to restore prev settings"
+echo "    and previous will be config.py.prev. If version is 4.30 or greater"
+echo "    cp config.py.prev config.py to restore previous config.py"
+echo "    otherwise you will need to edit the new config.py with your previous settings"
+echo "    that are in the config.prev file."
 echo "3 - A new menubox.sh has been added to make admin easier"
 echo "4 - Variable settings are now stored in .conf files or config.py"
 echo "    This allows upgrading without loosing settings"

@@ -20,8 +20,9 @@
 # 4.00 release 23-Jan-2017 Added menubox.sh and sh config vars stored in conf files so upgrades won't delete settings  
 # 4.10 release 09-Mar-2017 Moved position of camera.exposure_mode = 'off' for night shots
 # 4.20 release 13-Mar-2017 Updated takeNightImage settings
+# 4.30 release 30-Mar-2017 Add variables for day camera motion and timelapse camera warmup before taking image
 
-progVer = "ver 4.20"
+progVer = "ver 4.30"
 
 import datetime
 import glob
@@ -148,7 +149,7 @@ def takeTestImage():
     mytime=showTime()
     testfilename = "takeTestImage.jpg"
     testfilepath = os.path.join(baseDir, testfilename)
-    takeDayImage(testfilepath)    
+    takeDayImage(testfilepath, timelapseCamSleep)    
     imagetext = "%s %s" % (mytime, testfilename)
     writeTextToImage(testfilepath, imagetext, daymode)
     logging.info("imageTestPrint=%s Captured Test Image to %s " % (imageTestPrint, testfilepath))
@@ -174,7 +175,7 @@ def displayInfo(motioncount, timelapsecount):
         print("               forceTimer=%i min(If No Motion)"  % (motionForce/60))
         print("               Number of previous images to use to check for motion=%i"  % (motionAverage))
         print("               Use video port for motion image capture? %s"  % (useVideoPort))
-        print("               motionPath=%s" % (motionPath))
+        print("               motionPath=%s  motionCamSleep=%.2f sec" % (motionPath, motionCamSleep))
         if motionNumOn:
             print("    Num Seq .. motionNumOn=%s  current=%s   numStart=%i   numMax=%i   numRecycle=%s"  % (motionNumOn, motioncount, motionNumStart, motionNumMax, motionNumRecycle))
             print("               motionNumPath=%s " % (motionNumPath))
@@ -189,7 +190,7 @@ def displayInfo(motioncount, timelapsecount):
         else:
             print("    Video .... motionVideoOn=%s  Motion Video Disabled" % (motionVideoOn))
         print("Time Lapse ... On=%s  Prefix=%s   Timer=%i sec   timeLapseExit=%i sec (0=Continuous)" % (timelapseOn, timelapsePrefix, timelapseTimer, timelapseExit)) 
-        print("               timelapsePath=%s" % (timelapsePath))
+        print("               timelapsePath=%s  timelapseCamSleep=%.2f sec" % (timelapsePath, timelapseCamSleep))
         if timelapseNumOn:
             print("    Num Seq .. On=%s  current=%s   numStart=%i   numMax=%i   numRecycle=%s"  % (timelapseNumOn, timelapsecount, timelapseNumStart, timelapseNumMax, timelapseNumRecycle))
             print("               numPath=%s" % (timelapseNumPath))
@@ -359,11 +360,12 @@ def getImageName(path, prefix, numberon, counter):
     return filename
 
 #-----------------------------------------------------------------------------------------------
-def takeDayImage(filename):
+def takeDayImage(filename, cam_sleep_time):
     # Take a Day image using exp=auto and awb=auto
     with picamera.PiCamera() as camera:
         camera.resolution = (imageWidth, imageHeight) 
-        time.sleep(0.5)   # sleep for a little while so camera can get adjustments
+        time.sleep(cam_sleep_time)   # sleep for a little while so camera can get adjustments
+                                     # motion is minimal to capture movement while timelapse is longer for better images
         if imagePreview:
             camera.start_preview()
         camera.vflip = imageVFlip
@@ -666,7 +668,7 @@ def Main():
                     imagePrefix = timelapsePrefix + imageNamePrefix
                     filename = getImageName(timelapsePath, imagePrefix, timelapseNumOn, timelapseNumCount)
                     if daymode:
-                        takeDayImage(filename)
+                        takeDayImage(filename, timelapseCamSleep)
                     else:
                         takeNightImage(filename)
                     timelapseNumCount = postImageProcessing(timelapseNumOn, timelapseNumStart, timelapseNumMax, timelapseNumCount, timelapseNumRecycle, timelapseNumPath, filename, daymode)
@@ -710,7 +712,7 @@ def Main():
                         else:
                             filename = getImageName(motionPath, imagePrefix, motionNumOn, motionNumCount)
                             if daymode:
-                                takeDayImage(filename)
+                                takeDayImage(filename, timelapseCamSleep)
                             else:
                                 takeNightImage(filename)
                         motionNumCount = postImageProcessing(motionNumOn, motionNumStart, motionNumMax, motionNumCount, motionNumRecycle, motionNumPath, filename, daymode)

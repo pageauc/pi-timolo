@@ -1,6 +1,6 @@
 # User Configuration variable settings for pitimolo
 # Purpose - Motion Detection Security Cam
-# Created - 20-Jul-2015 pi-timolo ver 4.02 compatible or greater
+# Created - 20-Jul-2015 pi-timolo ver 4.30 compatible or greater
 # Done by - Claude Pageau
  
 configTitle = "pi-timolo Default Config Settings"
@@ -66,7 +66,8 @@ motionNumRecycle = True    # After numberMax reached restart at numberStart inst
 motionMaxDots = 100        # Number of motion dots before starting new line
 createLockFile = False     # default=False if True then sync.sh will call gdrive to sync files to your web google drive if .sync file exists
                            # Lock File is used to indicate motion images are added so sync.sh can sync in background via sudo crontab -e
-
+motionCamSleep = 0.7       # default=0.7 Sleep seconds to allow camera to establish white balance before taking photo
+                           
 # Time Lapse Settings
 timelapseOn = False        # Turns timelapse True=On  False=Off
 timelapsePrefix = "tl-"    # Prefix timelapse images with this prefix
@@ -77,6 +78,7 @@ timelapseNumStart = 1000   # Start of timelapse number sequence
 timelapseNumMax = 2000     # Max number of timelapse images desired. 0=Continuous  default=2000
 timelapseNumRecycle = True # After numberMax reached restart at numberStart instead of exiting default=True
 timelapseExit = 0          # Will Quit program after specified seconds 0=Continuous  default=0
+timelapseCamSleep = 4.0    # default 4.0 Sleep seconds to allow camera to establish white balance before taking photo 
 
 #======================================
 #       webserver.py Settings
