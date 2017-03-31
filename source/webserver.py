@@ -10,22 +10,21 @@ version = "ver 3.10 written by Claude Pageau"
 # based on original code by zeekay and modified by Claude Pageau Nov-2015 for use with pi-timolo.py on a Raspberry Pi
 # from http://stackoverflow.com/questions/8044873/python-how-to-override-simplehttpserver-to-show-timestamp-in-directory-listing
 
-# 1 - Use nano editor to change webserver.py web_server_root and other variables to suit
-#   nano webserver.py
+# 1 - Use nano editor to change webserver.py web_server_root and other variables to suit at bottom of config.py
+#     nano config.py         # Webserver settings are near the end of the file
 #     ctrl-x y to save changes
 #
 # 2 - On Terminal session execute command below.  This will display file access information
-#   ./webserver.py
-#     ctrl-c to stop web server.  Note if you close terminal session webserver.py will stop.
+#     ./webserver.py    # ctrl-c to stop web server.  Note if you close terminal session webserver.py will stop.
 #
 # 3 - To Run this script as a background daemon execute the command below.
-#     Once running you can close the console and webserver will continue to run.
-#   ./webserver.sh start
+#     Once running you can close the terminal session and webserver will continue to run.
+#     ./webserver.sh start
 #     To check status of webserver type command below with no parameter   
-#   ./webserver.sh
+#     ./webserver.sh
 #
-# 4 - On a LAN computer web browser url bar, input this RPI ip address and port number per example below.
-#   http://192.168.1.110:8080
+# 4 - On a LAN computer web browser url bar, input this RPI ip address and port number per below
+#     example    http://192.168.1.110:8080
 
 mypath = os.path.abspath(__file__)     # Find the full path of this python script
 base_dir = os.path.dirname(mypath)      # Get the path location only (excluding script name)
