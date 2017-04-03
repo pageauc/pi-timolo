@@ -364,17 +364,16 @@ def takeDayImage(filename, cam_sleep_time):
     # Take a Day image using exp=auto and awb=auto
     with picamera.PiCamera() as camera:
         camera.resolution = (imageWidth, imageHeight) 
-        time.sleep(cam_sleep_time)   # sleep for a little while so camera can get adjustments
-                                     # motion is minimal to capture movement while timelapse is longer for better images
-        if imagePreview:
-            camera.start_preview()
         camera.vflip = imageVFlip
         camera.hflip = imageHFlip
         camera.rotation = imageRotation #Note use imageVFlip and imageHFlip variables
         # Day Automatic Mode
         camera.exposure_mode = 'auto'
         camera.awb_mode = 'auto'
-        time.sleep(2)   # sleep for a little while to messure AWB
+        time.sleep(cam_sleep_time)   # sleep for a little while so camera can get adjustments
+                                     # motion is minimal to capture movement while timelapse is longer for better images
+        if imagePreview:
+            camera.start_preview()
         camera.capture(filename, use_video_port=useVideoPort)
     logging.info("Size=%ix%i exp=auto awb=auto %s" % (imageWidth, imageHeight, filename))
     return
