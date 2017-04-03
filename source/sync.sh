@@ -75,6 +75,8 @@ function restart_pi_timolo ()
     echo "------------------------------------------"
     echo "START   - restart_pi_timolo"
     echo "INFO    - Starting pi-timolo"
+    $PROG_DIR/pi-timolo.sh stop
+    sleep 5
     $PROG_DIR/pi-timolo.sh start
     sleep 5
     if [ -z "$(pgrep -f pi-timolo.py)" ] ; then
