@@ -345,7 +345,7 @@ function do_wipe_sync ()
             /usr/local/bin/gdrive rename -force $REMOTE_WIPE_DIR/$REMOTE_WIPE_FILE $REMOTE_WIPE_FILE.done
             echo "DELETE  - $SYNC_DIR  (local)"
             if $REMOTE_WIPE_SAFE ; then 
-                drive list -match-mime jpg $SYNC_DIR | cut -c2- | xargs -n 10 echo rm  | sh
+                drive list -match-mime jpg $SYNC_DIR | cut -c2- | xargs -n 10 echo rm -f | sh
             else
                 rm $SYNC_DIR/*jpg
             fi    
