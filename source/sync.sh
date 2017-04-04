@@ -388,7 +388,7 @@ if $REMOTE_CONFIG_ON ; then  # Check if remote configuration feature is on
     do_config_sync
 fi
 
-if $REMOTE_WIPE_ON ; then  # Check if remote configuration feature is on
+if $REMOTE_WIPE_ON ; then  # Check if remote wipe feature is on
     do_wipe_sync
 fi
 
