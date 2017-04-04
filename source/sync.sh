@@ -45,6 +45,14 @@ REMOTE_CONFIG_DIR='sync_config_cam1'   # Remote Config Folder on google drive (W
 REMOTE_CONFIG_FILE='config.py'         # Name of new pi-timolo config file on google drive
 LOCAL_CONFIG_FILE='config.py'          # pi-timolo configuration variables file (default)
 
+# ------------------ Remote Sync Wipe Settings -------------------
+# Remote Wipe will erase all Files in the syc folder ater syncing 
+# as long as a file wipe.me is located in the remote google drive
+REMOTE_WIPE_ON=false                   # true - Check for wipe.me file and wipe sync folder, false - Ignore Checking
+REMOTE_WIPE_DIR='sync_config_cam1'     # Remote Wipe Folder on google drive (Will be Created if Does Not Exist)
+REMOTE_WIPE_FILE='wipe.me'             # Name of the wipe file on google drive
+REMOTE_WIPE_SAFE=true                  # true - only synced files get deleted but this is slow, false- all jpg files get deleted 
+
 # -------------------- Watch App Settings --------------------------
 WATCH_APP_ON=false           # false - off  true - Check if app is running and restart or reboot
 WATCH_APP='pi-timolo.py'     # App filename to monitor for Run Status
@@ -61,6 +69,11 @@ echo "REMOTE_CONFIG_ON    =" $REMOTE_CONFIG_ON
 echo "REMOTE_CONFIG_DIR   =" $REMOTE_CONFIG_DIR
 echo "REMOTE_CONFIG_FILE  =" $REMOTE_CONFIG_FILE
 echo "LOCAL_CONFIG_FILE   =" $LOCAL_CONFIG_FILE
+echo ""
+echo "REMOTE_WIPE_ON    =" $REMOTE_WIPE_ON
+echo "REMOTE_WIPE_DIR   =" $REMOTE_WIPE_DIR
+echo "REMOTE_WIPE_FILE  =" $REMOTE_WIPE_FILE
+echo "REMOTE_WIPE_SAFE  =" $REMOTE_WIPE_SAFE
 echo ""
 echo "WATCH_APP_ON        =" $WATCH_APP_ON
 echo "WATCH_APP           =" $WATCH_APP
@@ -229,8 +242,9 @@ function do_config_sync ()
             echo "STATUS - mkdir $REMOTE_CONFIG_DIR  (local)"
             mkdir $PROG_DIR/$REMOTE_CONFIG_DIR
             cp $PROG_DIR/$LOCAL_CONFIG_FILE $PROG_DIR/$REMOTE_CONFIG_DIR/$REMOTE_CONFIG_FILE.orig
-
-            echo "GDRIVE  - Sync push Local /$LOCAL_CONFIG_DIR Files to Local to $REMOTE_CONFIG_DIR"
+            echo "GDRIVE  - Sync push Local /$REMOTE_CONFIG_DIR Files to Local to $REMOTE_CONFIG_DIR"
+            echo "GDRIVE  - Sync push Local /
+            Files to Local to $REMOTE_CONFIG_DIR"
             /usr/local/bin/gdrive push -no-prompt -ignore-conflict $REMOTE_CONFIG_DIR/$REMOTE_CONFIG_FILE.orig
        fi
     fi
@@ -284,7 +298,68 @@ function do_config_sync ()
         fi
     fi
 }
+# ------------------------------------------------------
+function do_wipe_sync ()
+{
+    # function to wipe local copy of synced files
+    # remote files will not be effected 
+    # regular wipes speed up the sync process
+    
+    echo "------------------------------------------"
+    echo "START   - do_wipe_sync - Remote Wipe Checks"
+    echo "INFO    - Look for new wipe file on google drive"
+    echo "          at $REMOTE_WIPE_DIR/$REMOTE_WIPE_FILE (remote)"
 
+    # check if folder exists locally and if not create one
+    if [ ! -d $PROG_DIR/$REMOTE_WIPE_DIR ] ; then
+        echo "STATUS  - Creating Remote Folder /$REMOTE_WIPE_DIR"
+        echo "------------------------------------------"
+        /usr/local/bin/gdrive new --folder $REMOTE_WIPE_DIR
+        /usr/local/bin/gdrive file-id $REMOTE_WIPE_DIR
+        if [ $? -ne 0 ] ; then
+            echo "------------------------------------------"
+            echo "ERROR   -  Could Not Create Remote $REMOTE_WIPE_DIR"
+            echo "          1 Lost Internet Connection"
+            echo "          2 Some Other Reason."
+        else
+            echo "STATUS - mkdir $REMOTE_WIPE_DIR  (local)"
+            mkdir $PROG_DIR/$REMOTE_WIPE_DIR
+       fi
+    fi
+
+    echo "GDRIVE  - Check Remote Wipe File Exists - /$REMOTE_WIPE_DIR/$REMOTE_WIPE_FILE"
+    /usr/local/bin/gdrive pull -no-prompt -ignore-conflict $REMOTE_WIPE_DIR/$REMOTE_WIPE_FILE
+    if [ $? -ne 0 ] ; then   # Check if gdrive exited successfully
+        echo "------------------------------------------"
+        echo "WARN    - Remote Wipe Check Failed"
+        echo "          See gdrive message above for Details."
+        echo "          Possible Cause"
+        echo "          1 Remote File Not Found /$REMOTE_WIPE_DIR/$REMOTE_WIPE_FILE"
+        echo "          2 Lost Internet Connection"
+        echo "          3 Some Other Reason."
+    else
+        # Download successful start update of pi-timolo config.py
+        if [ -e $REMOTE_WIPE_DIR/$REMOTE_WIPE_FILE ] ; then
+            echo "STATUS  - Successfully Downloaded $REMOTE_WIPE_DIR/$REMOTE_WIPE_FILE  (remote)"
+            echo "          to $PROG_DIR/$REMOTE_WIPE_DIR/$REMOTE_WIPE_FILE  (local)"
+            /usr/local/bin/gdrive rename -force $REMOTE_WIPE_DIR/$REMOTE_WIPE_FILE $REMOTE_WIPE_FILE.done
+            echo "DELETE  - $SYNC_DIR  (local)"
+            if $REMOTE_WIPE_SAFE ; then 
+                /usr/local/bin/gdrive list -match-mime jpg $SYNC_DIR | cut -c2- | xargs -n 10 echo rm -f | sh
+            else
+                rm $SYNC_DIR/*jpg
+            fi    
+            echo "SUCCESS - $SYNC_DIR  is now empty"
+            echo "------------------------------------------"
+            echo "GDRIVE  - Sync push Local /$REMOTE_WIPE_DIR Files to Local to $REMOTE_WIPE_DIR"
+            /usr/local/bin/gdrive push -no-prompt -ignore-conflict $REMOTE_WIPE_DIR
+            echo "TRASH   - Empty gdrive trash  (local)"
+            /usr/local/bin/gdrive emptytrash -no-prompt
+        else
+            echo "GDRIVE  - $REMOTE_WIPE_DIR/$REMOTE_WIPE_FILE Not Found (local)"
+        fi
+    fi
+}
 # ------------------------------------------------------
 function watch_app ()
 {
@@ -317,6 +392,10 @@ fi
 
 if $REMOTE_CONFIG_ON ; then  # Check if remote configuration feature is on
     do_config_sync
+fi
+
+if $REMOTE_WIPE_ON ; then  # Check if remote wipe feature is on
+    do_wipe_sync
 fi
 
 if $WATCH_APP_ON ; then # check if watch app feature is on
