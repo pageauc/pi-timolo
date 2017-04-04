@@ -342,7 +342,7 @@ function do_wipe_sync ()
             echo "          to $PROG_DIR/$REMOTE_WIPE_DIR/$REMOTE_WIPE_FILE  (local)"
             /usr/local/bin/gdrive rename -force $REMOTE_WIPE_DIR/$REMOTE_WIPE_FILE $REMOTE_WIPE_FILE.done
             echo "DELETE  - $SYNC_DIR  (local)"
-            rm $SYNC_DIR/*jpg
+            drive list -match-mime jpg $SYNC_DIR | cut -c2- |  xargs echo rm -f | sh
             echo "SUCCESS - $SYNC_DIR  is now empty"
             echo "------------------------------------------"
             echo "GDRIVE  - Sync push Local /$REMOTE_WIPE_DIR Files to Local to $REMOTE_WIPE_DIR"
