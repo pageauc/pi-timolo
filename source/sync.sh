@@ -51,6 +51,7 @@ LOCAL_CONFIG_FILE='config.py'          # pi-timolo configuration variables file 
 REMOTE_WIPE_ON=false                   # true - Check for wipe.me file and wipe sync folder, false - Ignore Checking
 REMOTE_WIPE_DIR='sync_config_cam1'     # Remote Wipe Folder on google drive (Will be Created if Does Not Exist)
 REMOTE_WIPE_FILE='wipe.me'             # Name of the wipe file on google drive
+REMOTE_WIPE_SAFE=true                  # true - only synced files get deleted but this is slow, false- all jpg files get deleted 
 
 # -------------------- Watch App Settings --------------------------
 WATCH_APP_ON=false           # false - off  true - Check if app is running and restart or reboot
@@ -72,6 +73,7 @@ echo ""
 echo "REMOTE_WIPE_ON    =" $REMOTE_WIPE_ON
 echo "REMOTE_WIPE_DIR   =" $REMOTE_WIPE_DIR
 echo "REMOTE_WIPE_FILE  =" $REMOTE_WIPE_FILE
+echo "REMOTE_WIPE_SAFE  =" $REMOTE_WIPE_SAFE
 echo ""
 echo "WATCH_APP_ON        =" $WATCH_APP_ON
 echo "WATCH_APP           =" $WATCH_APP
@@ -342,7 +344,11 @@ function do_wipe_sync ()
             echo "          to $PROG_DIR/$REMOTE_WIPE_DIR/$REMOTE_WIPE_FILE  (local)"
             /usr/local/bin/gdrive rename -force $REMOTE_WIPE_DIR/$REMOTE_WIPE_FILE $REMOTE_WIPE_FILE.done
             echo "DELETE  - $SYNC_DIR  (local)"
-            drive list -match-mime jpg $SYNC_DIR | cut -c2- |  xargs echo rm -f | sh
+            if $REMOTE_WIPE_SAVE ; then 
+                drive list -match-mime jpg $SYNC_DIR | cut -c2- | xargs -n 10 echo rm  | sh
+            else
+                rm $SYNC_DIR/*jpg
+            fi    
             echo "SUCCESS - $SYNC_DIR  is now empty"
             echo "------------------------------------------"
             echo "GDRIVE  - Sync push Local /$REMOTE_WIPE_DIR Files to Local to $REMOTE_WIPE_DIR"
