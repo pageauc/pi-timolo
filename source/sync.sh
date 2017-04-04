@@ -240,7 +240,7 @@ function do_config_sync ()
             echo "STATUS - mkdir $REMOTE_CONFIG_DIR  (local)"
             mkdir $PROG_DIR/$REMOTE_CONFIG_DIR
             cp $PROG_DIR/$LOCAL_CONFIG_FILE $PROG_DIR/$REMOTE_CONFIG_DIR/$REMOTE_CONFIG_FILE.orig
-
+            echo "GDRIVE  - Sync push Local /$REMOTE_CONFIG_DIR Files to Local to $REMOTE_CONFIG_DIR"
             echo "GDRIVE  - Sync push Local /
             Files to Local to $REMOTE_CONFIG_DIR"
             /usr/local/bin/gdrive push -no-prompt -ignore-conflict $REMOTE_CONFIG_DIR/$REMOTE_CONFIG_FILE.orig
@@ -347,7 +347,7 @@ function do_wipe_sync ()
             mkdir $SYNC_DIR
             echo "SUCCESS - $SYNC_DIR  is now empty"
             echo "------------------------------------------"
-            echo "GDRIVE  - Sync push Local /$LOCAL_WIPE_DIR Files to Local to $REMOTE_WIPE_DIR"
+            echo "GDRIVE  - Sync push Local /$REMOTE_WIPE_DIR Files to Local to $REMOTE_WIPE_DIR"
             /usr/local/bin/gdrive push -no-prompt -ignore-conflict $REMOTE_WIPE_DIR
             echo "TRASH   - Empty gdrive trash  (local)"
             /usr/local/bin/gdrive emptytrash -no-prompt
