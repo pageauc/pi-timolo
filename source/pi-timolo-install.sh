@@ -1,6 +1,6 @@
 #!/bin/bash
 # Convenient pi-timolo-install.sh script written by Claude Pageau 1-Jul-2016
-ver="4.6"
+ver="4.8"
 TIMOLO_DIR='pi-timolo'  # Default folder install location
 
 cd ~
@@ -26,6 +26,7 @@ echo "Install or Upgrade pi-timolo Pi, Timelapse, Motion, Low Light"
 echo "-------------------------------------------------------------"
 echo "1 - Downloading pi-timolo github repo files"
 echo ""
+
 if [ -e config.py ]; then
   if [ ! -e config.py.orig ]; then
      echo "Save config.py to config.py.orig"
@@ -35,6 +36,12 @@ if [ -e config.py ]; then
   cp config.py config.py.prev
 else
   wget -O config.py -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/config.py     
+fi
+
+if [ -e convid.conf.1 ]; then
+    rm *1
+    rm *2
+    rm *3
 fi
 
 wget -O media/webserver.txt https://raw.github.com/pageauc/pi-timolo/master/source/webserver.txt
@@ -196,13 +203,11 @@ if [ ! -e /usr/bin/mc ]; then
    echo "It can utilize mouse/function keys in SSH session"
    echo "and makes managing local files on the RPI easier"
    echo "Another option is to use filezilla on a windows computer"
-   read -r -p "Install Midnight Commander [y/N] " choice
-   if [[ "$choice" =~ ^([yY][eE][sS]|[yY])+$ ]]
-   then
-       echo "Installing Midnight Commander File Manager"
-       sudo apt-get install mc
-       echo "type mc to run Midnight Commander"
-   fi
+   echo "To Installing Midnight Commander File run command below"
+   echo ""
+   echo "    sudo apt-get install mc "
+   echo ""
+   echo "type mc to run Midnight Commander"
 fi
 echo "Good Luck Claude ..."
 echo "Bye"
