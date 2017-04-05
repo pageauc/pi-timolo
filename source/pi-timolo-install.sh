@@ -39,9 +39,9 @@ else
 fi
 
 if [ -e convid.conf.1 ]; then
-    rm *1
-    rm *2
-    rm *3
+  rm *1
+  rm *2
+  rm *3
 fi
 
 wget -O media/webserver.txt https://raw.github.com/pageauc/pi-timolo/master/source/webserver.txt
