@@ -195,7 +195,7 @@ if [ ! -e /usr/bin/mc ]; then
    echo "Can utilize mouse/function keys in SSH sessions"
    echo ""
    read -r -p "Install Midnight Commander [y/N] " choice
-   if [[ "$choice" =~ ^([yY][eE][sS]|[yY])+$ ]]
+   if [[ "$choice" =~ ^([yY][eE][sS]|[yY])+$ ]]; then
        echo "Installing Midnight Commander File Manager"
        sudo apt-get install mc
        echo "type mc to run Midnight Commander"
