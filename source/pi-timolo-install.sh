@@ -1,6 +1,6 @@
 #!/bin/bash
 # Convenient pi-timolo-install.sh script written by Claude Pageau 1-Jul-2016
-ver="4.5"
+ver="4.6"
 TIMOLO_DIR='pi-timolo'  # Default folder install location
 
 cd ~
@@ -190,12 +190,15 @@ if ! grep -q "web_server_root" config.py ; then
 fi
 echo "====================================================="
 if [ ! -e /usr/bin/mc ]; then
-   echo "Do you want to install mc (Midnight Commander)"
-   echo "Interactive Console File Manager"
-   echo "Can utilize mouse/function keys in SSH sessions"
    echo ""
+   echo "Optional Install of Midnight Commander"
+   echo "This is an Interactive Console File Manager"
+   echo "It can utilize mouse/function keys in SSH session"
+   echo "and makes managing local files on the RPI easier"
+   echo "Another option is to use filezilla on a windows computer"
    read -r -p "Install Midnight Commander [y/N] " choice
-   if [[ "$choice" =~ ^([yY][eE][sS]|[yY])+$ ]]; then
+   if [[ "$choice" =~ ^([yY][eE][sS]|[yY])+$ ]]
+   then
        echo "Installing Midnight Commander File Manager"
        sudo apt-get install mc
        echo "type mc to run Midnight Commander"
