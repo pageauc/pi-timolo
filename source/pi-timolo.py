@@ -688,7 +688,7 @@ def Main():
                     imagePrefix = motionPrefix + imageNamePrefix 
                     # check if motion Quick Time Lapse option is On.  This option supersedes motionVideoOn 
                     if motionQuickTLOn and daymode:
-                        filename = getFileeName(motionPath, imagePrefix, motionNumOn, motionNumCount, False)
+                        filename = getFileName(motionPath, imagePrefix, motionNumOn, motionNumCount, False, motionDateSubDir)
                         with picamera.PiCamera() as camera:
                             camera.resolution = (imageWidth, imageHeight)
                             camera.vflip = imageVFlip
