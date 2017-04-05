@@ -203,6 +203,6 @@ if [ ! -e /usr/bin/mc ]; then
      * ) echo "invalid";;
    esac
 fi
-echo $TIMOLO_DIR "Good Luck Claude ..."
+echo "Good Luck Claude ..."
 echo "Bye"
 
