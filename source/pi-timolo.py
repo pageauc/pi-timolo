@@ -338,25 +338,21 @@ def postImageProcessing(numberon, counterstart, countermax, counter, recycle, co
     return counter
 
 #-----------------------------------------------------------------------------------------------    
-def getVideoName(path, prefix, numberon, counter):
+def getFileName(path, prefix, numberon, counter, video):
     # build image file names by number sequence or date/time
-    if numberon:
-        if motionVideoOn:
-            filename = os.path.join(path, prefix + str(counter) + ".h264")
-    else:
-        if motionVideoOn:
-            rightNow = datetime.datetime.now()
-            filename = "%s/%s%04d%02d%02d-%02d%02d%02d.h264" % ( path, prefix ,rightNow.year, rightNow.month, rightNow.day, rightNow.hour, rightNow.minute, rightNow.second)
-    return filename
+    ext= ".h264" if video else ".jpg"
+    rightNow = datetime.datetime.now()
 
-#-----------------------------------------------------------------------------------------------
-def getImageName(path, prefix, numberon, counter):
-    # build image file names by number sequence or date/time
+    if dateSubDir:
+	    path = "%s/%04d-%02d-%02d" % (path, rightNow.year, rightNow.month, rightNow.day)
+    
+	if not os.path.exists(path):
+        os.makedirs(path)
+
     if numberon:
-        filename = os.path.join(path, prefix + str(counter) + ".jpg")   
+        filename = os.path.join(path, prefix + str(counter) + ext)    
     else:
-        rightNow = datetime.datetime.now()
-        filename = "%s/%s%04d%02d%02d-%02d%02d%02d.jpg" % ( path, prefix ,rightNow.year, rightNow.month, rightNow.day, rightNow.hour, rightNow.minute, rightNow.second)     
+        filename = "%s/%s%04d%02d%02d-%02d%02d%02d%s" % ( path, prefix ,rightNow.year, rightNow.month, rightNow.day, rightNow.hour, rightNow.minute, rightNow.second, ext)
     return filename
 
 #-----------------------------------------------------------------------------------------------
@@ -411,7 +407,7 @@ def takeQuickTimeLapse(motionPath, imagePrefix, motionNumOn, motionNumCount, day
 
     checkTimeLapseTimer = datetime.datetime.now()
     keepTakingImages = True
-    filename = getImageName(motionPath, imagePrefix, motionNumOn, motionNumCount)
+    filename = getFileeName(motionPath, imagePrefix, motionNumOn, motionNumCount, False)
     while keepTakingImages:
         yield filename
         rightNow = datetime.datetime.now()
@@ -420,7 +416,7 @@ def takeQuickTimeLapse(motionPath, imagePrefix, motionNumOn, motionNumCount, day
             keepTakingImages=False
         else:
             motionNumCount = postImageProcessing(motionNumOn, motionNumStart, motionNumMax, motionNumCount, motionNumRecycle, motionNumPath, filename, daymode)    
-            filename = getImageName(motionPath, imagePrefix, motionNumOn, motionNumCount)
+            filename = getImageName(motionPath, imagePrefix, motionNumOn, motionNumCount, False)
             time.sleep(motionQuickTLInterval)
 
 #-----------------------------------------------------------------------------------------------
@@ -665,7 +661,7 @@ def Main():
                     dotCount = showDots(motionMaxDots + 2)      # reset motion dots
                     logging.info("Scheduled Time Lapse Image - daymode=%s", daymode)
                     imagePrefix = timelapsePrefix + imageNamePrefix
-                    filename = getImageName(timelapsePath, imagePrefix, timelapseNumOn, timelapseNumCount)
+                    filename = getFileName(timelapsePath, imagePrefix, timelapseNumOn, timelapseNumCount, False)
                     if daymode:
                         takeDayImage(filename, timelapseCamSleep)
                     else:
@@ -695,7 +691,7 @@ def Main():
                     imagePrefix = motionPrefix + imageNamePrefix 
                     # check if motion Quick Time Lapse option is On.  This option supersedes motionVideoOn 
                     if motionQuickTLOn and daymode:
-                        filename = getImageName(motionPath, imagePrefix, motionNumOn, motionNumCount)
+                        filename = getFileeName(motionPath, imagePrefix, motionNumOn, motionNumCount, False)
                         with picamera.PiCamera() as camera:
                             camera.resolution = (imageWidth, imageHeight)
                             camera.vflip = imageVFlip
@@ -706,10 +702,10 @@ def Main():
                             motionNumCount = getCurrentCount(motionNumPath, motionNumStart)
                     else:                        
                         if motionVideoOn:
-                            filename = getVideoName(motionPath, imagePrefix, motionNumOn, motionNumCount)
+                            filename = getFileName(motionPath, imagePrefix, motionNumOn, motionNumCount, True)
                             takeVideo(filename)
                         else:
-                            filename = getImageName(motionPath, imagePrefix, motionNumOn, motionNumCount)
+                            filename = getFileName(motionPath, imagePrefix, motionNumOn, motionNumCount, False)
                             if daymode:
                                 takeDayImage(filename, timelapseCamSleep)
                             else:
