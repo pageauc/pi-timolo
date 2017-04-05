@@ -342,13 +342,10 @@ def getFileName(path, prefix, numberon, counter, video, dateSubDir):
     # build image file names by number sequence or date/time
     ext= ".h264" if video else ".jpg"
     rightNow = datetime.datetime.now()
-
     if dateSubDir:
-	    path = "%s/%04d-%02d-%02d" % (path, rightNow.year, rightNow.month, rightNow.day)
-    
-	if not os.path.exists(path):
-        os.makedirs(path)
-
+	path = "%s/%04d-%02d-%02d" % (path, rightNow.year, rightNow.month, rightNow.day)
+    	if not os.path.exists(path):
+		os.makedirs(path)
     if numberon:
         filename = os.path.join(path, prefix + str(counter) + ext)    
     else:
@@ -416,7 +413,7 @@ def takeQuickTimeLapse(motionPath, imagePrefix, motionNumOn, motionNumCount, day
             keepTakingImages=False
         else:
             motionNumCount = postImageProcessing(motionNumOn, motionNumStart, motionNumMax, motionNumCount, motionNumRecycle, motionNumPath, filename, daymode)    
-            filename = getImageName(motionPath, imagePrefix, motionNumOn, motionNumCount, False)
+            filename = getFileName(motionPath, imagePrefix, motionNumOn, motionNumCount, False, motionDateSubDir)
             time.sleep(motionQuickTLInterval)
 
 #-----------------------------------------------------------------------------------------------
