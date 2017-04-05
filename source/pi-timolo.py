@@ -338,7 +338,7 @@ def postImageProcessing(numberon, counterstart, countermax, counter, recycle, co
     return counter
 
 #-----------------------------------------------------------------------------------------------    
-def getFileName(path, prefix, numberon, counter, video):
+def getFileName(path, prefix, numberon, counter, video, dateSubDir):
     # build image file names by number sequence or date/time
     ext= ".h264" if video else ".jpg"
     rightNow = datetime.datetime.now()
@@ -407,7 +407,7 @@ def takeQuickTimeLapse(motionPath, imagePrefix, motionNumOn, motionNumCount, day
 
     checkTimeLapseTimer = datetime.datetime.now()
     keepTakingImages = True
-    filename = getFileeName(motionPath, imagePrefix, motionNumOn, motionNumCount, False)
+    filename = getFileName(motionPath, imagePrefix, motionNumOn, motionNumCount, False, motionDateSubDir)
     while keepTakingImages:
         yield filename
         rightNow = datetime.datetime.now()
@@ -661,7 +661,7 @@ def Main():
                     dotCount = showDots(motionMaxDots + 2)      # reset motion dots
                     logging.info("Scheduled Time Lapse Image - daymode=%s", daymode)
                     imagePrefix = timelapsePrefix + imageNamePrefix
-                    filename = getFileName(timelapsePath, imagePrefix, timelapseNumOn, timelapseNumCount, False)
+                    filename = getFileName(timelapsePath, imagePrefix, timelapseNumOn, timelapseNumCount, False, timelapseDateSubDir)
                     if daymode:
                         takeDayImage(filename, timelapseCamSleep)
                     else:
@@ -702,10 +702,10 @@ def Main():
                             motionNumCount = getCurrentCount(motionNumPath, motionNumStart)
                     else:                        
                         if motionVideoOn:
-                            filename = getFileName(motionPath, imagePrefix, motionNumOn, motionNumCount, True)
+                            filename = getFileName(motionPath, imagePrefix, motionNumOn, motionNumCount, True, timelapseDateSubDir)
                             takeVideo(filename)
                         else:
-                            filename = getFileName(motionPath, imagePrefix, motionNumOn, motionNumCount, False)
+                            filename = getFileName(motionPath, imagePrefix, motionNumOn, motionNumCount, False, motionDateSubDir)
                             if daymode:
                                 takeDayImage(filename, timelapseCamSleep)
                             else:
