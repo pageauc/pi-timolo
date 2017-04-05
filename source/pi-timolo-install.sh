@@ -194,14 +194,12 @@ if [ ! -e /usr/bin/mc ]; then
    echo "Interactive Console File Manager"
    echo "Can utilize mouse/function keys in SSH sessions"
    echo ""
-   read -p "Install Midnight Commander (y/n)?" choice
-   case "$choice" in 
-     y|Y ) echo "yes"
+   read -r -p "Install Midnight Commander [y/N] " choice
+   if [[ "$choice" =~ ^([yY][eE][sS]|[yY])+$ ]]
+       echo "Installing Midnight Commander File Manager"
        sudo apt-get install mc
-       echo "type mc to start";;
-     n|N ) echo "no";;
-     * ) echo "invalid";;
-   esac
+       echo "type mc to run Midnight Commander"
+   fi
 fi
 echo "Good Luck Claude ..."
 echo "Bye"
