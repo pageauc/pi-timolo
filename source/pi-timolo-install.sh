@@ -1,6 +1,6 @@
 #!/bin/bash
 # Convenient pi-timolo-install.sh script written by Claude Pageau 1-Jul-2016
-ver="4.8"
+ver="4.9"
 TIMOLO_DIR='pi-timolo'  # Default folder install location
 
 cd ~
@@ -88,7 +88,7 @@ echo "2 - Make Required Files Executable"
 echo ""
 chmod +x *py
 chmod -x config*py
-chmod +x *sh
+chmod +x *sh 
 echo "Done Permissions"
 echo "-------------------------------------------------------------"
 # check if system was updated today
@@ -130,6 +130,9 @@ else
   echo "Error - Could not find gdrive file in current folder.  Please investigate ..."
   echo "        pi-timolo syncing feature will not be available."
 fi
+
+dos2unix *sh
+dos2unix *py
 
 cd $DIR
 # Check if pi-timolo-install.sh was launched from pi-timolo folder
