@@ -1,6 +1,6 @@
 #!/bin/bash
 # Convenient pi-timolo-install.sh script written by Claude Pageau 1-Jul-2016
-ver="4.91"
+ver="4.92"
 TIMOLO_DIR='pi-timolo'  # Default folder install location
 
 cd ~
@@ -39,9 +39,8 @@ else
 fi
 
 if [ -e convid.conf.1 ]; then
-  rm *1
-  rm *2
-  rm *3
+  rm convid.conf.1
+  rm makevideo.conf.1
 fi
 
 wget -O media/webserver.txt https://raw.github.com/pageauc/pi-timolo/master/source/webserver.txt
