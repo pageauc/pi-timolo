@@ -11,9 +11,9 @@ configName = "pi-timolo-default-config"
 #======================================
 
 # These settings should be False if this script is run as a background /etc/rc.local
-verbose = True             # Sends detailed logging info to console. set to False if running script as daeman
+verbose = True             # Sends detailed logging info to console. Set to False if running script as daeman
 logDataToFile = False      # logs diagnostic data to a disk file for review  default=False
-debug = False              # Puts in debug mode returns pixel average data for tuning
+debug = False              # True = debug mode returns pixel average data for tuning default = False
 
 # print a test image
 imageTestPrint = False     # default=False Set to True to print one image and exit (useful for aligning camera)
@@ -78,7 +78,7 @@ timelapseNumStart = 1000   # Start of timelapse number sequence
 timelapseNumMax = 2000     # Max number of timelapse images desired. 0=Continuous  default=2000
 timelapseNumRecycle = True # After numberMax reached restart at numberStart instead of exiting default=True
 timelapseExit = 0          # Will Quit program after specified seconds 0=Continuous  default=0
-timelapseCamSleep = 4.0    # default 4.0 Sleep seconds to allow camera to establish white balance before taking photo 
+timelapseCamSleep = 4.0    # default 4.0 seconds sleep to allow camera to establish white balance before taking photo 
 
 #======================================
 #       webserver.py Settings
@@ -94,7 +94,7 @@ web_iframe_height = "100%"     # Desired frame height to display images. Scroll 
 web_max_list_entries = 0         # 0 = All or Specify Max right side file entries to show (must be > 1)
 web_list_height = web_image_height  # Right List - side menu height in px (link selection)
 web_list_by_datetime = True      # True=datetime False=filename
-web_list_sort_descending = True  # reverse sort order (filename or datetime per show_by_date setting
+web_list_sort_descending = True  # reverse sort order (filename or datetime per web_list_by_datetime setting
 
 # Web Server settings
 web_server_root = "media"     # webserver root path to webserver image folder
