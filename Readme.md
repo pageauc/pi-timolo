@@ -42,7 +42,7 @@ the pi-timolo-install.sh script code before executing.
 ### Run pi-timolo 
 Default is motion only see config.py for detailed settings   
     
-    cd ~./pi-timolo
+    cd ~/pi-timolo
     ./pi-timolo.py   
  
 ### Menubox
