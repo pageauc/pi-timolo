@@ -2,7 +2,21 @@
 ### Raspberry (Pi) - (Ti)melapse, (Mo)tion, (Lo)wlight
 ### Wiki https://github.com/pageauc/pi-timolo/wiki     
 YouTube Videos https://www.youtube.com/playlist?list=PLLXJw_uJtQLa11A4qjVpn2D2T0pgfaSG0
-  
+
+### Description
+pi-timolo is a python picamara module application for a Raspberry PI computer (RPI).
+A RPI camera module must be attached. pi-timolo can take timelapse and motion detection
+images/videos, separately or together. Takes Long exposure Night (lowlight) images for
+Time Lapse and/or Motion. Has smooth twilight transitions based on a threshold light
+setting, so a real time clock is not required. Customization settings are saved in a config.py and conf files.
+The application is primarily designed for headless operation and includes sync.sh that
+can securely synchronize files with a users google drive.  This works well for remote security
+cameras. Camera config.py settings can be administered remotely from a google drive using sync.sh.
+Includes makevideo.sh to create timelapse or motion lapse videos from images, convid.sh to convert/combine 
+h264 to mp4 format, a simple minumum or no setup web server to view images or videos and menubox.sh 
+to admin settings and stop start pi-timolo and webserver as background tasks.    
+see Github Wiki for More Details https://github.com/pageauc/pi-timolo/wiki    
+ 
 ### Quick Install
 For Easy pi-timolo-install.sh onto raspbian RPI. 
 
@@ -29,19 +43,7 @@ the pi-timolo-install.sh script code before executing.
 Default is motion only see config.py for detailed settings   
     
     cd pi-timolo
-    ./pi-timolo.py
-
-see Github Wiki for More Details https://github.com/pageauc/pi-timolo/wiki        
-
-### Description
-pi-timolo is a python picamara module application for a Raspberry PI computer.
-A RPI camera module must be attached. It can take timelapse and motion detection
-images separately or together. Takes Long exposure Night (lowlight) images for
-Time Lapse and/or Motion. Has smooth twilight transitions based on a threshold light
-setting, so a real time clock is not required. Customization settings are saved in a config.py and conf files.
-The application is primarily designed for headless operation and includes sync.sh that
-can securely synchronize files with a users google drive.  This works well for remote security
-cameras. Camera settings can also be administered remotely sync.sh
+    ./pi-timolo.py   
  
 ### Menubox
 The lastest version of pi-timolo has a whiptail admin menu system. The menu's allow
