@@ -60,6 +60,7 @@ motionQuickTLTimer = 10    # Duration in seconds of quick time lapse sequence af
 motionQuickTLInterval = 0  # Time between each Quick time lapse image 0 is fast as possible
 motionForce = 3600         # Force single motion image if no Motion Detected in specified seconds.  default=3600 1 hr
 motionNumOn = True         # True=On (filenames by sequenced Number) otherwise date/time used for filenames
+motionDateSubDir = False       # True=On files will be saved into directory named after the current date 
 motionNumStart = 1000      # Start motion number sequence
 motionNumMax  = 500        # Max number of motion images desired. 0=Continuous    default=0
 motionNumRecycle = True    # After numberMax reached restart at numberStart instead of exiting default=True
@@ -74,6 +75,7 @@ timelapsePrefix = "tl-"    # Prefix timelapse images with this prefix
 timelapseDir = "media/timelapse" # Storage Folder for Time Lapse Images
 timelapseTimer = 300       # Seconds between timelapse images  default=300 5 min
 timelapseNumOn = True      # True=On (filenames Sequenced by Number) otherwise date/time used for filename
+timelapseDateSubDir = False    # True=On files will be saved into directory named after the current date 
 timelapseNumStart = 1000   # Start of timelapse number sequence
 timelapseNumMax = 2000     # Max number of timelapse images desired. 0=Continuous  default=2000
 timelapseNumRecycle = True # After numberMax reached restart at numberStart instead of exiting default=True
