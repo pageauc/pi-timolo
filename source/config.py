@@ -50,7 +50,7 @@ showTextWhiteNight = True  # Change night text to white.  Might help if night ne
 motionOn = True            # Turns Motion Detection True=On False=Off
 motionPrefix = "mo-"       # Prefix Motion Detection images
 motionDir = "media/motion" # Storage Folder for Motion Detect Images
-threshold = 35             # How much a pixel has to change to be counted default=35 (1-200)
+threshold = 50             # How much a pixel has to change to be counted default=50 (1-200)
 sensitivity = 100          # Number of changed pixels to trigger motion default=100
 motionAverage = 20         # Number of images to average for motion verification: 1=last image only or 100=Med 300=High Average Etc.
 motionVideoOn = False      # If set to True then video clip is taken rather than image
