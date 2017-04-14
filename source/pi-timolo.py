@@ -21,8 +21,9 @@
 # 4.10 release 09-Mar-2017 Moved position of camera.exposure_mode = 'off' for night shots
 # 4.20 release 13-Mar-2017 Updated takeNightImage settings
 # 4.30 release 30-Mar-2017 Add variables for day camera motion and timelapse camera warmup before taking image
+# 4.31 release 14-Apr-2017 Changed logging display and misc fixes (Still get some greenish images)
 
-progVer = "ver 4.30"
+progVer = "ver 4.31"
 
 import datetime
 import glob
@@ -162,15 +163,18 @@ def displayInfo(motioncount, timelapsecount):
         print("-------------------------------------- Settings ----------------------------------------------")
         print("Config File .. Title=%s" % configTitle)
         print("               config-template filename=%s" % configName)
+        print("")
         print("Image Info ... Size=%ix%i   Prefix=%s   VFlip=%s   HFlip=%s   Preview=%s" % (imageWidth, imageHeight, imageNamePrefix, imageVFlip, imageHFlip, imagePreview))
         shutStr = shut2Sec(nightMaxShut)
-        print("    Low Light. twilightThreshold=%i  nightMaxShut=%s  nightMaxISO=%i   nightSleepSec=%i sec" % (twilightThreshold, shutStr, nightMaxISO, nightSleepSec))
+        print("    Low Light. twilightThreshold=%i  nightMaxShut=%s  nightMaxISO=%i nightMinISO=%i  nightSleepSec=%i sec" 
+                                     % (twilightThreshold, shutStr, nightMaxISO, nightMinISO, nightSleepSec))
         print("    No Shots . noNightShots=%s   noDayShots=%s" % (noNightShots, noDayShots))
         if showDateOnImage:
             print("    Img Text . On=%s  Bottom=%s (False=Top)  WhiteText=%s (False=Black)  showTextWhiteNight=%s" % (showDateOnImage, showTextBottom, showTextWhite, showTextWhiteNight)) 
             print("               showTextFontSize=%i px height" % (showTextFontSize))
         else:
             print("    No Text .. showDateOnImage=%s  Text on Image Disabled"  % (showDateOnImage))
+        print("")
         print("Motion ....... On=%s  Prefix=%s  threshold=%i(How Much)  sensitivity=%i(How Many)"  % (motionOn, motionPrefix, threshold, sensitivity))
         print("               forceTimer=%i min(If No Motion)"  % (motionForce/60))
         print("               Number of previous images to use to check for motion=%i"  % (motionAverage))
@@ -189,6 +193,7 @@ def displayInfo(motioncount, timelapsecount):
             print("    Video .... motionVideoOn=%s   motionVideoTimer=%i sec   (superseded by QuickTL)" % (motionVideoOn, motionVideoTimer))
         else:
             print("    Video .... motionVideoOn=%s  Motion Video Disabled" % (motionVideoOn))
+        print("")
         print("Time Lapse ... On=%s  Prefix=%s   Timer=%i sec   timeLapseExit=%i sec (0=Continuous)" % (timelapseOn, timelapsePrefix, timelapseTimer, timelapseExit)) 
         print("               timelapsePath=%s  timelapseCamSleep=%.2f sec" % (timelapsePath, timelapseCamSleep))
         if timelapseNumOn:
@@ -198,6 +203,7 @@ def displayInfo(motioncount, timelapsecount):
             print("    Date-Time. motionNumOn=%s  Numbering Disabled" % (timelapseNumOn))
         if createLockFile:
             print("gdrive Sync .. On=%s  Path=%s  Note: syncs for motion images only." % (createLockFile, lockFilePath))  
+        print("")
         print("Logging ...... verbose=%s (True = Log To Console)" % ( verbose ))
         print("               logDataToFile=%s  logFilePath=%s" % ( logDataToFile, logFilePath ))
         print("------------------------------------ Log Activity --------------------------------------------")
@@ -295,7 +301,8 @@ def writeTextToImage(imagename, datetoprint, daymode):
     draw.text(( x, y ), text, FOREGROUND, font=font)
     img.save(imagename)
     metadata.write()    # Write previously saved exif data to image file
-    logging.info("Added %s Text[%s] on %s", textColour, datetoprint, imagename)
+    logging.info("Added %s Text[%s]", textColour, datetoprint)
+    logging.info("FilePath %s" % imagename)
     return
 
 #----------------------------------------------------------------------------------------------- 
@@ -304,7 +311,8 @@ def postImageProcessing(numberon, counterstart, countermax, counter, recycle, co
     if (not motionVideoOn):
         rightNow = datetime.datetime.now()
         if showDateOnImage:
-            dateTimeText = "%04d%02d%02d_%02d:%02d:%02d" % (rightNow.year, rightNow.month, rightNow.day, rightNow.hour, rightNow.minute, rightNow.second)
+            dateTimeText = ("%04d%02d%02d_%02d:%02d:%02d" 
+                         % (rightNow.year, rightNow.month, rightNow.day, rightNow.hour, rightNow.minute, rightNow.second))
             if numberon:
                 counterStr = "%i    "  % ( counter )
                 imageText =  counterStr + dateTimeText
@@ -346,7 +354,8 @@ def getVideoName(path, prefix, numberon, counter):
     else:
         if motionVideoOn:
             rightNow = datetime.datetime.now()
-            filename = "%s/%s%04d%02d%02d-%02d%02d%02d.h264" % ( path, prefix ,rightNow.year, rightNow.month, rightNow.day, rightNow.hour, rightNow.minute, rightNow.second)
+            filename = ("%s/%s%04d%02d%02d-%02d%02d%02d.h264" 
+                     % ( path, prefix ,rightNow.year, rightNow.month, rightNow.day, rightNow.hour, rightNow.minute, rightNow.second))
     return filename
 
 #-----------------------------------------------------------------------------------------------
@@ -356,7 +365,8 @@ def getImageName(path, prefix, numberon, counter):
         filename = os.path.join(path, prefix + str(counter) + ".jpg")   
     else:
         rightNow = datetime.datetime.now()
-        filename = "%s/%s%04d%02d%02d-%02d%02d%02d.jpg" % ( path, prefix ,rightNow.year, rightNow.month, rightNow.day, rightNow.hour, rightNow.minute, rightNow.second)     
+        filename = ("%s/%s%04d%02d%02d-%02d%02d%02d.jpg" 
+                 % ( path, prefix ,rightNow.year, rightNow.month, rightNow.day, rightNow.hour, rightNow.minute, rightNow.second))     
     return filename
 
 #-----------------------------------------------------------------------------------------------
@@ -375,7 +385,8 @@ def takeDayImage(filename, cam_sleep_time):
         if imagePreview:
             camera.start_preview()
         camera.capture(filename, use_video_port=useVideoPort)
-    logging.info("Size=%ix%i exp=auto awb=auto %s" % (imageWidth, imageHeight, filename))
+    logging.info("Settings  Size=%ix%i exp=auto awb=auto" % (imageWidth, imageHeight))
+    logging.info("FilePath  %s" % (filename))
     return
 
 #-----------------------------------------------------------------------------------------------   
@@ -402,7 +413,9 @@ def takeNightImage(filename):
             camera.start_preview()        
         camera.capture(filename)
     shutSec = shut2Sec(currentShut)
-    logging.info("Size=%ix%i dayPixAve=%i ISO=%i shut=%s %s" % (imageWidth, imageHeight, dayPixAve, currentISO, shutSec, filename))
+    logging.info("Settings  Size=%ix%i dayPixAve=%i ISO=%i nightSleepSec=%i shut=%s" 
+              % (imageWidth, imageHeight, dayPixAve, currentISO, nightSleepSec, shutSec))
+    logging.info("FilePath  %s" % (filename))
     return
 
 #-----------------------------------------------------------------------------------------------
@@ -435,7 +448,8 @@ def takeVideo(filename):
             camera.rotation = imageRotation #Note use imageVFlip and imageHFlip variables
             if showDateOnImage:
                 rightNow = datetime.datetime.now()            
-                dateTimeText = " Started at %04d-%02d-%02d %02d:%02d:%02d " % (rightNow.year, rightNow.month, rightNow.day, rightNow.hour, rightNow.minute, rightNow.second)
+                dateTimeText = (" Started at %04d-%02d-%02d %02d:%02d:%02d " 
+                             % (rightNow.year, rightNow.month, rightNow.day, rightNow.hour, rightNow.minute, rightNow.second))
                 camera.annotate_text_size = showTextFontSize
                 camera.annotate_foreground = picamera.Color('black')
                 camera.annotate_background = picamera.Color('white')               
@@ -463,7 +477,8 @@ def createSyncLockFile(imagefilename):
             open(lockFilePath, 'w').close()
             logging.info("Create gdrive sync.sh Lock File %s", lockFilePath)
         rightNow = datetime.datetime.now()
-        now = "%04d%02d%02d-%02d%02d%02d" % ( rightNow.year, rightNow.month, rightNow.day, rightNow.hour, rightNow.minute, rightNow.second )
+        now = ("%04d%02d%02d-%02d%02d%02d" 
+            % ( rightNow.year, rightNow.month, rightNow.day, rightNow.hour, rightNow.minute, rightNow.second ))
         filecontents = now + " createSyncLockFile - "  + imagefilename + " Ready to sync using sudo ./sync.sh command." 
         f = open(lockFilePath, 'w+')
         f.write(filecontents)
@@ -522,7 +537,8 @@ def getNightCamSettings(dayPixAve):
         outISO = nightMinISO
     if outISO > nightMaxISO:
         outISO = nightMaxISO
-    logging.info("dayPixAve=%i ratio=%.3f ISO=%i shut=%i %s" % ( dayPixAve, ratio, outISO, outShut, shut2Sec(outShut)))
+    logging.info("dayPixAve=%i ratio=%.3f ISO=%i shut=%i %s" 
+              % ( dayPixAve, ratio, outISO, outShut, shut2Sec(outShut)))
     return outShut, outISO
 
 #-----------------------------------------------------------------------------------------------    
@@ -596,7 +612,8 @@ def dataLogger():
         dayPixAverage = getStreamPixAve(dayStream)
         nightStream = getStreamImage(False)
         nightPixAverage = getStreamPixAve(nightStream)
-        logging.info("nightPixAverage=%i dayPixAverage=%i twilightThreshold=%i " % (nightPixAverage, dayPixAverage, twilightThreshold))
+        logging.info("nightPixAverage=%i dayPixAverage=%i twilightThreshold=%i "
+                  % (nightPixAverage, dayPixAverage, twilightThreshold))
         time.sleep(1)
     return
 

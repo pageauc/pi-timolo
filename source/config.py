@@ -4,7 +4,7 @@
 # Done by - Claude Pageau
  
 configTitle = "pi-timolo Default Config Settings"
-configName = "pi-timolo-default-config"
+configName  = "config.py"
 
 #======================================
 #       pi-timolo.py Settings
@@ -31,13 +31,13 @@ imagePreview = False       # Preview image on connected RPI Monitor default=Fals
 useVideoPort = True        # Use the video port to capture motion images - faster than the image port. Default=False
 
 # Low Light Night Settings
-twilightThreshold = 20     # default=35 Light level to trigger day/night transition at twilight
-nightSleepSec = 25         # default=20 Sec - Time period to allow camera to calculate low light AWB
+twilightThreshold = 35     # default=35 Light level to trigger day/night transition at twilight
+nightSleepSec = 30         # default=30 Sec - Time period to allow camera to calculate low light AWB
 nightMaxShut = 5.5         # default=5.5 sec Highest cam shut exposure time.
                            # IMPORTANT 6 sec works sometimes but occasionally locks RPI and HARD reboot required to clear
 nightMinShut = .002        # default=.002 sec Lowest camera shut exposure time for transition from day to night (or visa versa)
 nightMaxISO = 800          # default=800  Max cam ISO night setting
-nightMinISO = 100          # lowest ISO camera setting for transition from day to night (or visa versa)
+nightMinISO = 200          # default=200  Min cam ISO camera setting for transition from day to night (or visa versa)
 
 # Date/Time Settings for Displaying info Directly on Images
 showTextFontSize = 18      # Size of image Font in pixel height
@@ -47,9 +47,9 @@ showTextWhite = True       # Colour of image Text True=White False=Black
 showTextWhiteNight = True  # Change night text to white.  Might help if night needs white instead of black during day or visa versa
 
 # Motion Detect Settings
-motionOn = True            # True = motion capture is turned on.  False= No motion detection
+motionOn = True            # Turns Motion Detection True=On False=Off
 motionPrefix = "mo-"       # Prefix Motion Detection images
-motionDir = "media/motion"       # Storage Folder for Motion Detect Images
+motionDir = "media/motion" # Storage Folder for Motion Detect Images
 threshold = 35             # How much a pixel has to change to be counted default=35 (1-200)
 sensitivity = 100          # Number of changed pixels to trigger motion default=100
 motionAverage = 20         # Number of images to average for motion verification: 1=last image only or 100=Med 300=High Average Etc.
@@ -66,7 +66,7 @@ motionNumRecycle = True    # After numberMax reached restart at numberStart inst
 motionMaxDots = 100        # Number of motion dots before starting new line
 createLockFile = False     # default=False if True then sync.sh will call gdrive to sync files to your web google drive if .sync file exists
                            # Lock File is used to indicate motion images are added so sync.sh can sync in background via sudo crontab -e
-motionCamSleep = 0.7       # default=0.7 Sleep seconds to allow camera to establish white balance before taking photo
+motionCamSleep = 0.7       # default=0.7 seconds sleep to allow camera to establish white balance before taking photo
                            
 # Time Lapse Settings
 timelapseOn = False        # Turns timelapse True=On  False=Off
@@ -78,7 +78,7 @@ timelapseNumStart = 1000   # Start of timelapse number sequence
 timelapseNumMax = 2000     # Max number of timelapse images desired. 0=Continuous  default=2000
 timelapseNumRecycle = True # After numberMax reached restart at numberStart instead of exiting default=True
 timelapseExit = 0          # Will Quit program after specified seconds 0=Continuous  default=0
-timelapseCamSleep = 4.0    # default 4.0 seconds sleep to allow camera to establish white balance before taking photo 
+timelapseCamSleep = 4.0    # default=4.0 seconds sleep to allow camera to establish white balance before taking photo 
 
 #======================================
 #       webserver.py Settings
