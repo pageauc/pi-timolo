@@ -32,7 +32,7 @@ useVideoPort = True        # Use the video port to capture motion images - faste
 
 # Low Light Night Settings
 twilightThreshold = 35     # default=35 Light level to trigger day/night transition at twilight
-nightSleepSec = 30         # default=30 Sec - Time period to allow camera to calculate low light AWB
+nightSleepSec = 20         # default=30 Sec - Time period to allow camera to calculate low light AWB
 nightMaxShut = 5.5         # default=5.5 sec Highest cam shut exposure time.
                            # IMPORTANT 6 sec works sometimes but occasionally locks RPI and HARD reboot required to clear
 nightMinShut = .002        # default=.002 sec Lowest camera shut exposure time for transition from day to night (or visa versa)
@@ -66,7 +66,7 @@ motionNumRecycle = True    # After numberMax reached restart at numberStart inst
 motionMaxDots = 100        # Number of motion dots before starting new line
 createLockFile = False     # default=False if True then sync.sh will call gdrive to sync files to your web google drive if .sync file exists
                            # Lock File is used to indicate motion images are added so sync.sh can sync in background via sudo crontab -e
-motionCamSleep = 0.7       # default=0.7 seconds sleep to allow camera to establish white balance before taking photo
+motionCamSleep = 0.7       # default=0.7 seconds day sleep so camera can measure AWB before taking photo
                            
 # Time Lapse Settings
 timelapseOn = False        # Turns timelapse True=On  False=Off
@@ -78,7 +78,7 @@ timelapseNumStart = 1000   # Start of timelapse number sequence
 timelapseNumMax = 2000     # Max number of timelapse images desired. 0=Continuous  default=2000
 timelapseNumRecycle = True # After numberMax reached restart at numberStart instead of exiting default=True
 timelapseExit = 0          # Will Quit program after specified seconds 0=Continuous  default=0
-timelapseCamSleep = 4.0    # default=4.0 seconds sleep to allow camera to establish white balance before taking photo 
+timelapseCamSleep = 4.0    # default=4.0 seconds day sleep so camera can measure AWB before taking photo 
 
 #======================================
 #       webserver.py Settings

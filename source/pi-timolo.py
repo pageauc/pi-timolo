@@ -22,8 +22,9 @@
 # 4.20 release 13-Mar-2017 Updated takeNightImage settings
 # 4.30 release 30-Mar-2017 Add variables for day camera motion and timelapse camera warmup before taking image
 # 4.31 release 14-Apr-2017 Changed logging display and misc fixes (Still get some greenish images)
+# 4.40 release 16-Apr-2017 Testing changed takeNightImage func to reduce greenish images
 
-progVer = "ver 4.31"
+progVer = "ver 4.40"
 
 import datetime
 import glob
@@ -176,7 +177,7 @@ def displayInfo(motioncount, timelapsecount):
             print("    No Text .. showDateOnImage=%s  Text on Image Disabled"  % (showDateOnImage))
         print("")
         print("Motion ....... On=%s  Prefix=%s  threshold=%i(How Much)  sensitivity=%i(How Many)"  % (motionOn, motionPrefix, threshold, sensitivity))
-        print("               forceTimer=%i min(If No Motion)"  % (motionForce/60))
+        print("               forceTimer=%i min (If No Motion)"  % (motionForce/60))
         print("               Number of previous images to use to check for motion=%i"  % (motionAverage))
         print("               Use video port for motion image capture? %s"  % (useVideoPort))
         print("               motionPath=%s  motionCamSleep=%.2f sec" % (motionPath, motionCamSleep))
@@ -301,7 +302,7 @@ def writeTextToImage(imagename, datetoprint, daymode):
     draw.text(( x, y ), text, FOREGROUND, font=font)
     img.save(imagename)
     metadata.write()    # Write previously saved exif data to image file
-    logging.info("Added %s Text[%s]", textColour, datetoprint)
+    logging.info("Added %s Text [ %s ]", textColour, datetoprint)
     logging.info("FilePath %s" % imagename)
     return
 
@@ -380,42 +381,41 @@ def takeDayImage(filename, cam_sleep_time):
         # Day Automatic Mode
         camera.exposure_mode = 'auto'
         camera.awb_mode = 'auto'
-        time.sleep(cam_sleep_time)   # sleep for a little while so camera can get adjustments
-                                     # motion is minimal to capture movement while timelapse is longer for better images
+        time.sleep(cam_sleep_time)   # sleep for a while so camera get AWB
         if imagePreview:
             camera.start_preview()
         camera.capture(filename, use_video_port=useVideoPort)
-    logging.info("Settings  Size=%ix%i exp=auto awb=auto" % (imageWidth, imageHeight))
+    logging.info("Settings  Size=%ix%i exp=auto awb=auto camSleep=%i sec" 
+              % (imageWidth, imageHeight, cam_sleep_time))
     logging.info("FilePath  %s" % (filename))
     return
 
 #-----------------------------------------------------------------------------------------------   
 def takeNightImage(filename):
-    dayStream = getStreamImage(True)
-    dayPixAve = getStreamPixAve(dayStream)
-    currentShut, currentISO = getNightCamSettings(dayPixAve)
     # Take low light Night image (including twilight zones)
+#    dayStream = getStreamImage(True)
     with picamera.PiCamera() as camera:
-        # Take Low Light image
-        # Set a framerate_range then set shutter
         camera.resolution = (imageWidth, imageHeight)
-        camera.framerate_range = (Fraction(1, 6), Fraction(30, 1))
-        camera.sensor_mode = 3
         camera.vflip = imageVFlip
         camera.hflip = imageHFlip
-        camera.rotation = imageRotation #Note use imageVFlip and imageHFlip variables
-        camera.shutter_speed = currentShut
-        camera.iso = currentISO
-        # Give the camera a good long time to measure AWB
-        time.sleep(nightSleepSec)
+        camera.rotation = imageRotation # valid values 0, 90, 180, 270
+        # Set a framerate_range then set shutter
+        camera.framerate_range = (Fraction(1, 6), Fraction(30, 1))
+#        camera.framerate = Fraction(1, 6)
+#        dayPixAve = getStreamPixAve(dayStream)
+#        currentShut, currentISO = getNightCamSettings(dayPixAve)
+#        camera.shutter_speed = currentShut
+#        camera.iso = currentISO
+        time.sleep(nightSleepSec)  # Give camera time to measure AWB
         camera.exposure_mode = 'off'
         if imagePreview:
             camera.start_preview()        
         camera.capture(filename)
-    shutSec = shut2Sec(currentShut)
-    logging.info("Settings  Size=%ix%i dayPixAve=%i ISO=%i nightSleepSec=%i shut=%s" 
-              % (imageWidth, imageHeight, dayPixAve, currentISO, nightSleepSec, shutSec))
-    logging.info("FilePath  %s" % (filename))
+#    shutSec = shut2Sec(currentShut)
+#    logging.info("Settings  Size=%ix%i dayPixAve=%i ISO=%i nightSleepSec=%i shut=%s" 
+#              % (imageWidth, imageHeight, dayPixAve, currentISO, nightSleepSec, shutSec))
+    logging.info("Settings Size=%ix%i nightSleepSec=%i" % (imageWidth, imageHeight, nightSleepSec))
+    logging.info("FilePath %s" % filename)
     return
 
 #-----------------------------------------------------------------------------------------------
@@ -492,21 +492,17 @@ def getStreamImage(isDay):
         camera.resolution = (testWidth, testHeight)
         with picamera.array.PiRGBArray(camera) as stream:
             if isDay:
-                time.sleep(0.5)            
                 camera.exposure_mode = 'auto'
                 camera.awb_mode = 'auto' 
+                time.sleep(motionCamSleep)   # sleep so camera can get AWB
                 camera.capture(stream, format='rgb', use_video_port=useVideoPort)
             else:
-                # Take Low Light image            
-                # Set a framerate_range then set shutter
-                # speed to 6s
+                # Take Low Light motion image stream            
+                # Set a framerate_range
                 camera.framerate_range = (Fraction(1, 6), Fraction(30, 1))
-                camera.sensor_mode = 3                
-                camera.shutter_speed = nightMaxShut
-                camera.iso = nightMaxISO
-                # Give the camera a good long time to measure AWB
-                # Note sleep time is hard coded and not set by nightSleepSec
-                time.sleep( 10 )
+#                camera.shutter_speed = nightMaxShut
+#                camera.iso = nightMaxISO
+                time.sleep(nightSleepSec)  # Give camera time to measure AWB
                 camera.exposure_mode = 'off'                
                 camera.capture(stream, format='rgb')
             return stream.array
@@ -518,9 +514,10 @@ def getStreamPixAve(streamData):
     return pixAverage
 
 #-----------------------------------------------------------------------------------------------
+# This can be deleted after testing of new takeNightImage function
 def getNightCamSettings(dayPixAve):
     # Calculate Ratio for adjusting shutter and ISO values
-    if dayPixAve <= twilightThreshold:
+    if dayPixAve < twilightThreshold:
         ratio = ((twilightThreshold - dayPixAve)/float(twilightThreshold)) 
         outShut = int(nightMaxShut * ratio)
         outISO  = int(nightMaxISO * ratio)
@@ -551,10 +548,11 @@ def checkIfDay(currentDayMode, dataStream):
         dayStream = getStreamImage(True)
         dayPixAverage = getStreamPixAve(dayStream) 
         
-    if dayPixAverage > twilightThreshold:
+    if dayPixAverage >= twilightThreshold:
         currentDayMode = True
     else:
         currentDayMode = False
+#   logging.info("daymode=%s dayPixAverage=%i" % (currentDayMode, dayPixAverage))
     return currentDayMode
 
 #-----------------------------------------------------------------------------------------------    
@@ -655,6 +653,7 @@ def Main():
     daymode = False
     data1 = getStreamImage(True).astype(float)  #All functions should still work with float instead of int - just takes more memory
     daymode = checkIfDay(daymode, data1)
+    logging.info("daymode=%s" % daymode )
     data2 = getStreamImage(daymode)  # initialise data2 to use in main loop
     if not daymode:
         data1 = data2.astype(float)
@@ -662,7 +661,7 @@ def Main():
     checkDayTimer = timelapseStart
     checkMotionTimer = timelapseStart
     forceMotion = False   # Used for forcing a motion image if no motion for motionForce time exceeded
-    logging.info("Entering Loop for Time Lapse and/or Motion Detect  Please Wait ...")
+    logging.info("Entering Loop for TimeLapse and/or Motion Detect  Please Wait ...")
     dotCount = showDots(motionMaxDots)  # reset motion dots
     # Start main program loop here.  Use Ctl-C to exit if run from terminal session.
     while True:
@@ -670,7 +669,7 @@ def Main():
         if daymode != checkIfDay(daymode, data2):  # if daymode has changed, reset background, to avoid false motion trigger
             daymode = not daymode
             data2 = getStreamImage(daymode)  #get new stream
-            data1 = data2.astype(float)    #reset background
+            data1 = data2.astype(float)      #reset background
         else:
             data2 = getStreamImage(daymode)      # This gets the second stream of motion analysis
         rightNow = datetime.datetime.now()   # refresh rightNow time
