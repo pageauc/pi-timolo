@@ -24,7 +24,7 @@
 # 4.31 release 14-Apr-2017 Changed logging display and misc fixes (Still get some greenish images)
 # 4.40 release 16-Apr-2017 Testing changed takeNightImage func to reduce greenish images
 
-progVer = "ver 4.40"
+progVer = "ver 4.41"
 
 import datetime
 import glob
@@ -716,7 +716,8 @@ def Main():
                             camera.resolution = (imageWidth, imageHeight)
                             camera.vflip = imageVFlip
                             camera.hflip = imageHFlip
-                            time.sleep(.5)
+                            camera.rotation = imageRotation # valid values 0, 90, 180, 270                            
+                            time.sleep(motionCamSleep)
                             # This uses yield to loop through time lapse sequence but does not seem to be faster due to writing images
                             camera.capture_sequence(takeQuickTimeLapse(motionPath, imagePrefix, motionNumOn, motionNumCount, daymode, motionNumPath))
                             motionNumCount = getCurrentCount(motionNumPath, motionNumStart)
