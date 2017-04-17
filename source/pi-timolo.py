@@ -23,8 +23,9 @@
 # 4.30 release 30-Mar-2017 Add variables for day camera motion and timelapse camera warmup before taking image
 # 4.31 release 14-Apr-2017 Changed logging display and misc fixes (Still get some greenish images)
 # 4.40 release 16-Apr-2017 Testing changed takeNightImage func to reduce greenish images
+# 4.42 release 17-Apr-2017 Fixed motionCamSleep bug for motion takeDayImage (was timelapseCamSleep)
 
-progVer = "ver 4.41"
+progVer = "ver 4.42"
 
 import datetime
 import glob
@@ -331,8 +332,8 @@ def postImageProcessing(numberon, counterstart, countermax, counter, recycle, co
                 if recycle:
                     counter = counterstart
                 else:
-                    print("%s - Exceeded Image Count numberMax=%i" % ( progName, countermax ))
-                    print("Exiting %s" % progName)
+                    logging.info("%s - Exceeded Image Count numberMax=%i" % ( progName, countermax ))
+                    logging.info("Exiting %s" % progName)
                     sys.exit(2)              
         # write next image counter number to dat file
         currentTime = showTime()        
@@ -385,7 +386,7 @@ def takeDayImage(filename, cam_sleep_time):
         if imagePreview:
             camera.start_preview()
         camera.capture(filename, use_video_port=useVideoPort)
-    logging.info("Settings  Size=%ix%i exp=auto awb=auto camSleep=%i sec" 
+    logging.info("Settings  Size=%ix%i exp=auto awb=auto camSleep=%.2f sec" 
               % (imageWidth, imageHeight, cam_sleep_time))
     logging.info("FilePath  %s" % (filename))
     return
@@ -414,7 +415,8 @@ def takeNightImage(filename):
 #    shutSec = shut2Sec(currentShut)
 #    logging.info("Settings  Size=%ix%i dayPixAve=%i ISO=%i nightSleepSec=%i shut=%s" 
 #              % (imageWidth, imageHeight, dayPixAve, currentISO, nightSleepSec, shutSec))
-    logging.info("Settings Size=%ix%i nightSleepSec=%i" % (imageWidth, imageHeight, nightSleepSec))
+    logging.info("Settings Size=%ix%i nightSleepSec=%.2f" 
+              % (imageWidth, imageHeight, nightSleepSec))
     logging.info("FilePath %s" % filename)
     return
 
@@ -463,9 +465,9 @@ def takeVideo(filename):
             proc = subprocess.Popen(convid, shell=True,
                              stdin=None, stdout=None, stderr=None, close_fds=True) 
         except IOError:
-            print("subprocess %s failed" %s ( convid ))
+            logging.error("subprocess %s failed" %s ( convid ))
         else:        
-            print("unidentified error")
+            logging.error("unidentified error")
         createSyncLockFile(filename)            
     return
 
@@ -728,7 +730,7 @@ def Main():
                         else:
                             filename = getImageName(motionPath, imagePrefix, motionNumOn, motionNumCount)
                             if daymode:
-                                takeDayImage(filename, timelapseCamSleep)
+                                takeDayImage(filename, motionCamSleep)
                             else:
                                 takeNightImage(filename)
                         motionNumCount = postImageProcessing(motionNumOn, motionNumStart, motionNumMax, motionNumCount, motionNumRecycle, motionNumPath, filename, daymode)
