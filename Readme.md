@@ -29,6 +29,15 @@ The command will download and execute the GitHub pi-timolo-install.sh script
 
 **IMPORTANT** - A raspbian apt-get update and upgrade will be performed as part of install
 so it may take some time if these are not up-to-date       
+
+### Minimal Upgrade
+If you are just interested in a minimal upgrade (must have pi-timolo previously installed)
+from a logged in ssh or terminal session.  Edit config.py to transfer any customized settings from config.py.old
+
+    cd ~/pi-timolo
+    cp config.py config.py.old
+    wget -O config.py https://raw.github.com/pageauc/pi-timolo/master/source/config.py
+    wget -O pi-timolo.py https://raw.github.com/pageauc/pi-timolo/master/source/pi-timolo.py    
     
 ### or Manual Install   
 From logged in RPI SSH session or console terminal perform the following. You can review
