@@ -24,8 +24,9 @@
 # 4.31 release 14-Apr-2017 Changed logging display and misc fixes (Still get some greenish images)
 # 4.40 release 16-Apr-2017 Testing changed takeNightImage func to reduce greenish images
 # 4.42 release 17-Apr-2017 Fixed motionCamSleep bug for motion takeDayImage (was timelapseCamSleep)
+# 4.50 release 18-Apr-2017 More changes for day to night lighting transitions and no greenish images
 
-progVer = "ver 4.42"
+progVer = "ver 4.50"
 
 import datetime
 import glob
@@ -90,7 +91,6 @@ from fractions import Fraction
 
 SECONDS2MICRO = 1000000    # Used to convert from seconds to microseconds
 nightMaxShut = int(nightMaxShut * SECONDS2MICRO)  # default=5 sec IMPORTANT- 6 sec works sometimes but occasionally locks RPI and HARD reboot required to clear
-nightMinShut = int(nightMinShut * SECONDS2MICRO)  # lowest shut camera setting for transition from day to night (or visa versa)
 testWidth = 128            # width of rgb image stream used for motion detection and day/night changes
 testHeight = 80            # height of rgb image stream used for motion detection and day/night changes
 daymode = False            # default should always be False.
@@ -112,7 +112,7 @@ def userMotionCodeHere():
 #-----------------------------------------------------------------------------------------------
 def shut2Sec (shutspeed):
     shutspeedSec = shutspeed/float(SECONDS2MICRO)
-    shutstring = str("%.3f sec") % ( shutspeedSec )
+    shutstring = str("%.2f") % ( shutspeedSec )
     return shutstring
 
 #-----------------------------------------------------------------------------------------------    
@@ -163,43 +163,50 @@ def takeTestImage():
 def displayInfo(motioncount, timelapsecount):
     if verbose:  
         print("-------------------------------------- Settings ----------------------------------------------")
-        print("Config File .. Title=%s" % configTitle)
-        print("               config-template filename=%s" % configName)
+        print("Config File .. configName=%s  configTitle=%s" % (configName, configTitle))
         print("")
-        print("Image Info ... Size=%ix%i   Prefix=%s   VFlip=%s   HFlip=%s   Preview=%s" % (imageWidth, imageHeight, imageNamePrefix, imageVFlip, imageHFlip, imagePreview))
+        print("Image Info ... Size=%ix%i  Prefix=%s  VFlip=%s  HFlip=%s  Rotation=%i  Preview=%s" 
+              % (imageWidth, imageHeight, imageNamePrefix, imageVFlip, imageHFlip, imageRotation, imagePreview))
         shutStr = shut2Sec(nightMaxShut)
-        print("    Low Light. twilightThreshold=%i  nightMaxShut=%s  nightMaxISO=%i nightMinISO=%i  nightSleepSec=%i sec" 
-                                     % (twilightThreshold, shutStr, nightMaxISO, nightMinISO, nightSleepSec))
+        print("    Low Light. nightThreshold=%i  nightMaxShut=%s Sec  nightMaxISO=%i  nightSleepSec=%i" 
+                           % (nightThreshold, shutStr, nightMaxISO, nightSleepSec))
         print("    No Shots . noNightShots=%s   noDayShots=%s" % (noNightShots, noDayShots))
         if showDateOnImage:
-            print("    Img Text . On=%s  Bottom=%s (False=Top)  WhiteText=%s (False=Black)  showTextWhiteNight=%s" % (showDateOnImage, showTextBottom, showTextWhite, showTextWhiteNight)) 
+            print("    Img Text . On=%s  Bottom=%s (False=Top)  WhiteText=%s (False=Black)  showTextWhiteNight=%s"
+                        % (showDateOnImage, showTextBottom, showTextWhite, showTextWhiteNight)) 
             print("               showTextFontSize=%i px height" % (showTextFontSize))
         else:
             print("    No Text .. showDateOnImage=%s  Text on Image Disabled"  % (showDateOnImage))
         print("")
-        print("Motion ....... On=%s  Prefix=%s  threshold=%i(How Much)  sensitivity=%i(How Many)"  % (motionOn, motionPrefix, threshold, sensitivity))
+        print("Motion ....... On=%s  Prefix=%s  Threshold=%i(How Much)  Sensitivity=%i(How Many)"  
+                         % (motionOn, motionPrefix, motionThreshold, motionSensitivity))
         print("               forceTimer=%i min (If No Motion)"  % (motionForce/60))
         print("               Number of previous images to use to check for motion=%i"  % (motionAverage))
         print("               Use video port for motion image capture? %s"  % (useVideoPort))
         print("               motionPath=%s  motionCamSleep=%.2f sec" % (motionPath, motionCamSleep))
         if motionNumOn:
-            print("    Num Seq .. motionNumOn=%s  current=%s   numStart=%i   numMax=%i   numRecycle=%s"  % (motionNumOn, motioncount, motionNumStart, motionNumMax, motionNumRecycle))
+            print("    Num Seq .. motionNumOn=%s  current=%s   numStart=%i   numMax=%i   numRecycle=%s"  
+                               % (motionNumOn, motioncount, motionNumStart, motionNumMax, motionNumRecycle))
             print("               motionNumPath=%s " % (motionNumPath))
         else:
             print("    Date-Time. motionNumOn=%s  Image Numbering Disabled" % (motionNumOn))
         if motionQuickTLOn:
-            print("    Quick TL . motionQuickTLOn=%s   motionQuickTLTimer=%i sec  motionQuickTLInterval=%i sec (0=fastest)" % (motionQuickTLOn, motionQuickTLTimer, motionQuickTLInterval))
+            print("    Quick TL . motionQuickTLOn=%s   motionQuickTLTimer=%i sec  motionQuickTLInterval=%i sec (0=fastest)" 
+                               % (motionQuickTLOn, motionQuickTLTimer, motionQuickTLInterval))
         else:
             print("    Quick TL . motionQuickTLOn=%s  Quick Time Lapse Disabled" % (motionQuickTLOn))
         if motionVideoOn:
-            print("    Video .... motionVideoOn=%s   motionVideoTimer=%i sec   (superseded by QuickTL)" % (motionVideoOn, motionVideoTimer))
+            print("    Video .... motionVideoOn=%s   motionVideoTimer=%i sec   (superseded by QuickTL)" 
+                               % (motionVideoOn, motionVideoTimer))
         else:
             print("    Video .... motionVideoOn=%s  Motion Video Disabled" % (motionVideoOn))
         print("")
-        print("Time Lapse ... On=%s  Prefix=%s   Timer=%i sec   timeLapseExit=%i sec (0=Continuous)" % (timelapseOn, timelapsePrefix, timelapseTimer, timelapseExit)) 
+        print("Time Lapse ... On=%s  Prefix=%s   Timer=%i sec   timeLapseExit=%i sec (0=Continuous)" 
+                    % (timelapseOn, timelapsePrefix, timelapseTimer, timelapseExit)) 
         print("               timelapsePath=%s  timelapseCamSleep=%.2f sec" % (timelapsePath, timelapseCamSleep))
         if timelapseNumOn:
-            print("    Num Seq .. On=%s  current=%s   numStart=%i   numMax=%i   numRecycle=%s"  % (timelapseNumOn, timelapsecount, timelapseNumStart, timelapseNumMax, timelapseNumRecycle))
+            print("    Num Seq .. On=%s  current=%s   numStart=%i   numMax=%i   numRecycle=%s"  
+                      % (timelapseNumOn, timelapsecount, timelapseNumStart, timelapseNumMax, timelapseNumRecycle))
             print("               numPath=%s" % (timelapseNumPath))
         else:
             print("    Date-Time. motionNumOn=%s  Numbering Disabled" % (timelapseNumOn))
@@ -378,14 +385,15 @@ def takeDayImage(filename, cam_sleep_time):
         camera.resolution = (imageWidth, imageHeight) 
         camera.vflip = imageVFlip
         camera.hflip = imageHFlip
-        camera.rotation = imageRotation #Note use imageVFlip and imageHFlip variables
+        camera.rotation = imageRotation # Valid values 0, 90, 180, 270
         # Day Automatic Mode
         camera.exposure_mode = 'auto'
         camera.awb_mode = 'auto'
-        time.sleep(cam_sleep_time)   # sleep for a while so camera get AWB
+        time.sleep(cam_sleep_time)   # motion or TL camera sleep to get AWB
         if imagePreview:
             camera.start_preview()
         camera.capture(filename, use_video_port=useVideoPort)
+        camera.close()
     logging.info("Settings  Size=%ix%i exp=auto awb=auto camSleep=%.2f sec" 
               % (imageWidth, imageHeight, cam_sleep_time))
     logging.info("FilePath  %s" % (filename))
@@ -393,32 +401,31 @@ def takeDayImage(filename, cam_sleep_time):
 
 #-----------------------------------------------------------------------------------------------   
 def takeNightImage(filename):
-    # Take low light Night image (including twilight zones)
-#    dayStream = getStreamImage(True)
+    # Take low light Twilight or Night image 
+    dayStream = getStreamImage(True)  # Get a day image stream to calc pixAve below
     with picamera.PiCamera() as camera:
+        time.sleep(2)  # Wait for camera to warm up to reduce green tint images
         camera.resolution = (imageWidth, imageHeight)
         camera.vflip = imageVFlip
         camera.hflip = imageHFlip
         camera.rotation = imageRotation # valid values 0, 90, 180, 270
-        # Set a framerate_range then set shutter
-        camera.framerate_range = (Fraction(1, 6), Fraction(30, 1))
-#        camera.framerate = Fraction(1, 6)
-#        dayPixAve = getStreamPixAve(dayStream)
-#        currentShut, currentISO = getNightCamSettings(dayPixAve)
-#        camera.shutter_speed = currentShut
-#        camera.iso = currentISO
-        time.sleep(nightSleepSec)  # Give camera time to measure AWB
-        camera.exposure_mode = 'off'
-        if imagePreview:
-            camera.start_preview()        
+        dayPixAve = getStreamPixAve(dayStream)
+        logging.info("Settings Size=%ix%i dayPixAve=%i"
+                  % (imageWidth, imageHeight, dayPixAve))
+        camera.framerate = Fraction(1, 6) # Set the framerate to a fixed value
+        time.sleep(1)  # short wait to allow framerate to settle
+        ratio = ((nightThreshold - dayPixAve)/float(nightThreshold)) 
+        if ratio < 0.3:
+           ratio = 0.3
+        camShut = int(nightMaxShut * ratio)
+        camera.shutter_speed = camShut  # Set the shutter for long exposure
+        camera.iso = nightMaxISO  # Set the ISO to a fixed value for long exposure          
+        logging.info("Long Exp ratio=%.2f camShut=%s Sec  nightMaxISO=%i  nightSleepSec=%i" 
+                                        % ( ratio, shut2Sec(camShut), nightMaxISO, nightSleepSec))
+        time.sleep(nightSleepSec)  # Give camera a long time to calc Night Settings
         camera.capture(filename)
-#    shutSec = shut2Sec(currentShut)
-#    logging.info("Settings  Size=%ix%i dayPixAve=%i ISO=%i nightSleepSec=%i shut=%s" 
-#              % (imageWidth, imageHeight, dayPixAve, currentISO, nightSleepSec, shutSec))
-    logging.info("Settings Size=%ix%i nightSleepSec=%.2f" 
-              % (imageWidth, imageHeight, nightSleepSec))
+        camera.close()
     logging.info("FilePath %s" % filename)
-    return
 
 #-----------------------------------------------------------------------------------------------
 def takeQuickTimeLapse(motionPath, imagePrefix, motionNumOn, motionNumCount, daymode, motionNumPath):
@@ -459,6 +466,7 @@ def takeVideo(filename):
             camera.start_recording(filename)
             camera.wait_recording(motionVideoTimer)
             camera.stop_recording()
+            camera.close()
         # This creates a subprocess that runs convid.sh with the filename as a parameter
         try:
             convid = "%s/convid.sh %s" % ( baseDir, filename )        
@@ -497,16 +505,13 @@ def getStreamImage(isDay):
                 camera.exposure_mode = 'auto'
                 camera.awb_mode = 'auto' 
                 time.sleep(motionCamSleep)   # sleep so camera can get AWB
-                camera.capture(stream, format='rgb', use_video_port=useVideoPort)
             else:
-                # Take Low Light motion image stream            
-                # Set a framerate_range
+                # use variable framerate_range for Low Light motion image stream            
                 camera.framerate_range = (Fraction(1, 6), Fraction(30, 1))
-#                camera.shutter_speed = nightMaxShut
-#                camera.iso = nightMaxISO
-                time.sleep(nightSleepSec)  # Give camera time to measure AWB
-                camera.exposure_mode = 'off'                
-                camera.capture(stream, format='rgb')
+                time.sleep(2) # Give camera time to measure AWB 
+                camera.iso = nightMaxISO                
+            camera.capture(stream, format='rgb', use_video_port=useVideoPort)
+            camera.close()
             return stream.array
 
 #-----------------------------------------------------------------------------------------------
@@ -514,31 +519,6 @@ def getStreamPixAve(streamData):
     # Calculate the average pixel values for the specified stream (used for determining day/night or twilight conditions)
     pixAverage = int(np.average(streamData[...,1]))
     return pixAverage
-
-#-----------------------------------------------------------------------------------------------
-# This can be deleted after testing of new takeNightImage function
-def getNightCamSettings(dayPixAve):
-    # Calculate Ratio for adjusting shutter and ISO values
-    if dayPixAve < twilightThreshold:
-        ratio = ((twilightThreshold - dayPixAve)/float(twilightThreshold)) 
-        outShut = int(nightMaxShut * ratio)
-        outISO  = int(nightMaxISO * ratio)
-    else:
-        ratio = 0.0
-        outShut = nightMinShut
-        outISO = nightMinISO 
-    # Do some Bounds Checking to avoid potential problems
-    if outShut < nightMinShut:
-        outShut = nightMinShut
-    if outShut > nightMaxShut:
-        outShut = nightMaxShut
-    if outISO < nightMinISO:
-        outISO = nightMinISO
-    if outISO > nightMaxISO:
-        outISO = nightMaxISO
-    logging.info("dayPixAve=%i ratio=%.3f ISO=%i shut=%i %s" 
-              % ( dayPixAve, ratio, outISO, outShut, shut2Sec(outShut)))
-    return outShut, outISO
 
 #-----------------------------------------------------------------------------------------------    
 def checkIfDay(currentDayMode, dataStream):
@@ -550,7 +530,7 @@ def checkIfDay(currentDayMode, dataStream):
         dayStream = getStreamImage(True)
         dayPixAverage = getStreamPixAve(dayStream) 
         
-    if dayPixAverage >= twilightThreshold:
+    if dayPixAverage >= nightThreshold:
         currentDayMode = True
     else:
         currentDayMode = False
@@ -591,14 +571,15 @@ def checkForMotion(data1, data2):
     motionDetected = False
     pixColor = 3 # red=0 green=1 blue=2 all=3  default=1
     if pixColor == 3:
-        pixChanges = (np.absolute(data1-data2)>threshold).sum()/3
+        pixChanges = (np.absolute(data1-data2)>motionThreshold).sum()/3
     else:
-        pixChanges = (np.absolute(data1[...,pixColor]-data2[...,pixColor])>threshold).sum()
-    if pixChanges > sensitivity:
+        pixChanges = (np.absolute(data1[...,pixColor]-data2[...,pixColor])>motionThreshold).sum()
+    if pixChanges > motionSensitivity:
         motionDetected = True
     if motionDetected:
         dotCount = showDots(motionMaxDots + 2)      # New Line
-        logging.info("Found Motion - threshold=%s  sensitivity=%s changes=%s", threshold, sensitivity, pixChanges)
+        logging.info("Found Motion - Threshold=%s  Sensitivity=%s changes=%s", 
+                                   motionThreshold, motionSensitivity, pixChanges)
     return motionDetected  
 
 #----------------------------------------------------------------------------------------------- 
@@ -612,8 +593,8 @@ def dataLogger():
         dayPixAverage = getStreamPixAve(dayStream)
         nightStream = getStreamImage(False)
         nightPixAverage = getStreamPixAve(nightStream)
-        logging.info("nightPixAverage=%i dayPixAverage=%i twilightThreshold=%i "
-                  % (nightPixAverage, dayPixAverage, twilightThreshold))
+        logging.info("nightPixAverage=%i dayPixAverage=%i nightThreshold=%i "
+                  % (nightPixAverage, dayPixAverage, nightThreshold))
         time.sleep(1)
     return
 
@@ -627,7 +608,7 @@ def Main():
     try:  #if motionAverage hasn't been included in config file (so it works with previous versions)
         global motionAverage
         if motionAverage > 1:
-            resetSensitivity = sensitivity*150   # number of changed pixels to trigger reset of background average
+            resetSensitivity = motionSensitivity*150   # number of changed pixels to trigger reset of background average
             if resetSensitivity > testHeight*testWidth*2:
                 resetSensitivity = testHeight*testWidth*2  #limit the resetSensitivity
         else:
@@ -663,7 +644,17 @@ def Main():
     checkDayTimer = timelapseStart
     checkMotionTimer = timelapseStart
     forceMotion = False   # Used for forcing a motion image if no motion for motionForce time exceeded
-    logging.info("Entering Loop for TimeLapse and/or Motion Detect  Please Wait ...")
+    if timelapseOn:
+        tlstr = "TimeLapse"
+    else:
+        tlstr = ""
+    if motionOn:
+        mostr = "Motion Detect"
+    else:
+        mostr = ""
+    if timelapseOn and motionOn:
+        tlstr = " and " + tlstr       
+    logging.info("Entering Loop for %s%s Please Wait ..." % (mostr, tlstr))
     dotCount = showDots(motionMaxDots)  # reset motion dots
     # Start main program loop here.  Use Ctl-C to exit if run from terminal session.
     while True:
@@ -694,7 +685,7 @@ def Main():
                 # IMPORTANT - Night motion detection may not work very well due to long exposure times and low light (may try checking red instead of green)
                 # Also may need night specific threshold and sensitivity settings (Needs more testing)
                 motionFound = checkForMotion(data1, data2)
-                if motionAverage > 1 and (np.absolute(data2-data1)>threshold).sum() > resetSensitivity:
+                if motionAverage > 1 and (np.absolute(data2-data1)>motionThreshold).sum() > resetSensitivity:
                     data1 = data2.astype(float)
                 else:
                     data1 = data1+(data2-data1)/motionAverage
@@ -722,6 +713,7 @@ def Main():
                             time.sleep(motionCamSleep)
                             # This uses yield to loop through time lapse sequence but does not seem to be faster due to writing images
                             camera.capture_sequence(takeQuickTimeLapse(motionPath, imagePrefix, motionNumOn, motionNumCount, daymode, motionNumPath))
+                            camera.close()
                             motionNumCount = getCurrentCount(motionNumPath, motionNumStart)
                     else:                        
                         if motionVideoOn:
