@@ -25,8 +25,9 @@
 # 4.40 release 16-Apr-2017 Testing changed takeNightImage func to reduce greenish images
 # 4.42 release 17-Apr-2017 Fixed motionCamSleep bug for motion takeDayImage (was timelapseCamSleep)
 # 4.50 release 18-Apr-2017 More changes for day to night lighting transitions and no greenish images
+# 4.60 release 27-Apr-2017 Added framerate_range to takeNightImage and added nightTwilightThreshold setting
 
-progVer = "ver 4.50"
+progVer = "ver 4.60"
 
 import datetime
 import glob
@@ -143,7 +144,6 @@ def showDots(dotcnt):
 def checkConfig():
     if not motionOn and not timelapseOn:
         logging.warning("Both Motion and Timelapse are turned OFF - motionOn=%s timelapseOn=%s", motionOn, timelapseOn)
-    return
 
 #-----------------------------------------------------------------------------------------------   
 def takeTestImage():
@@ -157,7 +157,6 @@ def takeTestImage():
     writeTextToImage(testfilepath, imagetext, daymode)
     logging.info("imageTestPrint=%s Captured Test Image to %s " % (imageTestPrint, testfilepath))
     sys.exit(2)
-    return
 
 #-----------------------------------------------------------------------------------------------
 def displayInfo(motioncount, timelapsecount):
@@ -168,12 +167,14 @@ def displayInfo(motioncount, timelapsecount):
         print("Image Info ... Size=%ix%i  Prefix=%s  VFlip=%s  HFlip=%s  Rotation=%i  Preview=%s" 
               % (imageWidth, imageHeight, imageNamePrefix, imageVFlip, imageHFlip, imageRotation, imagePreview))
         shutStr = shut2Sec(nightMaxShut)
-        print("    Low Light. nightThreshold=%i  nightMaxShut=%s Sec  nightMaxISO=%i  nightSleepSec=%i" 
-                           % (nightThreshold, shutStr, nightMaxISO, nightSleepSec))
-        print("    No Shots . noNightShots=%s   noDayShots=%s" % (noNightShots, noDayShots))
+        print("    Low Light. nightTwilightThreshold=%i  nightDarkThreshold=%i  nightBlackThreshold=%i" 
+                           % ( nightTwilightThreshold, nightDarkThreshold, nightBlackThreshold ))
+        print("               nightMaxShut=%s sec  nightDarkAdjustRatio=%.2f  nightMaxISO=%i  nightSleepSec=%i" 
+                           % ( shutStr, nightDarkAdjustRatio, nightMaxISO, nightSleepSec ))                           
+        print("    No Shots . noNightShots=%s   noDayShots=%s" % ( noNightShots, noDayShots ))
         if showDateOnImage:
             print("    Img Text . On=%s  Bottom=%s (False=Top)  WhiteText=%s (False=Black)  showTextWhiteNight=%s"
-                        % (showDateOnImage, showTextBottom, showTextWhite, showTextWhiteNight)) 
+                        % ( showDateOnImage, showTextBottom, showTextWhite, showTextWhiteNight )) 
             print("               showTextFontSize=%i px height" % (showTextFontSize))
         else:
             print("    No Text .. showDateOnImage=%s  Text on Image Disabled"  % (showDateOnImage))
@@ -217,7 +218,6 @@ def displayInfo(motioncount, timelapsecount):
         print("               logDataToFile=%s  logFilePath=%s" % ( logDataToFile, logFilePath ))
         print("------------------------------------ Log Activity --------------------------------------------")
     checkConfig()
-    return
 
 #-----------------------------------------------------------------------------------------------    
 def checkImagePath():
@@ -230,7 +230,6 @@ def checkImagePath():
         if not os.path.isdir(timelapsePath):
             logging.info("Creating Time Lapse Image Storage Folder %s", timelapsePath)
             os.makedirs(timelapsePath)
-    return
 
 #-----------------------------------------------------------------------------------------------    
 def getCurrentCount(numberpath, numberstart):
@@ -312,7 +311,6 @@ def writeTextToImage(imagename, datetoprint, daymode):
     metadata.write()    # Write previously saved exif data to image file
     logging.info("Added %s Text [ %s ]", textColour, datetoprint)
     logging.info("FilePath %s" % imagename)
-    return
 
 #----------------------------------------------------------------------------------------------- 
 def postImageProcessing(numberon, counterstart, countermax, counter, recycle, counterpath, filename, daymode):
@@ -397,14 +395,13 @@ def takeDayImage(filename, cam_sleep_time):
     logging.info("Settings  Size=%ix%i exp=auto awb=auto camSleep=%.2f sec" 
               % (imageWidth, imageHeight, cam_sleep_time))
     logging.info("FilePath  %s" % (filename))
-    return
 
 #-----------------------------------------------------------------------------------------------   
 def takeNightImage(filename):
     # Take low light Twilight or Night image 
     dayStream = getStreamImage(True)  # Get a day image stream to calc pixAve below
     with picamera.PiCamera() as camera:
-        time.sleep(2)  # Wait for camera to warm up to reduce green tint images
+        time.sleep(1)  # Wait for camera to warm up to reduce green tint images
         camera.resolution = (imageWidth, imageHeight)
         camera.vflip = imageVFlip
         camera.hflip = imageHFlip
@@ -412,17 +409,29 @@ def takeNightImage(filename):
         dayPixAve = getStreamPixAve(dayStream)
         logging.info("Settings Size=%ix%i dayPixAve=%i"
                   % (imageWidth, imageHeight, dayPixAve))
-        camera.framerate = Fraction(1, 6) # Set the framerate to a fixed value
-        time.sleep(1)  # short wait to allow framerate to settle
-        ratio = ((nightThreshold - dayPixAve)/float(nightThreshold)) 
-        if ratio < 0.3:
-           ratio = 0.3
-        camShut = int(nightMaxShut * ratio)
-        camera.shutter_speed = camShut  # Set the shutter for long exposure
-        camera.iso = nightMaxISO  # Set the ISO to a fixed value for long exposure          
-        logging.info("Long Exp ratio=%.2f camShut=%s Sec  nightMaxISO=%i  nightSleepSec=%i" 
-                                        % ( ratio, shut2Sec(camShut), nightMaxISO, nightSleepSec))
-        time.sleep(nightSleepSec)  # Give camera a long time to calc Night Settings
+        if dayPixAve > nightDarkThreshold:  # Twilight so use variable framerate_range
+            logging.info("LongExp Twilight: nightTwilightThreshold=%i  nightMaxISO=%i  nightSleepSec=2" 
+                                                 % ( nightTwilightThreshold, nightMaxISO ))        
+            camera.framerate_range = (Fraction(1, 6), Fraction(30, 1))
+            time.sleep(2) # Give camera time to measure AWB 
+            camera.iso = nightMaxISO  
+        else:
+            camera.framerate = Fraction(1, 6) # Set the framerate to a fixed value
+            time.sleep(1)  # short wait to allow framerate to settle
+            if dayPixAve <= nightBlackThreshold:  # Black Very Low Light so Use Maximum Settings
+                camShut = nightMaxShut
+                logging.info("LongExp Black: nightBlackThreshold=%i  camShut=%s Sec  nightMaxISO=%i  nightSleepSec=%i" 
+                                          % ( nightBlackThreshold, shut2Sec(camShut), nightMaxISO, nightSleepSec))
+            else:
+                # Dark so use variable shutter exposure times adjusted using nightDarkAdjustRatio
+                ratio = (((nightTwilightThreshold + 0.001) - dayPixAve) / float(nightTwilightThreshold)) / nightDarkAdjustRatio
+                camShut = int( nightMaxShut * ratio )
+                logging.info("LongExp Dark: nightDarkThreshold=%i" % ( nightDarkThreshold))
+                logging.info("ratio=%.2f -> %.3f  camShut=%s sec  nightMaxISO=%i  nightSleepSec=%i" 
+                                   % ( nightDarkAdjustRatio, ratio, shut2Sec(camShut), nightMaxISO, nightSleepSec))
+            camera.shutter_speed = camShut  # Set the shutter for long exposure
+            camera.iso = nightMaxISO  # Set the ISO to a fixed value for long exposure          
+            time.sleep(nightSleepSec)  # Give camera a long time to calc Night Settings
         camera.capture(filename)
         camera.close()
     logging.info("FilePath %s" % filename)
@@ -477,7 +486,6 @@ def takeVideo(filename):
         else:        
             logging.error("unidentified error")
         createSyncLockFile(filename)            
-    return
 
 #-----------------------------------------------------------------------------------------------    
 def createSyncLockFile(imagefilename):
@@ -493,7 +501,6 @@ def createSyncLockFile(imagefilename):
         f = open(lockFilePath, 'w+')
         f.write(filecontents)
         f.close()
-    return
 
 #----------------------------------------------------------------------------------------------- 
 def getStreamImage(isDay):
@@ -530,7 +537,7 @@ def checkIfDay(currentDayMode, dataStream):
         dayStream = getStreamImage(True)
         dayPixAverage = getStreamPixAve(dayStream) 
         
-    if dayPixAverage >= nightThreshold:
+    if dayPixAverage >= nightTwilightThreshold:
         currentDayMode = True
     else:
         currentDayMode = False
@@ -593,8 +600,8 @@ def dataLogger():
         dayPixAverage = getStreamPixAve(dayStream)
         nightStream = getStreamImage(False)
         nightPixAverage = getStreamPixAve(nightStream)
-        logging.info("nightPixAverage=%i dayPixAverage=%i nightThreshold=%i "
-                  % (nightPixAverage, dayPixAverage, nightThreshold))
+        logging.info("nightPixAverage=%i dayPixAverage=%i nightTwilightThreshold=%i nightDarkThreshold=%i "
+                  % (nightPixAverage, dayPixAverage, nightTwilightThreshold, nightDarkThreshold))
         time.sleep(1)
     return
 
@@ -654,7 +661,15 @@ def Main():
         mostr = ""
     if timelapseOn and motionOn:
         tlstr = " and " + tlstr       
-    logging.info("Entering Loop for %s%s Please Wait ..." % (mostr, tlstr))
+
+    if logDataToFile:
+        print("")
+        print("logDataToFile=%s Logging to Console Disabled." % ( logDataToFile))        
+        print("Sending Console Messages to %s" % (logFilePath))
+        print("Entering Loop for %s%s" % (mostr, tlstr))
+    else:
+        logging.info("Entering Loop for %s%s  Please Wait ..." % (mostr, tlstr))
+        
     dotCount = showDots(motionMaxDots)  # reset motion dots
     # Start main program loop here.  Use Ctl-C to exit if run from terminal session.
     while True:
