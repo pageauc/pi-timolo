@@ -27,7 +27,8 @@
 # 4.50 release 18-Apr-2017 More changes for day to night lighting transitions and no greenish images
 # 4.60 release 27-Apr-2017 Added framerate_range to takeNightImage and added nightTwilightThreshold setting
 
-progVer = "ver 4.60"
+progVer = "ver 4.61"
+__version__ = "4.61"
 
 import datetime
 import glob
@@ -113,7 +114,7 @@ def userMotionCodeHere():
 #-----------------------------------------------------------------------------------------------
 def shut2Sec (shutspeed):
     shutspeedSec = shutspeed/float(SECONDS2MICRO)
-    shutstring = str("%.2f") % ( shutspeedSec )
+    shutstring = str("%.4f") % ( shutspeedSec )
     return shutstring
 
 #-----------------------------------------------------------------------------------------------    
@@ -424,11 +425,11 @@ def takeNightImage(filename):
                                           % ( nightBlackThreshold, shut2Sec(camShut), nightMaxISO, nightSleepSec))
             else:
                 # Dark so use variable shutter exposure times adjusted using nightDarkAdjustRatio
-                ratio = (((nightTwilightThreshold + 0.001) - dayPixAve) / float(nightTwilightThreshold)) / nightDarkAdjustRatio
-                camShut = int( nightMaxShut * ratio )
+                ratio = 1 - ( dayPixAve / float(nightDarkThreshold + 1.0 ))
+                camShut = int(( nightMaxShut * ratio ) / float(nightDarkAdjustRatio))
                 logging.info("LongExp Dark: nightDarkThreshold=%i" % ( nightDarkThreshold))
-                logging.info("ratio=%.2f -> %.3f  camShut=%s sec  nightMaxISO=%i  nightSleepSec=%i" 
-                                   % ( nightDarkAdjustRatio, ratio, shut2Sec(camShut), nightMaxISO, nightSleepSec))
+                logging.info("ratio=%.3f  camShut=%s sec  nightMaxISO=%i  nightSleepSec=%i" 
+                                   % ( ratio, shut2Sec(camShut), nightMaxISO, nightSleepSec))
             camera.shutter_speed = camShut  # Set the shutter for long exposure
             camera.iso = nightMaxISO  # Set the ISO to a fixed value for long exposure          
             time.sleep(nightSleepSec)  # Give camera a long time to calc Night Settings
