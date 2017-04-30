@@ -27,8 +27,8 @@
 # 4.50 release 18-Apr-2017 More changes for day to night lighting transitions and no greenish images
 # 4.60 release 27-Apr-2017 Added framerate_range to takeNightImage and added nightTwilightThreshold setting
 
-progVer = "ver 4.61"
-__version__ = "4.61"
+progVer = "ver 4.62"
+__version__ = "4.62"
 
 import datetime
 import glob
@@ -425,7 +425,8 @@ def takeNightImage(filename):
                                           % ( nightBlackThreshold, shut2Sec(camShut), nightMaxISO, nightSleepSec))
             else:
                 # Dark so use variable shutter exposure times adjusted using nightDarkAdjustRatio
-                ratio = 1 - ( dayPixAve / float(nightDarkThreshold + 1.0 ))
+                ratio = 1 - ( dayPixAve / float(nightDarkThreshold + nightBlackThreshold ))
+                # add nightBlackThreshold to avoid ratio of zero
                 camShut = int(( nightMaxShut * ratio ) / float(nightDarkAdjustRatio))
                 logging.info("LongExp Dark: nightDarkThreshold=%i" % ( nightDarkThreshold))
                 logging.info("ratio=%.3f  camShut=%s sec  nightMaxISO=%i  nightSleepSec=%i" 

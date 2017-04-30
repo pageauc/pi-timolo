@@ -36,7 +36,7 @@ useVideoPort = False       # default= False True=Use the video port to capture m
 nightTwilightThreshold = 80 # default= 80 dayPixAve where twilight starts (framerate_range shutter)
 nightDarkThreshold = 43     # default= 43 dayPixAve where camera shutter long exposure starts
 nightDarkAdjustRatio = 4.5  # default= 4.5 takeNightImage Adjust camShut to reduce exposure times 
-nightBlackThreshold = 4     # default= 4 dayPixAve where almost no light so max settings used
+nightBlackThreshold = 3     # default= 3 dayPixAve where almost no light so max settings used
 nightSleepSec = 30          # default= 30 Sec - Time period to allow camera to calculate low light AWB
 nightMaxShut = 6.0          # default= 6.0 Sec Highest V1 Cam shutter for long exposures V2=10 Sec.
 nightMaxISO  = 800          # default= 800 Night ISO setting for Long Exposure below nightThreshold
