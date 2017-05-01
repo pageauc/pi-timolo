@@ -26,9 +26,10 @@
 # 4.42 release 17-Apr-2017 Fixed motionCamSleep bug for motion takeDayImage (was timelapseCamSleep)
 # 4.50 release 18-Apr-2017 More changes for day to night lighting transitions and no greenish images
 # 4.60 release 27-Apr-2017 Added framerate_range to takeNightImage and added nightTwilightThreshold setting
+# 4.70 release 30-Apr-2017 Modified takeNightImage logic for Dark Conditions (Must use latest config.py)
 
-progVer = "ver 4.62"
-__version__ = "4.62"
+progVer = "ver 4.7"
+__version__ = "4.7"   # May test for version number at a future time
 
 import datetime
 import glob
@@ -92,7 +93,7 @@ from fractions import Fraction
 #==================================
 
 SECONDS2MICRO = 1000000    # Used to convert from seconds to microseconds
-nightMaxShut = int(nightMaxShut * SECONDS2MICRO)  # default=5 sec IMPORTANT- 6 sec works sometimes but occasionally locks RPI and HARD reboot required to clear
+nightMaxShut = int(nightMaxShutSec * SECONDS2MICRO)  # default=5 sec IMPORTANT- 6 sec works sometimes but occasionally locks RPI and HARD reboot required to clear
 testWidth = 128            # width of rgb image stream used for motion detection and day/night changes
 testHeight = 80            # height of rgb image stream used for motion detection and day/night changes
 daymode = False            # default should always be False.
@@ -167,11 +168,10 @@ def displayInfo(motioncount, timelapsecount):
         print("")
         print("Image Info ... Size=%ix%i  Prefix=%s  VFlip=%s  HFlip=%s  Rotation=%i  Preview=%s" 
               % (imageWidth, imageHeight, imageNamePrefix, imageVFlip, imageHFlip, imageRotation, imagePreview))
-        shutStr = shut2Sec(nightMaxShut)
         print("    Low Light. nightTwilightThreshold=%i  nightDarkThreshold=%i  nightBlackThreshold=%i" 
                            % ( nightTwilightThreshold, nightDarkThreshold, nightBlackThreshold ))
-        print("               nightMaxShut=%s sec  nightDarkAdjustRatio=%.2f  nightMaxISO=%i  nightSleepSec=%i" 
-                           % ( shutStr, nightDarkAdjustRatio, nightMaxISO, nightSleepSec ))                           
+        print("               nightMaxShutSec=%.2f  nightDarkAdjustRatio=%.2f  nightMaxISO=%i  nightSleepSec=%i" 
+                           % ( nightMaxShutSec, nightDarkAdjustRatio, nightMaxISO, nightSleepSec ))                           
         print("    No Shots . noNightShots=%s   noDayShots=%s" % ( noNightShots, noDayShots ))
         if showDateOnImage:
             print("    Img Text . On=%s  Bottom=%s (False=Top)  WhiteText=%s (False=Black)  showTextWhiteNight=%s"
@@ -410,7 +410,7 @@ def takeNightImage(filename):
         dayPixAve = getStreamPixAve(dayStream)
         logging.info("Settings Size=%ix%i dayPixAve=%i"
                   % (imageWidth, imageHeight, dayPixAve))
-        if dayPixAve > nightDarkThreshold:  # Twilight so use variable framerate_range
+        if dayPixAve >= nightDarkThreshold:  # Twilight so use variable framerate_range
             logging.info("LongExp Twilight: nightTwilightThreshold=%i  nightMaxISO=%i  nightSleepSec=2" 
                                                  % ( nightTwilightThreshold, nightMaxISO ))        
             camera.framerate_range = (Fraction(1, 6), Fraction(30, 1))
@@ -425,11 +425,11 @@ def takeNightImage(filename):
                                           % ( nightBlackThreshold, shut2Sec(camShut), nightMaxISO, nightSleepSec))
             else:
                 # Dark so use variable shutter exposure times adjusted using nightDarkAdjustRatio
-                ratio = 1 - ( dayPixAve / float(nightDarkThreshold + nightBlackThreshold ))
-                # add nightBlackThreshold to avoid ratio of zero
+                                                                  # add nightBlackThreshold to avoid ratio of zero 
+                ratio = 1 - ((dayPixAve + nightBlackThreshold) / float( nightDarkThreshold + nightBlackThreshold ))             
                 camShut = int(( nightMaxShut * ratio ) / float(nightDarkAdjustRatio))
                 logging.info("LongExp Dark: nightDarkThreshold=%i" % ( nightDarkThreshold))
-                logging.info("ratio=%.3f  camShut=%s sec  nightMaxISO=%i  nightSleepSec=%i" 
+                logging.info("ratio=%.3f  camShut=%s sec nightMaxISO=%i  nightSleepSec=%i" 
                                    % ( ratio, shut2Sec(camShut), nightMaxISO, nightSleepSec))
             camera.shutter_speed = camShut  # Set the shutter for long exposure
             camera.iso = nightMaxISO  # Set the ISO to a fixed value for long exposure          
@@ -539,7 +539,7 @@ def checkIfDay(currentDayMode, dataStream):
         dayStream = getStreamImage(True)
         dayPixAverage = getStreamPixAve(dayStream) 
         
-    if dayPixAverage >= nightTwilightThreshold:
+    if dayPixAverage > nightTwilightThreshold:
         currentDayMode = True
     else:
         currentDayMode = False
@@ -742,6 +742,7 @@ def Main():
                                 takeDayImage(filename, motionCamSleep)
                             else:
                                 takeNightImage(filename)
+                                
                         motionNumCount = postImageProcessing(motionNumOn, motionNumStart, motionNumMax, motionNumCount, motionNumRecycle, motionNumPath, filename, daymode)
                     if motionFound:
                         # =========================================================================
