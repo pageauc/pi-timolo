@@ -1,6 +1,6 @@
 # User Configuration variable settings for pitimolo
 # Purpose - Motion Detection Security Cam
-# Updated - 30-Apr--2017 Must have pi-timolo.py ver 4.70 or greater
+# Updated - 3-May--2017 Must have pi-timolo.py ver 4.90 or greater
 # Done by - Claude Pageau
 
 configTitle = "pi-timolo Default Settings"
@@ -35,7 +35,6 @@ useVideoPort = False       # default= False True=Use the video port to capture m
 # -------------------------------------
 nightTwilightThreshold = 80 # default= 80 dayPixAve where twilight starts (framerate_range shutter)
 nightDarkThreshold = 43     # default= 43 dayPixAve where camera shutter long exposure starts
-nightDarkAdjustRatio = 3.0  # default= 3.0 takeNightImage Adjust camShut to reduce exposure times 
 nightBlackThreshold = 3     # default= 3 dayPixAve where almost no light so max settings used
 nightSleepSec = 30          # default= 30 Sec - Time period to allow camera to calculate low light AWB
 nightMaxShutSec = 6.0       # default= 6.0 Sec Highest V1 Cam shutter for long exposures V2=10 Sec.
@@ -43,23 +42,25 @@ nightMaxISO  = 800          # default= 800 Night ISO setting for Long Exposure b
 
 # Date/Time Settings for Displaying info Directly on Images
 # ---------------------------------------------------------
-showTextFontSize = 18      # default= 18 Size of image Font in pixel height
 showDateOnImage = True     # default= True False=Do Not display date/time text on images
+showTextFontSize = 18      # default= 18 Size of image Font in pixel height
 showTextBottom = True      # Location of image Text True=Bottom False=Top
 showTextWhite = True       # Colour of image Text True=White False=Black
 showTextWhiteNight = True  # default=True Changes night text to white.  Useful if night needs white text instead of black
 
 # Motion Detect Settings
 # ----------------------
-motionOn = True            # default= True Setting Turns Motion Detect True=On False=Off
-motionPrefix = "mo-"       # Prefix Motion Detection images
-motionDir = "media/motion" # Storage Folder for Motion Detect Images
+motionOn = True            # default= True True=Turns Motion Detect On, False=Off
+motionStreamOn = False     # default= False True=Use video stream thread for motion detect
+motionStreamStopSec = .5   # default= 0.5 seconds to close stream thread
+motionPrefix = "mo-"       # Prefix for all Motion Detect images
+motionDir = "media/motion" # Folder Path for Motion Detect Image Storage
 motionCamSleep = 0.7       # default= 0.7 Sec of day sleep so camera can measure AWB before taking photo
 motionThreshold = 50       # default= 50 (1-200) How much a pixel has to change to be counted
 motionSensitivity = 100    # default= 100 Number of changed pixels to trigger motion image
-motionAverage = 20         # Number of images to average for motion verification: 1=last image only or 100=Med 300=High Average Etc.
+motionAverage = 20         # default= 20 Num Images to Average for motion verification: 1=last image only, 100=Med, 300=High, Etc.
 motionVideoOn = False      # default= False True=Take a video clip rather than image
-motionVideoTimer = 10      # default= 10 Number of seconds of video clip to take if Motion Detected
+motionVideoTimer = 10      # default= 10 seconds of video clip to take if Motion Detected
 motionQuickTLOn = False    # default= False True=Take a quick time lapse sequence rather than a single image (overrides motionVideoOn)
 motionQuickTLTimer = 10    # default= 10 Duration in seconds of quick time lapse sequence after initial motion detected
 motionQuickTLInterval = 0  # default= 0 seconds between each Quick time lapse image. 0 is fast as possible
@@ -75,9 +76,9 @@ createLockFile = False     # default= False  True=Create pi-timolo.sync file whe
 
 # Time Lapse Settings
 # -------------------
-timelapseOn = True         # default= False Setting Turns timelapse True=On  False=Off
-timelapsePrefix = "tl-"    # Prefix timelapse images with this prefix
-timelapseDir = "media/timelapse" # Storage Folder for Time Lapse Images
+timelapseOn = True         # default= False True=Turn timelapse On, False=Off
+timelapsePrefix = "tl-"    # Prefix for All timelapse images with this prefix
+timelapseDir = "media/timelapse" # Storage Folder Path for Time Lapse Image Storage
 timelapseCamSleep = 4.0    # default= 4.0 seconds day sleep so camera can measure AWB before taking photo
 timelapseTimer = 300       # default= 300 (5 min) Seconds between timelapse images
 timelapseNumOn = True      # default= True filenames Sequenced by Number False=filenames by date/time
