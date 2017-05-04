@@ -31,8 +31,8 @@
 # 4.90 release 03-May-2017 Added video stream option for motion detection
 # 5.00 release 04-May-2017 Added motionDotsOn, nightDarkAdjust, and fixed timelapseExitSec + Misc
 
-progVer = "ver 5.00"
-__version__ = "5.00"   # May test for version number at a future time
+progVer = "ver 5.10"
+__version__ = "5.10"   # May test for version number at a future time
 
 import datetime
 import glob
@@ -101,6 +101,7 @@ from fractions import Fraction
 
 SECONDS2MICRO = 1000000    # Used to convert from seconds to microseconds
 nightMaxShut = int(nightMaxShutSec * SECONDS2MICRO)  # default=5 sec IMPORTANT- 6 sec works sometimes but occasionally locks RPI and HARD reboot required to clear
+darkAdjust = int((SECONDS2MICRO/5.0) * nightDarkAdjust)
 testWidth = 128            # width of rgb image stream used for motion detection and day/night changes
 testHeight = 80            # height of rgb image stream used for motion detection and day/night changes
 daymode = False            # default should always be False.
@@ -492,7 +493,7 @@ def takeNightImage(filename):
                           % ( dayPixAve, nightBlackThreshold, shut2Sec(camShut), settings ))
             else:
                 # Dark so calculate camShut exposure time based on dayPixAve
-                camShut = int(nightMaxShut * (( 1 + nightDarkAdjust)/ float(dayPixAve ))) 
+                camShut = int(nightMaxShut * ( 1 / float(dayPixAve))  + darkAdjust ) 
                 if camShut > nightMaxShut:
                     camShut = nightMaxShut                
                 logging.info("DarkThresh=%i/%i shutSec=%s %s" 
