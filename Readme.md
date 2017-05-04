@@ -3,7 +3,7 @@
 ### Wiki https://github.com/pageauc/pi-timolo/wiki     
 YouTube Videos https://www.youtube.com/playlist?list=PLLXJw_uJtQLa11A4qjVpn2D2T0pgfaSG0
 
-**NEW Release 5.0** with video stream thread, improved day/night transitions with not greenish images + Misc updates
+**NEW Release 5.0** with optional video stream thread, improved day/night transitions with no greenish images + Misc updates
 
 ### Description
 pi-timolo is a python picamara module application for a Raspberry PI computer (RPI).
