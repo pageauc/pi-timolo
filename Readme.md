@@ -4,6 +4,8 @@
 YouTube Videos https://www.youtube.com/playlist?list=PLLXJw_uJtQLa11A4qjVpn2D2T0pgfaSG0
 
 **NEW Release 5.0** with optional video stream thread, improved day/night transitions with no greenish images + Misc updates
+**NEW Release 6.0** with optional DateTime Named subfolders, recent files option and Disk Space Management + Misc updates  
+**See Minimal Upgrade Below**
 
 ### Description
 pi-timolo is a python picamara module application for a Raspberry PI computer (RPI).
