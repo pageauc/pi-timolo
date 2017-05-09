@@ -369,7 +369,7 @@ def subDirCheckMaxHrs(directory, hrsMax, prefix):   # Note to self need to add e
 def subDirChecks(maxHours, maxFiles, directory, prefix):
     # Check if motion SubDir needs to be created
     if maxHours < 1 and maxFiles < 1:  # No Checks required
-        logging.info('No sub-folders Required in %s', directory)    
+        # logging.info('No sub-folders Required in %s', directory)    
         subDirPath = directory 
     else:        
         subDirPath = subDirLatest(directory)
