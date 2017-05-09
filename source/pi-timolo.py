@@ -255,8 +255,8 @@ def displayInfo(motioncount, timelapsecount):
             print("   Img Path .. motionPath=%s  motionCamSleep=%.2f sec" % (motionPath, motionCamSleep))
             print("   Force ..... forceTimer=%i min (If No Motion)"  % (motionForce/60))
             if motionNumOn:
-                print("   Num Seq ... motionNumOn=%s  current=%s   numStart=%i   numMax=%i   numRecycle=%s"
-                                   % (motionNumOn, motioncount, motionNumStart, motionNumMax, motionNumRecycle))
+                print("   Num Seq ... motionNumOn=%s  numRecycle=%s  numStart=%i   numMax=%i  current=%s"
+                                   % (motionNumOn, motionNumRecycle, motionNumStart, motionNumMax, motioncount))
                 print("   Num Path .. motionNumPath=%s " % (motionNumPath))
 
             else:
@@ -271,9 +271,9 @@ def displayInfo(motioncount, timelapsecount):
                                    % (motionVideoOn, motionVideoTimer))
             else:
                 print("   Video ..... motionVideoOn=%s  Motion Video Disabled" % (motionVideoOn))
-            print("   Sub-Dir ... motionSubDirMaxHours=%i (0-off) motionSubDirMaxFiles=%i (0=off)" % 
+            print("   Sub-Dir ... motionSubDirMaxHours=%i (0-off)  motionSubDirMaxFiles=%i (0=off)" % 
                                 ( motionSubDirMaxHours, motionSubDirMaxFiles ))
-            print("   Recent .... motionRecentMax=%i (0=off) motionRecentDir=%s (0=off)" % 
+            print("   Recent .... motionRecentMax=%i (0=off)  motionRecentDir=%s" % 
                                 ( motionRecentMax, motionRecentDir ))           
         else:
             print("Motion ....... On=%s  Motion is Turned Off)" % (motionOn))
@@ -283,14 +283,14 @@ def displayInfo(motioncount, timelapsecount):
                         % (timelapseOn, timelapsePrefix, timelapseTimer, timelapseExitSec))
             print("   Img Path .. timelapsePath=%s  timelapseCamSleep=%.2f sec" % (timelapsePath, timelapseCamSleep))
             if timelapseNumOn:
-                print("   Num Seq ... On=%s  current=%s   numStart=%i   numMax=%i   numRecycle=%s"
-                          % (timelapseNumOn, timelapsecount, timelapseNumStart, timelapseNumMax, timelapseNumRecycle))
+                print("   Num Seq ... On=%s  numRecycle=%s  numStart=%i   numMax=%i  current=%s"
+                          % (timelapseNumOn, timelapseNumRecycle, timelapseNumStart, timelapseNumMax, timelapsecount))
                 print("   Num Path .. numPath=%s" % (timelapseNumPath))
             else:
                 print("   Date-Time.. motionNumOn=%s  Numbering Disabled" % (timelapseNumOn))
-            print("   Sub-Dir ... timelapseSubDirMaxHours=%i (0=off) timelapseSubDirMaxFiles=%i (0=off)" % 
+            print("   Sub-Dir ... timelapseSubDirMaxHours=%i (0=off)  timelapseSubDirMaxFiles=%i (0=off)" % 
                                 ( timelapseSubDirMaxHours, timelapseSubDirMaxFiles ))
-            print("   Recent .... timelapseRecentMax=%i (0=off) timelapseRecentDir=%s" % 
+            print("   Recent .... timelapseRecentMax=%i (0=off)  timelapseRecentDir=%s" % 
                                 ( timelapseRecentMax, timelapseRecentDir ))                   
             if createLockFile:
                 print("")             
@@ -337,7 +337,7 @@ def subDirCreate(directory, prefix):
 
 #-----------------------------------------------------------------------------------------------
 def subDirCheckMaxFiles(directory, filesMax):  # Count number of files in a folder path
-    fileList = glob.glob(directory + '/*.jpg')
+    fileList = glob.glob(directory + '/*jpg')
     count = len(fileList)
     if count > filesMax:
         makeNewDir = True
