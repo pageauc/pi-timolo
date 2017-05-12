@@ -18,7 +18,18 @@ can securely synchronize files with a users google drive.  This works well for r
 cameras. Camera config.py settings can be administered remotely from a google drive using sync.sh.
 Includes makevideo.sh to create timelapse or motion lapse videos from images, convid.sh to convert/combine 
 h264 to mp4 format, a simple minumum or no setup web server to view images or videos and menubox.sh 
-to admin settings and stop start pi-timolo and webserver as background tasks.    
+to admin settings and stop start pi-timolo and webserver as background tasks.
+        
+***NEW*** - Added two config.py templates config.py.stream uses video streaming thread (best with quad core) config.py.default
+uses normal picamera image capture for motion detection and is less resource intensive for single core RPI's    
+Make a backup of config.py then Copy a template over the original config.py per example below   
+
+    cd ~/pi-timolo.py
+    cp config.py config.py.bak
+    cp config.py.stream config.py
+    
+***Note:*** use nano to reinstate any customized settings
+
 see Github Wiki for More Details https://github.com/pageauc/pi-timolo/wiki    
  
 ### Quick Install
