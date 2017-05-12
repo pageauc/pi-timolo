@@ -958,11 +958,11 @@ def Main():
 
     if motionStreamOn:
         vs = PiVideoStream().start()
-        time.sleep(2.0)
         vs.camera.rotation = imageRotation
         vs.camera.hflip = imageHFlip
         vs.camera.vflip = imageVFlip
-        data1 = vs.read()
+        time.sleep(2)        
+        data1 = vs.read()    
     else:
         data1 = getStreamImage(True).astype(float)  #All functions should still work with float instead of int - just takes more memory
 
