@@ -47,6 +47,8 @@ wget -O media/webserver.txt https://raw.github.com/pageauc/pi-timolo/master/sour
 wget -O config_new.py -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/config.py
 if [ $? -ne 0 ] ;  then
   wget -O config.py https://raw.github.com/pageauc/pi-timolo/master/source/config.py
+  wget -O config.py.stream https://raw.github.com/pageauc/pi-timolo/master/source/config.py.stream
+  wget -O config.py.default https://raw.github.com/pageauc/pi-timolo/master/source/config.py.default
   wget -O menubox.sh https://raw.github.com/pageauc/pi-timolo/master/source/menubox.sh  
   wget -O pi-timolo.py https://raw.github.com/pageauc/pi-timolo/master/source/pi-timolo.py
   wget -O pi-timolo.sh https://raw.github.com/pageauc/pi-timolo/master/source/pi-timolo.sh  
@@ -64,6 +66,8 @@ if [ $? -ne 0 ] ;  then
   wget -O gdrive https://raw.github.com/pageauc/pi-timolo/master/source/drive_armv6
 else
   wget -O config.py -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/config.py
+  wget -O config.py.stream -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/config.py.stream
+  wget -O config.py.default -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/config.py.default
   wget -O menubox.sh -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/menubox.sh
   wget -O pi-timolo.py -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/pi-timolo.py
   wget -O pi-timolo.sh -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/pi-timolo.sh
