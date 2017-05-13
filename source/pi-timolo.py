@@ -276,7 +276,7 @@ def displayInfo(motioncount, timelapsecount):
             print("   Recent .... motionRecentMax=%i (0=off)  motionRecentDir=%s" % 
                                 ( motionRecentMax, motionRecentDir ))           
         else:
-            print("Motion ....... On=%s  Motion Detection is Disabled)" % (motionOn))
+            print("Motion ....... motionOn=%s  Motion Detection is Disabled)" % (motionOn))
         print("")
         if timelapseOn:
             print("Time Lapse ... On=%s  Prefix=%s   Timer=%i sec   timelapseExitSec=%i (0=Continuous)"
@@ -296,16 +296,17 @@ def displayInfo(motioncount, timelapsecount):
                 print("")             
                 print("gdrive Sync .. On=%s  Path=%s  Note: syncs for motion images only." % (createLockFile, lockFilePath))
         else:
-            print("Time Lapse ... On=%s  Timelapse is Disabled" % (timelapseOn))
+            print("Time Lapse ... timelapseOn=%s  Timelapse is Disabled" % (timelapseOn))
         print("")
         if spaceTimerHrs > 0:   # Check if disk mgmnt is enabled
-            print("Disk Space  .. Enabled - Manage Target Free Disk Space. Delete Oldest %s Files if Required" % spaceFileExt)          
+            print("Disk Space  .. Enabled - Manage Target Free Disk Space. Delete Oldest %s Files if Required" % (spaceFileExt))          
             print("               Check Every spaceTimerHrs=%i (0=off)  Target spaceFreeMB=%i (min=100 MB)  spaceFileExt=%s" %
                                  (spaceTimerHrs, spaceFreeMB, spaceFileExt))
             print("               Delete Oldest spaceFileExt=%s  spaceMediaDir=%s" % 
                                  ( spaceFileExt, spaceMediaDir))
         else:
-            print("Disk Space  .. Disabled - Manage Target Free Disk Space. Delete Oldest %s Files" % spaceFileExt)        
+            print("Disk Space  .. spaceTimerHrs=%i (Disabled) - Manage Target Free Disk Space. Delete Oldest %s Files" %
+                                   ( spaceTimerHrs, spaceFileExt))        
             print("            .. Check Every spaceTimerHrs=%i (0=Off)  Target spaceFreeMB=%i (min=100 MB)" % 
                                              ( spaceTimerHrs, spaceFreeMB))   
         print("")       
