@@ -299,17 +299,17 @@ def displayInfo(motioncount, timelapsecount):
             print("Time Lapse ... On=%s  Timelapse is Disabled" % (timelapseOn))
         print("")
         if spaceTimerHrs > 0:   # Check if disk mgmnt is enabled
-            print("Disk Space  .. Enabled - Manage Free Disk Space. Delete Oldest Files per Below")          
-            print("               spaceTimerHrs=%i (0=off)  Target spaceFreeMB=%i (min=100 MB)  spaceFileExt=%s (del oldest)" %
+            print("Disk Space  .. Enabled - Manage Target Free Disk Space. Delete Oldest %s Files if Required" % spaceFileExt)          
+            print("               Check Every spaceTimerHrs=%i (0=off)  Target spaceFreeMB=%i (min=100 MB)  spaceFileExt=%s" %
                                  (spaceTimerHrs, spaceFreeMB, spaceFileExt))
             print("               Delete Oldest spaceFileExt=%s  spaceMediaDir=%s" % 
                                  ( spaceFileExt, spaceMediaDir))
         else:
-            print("Disk Space  .. Disabled - Manage Free Disk Space. Delete Oldest %s Files" % spaceFileExt)        
+            print("Disk Space  .. Disabled - Manage Target Free Disk Space. Delete Oldest %s Files" % spaceFileExt)        
             print("            .. Check Every spaceTimerHrs=%i (0=Off)  Target spaceFreeMB=%i (min=100 MB)" % 
                                              ( spaceTimerHrs, spaceFreeMB))   
         print("")       
-        print("Logging ...... verbose=%s (True=Logging Enabled)" % ( verbose ))
+        print("Logging ...... verbose=%s (True=Enabled False=Disabled)" % ( verbose ))
         print("   Log Path .. logDataToFile=%s  logFilePath=%s" % ( logDataToFile, logFilePath ))
         print("------------------------------------ Log Activity --------------------------------------------")
     checkConfig()
