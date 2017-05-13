@@ -32,8 +32,8 @@
 # 5.00 release 04-May-2017 Added motionDotsOn, nightDarkAdjust, and fixed timelapseExitSec + Misc
 # 6.00 release 08-May-2017 Added recent folders, MO or TL subfolders option, free disk space option
  
-progVer = "ver 6.10"
-__version__ = "6.10"   # May test for version number at a future time
+progVer = "ver 6.20"
+__version__ = "6.20"   # May test for version number at a future time
 
 import datetime
 import glob
@@ -244,7 +244,7 @@ def displayInfo(motioncount, timelapsecount):
                          % ( showDateOnImage, showTextBottom, showTextWhite, showTextWhiteNight ))
             print("               showTextFontSize=%i px height" % (showTextFontSize))
         else:
-            print("    No Text .. showDateOnImage=%s  Text on Image Disabled"  % (showDateOnImage))
+            print("    No Text .. showDateOnImage=%s  Text on Image is Disabled"  % (showDateOnImage))
         print("")
         if motionOn:
             print("Motion ....... On=%s  Prefix=%s  Threshold=%i(How Much)  Sensitivity=%i(How Many)"
@@ -260,7 +260,7 @@ def displayInfo(motioncount, timelapsecount):
                 print("   Num Path .. motionNumPath=%s " % (motionNumPath))
 
             else:
-                print("   Date-Time.. motionNumOn=%s  Image Numbering Disabled" % (motionNumOn))
+                print("   Date-Time.. motionNumOn=%s  Image Numbering is Disabled" % (motionNumOn))
             if motionQuickTLOn:
                 print("   Quick TL .. motionQuickTLOn=%s   motionQuickTLTimer=%i sec  motionQuickTLInterval=%i sec (0=fastest)"
                                    % (motionQuickTLOn, motionQuickTLTimer, motionQuickTLInterval))
@@ -270,13 +270,13 @@ def displayInfo(motioncount, timelapsecount):
                 print("   Video ..... motionVideoOn=%s   motionVideoTimer=%i sec   (superseded by QuickTL)"
                                    % (motionVideoOn, motionVideoTimer))
             else:
-                print("   Video ..... motionVideoOn=%s  Motion Video Disabled" % (motionVideoOn))
+                print("   Video ..... motionVideoOn=%s  Motion Video is Disabled" % (motionVideoOn))
             print("   Sub-Dir ... motionSubDirMaxHours=%i (0-off)  motionSubDirMaxFiles=%i (0=off)" % 
                                 ( motionSubDirMaxHours, motionSubDirMaxFiles ))
             print("   Recent .... motionRecentMax=%i (0=off)  motionRecentDir=%s" % 
                                 ( motionRecentMax, motionRecentDir ))           
         else:
-            print("Motion ....... On=%s  Motion is Turned Off)" % (motionOn))
+            print("Motion ....... On=%s  Motion Detection is Disabled)" % (motionOn))
         print("")
         if timelapseOn:
             print("Time Lapse ... On=%s  Prefix=%s   Timer=%i sec   timelapseExitSec=%i (0=Continuous)"
@@ -296,13 +296,20 @@ def displayInfo(motioncount, timelapsecount):
                 print("")             
                 print("gdrive Sync .. On=%s  Path=%s  Note: syncs for motion images only." % (createLockFile, lockFilePath))
         else:
-            print("Time Lapse ... On=%s  is Turned Off" % (timelapseOn))
+            print("Time Lapse ... On=%s  Timelapse is Disabled" % (timelapseOn))
         print("")
-        print("Disk Space  .. spaceTimerHrs=%i (0=off)  Reqd spaceFreeMB=%i  spaceFileExt=%s (del oldest)" %
-                             (spaceTimerHrs, spaceFreeMB, spaceFileExt))
-        print("               spaceMediaDir=%s" % spaceMediaDir)
+        if spaceTimerHrs > 0:   # Check if disk mgmnt is enabled
+            print("Disk Space  .. Enabled - Manage Free Disk Space. Delete Oldest Files per Below")          
+            print("               spaceTimerHrs=%i (0=off)  Target spaceFreeMB=%i (min=100 MB)  spaceFileExt=%s (del oldest)" %
+                                 (spaceTimerHrs, spaceFreeMB, spaceFileExt))
+            print("               Delete Oldest spaceFileExt=%s  spaceMediaDir=%s" % 
+                                 ( spaceFileExt, spaceMediaDir))
+        else:
+            print("Disk Space  .. Disabled - Manage Free Disk Space. Delete Oldest %s Files" % spaceFileExt)        
+            print("            .. Check Every spaceTimerHrs=%i (0=Off)  Target spaceFreeMB=%i (min=100 MB)" % 
+                                             ( spaceTimerHrs, spaceFreeMB))   
         print("")       
-        print("Logging ...... verbose=%s (True= Logging On)" % ( verbose ))
+        print("Logging ...... verbose=%s (True=Logging Enabled)" % ( verbose ))
         print("   Log Path .. logDataToFile=%s  logFilePath=%s" % ( logDataToFile, logFilePath ))
         print("------------------------------------ Log Activity --------------------------------------------")
     checkConfig()
@@ -656,6 +663,7 @@ def takeDayImage(filename, cam_sleep_time):
     # Take a Day image using exp=auto and awb=auto
     with picamera.PiCamera() as camera:
         camera.resolution = (imageWidth, imageHeight)
+        camera.framerate = 80
         camera.vflip = imageVFlip
         camera.hflip = imageHFlip
         camera.rotation = imageRotation # Valid values 0, 90, 180, 270
