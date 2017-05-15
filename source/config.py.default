@@ -3,11 +3,11 @@
 # Updated - 8-May-2017 IMPORTANT - Required for pi-timolo.py ver 6.00 or Greater
 # Done by - Claude Pageau
 
-configTitle = "pi-timolo ver 6.00 Default Settings"
+configTitle = "pi-timolo ver 6.30 Default Settings"
 configName  = "config.py.default"
 
 #======================================
-#   pi-timolo.py ver 6.00 Settings
+#   pi-timolo.py ver 6.30 Settings
 #======================================
 
 # Logging and Debug Settings
@@ -41,13 +41,13 @@ showTextWhiteNight = True  # default=True Changes night text to white.  Useful i
 
 # Low Light Twilight and Night Settings
 # -------------------------------------
-nightTwilightThreshold = 80 # default= 80 dayPixAve where twilight starts (framerate_range shutter)
+nightTwilightThreshold = 85 # default= 85 dayPixAve where twilight starts (framerate_range shutter)
 nightDarkThreshold = 50     # default= 50 dayPixAve where camera variable shutter long exposure starts
 nightBlackThreshold = 4     # default= 3  dayPixAve where almost no light so Max settings used
 nightSleepSec = 30          # default= 30 Sec - Time period to allow camera to calculate low light AWB
 nightMaxShutSec = 5.9       # default= 5.9 Sec Highest V1 Cam shutter for long exposures V2=10 Sec.
 nightMaxISO  = 800          # default= 800 Night ISO setting for Long Exposure below nightThreshold
-nightDarkAdjust = 0.4       # default= 0.4 Factor to fine tune nightDarkThreshold brightness (greater is brighter)
+nightDarkAdjust = 1.1       # default= 1.1 Factor to fine tune nightDarkThreshold brightness (greater is brighter)
 
 # Motion Detect Settings
 # ----------------------

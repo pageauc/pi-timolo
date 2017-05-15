@@ -32,8 +32,8 @@
 # 5.00 release 04-May-2017 Added motionDotsOn, nightDarkAdjust, and fixed timelapseExitSec + Misc
 # 6.00 release 08-May-2017 Added recent folders, MO or TL subfolders option, free disk space option
  
-progVer = "ver 6.20"
-__version__ = "6.20"   # May test for version number at a future time
+progVer = "ver 6.30"
+__version__ = "6.30"   # May test for version number at a future time
 
 import datetime
 import glob
@@ -494,6 +494,7 @@ def freeSpaceUpTo(spaceFreeMB, mediaDir, extension=".jpg"):
     else:
         logging.error('Directory Not Found - %s', mediaDirPath)
 
+#-----------------------------------------------------------------------------------------------
 def freeDiskSpaceCheck(lastSpaceCheck):
     # Check if it is time to do disk cleanup
     rightNow = datetime.datetime.now()
@@ -682,6 +683,18 @@ def takeDayImage(filename, cam_sleep_time):
         logging.info("FilePath  %s" % (filename))
 
 #-----------------------------------------------------------------------------------------------
+def gaussian(x, mu, sig):
+    return np.exp(-np.power(x - mu, 2.) / (2 * np.power(sig, 2.)))
+
+#-----------------------------------------------------------------------------------------------
+def getShut(pxAve):
+    offset = gaussian(nightDarkThreshold, int(nightDarkThreshold/2), nightDarkThreshold)
+    adjust = gaussian(pxAve, int(nightDarkThreshold/2), nightDarkThreshold)
+    variance = (adjust - offset) * nightDarkAdjust
+    shut = ((nightMaxShut * (1 / float(pxAve))) + (variance * SECONDS2MICRO))
+    return int(shut)
+
+#-----------------------------------------------------------------------------------------------
 def takeNightImage(filename):
     # Take low light Twilight or Night image
     dayStream = getStreamImage(True)  # Get a day image stream to calc pixAve below
@@ -711,7 +724,7 @@ def takeNightImage(filename):
                           % ( dayPixAve, nightBlackThreshold, shut2Sec(camShut), settings ))
             else:
                 # Dark so calculate camShut exposure time based on dayPixAve
-                camShut = int(nightMaxShut * ( 1 / float(dayPixAve))  + darkAdjust )
+                camShut = getShut(dayPixAve)
                 if camShut > nightMaxShut:
                     camShut = nightMaxShut
                 logging.info("DarkThresh=%i/%i shutSec=%s %s"
