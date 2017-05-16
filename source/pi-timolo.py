@@ -31,9 +31,10 @@
 # 4.90 release 03-May-2017 Added video stream option for motion detection
 # 5.00 release 04-May-2017 Added motionDotsOn, nightDarkAdjust, and fixed timelapseExitSec + Misc
 # 6.00 release 08-May-2017 Added recent folders, MO or TL subfolders option, free disk space option
- 
-progVer = "ver 6.30"
-__version__ = "6.30"   # May test for version number at a future time
+# 6.40 release 15-May-2017 Added new getShut function and imageFormat var, fixed freeDiskSpaceCheck timer issues
+
+progVer = "ver 6.40"
+__version__ = "6.40"   # May test for version number at a future time
 
 import datetime
 import glob
@@ -218,7 +219,7 @@ def takeTestImage():
     # Check if any parameter was passed to this script from the command line.
     # This is useful for taking a single image for aligning camera without editing script settings.
     mytime=showTime()
-    testfilename = "takeTestImage.jpg"
+    testfilename = "takeTestImage" + imageFormat
     testfilepath = os.path.join(baseDir, testfilename)
     takeDayImage(testfilepath, timelapseCamSleep)
     imagetext = "%s %s" % (mytime, testfilename)
@@ -450,7 +451,7 @@ def saveRecent( recentMax, recentDir, filename):
         logging.error('Copy from %s to %s - %s', filename, oldestFile, err)
 
 #-----------------------------------------------------------------------------------------------
-def filesToDelete(mediaDirPath, extension=".jpg"):
+def filesToDelete(mediaDirPath, extension=imageFormat):
     return sorted(
         (os.path.join(dirname, filename)
         for dirname, dirnames, filenames in os.walk(mediaDirPath)
@@ -459,7 +460,7 @@ def filesToDelete(mediaDirPath, extension=".jpg"):
         key=lambda fn: os.stat(fn).st_mtime, reverse=True)
 
 #-----------------------------------------------------------------------------------------------
-def freeSpaceUpTo(spaceFreeMB, mediaDir, extension=".jpg"):
+def freeSpaceUpTo(spaceFreeMB, mediaDir, extension=imageFormat):
     # Walks mediaDir and deletes oldest files until spaceFreeMB is achieved
     # Use with Caution
     mediaDirPath = os.path.abspath(mediaDir)
@@ -496,24 +497,17 @@ def freeSpaceUpTo(spaceFreeMB, mediaDir, extension=".jpg"):
 
 #-----------------------------------------------------------------------------------------------
 def freeDiskSpaceCheck(lastSpaceCheck):
-    # Check if it is time to do disk cleanup
-    rightNow = datetime.datetime.now()
-    if spaceTimerHrs > 0:
-        if spaceFreeMB < 100:
-            diskFreeMB = 100
-        else:
-            diskFreeMB = spaceFreeMB
-        timeDiff = ( rightNow - lastSpaceCheck).total_seconds()
-        timeDiffHours = timeDiff // 3600
-        if timeDiffHours > spaceTimerHrs:
+    if spaceTimerHrs > 0:   # Check if disk free space timer hours is enabled
+        # See if it is time to do disk clean-up check  
+        if ((datetime.datetime.now() - lastSpaceCheck).total_seconds() > spaceTimerHrs * 3600):
+            lastSpaceCheck = datetime.datetime.now()
+            if spaceFreeMB < 100:   # set freeSpaceMB to reasonable value if too low
+                diskFreeMB = 100
+            else:
+                diskFreeMB = spaceFreeMB
             logging.info('spaceTimerHrs=%i  diskFreeMB=%i  spaceMediaDir=%s spaceFileExt=%s',
                            spaceTimerHrs, diskFreeMB, spaceMediaDir, spaceFileExt)
-            logging.info('Start')
             freeSpaceUpTo(diskFreeMB, spaceMediaDir, spaceFileExt)
-            logging.info('End')
-    else:
-        logging.warn('No Checks Configured spaceTimerHrs=%i', spaceTimerHrs)
-    lastSpaceCheck = datetime.datetime.now()
     return lastSpaceCheck
 
 #-----------------------------------------------------------------------------------------------
@@ -535,15 +529,15 @@ def getCurrentCount(numberpath, numberstart):
         except ValueError:   # Found Corrupt dat file since cannot convert to integer
             # Try to determine if this is motion or timelapse
             if numberpath.find(motionPrefix) > 0:
-                filePath = motionPath + "/*.jpg"
+                filePath = motionPath + "/*" + imageFormat
                 fprefix = motionPath + motionPrefix + imageNamePrefix
             else:
-                filePath = timelapsePath + "/*.jpg"
+                filePath = timelapsePath + "/*" + imageFormat
                 fprefix = timelapsePath + timelapsePrefix + imageNamePrefix
             try:
                # Scan image folder for most recent file and try to extract numbercounter
                 newest = max(glob.iglob(filePath), key=os.path.getctime)
-                writeCount = newest[len(fprefix)+1:newest.find(".jpg")]
+                writeCount = newest[len(fprefix)+1:newest.find(imageFormat)]
             except:
                 writeCount = numberstart
             try:
@@ -653,11 +647,12 @@ def getVideoName(path, prefix, numberon, counter):
 def getImageName(path, prefix, numberon, counter):
     # build image file names by number sequence or date/time
     if numberon:
-        filename = os.path.join(path, prefix + str(counter) + ".jpg")
+        filename = os.path.join(path, prefix + str(counter) + imageFormat)
     else:
         rightNow = datetime.datetime.now()
-        filename = ("%s/%s%04d%02d%02d-%02d%02d%02d.jpg"
-                 % ( path, prefix ,rightNow.year, rightNow.month, rightNow.day, rightNow.hour, rightNow.minute, rightNow.second))
+        filename = ("%s/%s%04d%02d%02d-%02d%02d%02d%s"
+                 % ( path, prefix ,rightNow.year, rightNow.month, rightNow.day, 
+                    rightNow.hour, rightNow.minute, rightNow.second, imageFormat))
     return filename
 
 #-----------------------------------------------------------------------------------------------
@@ -684,14 +679,23 @@ def takeDayImage(filename, cam_sleep_time):
 
 #-----------------------------------------------------------------------------------------------
 def gaussian(x, mu, sig):
+    # will generate a bell curve but end points are above zero
     return np.exp(-np.power(x - mu, 2.) / (2 * np.power(sig, 2.)))
 
 #-----------------------------------------------------------------------------------------------
 def getShut(pxAve):
+    # gaussian bell curve with max center point is used to adjust dark shutter brightness.
+    # Since this bell curve has no zero end points subtract the end point value
+    # from all curve values. The zero based result value is added to subsequent hyperbolic curve value
+    # Find end point of gaussian bell curve and determine value to subtract to make it zero
     offset = gaussian(nightDarkThreshold, int(nightDarkThreshold/2), nightDarkThreshold)
+    # calculate value of pxAve point on gaussian bell curve (no zero point ends)    
     adjust = gaussian(pxAve, int(nightDarkThreshold/2), nightDarkThreshold)
-    variance = (adjust - offset) * nightDarkAdjust
-    shut = ((nightMaxShut * (1 / float(pxAve))) + (variance * SECONDS2MICRO))
+    # Subtract two values to get brightness of position on bell curve with zero value end points    
+    brightness = ((adjust - offset) * nightDarkAdjust) * SECONDS2MICRO
+    # Calculate position on hyperbolic shutter curve and add brightness to middle to allow increasing
+    # brightness without increasing end points and thus affecting transition to twilight    
+    shut = (nightMaxShut * (1 / float(pxAve))) + brightness
     return int(shut)
 
 #-----------------------------------------------------------------------------------------------
@@ -723,7 +727,7 @@ def takeNightImage(filename):
                 logging.info("BlackThresh=%i/%i shutSec=%s %s"
                           % ( dayPixAve, nightBlackThreshold, shut2Sec(camShut), settings ))
             else:
-                # Dark so calculate camShut exposure time based on dayPixAve
+                # Dark so calculate camShut exposure time based on dayPixAve light curve + brightness
                 camShut = getShut(dayPixAve)
                 if camShut > nightMaxShut:
                     camShut = nightMaxShut

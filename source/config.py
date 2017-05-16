@@ -23,6 +23,7 @@ imageTestPrint = False     # default= False Set to True to print one image and e
 imageNamePrefix = 'cam1-'  # default= 'cam1-' for all image file names. Eg garage-
 imageWidth = 1024          # default= 1024 Full Size Image Width in px  
 imageHeight = 768          # default= 768  Full Size Image Height in px 
+imageFormat = ".jpg"       # default = ".jpg"  image Formats .jpeg .png .gif .bmp
 imageVFlip = False         # default= False True Flips image Vertically
 imageHFlip = False         # default= False True Flips image Horizontally
 imageRotation = 0          # Default= 0  Rotate image. Valid values: 0, 90, 180, 270
@@ -103,7 +104,7 @@ timelapseRecentDir = "media/recent/timelapse"  # default= "media/recent/timelaps
 spaceTimerHrs = 0          # default= 0  0=off or specify hours frequency to perform free disk space check
 spaceFreeMB = 500          # default= 500  Target Free space in MB Required.
 spaceMediaDir = '/home/pi/pi-timolo/media'    # default= '/home/pi/pi-timolo/media'  Starting point for directory walk
-spaceFileExt  = 'jpg'     # default= 'jpg'  File extension to Delete Oldest Files
+spaceFileExt  = 'jpg'     # default= 'jpg' File extension to Delete Oldest Files
 
 #======================================
 #       webserver.py Settings
