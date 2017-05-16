@@ -32,9 +32,10 @@
 # 5.00 release 04-May-2017 Added motionDotsOn, nightDarkAdjust, and fixed timelapseExitSec + Misc
 # 6.00 release 08-May-2017 Added recent folders, MO or TL subfolders option, free disk space option
 # 6.40 release 15-May-2017 Added new getShut function and imageFormat var, fixed freeDiskSpaceCheck timer issues
+# 6.50 release 16-May-2017 Fine Tune brightness settings for dark night setting
 
-progVer = "ver 6.40"
-__version__ = "6.40"   # May test for version number at a future time
+progVer = "ver 6.50"
+__version__ = "6.50"   # May test for version number at a future time
 
 import datetime
 import glob
@@ -688,7 +689,7 @@ def getShut(pxAve):
     # Since this bell curve has no zero end points subtract the end point value
     # from all curve values. The zero based result value is added to subsequent hyperbolic curve value
     # Find end point of gaussian bell curve and determine value to subtract to make it zero
-    offset = gaussian(nightDarkThreshold, int(nightDarkThreshold/2), nightDarkThreshold)
+    offset = gaussian(nightDarkThreshold - 1.5, int(nightDarkThreshold/2), nightDarkThreshold)
     # calculate value of pxAve point on gaussian bell curve (no zero point ends)    
     adjust = gaussian(pxAve, int(nightDarkThreshold/2), nightDarkThreshold)
     # Subtract two values to get brightness of position on bell curve with zero value end points    
