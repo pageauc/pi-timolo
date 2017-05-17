@@ -110,9 +110,18 @@ spaceFileExt  = 'jpg'      # default= 'jpg' File extension to Delete Oldest File
 #       webserver.py Settings
 #======================================
 
+# Web Server settings
+# -------------------
+web_server_port = 8080        # default= 8080 Web server access port eg http://192.168.1.100:8080
+web_server_root = "media"     # default= "media" webserver root path to webserver image/video sub-folders
+web_page_title = "Pi-Timolo Media"  # web page title that browser show (not displayed on web page)
+web_page_refresh_on = True    # False=Off (never)  Refresh True=On (per seconds below)
+web_page_refresh_sec = "180"  # default= "180" seconds to wait for web page refresh  seconds (three minutes)
+web_page_blank = False        # True Starts left image with a blank page until a right menu item is selected
+                              # False displays second list[1] item since first may be in progress
+
 # Left iFrame Image Settings
 # --------------------------
-web_server_root = "media"      # default= "media" webserver root path to webserver image/video sub-folders
 web_image_height = "768"       # default= "768" px height of images to display in iframe
 web_iframe_width_usage = "75%" # Left Pane - Sets % of total screen width allowed for iframe. Rest for right list
 web_iframe_width = "100%"      # Desired frame width to display images. can be eg percent "80%" or px "1280"
@@ -125,13 +134,5 @@ web_list_height = web_image_height  # Right List - side menu height in px (link 
 web_list_by_datetime = True      # True=datetime False=filename
 web_list_sort_descending = True  # reverse sort order (filename or datetime per web_list_by_datetime setting
 
-# Web Server settings
-# -------------------
-web_server_port = 8080        # default= 8080 Web server access port eg http://192.168.1.100:8080
-web_page_title = "Pi-Timolo Media"  # web page title that browser show (not displayed on web page)
-web_page_refresh_on = True    # False=Off (never)  Refresh True=On (per seconds below)
-web_page_refresh_sec = "180"  # default= "180" seconds to wait for web page refresh  seconds (three minutes)
-web_page_blank = False        # True Starts left image with a blank page until a right menu item is selected
-                              # False displays second list[1] item since first may be in progress
 
 # ---------------------------------------------- End of User Variables -----------------------------------------------------
