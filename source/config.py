@@ -42,13 +42,13 @@ showTextWhiteNight = True  # default=True Changes night text to white.  Useful i
 
 # Low Light Twilight and Night Settings
 # -------------------------------------
-nightTwilightThreshold = 85 # default= 85 dayPixAve where twilight starts (framerate_range shutter)
-nightDarkThreshold = 55     # default= 55 dayPixAve where camera variable shutter long exposure starts
+nightTwilightThreshold = 90 # default= 90 dayPixAve where twilight starts (framerate_range shutter)
+nightDarkThreshold = 50     # default= 50 dayPixAve where camera variable shutter long exposure starts
 nightBlackThreshold = 4     # default= 4  dayPixAve where almost no light so Max settings used
 nightSleepSec = 30          # default= 30 Sec - Time period to allow camera to calculate low light AWB
 nightMaxShutSec = 5.9       # default= 5.9 Sec Highest V1 Cam shutter for long exposures V2=10 Sec.
 nightMaxISO  = 800          # default= 800 Night ISO setting for Long Exposure below nightThreshold
-nightDarkAdjust = 8.0       # default= 8.0 Factor to fine tune nightDarkThreshold brightness (greater is brighter)
+nightDarkAdjust = 6.7       # default= 6.7 Factor to fine tune nightDarkThreshold brightness (greater is brighter)
 
 # Motion Detect Settings
 # ----------------------
@@ -104,7 +104,7 @@ timelapseRecentDir = "media/recent/timelapse"  # default= "media/recent/timelaps
 spaceTimerHrs = 0          # default= 0  0=off or specify hours frequency to perform free disk space check
 spaceFreeMB = 500          # default= 500  Target Free space in MB Required.
 spaceMediaDir = '/home/pi/pi-timolo/media'    # default= '/home/pi/pi-timolo/media'  Starting point for directory walk
-spaceFileExt  = 'jpg'     # default= 'jpg' File extension to Delete Oldest Files
+spaceFileExt  = 'jpg'      # default= 'jpg' File extension to Delete Oldest Files
 
 #======================================
 #       webserver.py Settings

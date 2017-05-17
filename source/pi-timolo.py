@@ -187,7 +187,8 @@ def shut2Sec (shutspeed):
 #-----------------------------------------------------------------------------------------------
 def showTime():
     rightNow = datetime.datetime.now()
-    currentTime = "%04d-%02d-%02d %02d:%02d:%02d" % (rightNow.year, rightNow.month, rightNow.day, rightNow.hour, rightNow.minute, rightNow.second)
+    currentTime = ("%04d-%02d-%02d %02d:%02d:%02d" % (rightNow.year, rightNow.month, rightNow.day, 
+    rightNow.hour, rightNow.minute, rightNow.second))
     return currentTime
 
 #-----------------------------------------------------------------------------------------------
@@ -432,6 +433,7 @@ def checkImagePath():
 
 #-----------------------------------------------------------------------------------------------
 def saveRecent( recentMax, recentDir, filename):
+    # save specified most recent files (timelapse and/or motion) in recent subfolder
     try:
         fileList = sorted(os.listdir(recentDir))
     except OSError as err:
