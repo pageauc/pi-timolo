@@ -318,6 +318,9 @@ function do_settings_menu ()
 
   RET=$?
   if [ $RET -eq 1 ]; then
+    clear
+    rm -f $filename_temp
+    rm -f $filename_conf    
     do_main_menu
   elif [ $RET -eq 0 ]; then
     case "$SET_SEL" in
