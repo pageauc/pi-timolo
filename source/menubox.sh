@@ -338,7 +338,10 @@ function do_settings_menu ()
             cat $DIR/convid.conf
             do_anykey
             do_settings_menu ;;
-      h\ *) do_main_menu ;;
+      h\ *) clear
+            rm -f $filename_temp
+            rm -f $filename_conf
+            do_main_menu ;;
       *) whiptail --msgbox "Programmer error: unrecognized option" 20 60 1 ;;
     esac || whiptail --msgbox "There was an error running selection $SELECTION" 20 60 1
   fi
