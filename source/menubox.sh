@@ -33,11 +33,11 @@ function init_status ()
      PTMLO_2="Stop pi-timolo.py - PID is $pi_timolo_pid"     
   fi
 
-  if [ -z "$( pgrep -f webserver.py )" ]; then
+  if [ -z "$( pgrep -f $DIR/webserver.py )" ]; then
      WEB_1="Start webserver"
      WEB_2="Start webserver.py in background"    
   else
-     webserver_pid=$( pgrep -f webserver.py )    
+     webserver_pid=$( pgrep -f $DIR/webserver.py )    
      WEB_1="Stop webserver"
      WEB_2="Stop webserver.py - PID is $webserver_pid"    
   fi
@@ -64,9 +64,9 @@ function do_pi_timolo ()
 #------------------------------------------------------------------------------
 function do_webserver ()
 {
-  if [ -z "$( pgrep -f webserver.py )" ]; then
-     ./webserver.py >/dev/null 2>&1 & 
-     if [ -z "$( pgrep -f webserver.py )" ]; then 
+  if [ -z "$( pgrep -f $DIR/webserver.py )" ]; then
+     $DIR/webserver.py >/dev/null 2>&1 & 
+     if [ -z "$( pgrep -f $DIR/webserver.py )" ]; then 
         whiptail --msgbox "Failed to Start webserver.py   Please Investigate Problem." 20 70
      else
        myip=$(ifconfig | grep 'inet ' | grep -v 127.0.0 | cut -d " " -f 12 | cut -d ":" -f 2 )
@@ -74,9 +74,9 @@ function do_webserver ()
        whiptail --msgbox --title "Webserver Access" "Access pi-timolo web server from another network computer web browser using url http://$myip:$myport" 15 50
      fi 
   else  
-     webserver_pid=$( pgrep -f webserver.py )   
+     webserver_pid=$( pgrep -f $DIR/webserver.py )   
      sudo kill $webserver_pid
-     if [ ! -z "$( pgrep -f webserver.py )" ]; then 
+     if [ ! -z "$( pgrep -f $DIR/webserver.py )" ]; then 
         whiptail --msgbox "Failed to Stop webserver.py   Please Investigate Problem." 20 70     
      fi      
   fi
