@@ -34,7 +34,7 @@ if [ -z "$( pgrep -f $progpath/$progname )" ]; then
     echo "STATUS  - $progpath/$progname is Not Running ..."
     echo "INFO    - To Start $progpath/$progname execute command below"
     echo "INFO    - $0 start"
-  else
+else
     progPID=$(pgrep -f $progpath/$progname)
     echo "STATUS  - $progpath/$progname is Running ..."
     echo "STATUS  - PID is $progPID"
