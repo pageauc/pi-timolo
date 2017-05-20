@@ -48,7 +48,7 @@ nightBlackThreshold = 4     # default= 4  dayPixAve where almost no light so Max
 nightSleepSec = 30          # default= 30 Sec - Time period to allow camera to calculate low light AWB
 nightMaxShutSec = 5.9       # default= 5.9 Sec Highest V1 Cam shutter for long exposures V2=10 Sec.
 nightMaxISO  = 800          # default= 800 Night ISO setting for Long Exposure below nightThreshold
-nightDarkAdjust = 6.7       # default= 6.7 Factor to fine tune nightDarkThreshold brightness (greater is brighter)
+nightDarkAdjust = 5.7       # default= 5.7 Factor to fine tune nightDarkThreshold brightness (greater is brighter)
 
 # Motion Detect Settings
 # ----------------------
