@@ -33,9 +33,10 @@
 # 6.00 release 08-May-2017 Added recent folders, MO or TL subfolders option, free disk space option
 # 6.40 release 15-May-2017 Added new getShut function and imageFormat var, fixed freeDiskSpaceCheck timer issues
 # 6.50 release 16-May-2017 Fine Tune brightness settings for dark night setting
+# 6.60 release 20-May-2017 Simplied getShut function to be more linear instead.  Requires revised config.py
 
-progVer = "ver 6.50"
-__version__ = "6.50"   # May test for version number at a future time
+progVer = "ver 6.60"
+__version__ = "6.60"   # May test for version number at a future time
 
 import datetime
 import glob
@@ -681,32 +682,19 @@ def takeDayImage(filename, cam_sleep_time):
         logging.info("FilePath  %s" % (filename))
 
 #-----------------------------------------------------------------------------------------------
-def gaussian(x, mu, sig):
-    # will generate a bell curve but end points are above zero
-    return np.exp(-np.power(x - mu, 2.) / (2 * np.power(sig, 2.)))
-
-#-----------------------------------------------------------------------------------------------
 def getShut(pxAve):
-    # gaussian bell curve with max center point is used to adjust dark shutter brightness.
-    # Since this bell curve has no zero end points subtract the end point value
-    # from all curve values. The zero based result value is added to subsequent hyperbolic curve value
-    # Find end point of gaussian bell curve and determine value to subtract to make it zero
-    offset = gaussian(nightDarkThreshold - 1.5, int(nightDarkThreshold/2), nightDarkThreshold)
-    # calculate value of pxAve point on gaussian bell curve (no zero point ends)    
-    adjust = gaussian(pxAve, int(nightDarkThreshold/2), nightDarkThreshold)
-    # Subtract two values to get brightness of position on bell curve with zero value end points    
-    brightness = ((adjust - offset) * nightDarkAdjust) * SECONDS2MICRO
-    # Calculate position on hyperbolic shutter curve and add brightness to middle to allow increasing
-    # brightness without increasing end points and thus affecting transition to twilight    
-    shut = (nightMaxShut * (1 / float(pxAve))) + brightness
+    px = pxAve + 1
+    offset = nightMaxShut - ((nightMaxShut / float(nightDarkThreshold) * px))
+    brightness = offset * (1/float(nightDarkAdjust))
+    shut = (nightMaxShut * (1 / float(px))) + brightness
     return int(shut)
-
+    
 #-----------------------------------------------------------------------------------------------
 def takeNightImage(filename):
     # Take low light Twilight or Night image
     dayStream = getStreamImage(True)  # Get a day image stream to calc pixAve below
     with picamera.PiCamera() as camera:
-        time.sleep(1)  # Wait for camera to warm up to reduce green tint images
+        time.sleep(1.5)  # Wait for camera to warm up to reduce green tint images
         camera.resolution = (imageWidth, imageHeight)
         camera.vflip = imageVFlip
         camera.hflip = imageHFlip
