@@ -1,8 +1,9 @@
 #!/bin/bash
 
-ver="4.00"
+ver="4.10"
 
-# makedailymovie.sh - written by Claude Pageau.
+# makevideo.sh written by Claude Pageau.
+# Note - makevideo.sh variables in makevideo.conf
 # To install/update avconv execute the following command in RPI terminal session
 #
 # sudo apt-get install libav-tools
@@ -33,7 +34,6 @@ else
 fi
 
 # ------------- Start Script ------------------
-
 if [ -e $DIR/$filename_utils_conf ]; then
     source $DIR/$filename_utils_conf 
 else
@@ -45,7 +45,7 @@ fi
 #  Script variables
 tl_folder_working=$DIR"/makevideo_tmp"
 tl_error_log_file=$DIR"/makevideo_error.log"    
-tl_source_files=$tl_folder_source/$tl_files  # Files wildcard that we are looking for
+tl_source_files=$tl_folder_source/*$tl_files_ext  # Files wildcard that we are looking for
 
 # Output videoname with prefix and date and time (minute only).
 # Video can be specified as avi or mp4
@@ -54,13 +54,15 @@ tl_videoname=$tl_video_prefix$(date '+%Y%m%d-%H%M').mp4
 clear
 echo "$0 version $ver written by Claude Pageau"
 echo "============ TIMELAPSE VIDEO SETTINGS ===================================="
-echo "tl_videoname           =" $tl_videoname
-echo "tl_folder_source       =" $tl_folder_source
-echo "tl_source_files        = $tl_source_files"
-echo "tl_folder_destination  =" $tl_folder_destination
-echo "tl_delete_source_files =" $tl_delete_source_files
-echo "tl_share_copy_on       =" $tl_share_copy_on
-echo "tl_share_destination   =" $tl_share_destination
+echo "tl_videoname           = $tl_videoname"
+echo "tl_folder_source       = $tl_folder_source" 
+echo "tl_files_ext           = $tl_files_ext" 
+echo "tl_files_sort          = $tl_files_sort "    
+echo "tl_source_files        = $tl_source_files" 
+echo "tl_folder_destination  = $tl_folder_destination"
+echo "tl_delete_source_files = $tl_delete_source_files"
+echo "tl_share_copy_on       = $tl_share_copy_on"
+echo "tl_share_destination   = $tl_share_destination"
 echo "=========================================================================="
 echo "Working ..."
 
@@ -112,7 +114,7 @@ echo "STATUS- Creating Image File Soft Links"
 echo "STATUS-   From" $tl_folder_source
 echo "STATUS-   To  " $tl_folder_working
 a=0
-ls $tl_source_files |
+ls $tl_files_sort $tl_source_files |
 (
   # the first line will be the most recent file so ignore it
   # since it might still be in progress
@@ -121,7 +123,7 @@ ls $tl_source_files |
   # create sym links in working folder for the rest of the files
   while read not_the_most_recent_file
   do
-    new=$(printf "%05d.jpg" ${a}) #05 pad to length of 4 max 99999 images
+    new=$(printf "%05d.$tl_files_ext" ${a}) #05 pad to length of 4 max 99999 images
     ln -s ${not_the_most_recent_file} ${new}
     let a=a+1
   done
@@ -131,7 +133,7 @@ cd $DIR      # Return back to launch folder
 echo "=========================================================================="
 echo "Making Video ... "$tl_videoname
 echo "=========================================================================="
-/usr/bin/avconv -y -f image2 -r $tl_fps -i $tl_folder_working/%5d.jpg -aspect $tl_a_ratio -s $tl_vid_size $tl_folder_destination/$tl_videoname
+/usr/bin/avconv -y -f image2 -r $tl_fps -i $tl_folder_working/%5d.$tl_files_ext -aspect $tl_a_ratio -s $tl_vid_size $tl_folder_destination/$tl_videoname
 if [ $? -ne 0 ] ; then
   echo "ERROR - avconv Encoding Failed for" $tl_folder_destination/$tl_videoname 
   echo "ERROR - Review avconv output for Error Messages and Correct Problem"
@@ -143,9 +145,9 @@ else
 
   if [ "$tl_delete_source_files" = true ] ; then
     echo "WARN  - Variable tl_delete_source_files="$tl_delete_source_files
-    echo "WARN  - Deleting Source Files $tl_folder_source/*jpg"
+    echo "WARN  - Deleting Source Files $tl_folder_source/*$tl_files"
     # Be Careful Not to Crash pi-timolo.py by deleting image file in progress
-    ls -t $tl_folder_source/*.jpg |
+    ls -t $tl_source_files |
     (
       # the first line will be the most recent file so ignore it
       # since it might still be in progress
