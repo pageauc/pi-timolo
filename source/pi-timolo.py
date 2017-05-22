@@ -33,7 +33,7 @@
 # 6.00 release 08-May-2017 Added recent folders, MO or TL subfolders option, free disk space option
 # 6.40 release 15-May-2017 Added new getShut function and imageFormat var, fixed freeDiskSpaceCheck timer issues
 # 6.50 release 16-May-2017 Fine Tune brightness settings for dark night setting
-# 6.60 release 20-May-2017 Simplied getShut function to be more linear instead.  Requires revised config.py
+# 6.60 release 20-May-2017 Simplied getShut function with hyperbolic and no Gaussian. Requires revised config.py
 
 progVer = "ver 6.60"
 __version__ = "6.60"   # May test for version number at a future time
@@ -683,10 +683,10 @@ def takeDayImage(filename, cam_sleep_time):
 
 #-----------------------------------------------------------------------------------------------
 def getShut(pxAve):
-    px = pxAve + 1
+    px = pxAve + 1  # avoid division by zero
     offset = nightMaxShut - ((nightMaxShut / float(nightDarkThreshold) * px))
     brightness = offset * (1/float(nightDarkAdjust))
-    shut = (nightMaxShut * (1 / float(px))) + brightness
+    shut = (nightMaxShut * (1 / float(px))) + brightness # hyperbolic curve + brightness adjust
     return int(shut)
     
 #-----------------------------------------------------------------------------------------------
