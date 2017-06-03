@@ -1,13 +1,13 @@
 # User Configuration variable settings for pitimolo
 # Purpose - Motion Detection Security Cam
-# Updated - 20-May-2017 IMPORTANT - Required for pi-timolo.py ver 6.60 or Greater
+# Updated - 20-May-2017 IMPORTANT - Required for pi-timolo.py ver 6.70 or Greater
 # Done by - Claude Pageau
 
-configTitle = "pi-timolo ver 6.60 Default Settings"
+configTitle = "pi-timolo ver 6.70 Default Settings"
 configName  = "config.py"
 
 #======================================
-#   pi-timolo.py ver 6.60 Settings
+#   pi-timolo.py ver 6.70 Settings
 #======================================
 
 # Logging and Debug Settings
@@ -21,8 +21,8 @@ imageTestPrint = False     # default= False Set to True to print one image and e
 # Image Settings
 # --------------
 imageNamePrefix = 'cam1-'  # default= 'cam1-' for all image file names. Eg garage-
-imageWidth = 1024          # default= 1024 Full Size Image Width in px  
-imageHeight = 768          # default= 768  Full Size Image Height in px 
+imageWidth = 1024          # default= 1024 Full Size Image Width in px
+imageHeight = 768          # default= 768  Full Size Image Height in px
 imageFormat = ".jpg"       # default = ".jpg"  image Formats .jpeg .png .gif .bmp
 imageVFlip = False         # default= False True Flips image Vertically
 imageHFlip = False         # default= False True Flips image Horizontally
@@ -66,9 +66,9 @@ motionQuickTLTimer = 10     # default= 10 Duration in seconds of quick time laps
 motionQuickTLInterval = 0   # default= 0 seconds between each Quick time lapse image. 0 is fast as possible
 motionForce = 3600          # default= 3600 seconds (1 hr) Force single motion image if no Motion Detected in specified seconds.
 motionNumOn = True          # default= True  True=filenames by sequenced Number  False=filenames by date/time
+motionNumRecycle = True     # default= True when NumMax reached restart at NumStart instead of exiting
 motionNumStart = 1000       # default= 1000 Start 0f motion number sequence
 motionNumMax  = 500         # default= 0 Max number of motion images desired. 0=Continuous
-motionNumRecycle = True     # default= True when NumMax reached restart at NumStart instead of exiting
 motionStreamOn = False      # default= False  True=Use video stream thread for motion detect
 motionStreamStopSec = 0.5   # default= 0.5 seconds  Time to close stream thread
 motionDotsOn = True         # default= True Displays motion loop progress dots if verbose=True False=Non
@@ -78,7 +78,7 @@ motionSubDirMaxFiles = 0    # 0=off or specify Max Files to create new sub-folde
 motionRecentMax = 10        # 0=off  Maintain specified number of most recent files in motionRecentDir
 motionRecentDir = "media/recent/motion"  # default= "media/recent/motion"  Location of motionRecent files
 
-createLockFile = False      # default= False True=Create pi-timolo.sync file whenever images saved. 
+createLockFile = False      # default= False True=Create pi-timolo.sync file whenever images saved.
                             # Lock File is used to indicate motion images have been added
                             # so sync.sh can sync in background via sudo crontab -e
 
@@ -90,14 +90,26 @@ timelapsePrefix = "tl-"     # default= "tl-" Prefix for All timelapse images wit
 timelapseCamSleep = 4.0     # default= 4.0 seconds day sleep so camera can measure AWB before taking photo
 timelapseTimer = 300        # default= 300 (5 min) Seconds between timelapse images
 timelapseNumOn = True       # default= True filenames Sequenced by Number False=filenames by date/time
+timelapseNumRecycle = True  # default= True Restart Numbering at NumStart  False= Surpress Timelapse at NumMax
 timelapseNumStart = 1000    # default= 1000 Start of timelapse number sequence
 timelapseNumMax = 2000      # default= 2000 Max number of timelapse images desired. 0=Continuous
-timelapseNumRecycle = True  # default= True Restart Numbering at NumStart  False= Surpress Timelapse at NumMax
 timelapseExitSec = 0        # default= 0 seconds Surpress Timelapse after specified Seconds  0=Continuous
 timelapseSubDirMaxHours = 0 # 0=off or specify MaxHours - Creates New dated sub-folder if MaxHours exceeded
 timelapseSubDirMaxFiles = 0 # 0=off or specify MaxFiles - Creates New dated sub-folder if MaxFiles exceeded
 timelapseRecentMax = 10     # 0=off or specify number of most recent files to save in timelapseRecentDir
 timelapseRecentDir = "media/recent/timelapse"  # default= "media/recent/timelapse"  location of timelapseRecent files
+
+# Video Repeat Mode (suppresses Timelapse and Motion Settings)
+# -----------------
+videoRepeatOn = False       # Turn on Video Repeat Mode IMPORTANT Overrides timelapse and motion
+videoPath = "media/videos"  # default= media/videos Storage folder path for videos
+videoPrefix = "vid-"        # prefix for video filenames
+videoDuration = 120         # default= 120 seconds for each video recording
+videoTimer = 60             # default= 60 minutes  Run Recording Session then Exit  0=Continuous
+videoNumOn = False          # default= True True=filenames by sequenced Number  False=filenames by date/time
+videoNumRecycle = False     # default= False when NumMax reached restart at NumStart instead of exiting
+videoNumStart = 100         # default= 100 Start 0f motion number sequence
+videoNumMax  = 20           # default= 20 Max number of motion images desired. 0=Continuous
 
 # Manage Disk Space Settings
 #---------------------------

@@ -34,9 +34,10 @@
 # 6.40 release 15-May-2017 Added new getShut function and imageFormat var, fixed freeDiskSpaceCheck timer issues
 # 6.50 release 16-May-2017 Fine Tune brightness settings for dark night setting
 # 6.60 release 20-May-2017 Simplied getShut function with hyperbolic and no Gaussian. Requires revised config.py
+# 6.70 release 03-Jun-2017 Added videoRepeat option Requires revised 6.70 config.py (Note suppresses motion and timelapse)
 
-progVer = "ver 6.60"
-__version__ = "6.60"   # May test for version number at a future time
+progVer = "ver 6.70"
+__version__ = "6.70"   # May test for version number at a future time
 
 import datetime
 import glob
@@ -188,7 +189,7 @@ def shut2Sec (shutspeed):
 #-----------------------------------------------------------------------------------------------
 def showTime():
     rightNow = datetime.datetime.now()
-    currentTime = ("%04d-%02d-%02d %02d:%02d:%02d" % (rightNow.year, rightNow.month, rightNow.day, 
+    currentTime = ("%04d-%02d-%02d %02d:%02d:%02d" % (rightNow.year, rightNow.month, rightNow.day,
     rightNow.hour, rightNow.minute, rightNow.second))
     return currentTime
 
@@ -275,10 +276,10 @@ def displayInfo(motioncount, timelapsecount):
                                    % (motionVideoOn, motionVideoTimer))
             else:
                 print("   Video ..... motionVideoOn=%s  Motion Video is Disabled" % (motionVideoOn))
-            print("   Sub-Dir ... motionSubDirMaxHours=%i (0-off)  motionSubDirMaxFiles=%i (0=off)" % 
+            print("   Sub-Dir ... motionSubDirMaxHours=%i (0-off)  motionSubDirMaxFiles=%i (0=off)" %
                                 ( motionSubDirMaxHours, motionSubDirMaxFiles ))
-            print("   Recent .... motionRecentMax=%i (0=off)  motionRecentDir=%s" % 
-                                ( motionRecentMax, motionRecentDir ))           
+            print("   Recent .... motionRecentMax=%i (0=off)  motionRecentDir=%s" %
+                                ( motionRecentMax, motionRecentDir ))
         else:
             print("Motion ....... motionOn=%s  Motion Detection is Disabled)" % (motionOn))
         print("")
@@ -292,28 +293,28 @@ def displayInfo(motioncount, timelapsecount):
                 print("   Num Path .. numPath=%s" % (timelapseNumPath))
             else:
                 print("   Date-Time.. motionNumOn=%s  Numbering Disabled" % (timelapseNumOn))
-            print("   Sub-Dir ... timelapseSubDirMaxHours=%i (0=off)  timelapseSubDirMaxFiles=%i (0=off)" % 
+            print("   Sub-Dir ... timelapseSubDirMaxHours=%i (0=off)  timelapseSubDirMaxFiles=%i (0=off)" %
                                 ( timelapseSubDirMaxHours, timelapseSubDirMaxFiles ))
-            print("   Recent .... timelapseRecentMax=%i (0=off)  timelapseRecentDir=%s" % 
-                                ( timelapseRecentMax, timelapseRecentDir ))                   
+            print("   Recent .... timelapseRecentMax=%i (0=off)  timelapseRecentDir=%s" %
+                                ( timelapseRecentMax, timelapseRecentDir ))
             if createLockFile:
-                print("")             
+                print("")
                 print("gdrive Sync .. On=%s  Path=%s  Note: syncs for motion images only." % (createLockFile, lockFilePath))
         else:
             print("Time Lapse ... timelapseOn=%s  Timelapse is Disabled" % (timelapseOn))
         print("")
         if spaceTimerHrs > 0:   # Check if disk mgmnt is enabled
-            print("Disk Space  .. Enabled - Manage Target Free Disk Space. Delete Oldest %s Files if Required" % (spaceFileExt))          
+            print("Disk Space  .. Enabled - Manage Target Free Disk Space. Delete Oldest %s Files if Required" % (spaceFileExt))
             print("               Check Every spaceTimerHrs=%i (0=off)  Target spaceFreeMB=%i (min=100 MB)  spaceFileExt=%s" %
                                  (spaceTimerHrs, spaceFreeMB, spaceFileExt))
-            print("               Delete Oldest spaceFileExt=%s  spaceMediaDir=%s" % 
+            print("               Delete Oldest spaceFileExt=%s  spaceMediaDir=%s" %
                                  ( spaceFileExt, spaceMediaDir))
         else:
             print("Disk Space  .. spaceTimerHrs=%i (Disabled) - Manage Target Free Disk Space. Delete Oldest %s Files" %
-                                   ( spaceTimerHrs, spaceFileExt))        
-            print("            .. Check Every spaceTimerHrs=%i (0=Off)  Target spaceFreeMB=%i (min=100 MB)" % 
-                                             ( spaceTimerHrs, spaceFreeMB))   
-        print("")       
+                                   ( spaceTimerHrs, spaceFileExt))
+            print("            .. Check Every spaceTimerHrs=%i (0=Off)  Target spaceFreeMB=%i (min=100 MB)" %
+                                             ( spaceTimerHrs, spaceFreeMB))
+        print("")
         print("Logging ...... verbose=%s (True=Enabled False=Disabled)" % ( verbose ))
         print("   Log Path .. logDataToFile=%s  logFilePath=%s" % ( logDataToFile, logFilePath ))
         print("------------------------------------ Log Activity --------------------------------------------")
@@ -381,9 +382,9 @@ def subDirCheckMaxHrs(directory, hrsMax, prefix):   # Note to self need to add e
 def subDirChecks(maxHours, maxFiles, directory, prefix):
     # Check if motion SubDir needs to be created
     if maxHours < 1 and maxFiles < 1:  # No Checks required
-        # logging.info('No sub-folders Required in %s', directory)    
-        subDirPath = directory 
-    else:        
+        # logging.info('No sub-folders Required in %s', directory)
+        subDirPath = directory
+    else:
         subDirPath = subDirLatest(directory)
         if subDirPath == directory:   # No subDir Found
             logging.info('No sub folders Found in %s' % directory)
@@ -474,7 +475,7 @@ def freeSpaceUpTo(spaceFreeMB, mediaDir, extension=imageFormat):
         fileList = filesToDelete(mediaDir, extension)
         totFiles = len(fileList)
         delcnt = 0
-        logging.info('Session Started')        
+        logging.info('Session Started')
         while fileList:
             statv = os.statvfs(mediaDirPath)
             availFreeBytes = statv.f_bfree*statv.f_bsize
@@ -488,13 +489,13 @@ def freeSpaceUpTo(spaceFreeMB, mediaDir, extension=imageFormat):
                 logging.error('Error: %s', err)
             else:
                 delcnt += 1
-                logging.info('Del %s', filePath) 
-                logging.info('Target=%i MB  Avail=%i MB  Deleted %i of %i Files ', 
+                logging.info('Del %s', filePath)
+                logging.info('Target=%i MB  Avail=%i MB  Deleted %i of %i Files ',
                                    targetFreeBytes / MB2Bytes, availFreeBytes / MB2Bytes, delcnt, totFiles )
                 if delcnt > totFiles / 4:  # Avoid deleting more than 1/4 of files at one time
                     logging.warn('Max Deletions Reached %i of %i', delcnt, totFiles)
                     logging.warn('Deletions Restricted to 1/4 of total files per session.')
-                    break                                          
+                    break
         logging.info('Session Ended')
     else:
         logging.error('Directory Not Found - %s', mediaDirPath)
@@ -502,7 +503,7 @@ def freeSpaceUpTo(spaceFreeMB, mediaDir, extension=imageFormat):
 #-----------------------------------------------------------------------------------------------
 def freeDiskSpaceCheck(lastSpaceCheck):
     if spaceTimerHrs > 0:   # Check if disk free space timer hours is enabled
-        # See if it is time to do disk clean-up check  
+        # See if it is time to do disk clean-up check
         if ((datetime.datetime.now() - lastSpaceCheck).total_seconds() > spaceTimerHrs * 3600):
             lastSpaceCheck = datetime.datetime.now()
             if spaceFreeMB < 100:   # set freeSpaceMB to reasonable value if too low
@@ -638,10 +639,10 @@ def postImageProcessing(numberon, counterstart, countermax, counter, recycle, co
 def getVideoName(path, prefix, numberon, counter):
     # build image file names by number sequence or date/time
     if numberon:
-        if motionVideoOn:
+        if motionVideoOn or videoRepeatOn:
             filename = os.path.join(path, prefix + str(counter) + ".h264")
     else:
-        if motionVideoOn:
+        if motionVideoOn or videoRepeatOn:
             rightNow = datetime.datetime.now()
             filename = ("%s/%s%04d%02d%02d-%02d%02d%02d.h264"
                      % ( path, prefix ,rightNow.year, rightNow.month, rightNow.day, rightNow.hour, rightNow.minute, rightNow.second))
@@ -655,7 +656,7 @@ def getImageName(path, prefix, numberon, counter):
     else:
         rightNow = datetime.datetime.now()
         filename = ("%s/%s%04d%02d%02d-%02d%02d%02d%s"
-                 % ( path, prefix ,rightNow.year, rightNow.month, rightNow.day, 
+                 % ( path, prefix ,rightNow.year, rightNow.month, rightNow.day,
                     rightNow.hour, rightNow.minute, rightNow.second, imageFormat))
     return filename
 
@@ -688,7 +689,7 @@ def getShut(pxAve):
     brightness = offset * (1/float(nightDarkAdjust))
     shut = (nightMaxShut * (1 / float(px))) + brightness # hyperbolic curve + brightness adjust
     return int(shut)
-    
+
 #-----------------------------------------------------------------------------------------------
 def takeNightImage(filename):
     # Take low light Twilight or Night image
@@ -751,15 +752,15 @@ def takeQuickTimeLapse(moPath, imagePrefix, motionNumOn, motionNumCount, daymode
             time.sleep(motionQuickTLInterval)
 
 #-----------------------------------------------------------------------------------------------
-def takeVideo(filename):
+def takeVideo(filename, duration):
     # Take a short motion video if required
-    logging.info("Size %ix%i for %i sec %s" % (imageWidth, imageHeight, motionVideoTimer, filename))
-    if motionVideoOn:
+    logging.info("Start: Size %ix%i for %i sec to %s" % (imageWidth, imageHeight, duration, filename))
+    if motionVideoOn or videoRepeatOn:
         with picamera.PiCamera() as camera:
             camera.resolution = (imageWidth, imageHeight)
             camera.vflip = imageVFlip
             camera.hflip = imageHFlip
-            camera.rotation = imageRotation #Note use imageVFlip and imageHFlip variables
+            camera.rotation = imageRotation # You can also use imageVFlip and imageHFlip variables
             if showDateOnImage:
                 rightNow = datetime.datetime.now()
                 dateTimeText = (" Started at %04d-%02d-%02d %02d:%02d:%02d "
@@ -769,18 +770,18 @@ def takeVideo(filename):
                 camera.annotate_background = picamera.Color('white')
                 camera.annotate_text = dateTimeText
             camera.start_recording(filename)
-            camera.wait_recording(motionVideoTimer)
+            camera.wait_recording(duration)
             camera.stop_recording()
             camera.close()
         # This creates a subprocess that runs convid.sh with the filename as a parameter
         try:
             convid = "%s/convid.sh %s" % ( baseDir, filename )
-            proc = subprocess.Popen(convid, shell=True,
-                             stdin=None, stdout=None, stderr=None, close_fds=True)
+            proc = subprocess.Popen(convid, shell=True, stdin=None, stdout=None,
+                                                        stderr=None, close_fds=True)
         except IOError:
             logging.error("subprocess %s failed" %s ( convid ))
-        else:
-            logging.error("unidentified error")
+#        else:
+#            logging.error("unidentified error")
         createSyncLockFile(filename)
 
 #-----------------------------------------------------------------------------------------------
@@ -969,7 +970,7 @@ def Main():
 
     if spaceTimerHrs > 0:
         lastSpaceCheck = datetime.datetime.now()
-    
+
     if imageTestPrint:
         takeTestImage() # prints one image and exits if imageTestPrint = True in config.py
 
@@ -978,8 +979,8 @@ def Main():
         vs.camera.rotation = imageRotation
         vs.camera.hflip = imageHFlip
         vs.camera.vflip = imageVFlip
-        time.sleep(2)        
-        data1 = vs.read()    
+        time.sleep(2)
+        data1 = vs.read()
     else:
         data1 = getStreamImage(True).astype(float)  #All functions should still work with float instead of int - just takes more memory
 
@@ -1013,8 +1014,8 @@ def Main():
     # Start main program loop here.  Use Ctl-C to exit if run from terminal session.
     while True:
         if spaceTimerHrs > 0:  # if required check free disk space and delete older files (jpg)
-            lastSpaceCheck = freeDiskSpaceCheck(lastSpaceCheck)    
-    
+            lastSpaceCheck = freeDiskSpaceCheck(lastSpaceCheck)
+
         # use data2 to check daymode as data1 may be average that changes slowly, and data1 may not be updated
         if motionStreamOn:
             if daymode != checkIfDayStream(daymode, data2):
@@ -1118,7 +1119,7 @@ def Main():
                     else:
                         if motionVideoOn:
                             filename = getVideoName(motionPath, imagePrefix, motionNumOn, motionNumCount)
-                            takeVideo(filename)
+                            takeVideo(filename, motionVideoTimer)
                         else:
                             filename = getImageName(moPath, imagePrefix, motionNumOn, motionNumCount)
                             if daymode:
@@ -1147,13 +1148,73 @@ def Main():
                         dotCount = showDots(motionDotsMax)
                 else:
                     dotCount = showDots(dotCount)  # show progress dots when no motion found
-    return
+
+#-----------------------------------------------------------------------------------------------
+def videoRepeat():
+    if not os.path.isdir(videoPath):     # Check if folder exist and create if required
+        logging.info("Create videoRepeat Folder %s", videoPath)
+        os.makedirs(videoPath)
+    print("------------------------------------------------------------------------------------------")
+    print("VideoRepeat . videoRepeatOn=%s" % videoRepeatOn)
+    print("   Info ..... Size=%ix%i  videoPrefix=%s  videoDuration=%i seconds" %
+                       ( imageWidth, imageHeight, videoPrefix, videoDuration ))
+    print("   Vid Path . videoPath=%s" % videoPath)
+    print("   Timer .... videoTimer=%i minutes  0=Continuous" % ( videoTimer ))
+    print("   Num Seq .. videoNumOn=%s  videoNumRecycle=%s  videoNumStart=%i  videoNumMax=%i 0=Continuous" %
+                         ( videoNumOn, videoNumRecycle, videoNumStart, videoNumMax ))
+    print("------------------------------------------------------------------------------------------")
+    print("WARNING: videoRepeatOn=%s Suppresses TimeLapse and Motion Settings." % videoRepeatOn)
+
+    videoStartTime = datetime.datetime.now()
+    lastSpaceCheck = datetime.datetime.now()
+    videoCount = 0
+    videoNumCounter = videoNumStart
+    keepRecording = True
+    while keepRecording:
+        # if required check free disk space and delete older files
+        #  Set variables spaceFileExt='mp4' and spaceMediaDir= to appropriate folder path
+        if spaceTimerHrs > 0:
+            lastSpaceCheck = freeDiskSpaceCheck(lastSpaceCheck)
+        filename = getVideoName(videoPath, videoPrefix, videoNumOn, videoNumCounter )
+        takeVideo(filename, videoDuration)
+        timeUsed = (datetime.datetime.now() - videoStartTime).total_seconds()
+        timeRemaining = ( videoTimer*60 - timeUsed ) / 60.0
+        videoCount += 1
+        if videoNumOn:
+            videoNumCounter += 1
+            if videoNumMax > 0:
+                if videoNumCounter - videoNumStart > videoNumMax:
+                    if videoNumRecycle:
+                        videoNumCounter = videoNumStart
+                        logging.info("Restart Numbering: videoNumRecycle=%s and videoNumMax=%i Exceeded",
+                                             videoNumRecycle, videoNumMax)
+                    else:
+                        keepRecording = False
+                        logging.info("Exit since videoNumRecycle=%s and videoNumMax=%i Exceeded  %i Videos Recorded",
+                                             videoNumRecycle, videoNumMax, videoCount)
+                logging.info("Recorded %i of %i Videos" % ( videoCount, videoNumMax))
+            else:
+                logging.info("Recorded %i Videos  videoNumMax=%i 0=Continuous" % (videoCount, videoNumMax))
+        else:
+            logging.info("Progress: %i Videos Recorded in Folder %s", videoCount, videoPath)
+
+        if videoTimer > 0:
+            if timeUsed > videoTimer * 60:
+                keepRecording = False
+                logging.info("Exit since videoTimer=%i minutes Exceeded", videoTimer)
+            else:
+                logging.info("Remaining Time %.1f of %i minutes", timeRemaining, videoTimer)
+        else:
+            videoStartTime = datetime.datetime.now()
+    logging.info("Exit: %i Videos Recorded in Folder %s", videoCount, videoPath)
 
 #-----------------------------------------------------------------------------------------------
 if __name__ == '__main__':
     try:
         if debug:
             dataLogger()
+        elif videoRepeatOn:
+            videoRepeat()
         else:
             Main()
     finally:
