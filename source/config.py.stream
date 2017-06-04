@@ -106,10 +106,10 @@ videoPath = "media/videos"  # default= media/videos Storage folder path for vide
 videoPrefix = "vid-"        # prefix for video filenames
 videoDuration = 120         # default= 120 seconds for each video recording
 videoTimer = 60             # default= 60 minutes  Run Recording Session then Exit  0=Continuous
-videoNumOn = False          # default= True True=filenames by sequenced Number  False=filenames by date/time
+videoNumOn = False          # default= True True=filenames by sequence Number  False=filenames by date/time
 videoNumRecycle = False     # default= False when NumMax reached restart at NumStart instead of exiting
-videoNumStart = 100         # default= 100 Start 0f motion number sequence
-videoNumMax  = 20           # default= 20 Max number of motion images desired. 0=Continuous
+videoNumStart = 100         # default= 100 Start of video filename number sequence
+videoNumMax  = 20           # default= 20 Max number of videos desired. 0=Continuous
 
 # Manage Disk Space Settings
 #---------------------------
