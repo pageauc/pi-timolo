@@ -434,10 +434,10 @@ def checkImagePath():
                 logging.error('Failed to Create %s - %s', timelapseRecentDir, err)
 
 #-----------------------------------------------------------------------------------------------
-def saveRecent( recentMax, recentDir, filename):
+def saveRecent(recentMax, recentDir, filename, prefix):
     # save specified most recent files (timelapse and/or motion) in recent subfolder
     try:
-        fileList = sorted(os.listdir(recentDir))
+        fileList = sorted(glob.glob(os.path.join(recentDir, prefix + '*')))
     except OSError as err:
         logging.error('Problem Reading Directory %s - %s', recentDir, err)
     else:
@@ -445,8 +445,8 @@ def saveRecent( recentMax, recentDir, filename):
             oldest = fileList[0]
             oldestFile = os.path.join(recentDir, oldest)
             try:   # Remove oldest file in recent folder
-                os.remove(oldestFile)
                 fileList.remove(oldest)
+                os.remove(oldestFile)
             except OSError as err:
                 logging.error('Cannot Remove %s - %s', oldestFile, err)
 
@@ -1070,7 +1070,7 @@ def Main():
                                                             timelapseNumCount, timelapseNumRecycle,
                                                             timelapseNumPath, filename, daymode)
                     if timelapseRecentMax > 0:
-                        saveRecent( timelapseRecentMax, timelapseRecentDir, filename)
+                        saveRecent(timelapseRecentMax, timelapseRecentDir, filename, imagePrefix)
 
                     dotCount = showDots(motionDotsMax)
                     if motionStreamOn:
@@ -1130,7 +1130,7 @@ def Main():
                                                              motionNumCount, motionNumRecycle, motionNumPath,
                                                              filename, daymode)
                         if motionRecentMax > 0:
-                            saveRecent( motionRecentMax, motionRecentDir, filename)
+                            saveRecent(motionRecentMax, motionRecentDir, filename, imagePrefix)
 
                     if motionStreamOn:
                         vs = PiVideoStream().start()
