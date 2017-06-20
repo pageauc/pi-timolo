@@ -1,13 +1,13 @@
 # User Configuration variable settings for pitimolo
 # Purpose - Motion Detection Security Cam
-# Updated - 20-May-2017 IMPORTANT - Required for pi-timolo.py ver 6.70 or Greater
+# Updated - 20-Jun-2017 IMPORTANT - Required for pi-timolo.py ver 6.71 or Greater
 # Done by - Claude Pageau
 
-configTitle = "pi-timolo ver 6.70 Default Settings"
+configTitle = "pi-timolo ver 6.71 Default Settings"
 configName  = "config.py"
 
 #======================================
-#   pi-timolo.py ver 6.70 Settings
+#   pi-timolo.py ver 6.71 Settings
 #======================================
 
 # Logging and Debug Settings
@@ -24,6 +24,7 @@ imageNamePrefix = 'cam1-'  # default= 'cam1-' for all image file names. Eg garag
 imageWidth = 1024          # default= 1024 Full Size Image Width in px
 imageHeight = 768          # default= 768  Full Size Image Height in px
 imageFormat = ".jpg"       # default = ".jpg"  image Formats .jpeg .png .gif .bmp
+imageJpegQuality = 20      # default = 20  Valid jpg encoder quality values 1(high) - 40(low)
 imageVFlip = False         # default= False True Flips image Vertically
 imageHFlip = False         # default= False True Flips image Horizontally
 imageRotation = 0          # Default= 0  Rotate image. Valid values: 0, 90, 180, 270
@@ -94,6 +95,7 @@ timelapseNumRecycle = True  # default= True Restart Numbering at NumStart  False
 timelapseNumStart = 1000    # default= 1000 Start of timelapse number sequence
 timelapseNumMax = 2000      # default= 2000 Max number of timelapse images desired. 0=Continuous
 timelapseExitSec = 0        # default= 0 seconds Surpress Timelapse after specified Seconds  0=Continuous
+timelapseMaxFiles = 0       # 0=off or specify MaxFiles to maintain then oldest are deleted  default=0 (off)
 timelapseSubDirMaxHours = 0 # 0=off or specify MaxHours - Creates New dated sub-folder if MaxHours exceeded
 timelapseSubDirMaxFiles = 0 # 0=off or specify MaxFiles - Creates New dated sub-folder if MaxFiles exceeded
 timelapseRecentMax = 10     # 0=off or specify number of most recent files to save in timelapseRecentDir

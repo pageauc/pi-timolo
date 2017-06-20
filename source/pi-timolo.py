@@ -37,8 +37,8 @@
 # 6.70 release 03-Jun-2017 Added videoRepeat option Requires revised 6.70 config.py (Note suppresses motion and timelapse)
 # 6.71 release 20-Jun-2017 Added timelapseMaxFiles, and imageJpegQuality parameter
 
-progVer = "ver 6.71"
-__version__ = "6.71"   # May test for version number at a future time
+progVer = "ver 6.72"
+__version__ = "6.72"   # May test for version number at a future time
 
 import datetime
 import glob
@@ -240,6 +240,7 @@ def displayInfo(motioncount, timelapsecount):
         print("")
         print("Image Info ... Size=%ix%i  Prefix=%s  VFlip=%s  HFlip=%s  Rotation=%i  Preview=%s"
               % (imageWidth, imageHeight, imageNamePrefix, imageVFlip, imageHFlip, imageRotation, imagePreview))
+        print("               JpegQuality=%i 1(hi) - 40(low)  useVideoPort=%s" % ( imageJpegQaulity, useVideoPort ))
         print("   Low Light.. nightTwilightThreshold=%i  nightDarkThreshold=%i  nightBlackThreshold=%i"
                            % ( nightTwilightThreshold, nightDarkThreshold, nightBlackThreshold ))
         print("               nightMaxShutSec=%.2f  nightMaxISO=%i  nightDarkAdjust=%.2f  nightSleepSec=%i"
@@ -287,6 +288,7 @@ def displayInfo(motioncount, timelapsecount):
         if timelapseOn:
             print("Time Lapse ... On=%s  Prefix=%s   Timer=%i sec   timelapseExitSec=%i (0=Continuous)"
                         % (timelapseOn, timelapsePrefix, timelapseTimer, timelapseExitSec))
+            print("               timelapseMaxFiles=%i" % ( timelapseMaxFiles ))
             print("   Img Path .. timelapsePath=%s  timelapseCamSleep=%.2f sec" % (timelapsePath, timelapseCamSleep))
             if timelapseNumOn:
                 print("   Num Seq ... On=%s  numRecycle=%s  numStart=%i   numMax=%i  current=%s"
