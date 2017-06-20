@@ -35,9 +35,10 @@
 # 6.50 release 16-May-2017 Fine Tune brightness settings for dark night setting
 # 6.60 release 20-May-2017 Simplied getShut function with hyperbolic and no Gaussian. Requires revised config.py
 # 6.70 release 03-Jun-2017 Added videoRepeat option Requires revised 6.70 config.py (Note suppresses motion and timelapse)
+# 6.71 release 20-Jun-2017 Added timelapseMaxFiles, and imageJpegQuality parameter
 
-progVer = "ver 6.70"
-__version__ = "6.70"   # May test for version number at a future time
+progVer = "ver 6.71"
+__version__ = "6.71"   # May test for version number at a future time
 
 import datetime
 import glob
@@ -434,7 +435,7 @@ def checkImagePath():
                 logging.error('Failed to Create %s - %s', timelapseRecentDir, err)
 
 #-----------------------------------------------------------------------------------------------
-def saveRecent(recentMax, recentDir, filename, prefix):
+def deleteOldFiles(recentMax, recentDir, prefix):
     # save specified most recent files (timelapse and/or motion) in recent subfolder
     try:
         fileList = sorted(glob.glob(os.path.join(recentDir, prefix + '*')))
@@ -450,6 +451,9 @@ def saveRecent(recentMax, recentDir, filename, prefix):
             except OSError as err:
                 logging.error('Cannot Remove %s - %s', oldestFile, err)
 
+#-----------------------------------------------------------------------------------------------
+def saveRecent(recentMax, recentDir, filename, prefix):
+    deleteOldFiles(recentMax, recentDir, prefix)
     try:    # Copy image file to recent folder
         shutil.copy(filename, recentDir)
     except OSError as err:
@@ -675,7 +679,10 @@ def takeDayImage(filename, cam_sleep_time):
         time.sleep(cam_sleep_time)   # use motion or TL camera sleep to get AWB
         if imagePreview:
             camera.start_preview()
-        camera.capture(filename, use_video_port=useVideoPort)
+        if imageFormat == ".jpg" :
+            camera.capture(filename, use_video_port=useVideoPort, format='jpeg',quality=imageJpegQuality)
+        else:
+            camera.capture(filename, use_video_port=useVideoPort)
         camera.close()
     logging.info("camSleepSec=%.2f exp=auto awb=auto Size=%ix%i "
               % ( cam_sleep_time, imageWidth, imageHeight ))
@@ -728,7 +735,10 @@ def takeNightImage(filename):
             camera.shutter_speed = camShut  # Set the shutter for long exposure
             camera.iso = nightMaxISO   # Set the ISO to a fixed value for long exposure
             time.sleep(nightSleepSec)  # Give camera a long time to calc Night Settings
-        camera.capture(filename)
+        if imageFormat == ".jpg" :
+            camera.capture(filename,format='jpeg',quality=imageJpegQuality)
+        else:
+            camera.capture(filename)
         camera.close()
     if not showDateOnImage:  # showDateOnImage displays FilePath so avoid showing twice
         logging.info("FilePath %s" % filename)
@@ -1071,6 +1081,9 @@ def Main():
                                                             timelapseNumPath, filename, daymode)
                     if timelapseRecentMax > 0:
                         saveRecent(timelapseRecentMax, timelapseRecentDir, filename, imagePrefix)
+
+                    if timelapseMaxFiles > 0:
+                        deleteOldFiles(timelapseMaxFiles, timelapseDir, imagePrefix)
 
                     dotCount = showDots(motionDotsMax)
                     if motionStreamOn:
