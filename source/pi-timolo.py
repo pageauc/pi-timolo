@@ -37,8 +37,8 @@
 # 6.70 release 03-Jun-2017 Added videoRepeat option Requires revised 6.70 config.py (Note suppresses motion and timelapse)
 # 6.71 release 20-Jun-2017 Added timelapseMaxFiles, and imageJpegQuality parameter
 
-progVer = "ver 6.72"
-__version__ = "6.72"   # May test for version number at a future time
+progVer = "ver 6.73"
+__version__ = "6.73"   # May test for version number at a future time
 
 import datetime
 import glob
@@ -437,16 +437,16 @@ def checkImagePath():
                 logging.error('Failed to Create %s - %s', timelapseRecentDir, err)
 
 #-----------------------------------------------------------------------------------------------
-def deleteOldFiles(recentMax, recentDir, prefix):
+def deleteOldFiles(maxFiles, dirPath, prefix):
     # save specified most recent files (timelapse and/or motion) in recent subfolder
     try:
-        fileList = sorted(glob.glob(os.path.join(recentDir, prefix + '*')))
+        fileList = sorted(glob.glob(os.path.join(dirPath, prefix + '*')))
     except OSError as err:
-        logging.error('Problem Reading Directory %s - %s', recentDir, err)
+        logging.error('Problem Reading Directory %s - %s', dirPath, err)
     else:
-        while len(fileList) >= recentMax:
+        while len(fileList) > maxFiles:
             oldest = fileList[0]
-            oldestFile = os.path.join(recentDir, oldest)
+            oldestFile = oldest
             try:   # Remove oldest file in recent folder
                 fileList.remove(oldest)
                 os.remove(oldestFile)
