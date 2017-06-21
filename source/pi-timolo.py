@@ -438,7 +438,7 @@ def checkImagePath():
 
 #-----------------------------------------------------------------------------------------------
 def deleteOldFiles(maxFiles, dirPath, prefix):
-    # save specified most recent files (timelapse and/or motion) in recent subfolder
+    # Delete Oldest files gt or eq to maxfiles that match filename prefix
     try:
         fileList = sorted(glob.glob(os.path.join(dirPath, prefix + '*')))
     except OSError as err:
@@ -455,6 +455,7 @@ def deleteOldFiles(maxFiles, dirPath, prefix):
 
 #-----------------------------------------------------------------------------------------------
 def saveRecent(recentMax, recentDir, filename, prefix):
+    # save specified most recent files (timelapse and/or motion) in recent subfolder
     deleteOldFiles(recentMax, recentDir, prefix)
     try:    # Copy image file to recent folder
         shutil.copy(filename, recentDir)
