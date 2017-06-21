@@ -444,7 +444,7 @@ def deleteOldFiles(maxFiles, dirPath, prefix):
     except OSError as err:
         logging.error('Problem Reading Directory %s - %s', dirPath, err)
     else:
-        while len(fileList) > maxFiles:
+        while len(fileList) >= maxFiles:
             oldest = fileList[0]
             oldestFile = oldest
             try:   # Remove oldest file in recent folder
