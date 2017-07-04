@@ -5,8 +5,8 @@
 # getStreamImage function based on utpalc code based on brainflakes lightweight motion detection code on Raspberry PI forum - Thanks
 # Complete pi-timolo code and wiki instructions are available on my github repo at https://github.com/pageauc/pi-timolo
 
-# 2.7 released 20-Jul-2015  added saving of exif metadata when text written to image sinc PIL does not retain this.
-# 2.8 released 2-Aug-2015 updated gdrive and replaced mencoder with avconv
+# 2.7 released 20-Jul-2015 added saving of exif metadata when text written to image sinc PIL does not retain this.
+# 2.8 released 02-Aug-2015 updated gdrive and replaced mencoder with avconv
 # 2.92 release 22-Mar-2016 fixed getCurrentCount when file contains non integer data due to a write error or corruption.
 # 2.93 release 21-Jul-2016 improved getCurrentCount logic and changed default motion image size to 128x80 per picamra default
 # 2.94 release 14-Aug-2016 implemented camera.rotation = cameraRotate but not yet fully tested
@@ -37,8 +37,8 @@
 # 6.70 release 03-Jun-2017 Added videoRepeat option Requires revised 6.70 config.py (Note suppresses motion and timelapse)
 # 6.71 release 20-Jun-2017 Added timelapseMaxFiles, and imageJpegQuality parameter
 
-progVer = "ver 6.73"
-__version__ = "6.73"   # May test for version number at a future time
+progVer = "ver 6.74"
+__version__ = "6.74"   # May test for version number at a future time
 
 import datetime
 import glob
@@ -67,7 +67,7 @@ else:
     print("Importing Configuration Variables from File %s" % ( configFilePath ))
     from config import *
 
-# Now that variable are imported from config.py Setup Logging
+# Setup Logging now that variables are imported from config.py
 if logDataToFile:
     print("Sending Logging Data to %s  (Console Messages Disabled)" %( logFilePath ))
     logging.basicConfig(level=logging.DEBUG,
@@ -86,8 +86,7 @@ else:
                     format='%(asctime)s %(levelname)-8s %(funcName)-10s %(message)s',
                     datefmt='%Y-%m-%d %H:%M:%S')
 
-print("Loading Python Libraries ...")
-# import remaining python libraries
+print("Loading Python Libraries ...")  # import remaining python libraries
 import picamera
 from picamera import PiCamera
 import picamera.array
@@ -95,7 +94,7 @@ from picamera.array import PiRGBArray
 from threading import Thread
 
 import numpy as np
-import pyexiv2
+import pyexiv2         # Not Available under python3
 from PIL import Image
 from PIL import ImageFont
 from PIL import ImageDraw
@@ -1233,9 +1232,12 @@ if __name__ == '__main__':
             videoRepeat()
         else:
             Main()
-    finally:
+    except KeyboardInterrupt:
         print("")
         print("+++++++++++++++++++++++++++++++++++")
-        print("%s - Exiting Program" % progName)
+        print("User Pressed Keyboard ctrl-c")
+        print("%s %s - Exiting" % (progName, progVer)
         print("+++++++++++++++++++++++++++++++++++")
         print("")
+        quit(0)
+
