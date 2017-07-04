@@ -57,9 +57,11 @@ motionOn = True             # default= True True=Turns Motion Detect On, False=O
 motionDir = "media/motion"  # default= "media/motion"  Folder Path for Motion Detect Image Storage
 motionPrefix = "mo-"        # default= "mo-" Prefix for all Motion Detect images
 motionCamSleep = 0.7        # default= 0.7 Sec of day sleep so camera can measure AWB before taking photo
+motionStreamOn = False      # default= False  True=Use video stream thread for Faster motion detect best on quad core
+motionStreamStopSec = 0.5   # default= 0.5 seconds  Time to close stream thread
+motionAverage = 20          # default= 20 Num Images to Average for motion verification: 1=last image only, 100=Med, 300=High, Etc.
 motionThreshold = 50        # default= 50 (1-200)  How much a pixel has to change to be counted
 motionSensitivity = 100     # default= 100 Number of changed pixels to trigger motion image
-motionAverage = 20          # default= 20 Num Images to Average for motion verification: 1=last image only, 100=Med, 300=High, Etc.
 motionVideoOn = False       # default= False  True=Take a video clip rather than image
 motionVideoTimer = 10       # default= 10 seconds of video clip to take if Motion Detected
 motionQuickTLOn = False     # default= False  True=Take a quick time lapse sequence rather than a single image (overrides motionVideoOn)
@@ -70,8 +72,6 @@ motionNumOn = True          # default= True  True=filenames by sequenced Number 
 motionNumRecycle = True     # default= True when NumMax reached restart at NumStart instead of exiting
 motionNumStart = 1000       # default= 1000 Start 0f motion number sequence
 motionNumMax  = 500         # default= 0 Max number of motion images desired. 0=Continuous
-motionStreamOn = False      # default= False  True=Use video stream thread for motion detect
-motionStreamStopSec = 0.5   # default= 0.5 seconds  Time to close stream thread
 motionDotsOn = True         # default= True Displays motion loop progress dots if verbose=True False=Non
 motionDotsMax = 100         # default= 100 Number of motion dots before starting new line if motionDotsOn=True
 motionSubDirMaxHours = 0    # 0=off or specify Max Hrs to create new sub-folder if HrsMax exceeded
