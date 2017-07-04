@@ -1236,7 +1236,7 @@ if __name__ == '__main__':
         print("")
         print("+++++++++++++++++++++++++++++++++++")
         print("User Pressed Keyboard ctrl-c")
-        print("%s %s - Exiting" % (progName, progVer)
+        print("%s %s - Exiting" % (progName, progVer))
         print("+++++++++++++++++++++++++++++++++++")
         print("")
         quit(0)
