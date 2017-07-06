@@ -1,19 +1,19 @@
 #!/bin/bash
 # Convenient pi-timolo-install.sh script written by Claude Pageau 1-Jul-2016
-ver="7.0"
+ver="4.92"
 TIMOLO_DIR='pi-timolo'  # Default folder install location
 
 cd ~
 if [ -d "$TIMOLO_DIR" ] ; then
   STATUS="Upgrade"
   echo "Upgrade pi-timolo files"
-else
+else  
   echo "New pi-timolo Install"
   STATUS="New Install"
   mkdir -p $TIMOLO_DIR
   mkdir -p $TIMOLO_DIR/media
   echo "$TIMOLO_DIR Folder Created"
-fi
+fi 
 
 cd $TIMOLO_DIR
 INSTALL_PATH=$( pwd )
@@ -35,7 +35,7 @@ if [ -e config.py ]; then
   echo "Backup config.py to config.py.prev"
   cp config.py config.py.prev
 else
-  wget -O config.py -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/config.py
+  wget -O config.py -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/config.py     
 fi
 
 if [ -e convid.conf.1 ]; then
@@ -47,33 +47,35 @@ wget -O media/webserver.txt https://raw.github.com/pageauc/pi-timolo/master/sour
 wget -O config_new.py -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/config.py
 if [ $? -ne 0 ] ;  then
   wget -O config.py https://raw.github.com/pageauc/pi-timolo/master/source/config.py
+  wget -O config.py.stream https://raw.github.com/pageauc/pi-timolo/master/source/config.py.stream
   wget -O config.py.default https://raw.github.com/pageauc/pi-timolo/master/source/config.py.default
-  wget -O menubox.sh https://raw.github.com/pageauc/pi-timolo/master/source/menubox.sh
+  wget -O menubox.sh https://raw.github.com/pageauc/pi-timolo/master/source/menubox.sh  
   wget -O pi-timolo.py https://raw.github.com/pageauc/pi-timolo/master/source/pi-timolo.py
-  wget -O pi-timolo.sh https://raw.github.com/pageauc/pi-timolo/master/source/pi-timolo.sh
+  wget -O pi-timolo.sh https://raw.github.com/pageauc/pi-timolo/master/source/pi-timolo.sh  
   wget -O pi-timolo-install.sh https://raw.github.com/pageauc/pi-timolo/master/source/pi-timolo-install.sh
   wget -O Readme.md https://raw.github.com/pageauc/pi-timolo/master/Readme.md
   wget -O sync.sh https://raw.github.com/pageauc/pi-timolo/master/source/sync.sh
   wget -O webserver.py https://raw.github.com/pageauc/pi-timolo/master/source/webserver.py
-  wget -O webserver.sh https://raw.github.com/pageauc/pi-timolo/master/source/webserver.sh
-  wget -O convid.sh https://raw.github.com/pageauc/pi-timolo/master/source/convid.sh
-  wget https://raw.github.com/pageauc/pi-timolo/master/source/convid.conf
+  wget -O webserver.sh https://raw.github.com/pageauc/pi-timolo/master/source/webserver.sh  
+  wget -O convid.sh https://raw.github.com/pageauc/pi-timolo/master/source/convid.sh 
+  wget https://raw.github.com/pageauc/pi-timolo/master/source/convid.conf 
   wget -O makevideo.sh https://raw.github.com/pageauc/pi-timolo/master/source/makevideo.sh
-  wget https://raw.github.com/pageauc/pi-timolo/master/source/makevideo.conf
+  wget https://raw.github.com/pageauc/pi-timolo/master/source/makevideo.conf 
   wget -O mvleavelast.sh https://raw.github.com/pageauc/pi-timolo/master/source/mvleavelast.sh
   wget -O myip.sh https://raw.github.com/pageauc/pi-timolo/master/source/myip.sh
   wget -O gdrive https://raw.github.com/pageauc/pi-timolo/master/source/drive_armv6
 else
   wget -O config.py -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/config.py
+  wget -O config.py.stream -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/config.py.stream
   wget -O config.py.default -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/config.py.default
   wget -O menubox.sh -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/menubox.sh
   wget -O pi-timolo.py -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/pi-timolo.py
   wget -O pi-timolo.sh -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/pi-timolo.sh
-  wget -O pi-timolo-install.sh -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/pi-timolo-install.sh
+  wget -O pi-timolo-install.sh -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/pi-timolo-install.sh  
   wget -O Readme.md -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/Readme.md
   wget -O sync.sh -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/sync.sh
   wget -O webserver.py -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/webserver.py
-  wget -O webserver.sh -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/webserver.sh
+  wget -O webserver.sh -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/webserver.sh 
   wget -O convid.sh -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/convid.sh
   wget -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/convid.conf
   wget -O makevideo.sh -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/makevideo.sh
@@ -82,14 +84,14 @@ else
   wget -O myip.sh -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/myip.sh
   wget -O gdrive -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/drive_armv6
 fi
-
+  
 echo "Done Download"
 echo "-------------------------------------------------------------"
 echo "2 - Make Required Files Executable"
 echo ""
 chmod +x *py
 chmod -x config*py
-chmod +x *sh
+chmod +x *sh 
 echo "Done Permissions"
 echo "-------------------------------------------------------------"
 # check if system was updated today
@@ -97,7 +99,7 @@ NOW="$( date +%d-%m-%y )"
 LAST="$( date -r /var/lib/dpkg/info +%d-%m-%y )"
 if [ "$NOW" == "$LAST" ] ; then
   echo "4 Raspbian System is Up To Date"
-  echo ""
+  echo ""  
 else
   echo "3 - Performing Raspbian System Update"
   echo "    This Will Take Some Time ...."
@@ -110,17 +112,15 @@ else
   echo ""
   sudo apt-get -y upgrade
   echo "Done Upgrade"
-fi
+fi  
 echo "------------------------------------------------"
-echo ""
+echo ""  
 echo "5 - Installing pi-timolo Dependencies"
 echo ""
 sudo apt-get install -yq python-picamera python-imaging dos2unix python-pyexiv2 libav-tools
 sudo apt-get install -yq python-scipy  # New Dependency for enhanced motion detection
 sudo apt-get install -yq gpac   # required for MP4Box video converter
 sudo apt-get install -yq fonts-freefont-ttf # Required for Jessie Lite Only
-sudo apt-get install -yq python-opencv
-
 if [ -e gdrive ]; then
   echo "-------------------------------------------------------------"
   echo "6 - Install Latest gdrive to /usr/local/bin/gdrive"
@@ -196,7 +196,7 @@ echo "here https://github.com/pageauc/pi-timolo/wiki"
 
 if ! grep -q "web_server_root" config.py ; then
    cp config_new.py config.py
-   echo ""
+   echo ""   
    echo "IMPORTANT:  Your config.py has been Upgraded"
    echo "and Replaced with config_new.py"
    echo "Your previous settings are in config.py.prev"

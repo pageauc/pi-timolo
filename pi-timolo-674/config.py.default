@@ -1,13 +1,13 @@
 # User Configuration variable settings for pitimolo
 # Purpose - Motion Detection Security Cam
-# Updated - 06-Jul-2017 IMPORTANT - Required for pi-timolo.py ver 7.0 or Greater
+# Updated - 20-Jun-2017 IMPORTANT - Required for pi-timolo.py ver 6.71 or Greater
 # Done by - Claude Pageau
 
-configTitle = "pi-timolo ver 7.0 Default Settings"
-configName  = "config.py"
+configTitle = "pi-timolo ver 6.71 Default Settings"
+configName  = "config.py.default"
 
 #======================================
-#   pi-timolo.py Settings
+#   pi-timolo.py ver 6.71 Settings
 #======================================
 
 # Logging and Debug Settings
@@ -16,6 +16,7 @@ configName  = "config.py"
 verbose = True             # default= True Sends logging Info to Console. False if running script as daeman
 logDataToFile = False      # default= False True logs diagnostic data to a disk file for review
 debug = False              # default= False True = debug mode returns pixel average data for tuning
+imageTestPrint = False     # default= False Set to True to print one image and exit (useful for aligning camera)
 
 # Image Settings
 # --------------
@@ -50,22 +51,17 @@ nightMaxShutSec = 5.9       # default= 5.9 Sec Highest V1 Cam shutter for long e
 nightMaxISO  = 800          # default= 800 Night ISO setting for Long Exposure below nightThreshold
 nightDarkAdjust = 4.7       # default= 4.7 Factor to fine tune nightDarkThreshold brightness (lower is brighter)
 
-# Motion Track Settings
-# ---------------------
-motionTrackOn = True        # default= True True=Turns Motion Detect On, False=Off
-motionTrackTimeOut = 3      # default= 3 seconds Reset Track if no activity
-motionTrackTrigLen = 75     # default= 75 px Length of motion track to Trigger motionFound
-motionTrackMinArea = 200    # default= 200 sq px  Minimum Area required to start tracking
-motionTrackFrameRate = 25   # default= 25 fps  PiVideoStream setting.  Single core RPI suggest 15 fps
-motionTrackQuickPic = True  # default= False True= save a frame image instead of switching out of opencv
-motionTrackQPBigger = 2.5   # default= 2.5 multiply size of QuickPic saved image from default 320x240
-motionTrackInfo = True      # default= False Hide detailed track position logging messages
-
-# Motion Settings
-# ---------------
+# Motion Detect Settings
+# ----------------------
+motionOn = True             # default= True True=Turns Motion Detect On, False=Off
 motionDir = "media/motion"  # default= "media/motion"  Folder Path for Motion Detect Image Storage
 motionPrefix = "mo-"        # default= "mo-" Prefix for all Motion Detect images
 motionCamSleep = 0.7        # default= 0.7 Sec of day sleep so camera can measure AWB before taking photo
+motionStreamOn = False      # default= False  True=Use video stream thread for Faster motion detect best on quad core
+motionStreamStopSec = 0.5   # default= 0.5 seconds  Time to close stream thread
+motionAverage = 20          # default= 20 Num Images to Average for motion verification: 1=last image only, 100=Med, 300=High, Etc.
+motionThreshold = 50        # default= 50 (1-200)  How much a pixel has to change to be counted
+motionSensitivity = 100     # default= 100 Number of changed pixels to trigger motion image
 motionVideoOn = False       # default= False  True=Take a video clip rather than image
 motionVideoTimer = 10       # default= 10 seconds of video clip to take if Motion Detected
 motionQuickTLOn = False     # default= False  True=Take a quick time lapse sequence rather than a single image (overrides motionVideoOn)
@@ -76,12 +72,13 @@ motionNumOn = True          # default= True  True=filenames by sequenced Number 
 motionNumRecycle = True     # default= True when NumMax reached restart at NumStart instead of exiting
 motionNumStart = 1000       # default= 1000 Start 0f motion number sequence
 motionNumMax  = 500         # default= 0 Max number of motion images desired. 0=Continuous
+motionDotsOn = True         # default= True Displays motion loop progress dots if verbose=True False=Non
+motionDotsMax = 100         # default= 100 Number of motion dots before starting new line if motionDotsOn=True
 motionSubDirMaxHours = 0    # 0=off or specify Max Hrs to create new sub-folder if HrsMax exceeded
 motionSubDirMaxFiles = 0    # 0=off or specify Max Files to create new sub-folder if FilesMax exceeded
 motionRecentMax = 10        # 0=off  Maintain specified number of most recent files in motionRecentDir
 motionRecentDir = "media/recent/motion"  # default= "media/recent/motion"  Location of motionRecent files
-motionDotsOn = False        # default= True Displays motion loop progress dots if verbose=True False=Non
-motionDotsMax = 100         # default= 100 Number of motion dots before starting new line if motionDotsOn=True
+
 createLockFile = False      # default= False True=Create pi-timolo.sync file whenever images saved.
                             # Lock File is used to indicate motion images have been added
                             # so sync.sh can sync in background via sudo crontab -e
@@ -118,10 +115,10 @@ videoNumMax  = 20           # default= 20 Max number of videos desired. 0=Contin
 
 # Manage Disk Space Settings
 #---------------------------
-spaceTimerHrs = 0           # default= 0  0=off or specify hours frequency to perform free disk space check
-spaceFreeMB = 500           # default= 500  Target Free space in MB Required.
-spaceMediaDir = '/home/pi/pi-timolo/media'  # default= '/home/pi/pi-timolo/media'  Starting point for directory walk
-spaceFileExt  = 'jpg'       # default= 'jpg' File extension to Delete Oldest Files
+spaceTimerHrs = 0          # default= 0  0=off or specify hours frequency to perform free disk space check
+spaceFreeMB = 500          # default= 500  Target Free space in MB Required.
+spaceMediaDir = '/home/pi/pi-timolo/media'    # default= '/home/pi/pi-timolo/media'  Starting point for directory walk
+spaceFileExt  = 'jpg'      # default= 'jpg' File extension to Delete Oldest Files
 
 #======================================
 #       webserver.py Settings
