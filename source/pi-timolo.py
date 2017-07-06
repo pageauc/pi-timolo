@@ -4,8 +4,8 @@
 # written by Claude Pageau Jul-2017 (release 7.0)
 # This release uses OpenCV to do Motion Tracking.  It requires updated config.py
 
-progVer = "ver 7.0"
-__version__ = "7.0"   # May test for version number at a future time
+progVer = "ver 7.1"
+__version__ = "7.1"   # May test for version number at a future time
 
 import datetime
 import logging
@@ -1099,6 +1099,7 @@ def timolo():
 
             if motionTrackOn:
                 # IMPORTANT - Night motion detection may not work very well due to long exposure times and low light
+                image2 = vs.read()
                 grayimage2 = cv2.cvtColor(image2, cv2.COLOR_BGR2GRAY)
                 movePoint1 = trackPoint(grayimage1, grayimage2)
                 grayimage1 = grayimage2
@@ -1117,22 +1118,31 @@ def timolo():
                             logging.info("Track Start(%i,%i)  Now(%i,%i) trackLen=%.2f px",
                                startPos[0], startPos[1], movePoint2[0], movePoint2[1], trackLen)
 
+                    # Track length triggered           
                     if trackLen > TRACK_TRIG_LEN:
                         if trackLen > TRACK_TRIG_LEN + TRACK_TRIG_LEN/4.0:
+                            motionFound = False
                             if motionTrackInfo:
                                 logging.info("TrackLen %.2f px Exceeded %i px Max Trig Len Allowed.",
-                                         trackLen, TRACK_TRIG_LEN + TRACK_TRIG_LEN/4.0)
-                            motionFound = False
+                                                   trackLen, TRACK_TRIG_LEN + TRACK_TRIG_LEN/4.0)
                         else:
                             motionFound = True
                             logging.info("Motion Triggered Start(%i,%i)  End(%i,%i) trackLen=%.2f px",
                                startPos[0], startPos[1], movePoint2[0], movePoint2[1], trackLen)
-
+                        image1 = vs.read()
+                        image2 = image1                        
+                        grayimage1 = cv2.cvtColor(image1, cv2.COLOR_BGR2GRAY)
+                        grayimage2 = grayimage1
                         startTrack = False
                         startPos = []
                         trackLen = 0.0
 
+                # Track timed out
                 if ((time.time() - trackTimeout > trackTimer) and startTrack):
+                    image1 = vs.read()
+                    image2 = image1                    
+                    grayimage1 = cv2.cvtColor(image1, cv2.COLOR_BGR2GRAY)
+                    grayimage2 = grayimage1
                     if motionTrackInfo:
                         logging.info("Track Timer %i sec Exceeded.  Reset Track", trackTimer)
                     startTrack = False
@@ -1142,6 +1152,10 @@ def timolo():
                 rightNow = datetime.datetime.now()
                 timeDiff = (rightNow - checkMotionTimer).total_seconds()
                 if timeDiff > motionForce:
+                    image1 = vs.read()
+                    image2 = image1
+                    grayimage1 = cv2.cvtColor(image1, cv2.COLOR_BGR2GRAY)
+                    grayimage2 = grayimage1
                     dotCount = showDots(motionDotsMax + 2)      # New Line
                     logging.info("No Motion Detected for %s minutes. Taking Forced Motion Image.", (motionForce / 60))
                     checkMotionTimer = rightNow
@@ -1201,6 +1215,7 @@ def timolo():
                             vs.camera.vflip = imageVFlip
                             time.sleep(2)
                             image1 = vs.read()
+                            image2 = image1
                             grayimage1 = cv2.cvtColor(image1, cv2.COLOR_BGR2GRAY)
                             grayimage2 = grayimage1
                             trackLen = 0.0
