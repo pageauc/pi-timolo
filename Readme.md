@@ -9,7 +9,9 @@ Release 6.7 with videoRepeat option to take continuous video clips by filename d
 specified time or number of videos or run continuous and manage by freedisk space..  
 This is similar to a dash cam.  Requires the updated config.py.   
 ***New Release 7.x*** Now uses openCV motion Tracking to track objects above a min size for a designated pixel track trigger length.
-There is also a new motionTrackQuickPic feature that saves a stream image rather than switching to normal pi-camera non streaming mode.   
+There is also a new motionTrackQuickPic feature that saves a stream image rather than switching to normal pi-camera non streaming mode.    
+RPI Forum Post details here https://www.raspberrypi.org/forums/viewtopic.php?p=1183663#p1183663
+   
 **See Minimal Upgrade Below** if you have a recent pi-timolo version installed
 
 ### Description
