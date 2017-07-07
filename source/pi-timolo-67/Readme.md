@@ -31,7 +31,7 @@ Install into an existing pi-timolo install per the following.  From a logged in 
 
     cd ~/pi-timolo
     cp pi-timolo.py pi-timolo.old
-    cp config.py config.old
+    cp config.py config.py.old
     wget -O pi-timolo.py https://raw.github.com/pageauc/pi-timolo/master/source/pi-timolo-67/pi-timolo.py 
     wget -O pi-timolo.py https://raw.github.com/pageauc/pi-timolo/master/source/pi-timolo-67/config.py     
     wget -O pi-timolo.py https://raw.github.com/pageauc/pi-timolo/master/source/pi-timolo-67/config.py.default
