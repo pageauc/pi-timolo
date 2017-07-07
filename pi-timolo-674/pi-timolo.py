@@ -37,8 +37,8 @@
 # 6.70 release 03-Jun-2017 Added videoRepeat option Requires revised 6.70 config.py (Note suppresses motion and timelapse)
 # 6.71 release 20-Jun-2017 Added timelapseMaxFiles, and imageJpegQuality parameter
 
-progVer = "ver 6.74"
-__version__ = "6.74"   # May test for version number at a future time
+progVer = "ver 6.75"
+__version__ = "6.75"   # May test for version number at a future time
 
 import datetime
 import glob
@@ -895,14 +895,14 @@ def checkForTimelapse (timelapseStart):
     return timelapseFound
 
 #-----------------------------------------------------------------------------------------------
-def checkForMotion(data1, data2):
+def checkForMotion(image1, image2):
     # Find motion between two data streams based on sensitivity and threshold
     motionDetected = False
     pixColor = 3 # red=0 green=1 blue=2 all=3  default=1
     if pixColor == 3:
-        pixChanges = (np.absolute(data1-data2)>motionThreshold).sum()/3
+        pixChanges = (np.absolute(image1-image2)>motionThreshold).sum()/3
     else:
-        pixChanges = (np.absolute(data1[...,pixColor]-data2[...,pixColor])>motionThreshold).sum()
+        pixChanges = (np.absolute(image1[...,pixColor]-image2[...,pixColor])>motionThreshold).sum()
     if pixChanges > motionSensitivity:
         motionDetected = True
     if motionDetected:
@@ -987,28 +987,29 @@ def Main():
         takeTestImage() # prints one image and exits if imageTestPrint = True in config.py
 
     if motionStreamOn:
+        logging.info("Start PiVideoStream ....")
         vs = PiVideoStream().start()
         vs.camera.rotation = imageRotation
         vs.camera.hflip = imageHFlip
         vs.camera.vflip = imageVFlip
         time.sleep(2)
-        data1 = vs.read()
+        image1 = vs.read()
     else:
-        data1 = getStreamImage(True).astype(float)  #All functions should still work with float instead of int - just takes more memory
+        image1 = getStreamImage(True).astype(float)  #All functions should still work with float instead of int - just takes more memory
 
     if motionStreamOn:
-        daymode = checkIfDayStream(daymode, data1)
+        daymode = checkIfDayStream(daymode, image1)
     else:
-        daymode = checkIfDay(daymode, data1)
+        daymode = checkIfDay(daymode, image1)
     logging.info("daymode=%s  motionDotsOn=%s " % ( daymode, motionDotsOn ))
 
     if motionStreamOn:
-        data2 = vs.read()
+        image2 = vs.read()
     else:
-        data2 = getStreamImage(daymode)  # initialise data2 to use in main loop
+        image2 = getStreamImage(daymode)  # initialise image2 to use in main loop
 
     if not daymode:
-        data1 = data2.astype(float)
+        image1 = image2.astype(float)
 
     timelapseStart = datetime.datetime.now()
     timelapseExitStart = timelapseStart
@@ -1025,24 +1026,26 @@ def Main():
     dotCount = showDots(motionDotsMax)  # reset motion dots
     # Start main program loop here.  Use Ctl-C to exit if run from terminal session.
     while True:
+        motionFound = False
+        
         if spaceTimerHrs > 0:  # if required check free disk space and delete older files (jpg)
             lastSpaceCheck = freeDiskSpaceCheck(lastSpaceCheck)
 
-        # use data2 to check daymode as data1 may be average that changes slowly, and data1 may not be updated
+        # use image2 to check daymode as image1 may be average that changes slowly, and image1 may not be updated
         if motionStreamOn:
-            if daymode != checkIfDayStream(daymode, data2):
+            if daymode != checkIfDayStream(daymode, image2):
                 daymode = not daymode
-                data2 = vs.read()
-                data1 = data2
+                image2 = vs.read()
+                image1 = image2
             else:
-                data2 = vs.read()
+                image2 = vs.read()
         else:
-            if daymode != checkIfDay(daymode, data2):  # if daymode has changed, reset background, to avoid false motion trigger
+            if daymode != checkIfDay(daymode, image2):  # if daymode has changed, reset background, to avoid false motion trigger
                 daymode = not daymode
-                data2 = getStreamImage(daymode)  #get new stream
-                data1 = data2.astype(float)      #reset background
+                image2 = getStreamImage(daymode)  #get new stream
+                image1 = image2.astype(float)      #reset background
             else:
-                data2 = getStreamImage(daymode)  # This gets the second stream of motion analysis
+                image2 = getStreamImage(daymode)  # This gets the second stream of motion analysis
         rightNow = datetime.datetime.now()   # refresh rightNow time
         if not timeToSleep(daymode):  # Don't take images if noNightShots or noDayShots settings are valid
             if timelapseOn:
@@ -1071,6 +1074,7 @@ def Main():
                     imagePrefix = timelapsePrefix + imageNamePrefix
                     filename = getImageName(tlPath, imagePrefix, timelapseNumOn, timelapseNumCount)
                     if motionStreamOn:
+                        logging.info("Stop PiVideoStream ...")
                         vs.stop()
                         time.sleep(motionStreamStopSec)
                     timelapseStart = datetime.datetime.now()  # reset time lapse timer
@@ -1089,20 +1093,24 @@ def Main():
 
                     dotCount = showDots(motionDotsMax)
                     if motionStreamOn:
+                        logging.info("Restart PiVideoStream ...")
                         vs = PiVideoStream().start()
                         vs.camera.rotation = imageRotation
                         vs.camera.hflip = imageHFlip
                         vs.camera.vflip = imageVFlip
+                        image1 = vs.read()
+                        image2 = image1
                         time.sleep(2)
+                        motionFound = False
                     tlPath = subDirChecks( timelapseSubDirMaxHours, timelapseSubDirMaxFiles, timelapseDir, timelapsePrefix)
 
             if motionOn:
                 # IMPORTANT - Night motion detection may not work very well due to long exposure times and low light
-                motionFound = checkForMotion(data1, data2)
-                if motionAverage > 1 and (np.absolute(data2-data1)>motionThreshold).sum() > resetSensitivity:
-                    data1 = data2.astype(float)
+                motionFound = checkForMotion(image1, image2)
+                if motionAverage > 1 and (np.absolute(image2-image1)>motionThreshold).sum() > resetSensitivity:
+                    image1 = image2.astype(float)
                 else:
-                    data1 = data1+(data2-data1)/motionAverage
+                    image1 = image1+(image2-image1)/motionAverage
                 rightNow = datetime.datetime.now()
                 timeDiff = (rightNow - checkMotionTimer).total_seconds()
                 if timeDiff > motionForce:
@@ -1112,6 +1120,7 @@ def Main():
                     forceMotion = True
                 if motionFound or forceMotion:
                     if motionStreamOn:
+                        logging.info("Stop PiVideoStream ....")
                         vs.stop()
                         time.sleep(motionStreamStopSec)
                     checkMotionTimer = rightNow
@@ -1148,11 +1157,15 @@ def Main():
                             saveRecent(motionRecentMax, motionRecentDir, filename, imagePrefix)
 
                     if motionStreamOn:
+                        logging.info("Restart PiVideoStream ...")
                         vs = PiVideoStream().start()
                         vs.camera.rotation = imageRotation
                         vs.camera.hflip = imageHFlip
                         vs.camera.vflip = imageVFlip
                         time.sleep(2)
+                        image1 = vs.read()
+                        image2 = image1
+                        motionFound = False
                     moPath = subDirChecks( motionSubDirMaxHours, motionSubDirMaxFiles, motionDir, motionPrefix)
 
                     if motionFound:
