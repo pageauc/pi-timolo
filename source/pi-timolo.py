@@ -4,8 +4,8 @@
 # written by Claude Pageau Jul-2017 (release 7.0)
 # This release uses OpenCV to do Motion Tracking.  It requires updated config.py
 
-progVer = "ver 7.1"
-__version__ = "7.1"   # May test for version number at a future time
+progVer = "ver 7.2"
+__version__ = "7.2"   # May test for version number at a future time
 
 import datetime
 import logging
@@ -1024,6 +1024,7 @@ def timolo():
     # Start main program loop here.  Use Ctl-C to exit if run from terminal session.
     while True:
         motionFound = False
+        forceMotion = False        
         if spaceTimerHrs > 0:  # if required check free disk space and delete older files (jpg)
             lastSpaceCheck = freeDiskSpaceCheck(lastSpaceCheck)
 
@@ -1222,6 +1223,7 @@ def timolo():
                             trackTimeout = time.time()
                             startPos = []
                             startTrack = False
+                            forceMotion = False               
 
                     moPath = subDirChecks( motionSubDirMaxHours, motionSubDirMaxFiles, motionDir, motionPrefix)
 
