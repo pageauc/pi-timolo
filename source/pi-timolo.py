@@ -4,8 +4,8 @@
 # written by Claude Pageau Jul-2017 (release 7.0)
 # This release uses OpenCV to do Motion Tracking.  It requires updated config.py
 
-progVer = "ver 7.2"
-__version__ = "7.2"   # May test for version number at a future time
+progVer = "ver 7.3"
+__version__ = "7.3"   # May test for version number at a future time
 
 import datetime
 import logging
@@ -563,20 +563,15 @@ def writeTextToImage(imagename, datetoprint, daymode):
         if showTextWhiteNight and ( not daymode):
             FOREGROUND = ( 255, 255, 255 )  # rgb settings for black text foreground
             textColour = "White"
-
+            
+    img = cv2.imread(imagename)
+    height, width, channels = img.shape
     # centre text and compensate for graphics text being wider
-    if motionTrackQuickPic:
-        x = int((bigImageWidth/2) - (len(imagename)*2))
-        if showTextBottom:
-            y = (bigImageHeight - 50)  # show text at bottom of image
-        else:
-            y = 10  # show text at top of image
+    x = int((width/2) - (len(imagename)*2))
+    if showTextBottom:
+        y = (height - 50)  # show text at bottom of image
     else:
-        x = int((imageWidth/2) - (len(imagename)*2))
-        if showTextBottom:
-            y = (imageHeight - 50)  # show text at bottom of image
-        else:
-            y = 10  # show text at top of image
+        y = 10  # show text at top of image
 
     TEXT = imageNamePrefix + datetoprint
     font_path = '/usr/share/fonts/truetype/freefont/FreeSansBold.ttf'
