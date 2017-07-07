@@ -22,5 +22,18 @@ h264 to mp4 format, a simple minumum or no setup web server to view images or vi
 to admin settings and stop start pi-timolo and webserver as background tasks.
 
 ### This version is superceded by the new version 7.x release located here https://github.com/pageauc/pi-timolo.
-The new version uses opencv motion tracking.  You can still use this version by copying these files over the
-latest version.
+The new version uses opencv motion tracking.  You can still use this version by copying these files over an existing
+recent version.
+
+### To install version 6.7
+
+Install into an existing pi-timolo install per the following.  From an Putty SSH or terminal session execute the following.
+
+    cd ~/pi-timolo
+    cp cp-timolo.py pi-timolo.old
+    cp config.py config.old
+    wget -O pi-timolo.py https://raw.github.com/pageauc/pi-timolo/master/source/pi-timolo-67/pi-timolo.py 
+    wget -O pi-timolo.py https://raw.github.com/pageauc/pi-timolo/master/source/pi-timolo-67/config.py     
+    wget -O pi-timolo.py https://raw.github.com/pageauc/pi-timolo/master/source/pi-timolo-67/config.py.default
+    
+    

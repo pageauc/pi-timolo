@@ -8,8 +8,8 @@ Release 6.0 with optional DateTime Named subfolders, recent files option and Dis
 Release 6.7 with videoRepeat option to take continuous video clips by filename datetime or seq num and exit by
 specified time or number of videos or run continuous and manage by freedisk space..  
 This is similar to a dash cam.  Requires the updated config.py.   
-***New Release 7.x*** Now uses openCV motion Tracking to track objects above a min size for a designated pixel track trigger length.  There is also a
-new motionTrackQuickPic feature that saves a stream image rather than switching to normal pi-camera non streaming mode.   
+***New Release 7.x*** Now uses openCV motion Tracking to track objects above a min size for a designated pixel track trigger length.
+There is also a new motionTrackQuickPic feature that saves a stream image rather than switching to normal pi-camera non streaming mode.   
 **See Minimal Upgrade Below** if you have a recent pi-timolo version installed
 
 ### Description
