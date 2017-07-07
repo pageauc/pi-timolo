@@ -27,10 +27,10 @@ recent version.
 
 ### To install version 6.7
 
-Install into an existing pi-timolo install per the following.  From an Putty SSH or terminal session execute the following.
+Install into an existing pi-timolo install per the following.  From a logged in Putty SSH or terminal session execute the following.
 
     cd ~/pi-timolo
-    cp cp-timolo.py pi-timolo.old
+    cp pi-timolo.py pi-timolo.old
     cp config.py config.old
     wget -O pi-timolo.py https://raw.github.com/pageauc/pi-timolo/master/source/pi-timolo-67/pi-timolo.py 
     wget -O pi-timolo.py https://raw.github.com/pageauc/pi-timolo/master/source/pi-timolo-67/config.py     
