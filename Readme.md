@@ -9,8 +9,8 @@ Release 6.7 with videoRepeat option to take continuous video clips by filename d
 specified time or number of videos or run continuous and manage by freedisk space..  
 This is similar to a dash cam.  Requires the updated config.py.   
 ***New Release 7.x*** Now uses openCV motion Tracking to track objects above a min size for a designated pixel track trigger length.  There is also a
-new motionTrackQuickPic feature that saves a stream image rather than switching to normal pi-camera not streaming mode.   
-**See Minimal Upgrade Below**
+new motionTrackQuickPic feature that saves a stream image rather than switching to normal pi-camera non streaming mode.   
+**See Minimal Upgrade Below** if you have a recent pi-timolo version installed
 
 ### Description
 pi-timolo is a python picamara module application for a Raspberry PI computer (RPI).
@@ -45,7 +45,9 @@ If you are just interested in a minimal upgrade (must have pi-timolo previously 
 from a logged in ssh or terminal session execute the following commands.  
 
     cd ~/pi-timolo
+    sudo apt-get install python-opencv
     cp config.py config.py.old
+    cp pi-timolo.py pi-timolo.py.old
     wget -O config.py https://raw.github.com/pageauc/pi-timolo/master/source/config.py
     wget -O pi-timolo.py https://raw.github.com/pageauc/pi-timolo/master/source/pi-timolo.py    
     
