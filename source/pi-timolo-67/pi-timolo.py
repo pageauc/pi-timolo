@@ -37,8 +37,8 @@
 # 6.70 release 03-Jun-2017 Added videoRepeat option Requires revised 6.70 config.py (Note suppresses motion and timelapse)
 # 6.71 release 20-Jun-2017 Added timelapseMaxFiles, and imageJpegQuality parameter
 
-progVer = "ver 6.75"
-__version__ = "6.75"   # May test for version number at a future time
+progVer = "ver 6.76"
+__version__ = "6.76"   # May test for version number at a future time
 
 import datetime
 import glob
@@ -994,18 +994,12 @@ def Main():
         vs.camera.vflip = imageVFlip
         time.sleep(2)
         image1 = vs.read()
+        daymode = checkIfDayStream(daymode, image1)
+        image2 = vs.read()        
     else:
         image1 = getStreamImage(True).astype(float)  #All functions should still work with float instead of int - just takes more memory
-
-    if motionStreamOn:
-        daymode = checkIfDayStream(daymode, image1)
-    else:
         daymode = checkIfDay(daymode, image1)
-    logging.info("daymode=%s  motionDotsOn=%s " % ( daymode, motionDotsOn ))
-
-    if motionStreamOn:
-        image2 = vs.read()
-    else:
+        logging.info("daymode=%s  motionDotsOn=%s " % ( daymode, motionDotsOn ))
         image2 = getStreamImage(daymode)  # initialise image2 to use in main loop
 
     if not daymode:
@@ -1103,6 +1097,7 @@ def Main():
                         image2 = image1
                         time.sleep(2)
                         motionFound = False
+                        forceMotion = False
                     tlPath = subDirChecks( timelapseSubDirMaxHours, timelapseSubDirMaxFiles, timelapseDir, timelapsePrefix)
 
             if motionOn:

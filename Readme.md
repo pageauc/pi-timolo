@@ -3,9 +3,11 @@
 ### Wiki https://github.com/pageauc/pi-timolo/wiki     
 YouTube Videos https://www.youtube.com/playlist?list=PLLXJw_uJtQLa11A4qjVpn2D2T0pgfaSG0
 
-**NEW Release 5.0** with optional video stream thread, improved day/night transitions with no greenish images + Misc updates
-**NEW Release 6.0** with optional DateTime Named subfolders, recent files option and Disk Space Management + Misc updates 
-**NEW Release 6.7** with videoRepeat option to take continuous video clips by filename datetime or seq num and exit by specified time or number of videos or run continuous and manage by freedisk space..  This is similar to a dash cam.  Requires the updated config.py.
+Release 5.0 with optional video stream thread, improved day/night transitions with no greenish images + Misc updates
+Release 6.0 with optional DateTime Named subfolders, recent files option and Disk Space Management + Misc updates 
+Release 6.7 with videoRepeat option to take continuous video clips by filename datetime or seq num and exit by specified time or number of videos or run continuous and manage by freedisk space..  This is similar to a dash cam.  Requires the updated config.py.
+***New Release 7.x*** Now uses openCV motion Tracking to track objects above a min size for a designated pixel track trigger length.  There is also a
+new motionTrackQuickPic feature that saves a stream image rather than switching to normal pi-camera not streaming mode.
 **See Minimal Upgrade Below**
 
 ### Description
@@ -21,16 +23,6 @@ Includes makevideo.sh to create timelapse or motion lapse videos from images, co
 h264 to mp4 format, a simple minumum or no setup web server to view images or videos and menubox.sh 
 to admin settings and stop start pi-timolo and webserver as background tasks.
         
-***NEW*** - Added two config.py templates config.py.stream uses video streaming thread (best with quad core) config.py.default
-uses normal picamera image capture for motion detection and is less resource intensive for single core RPI's    
-Make a backup of config.py then Copy a template over the original config.py per example below   
-
-    cd ~/pi-timolo.py
-    cp config.py config.py.bak
-    cp config.py.stream config.py
-    
-***Note:*** use nano to reinstate any customized settings
-
 see Github Wiki for More Details https://github.com/pageauc/pi-timolo/wiki    
  
 ### Quick Install
