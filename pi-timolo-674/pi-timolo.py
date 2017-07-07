@@ -1027,6 +1027,7 @@ def Main():
     # Start main program loop here.  Use Ctl-C to exit if run from terminal session.
     while True:
         motionFound = False
+        forceMotion = False
         
         if spaceTimerHrs > 0:  # if required check free disk space and delete older files (jpg)
             lastSpaceCheck = freeDiskSpaceCheck(lastSpaceCheck)
@@ -1166,6 +1167,8 @@ def Main():
                         image1 = vs.read()
                         image2 = image1
                         motionFound = False
+                        forceMotion = False
+                        
                     moPath = subDirChecks( motionSubDirMaxHours, motionSubDirMaxFiles, motionDir, motionPrefix)
 
                     if motionFound:
