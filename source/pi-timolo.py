@@ -4,8 +4,8 @@
 # written by Claude Pageau Jul-2017 (release 7.0)
 # This release uses OpenCV to do Motion Tracking.  It requires updated config.py
 
-progVer = "ver 7.3"
-__version__ = "7.3"   # May test for version number at a future time
+progVer = "ver 7.4"
+__version__ = "7.4"   # May test for version number at a future time
 
 import datetime
 import logging
@@ -820,7 +820,7 @@ def trackPoint(grayimage1, grayimage2):
     except:
         contours, hierarchy = cv2.findContours( thresholdimage, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE )
 
-    if contours != ():
+    if contours:
         movement = False
         for c in contours:
             cArea = cv2.contourArea(c)
@@ -833,11 +833,9 @@ def trackPoint(grayimage1, grayimage2):
     return movementCenterPoint
 
 #-----------------------------------------------------------------------------------------------
-def trackDistance(trackLen, mPoint1, mPoint2):
-    x1 = int(mPoint1[0])
-    y1 = int(mPoint1[1])
-    x2 = int(mPoint2[0])
-    y2 = int(mPoint2[1])
+def trackDistance(mPoint1, mPoint2):
+    x1, y1 = mPoint1
+    x2, y2 = mPoint2
     trackLen = abs(math.hypot(x2 - x1, y2 - y1))
     return trackLen
 
@@ -1108,7 +1106,7 @@ def timolo():
                 movePoint2 = trackPoint(grayimage1, grayimage2)
                 if movePoint2 and startTrack:   # Two sets of movement required
                     trackTimeout = time.time()
-                    trackLen = trackDistance(trackLen, startPos, movePoint2)
+                    trackLen = trackDistance(startPos, movePoint2)
                     if trackLen >  TRACK_TRIG_LEN / 4.0:
                         if motionTrackInfo:
                             logging.info("Track Start(%i,%i)  Now(%i,%i) trackLen=%.2f px",
