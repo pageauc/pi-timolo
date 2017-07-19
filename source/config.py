@@ -3,7 +3,7 @@
 # Updated - 06-Jul-2017 IMPORTANT - Required for pi-timolo.py ver 7.0 or Greater
 # Done by - Claude Pageau
 
-configTitle = "pi-timolo ver 7.0 Default Settings"
+configTitle = "pi-timolo ver 7.6 Default Settings"
 configName  = "config.py"
 
 #======================================
@@ -53,13 +53,13 @@ nightDarkAdjust = 4.7       # default= 4.7 Factor to fine tune nightDarkThreshol
 # Motion Track Settings
 # ---------------------
 motionTrackOn = True        # default= True True=Turns Motion Detect On, False=Off
-motionTrackTimeOut = 3      # default= 3 seconds Reset Track if no activity
-motionTrackTrigLen = 75     # default= 75 px Length of motion track to Trigger motionFound
-motionTrackMinArea = 200    # default= 200 sq px  Minimum Area required to start tracking
-motionTrackFrameRate = 25   # default= 25 fps  PiVideoStream setting.  Single core RPI suggest 15 fps
 motionTrackQuickPic = True  # default= False True= save a frame image instead of switching out of opencv
-motionTrackQPBigger = 2.5   # default= 2.5 multiply size of QuickPic saved image from default 320x240
 motionTrackInfo = True      # default= False Hide detailed track position logging messages
+motionTrackTimeOut = 1      # default= 3 seconds Reset Track if no activity
+motionTrackTrigLen = 50     # default= 75 px Length of motion track to Trigger motionFound
+motionTrackMinArea = 100    # default= 200 sq px  Minimum Area required to start tracking
+motionTrackFrameRate = 25   # default= 25 fps  PiVideoStream setting.  Single core RPI suggest 15 fps
+motionTrackQPBigger = 2.5   # default= 2.5 multiply size of QuickPic saved image from default 320x240
 
 # Motion Settings
 # ---------------

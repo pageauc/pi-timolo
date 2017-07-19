@@ -226,7 +226,7 @@ def displayInfo(motioncount, timelapsecount):
         print("")
         print("Image Info ... Size=%ix%i  Prefix=%s  VFlip=%s  HFlip=%s  Rotation=%i  Preview=%s"
               % (imageWidth, imageHeight, imageNamePrefix, imageVFlip, imageHFlip, imageRotation, imagePreview))
-        print("               JpegQuality=%i 1(hi) - 40(low)" % ( imageJpegQuality ))
+        print("               JpegQuality=%i 1=highest 40=lowest" % ( imageJpegQuality ))
         print("   Low Light.. nightTwilightThreshold=%i  nightDarkThreshold=%i  nightBlackThreshold=%i"
                            % ( nightTwilightThreshold, nightDarkThreshold, nightBlackThreshold ))
         print("               nightMaxShutSec=%.2f  nightMaxISO=%i  nightDarkAdjust=%.2f  nightSleepSec=%i"
@@ -1117,7 +1117,7 @@ def timolo():
 
                     # Track length triggered           
                     if trackLen > TRACK_TRIG_LEN:  
-                        if trackLen > TRACK_TRIG_LEN_MAX:   # reduce chance of two objects at different postions
+                        if trackLen > TRACK_TRIG_LEN_MAX:  # reduce chance of two objects at different postions
                             motionFound = False
                             if motionTrackInfo:
                                 logging.info("TrackLen %.2f px Exceeded %i px Max Trig Len Allowed.",
