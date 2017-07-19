@@ -4,8 +4,8 @@
 # written by Claude Pageau Jul-2017 (release 7.0)
 # This release uses OpenCV to do Motion Tracking.  It requires updated config.py
 
-progVer = "ver 7.5"
-__version__ = "7.5"   # May test for version number at a future time
+progVer = "ver 7.6"
+__version__ = "7.6"   # May test for version number at a future time
 
 import datetime
 import logging
@@ -114,6 +114,7 @@ bigImageWidth = int(CAMERA_WIDTH * bigImage)
 bigImageHeight = int(CAMERA_HEIGHT * bigImage)
 CAMERA_FRAMERATE = motionTrackFrameRate  # camera framerate
 TRACK_TRIG_LEN = motionTrackTrigLen  # Length of track to trigger speed photo
+TRACK_TRIG_LEN_MIN = int(motionTrackTrigLen / 4)
 TRACK_TRIG_LEN_MAX = int(CAMERA_HEIGHT / 2)  # Set max over triglen allowed half cam height
 TRACK_TIMEOUT = motionTrackTimeOut   # Timeout seconds Stops motion tracking when no activity
 MIN_AREA = motionTrackMinArea    # OpenCV Contour sq px area must be greater than this.
@@ -1107,9 +1108,9 @@ def timolo():
                 grayimage2 = cv2.cvtColor(image2, cv2.COLOR_BGR2GRAY)
                 movePoint2 = trackPoint(grayimage1, grayimage2)
                 if movePoint2 and startTrack:   # Two sets of movement required
-                    trackTimeout = time.time()
                     trackLen = trackDistance(startPos, movePoint2)
-                    if trackLen >  TRACK_TRIG_LEN / 4.0:  # wait until track well started
+                    if trackLen > TRACK_TRIG_LEN_MIN:  # wait until track well started
+                        trackTimeout = time.time()  # Reset tracking timer object moved
                         if motionTrackInfo:
                             logging.info("Track Start(%i,%i)  Now(%i,%i) trackLen=%.2f px",
                                startPos[0], startPos[1], movePoint2[0], movePoint2[1], trackLen)
