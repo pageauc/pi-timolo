@@ -4,8 +4,8 @@
 # written by Claude Pageau Jul-2017 (release 7.0)
 # This release uses OpenCV to do Motion Tracking.  It requires updated config.py
 
-progVer = "ver 7.4"
-__version__ = "7.4"   # May test for version number at a future time
+progVer = "ver 7.5"
+__version__ = "7.5"   # May test for version number at a future time
 
 import datetime
 import logging
@@ -113,7 +113,8 @@ bigImage = motionTrackQPBigger  # increase size of motionTrackQuickPic image
 bigImageWidth = int(CAMERA_WIDTH * bigImage)
 bigImageHeight = int(CAMERA_HEIGHT * bigImage)
 CAMERA_FRAMERATE = motionTrackFrameRate  # camera framerate
-TRACK_TRIG_LEN = motionTrackTrigLen  # Length of track to trigger speed photo Default=50
+TRACK_TRIG_LEN = motionTrackTrigLen  # Length of track to trigger speed photo
+TRACK_TRIG_LEN_MAX = int(CAMERA_HEIGHT / 2)  # Set max over triglen allowed half cam height
 TRACK_TIMEOUT = motionTrackTimeOut   # Timeout seconds Stops motion tracking when no activity
 MIN_AREA = motionTrackMinArea    # OpenCV Contour sq px area must be greater than this.
 
@@ -238,8 +239,9 @@ def displayInfo(motioncount, timelapsecount):
             print("    No Text .. showDateOnImage=%s  Text on Image is Disabled"  % (showDateOnImage))
         print("")
         if motionTrackOn:
-            print("Motion Track.. On=%s  Prefix=%s  MinArea=%i sqpx  TrigLen=%i px  TimeOut=%i sec"
-                             % (motionTrackOn, motionPrefix, motionTrackMinArea, motionTrackTrigLen, motionTrackTimeOut))
+            print("Motion Track.. On=%s  Prefix=%s  MinArea=%i sqpx  TrigLen=%i-%i px  TimeOut=%i sec"
+                             % (motionTrackOn, motionPrefix, motionTrackMinArea, 
+                                                      motionTrackTrigLen, TRACK_TRIG_LEN_MAX, motionTrackTimeOut))
             print("               motionTrackInfo=%s   motionDotsOn=%s"  % ( motionTrackInfo, motionDotsOn ))
             print("   Stream .... size=%ix%i  framerate=%i fps  motionStreamStopSec=%.2f  QuickPic=%s" %
                                   ( CAMERA_WIDTH, CAMERA_HEIGHT, motionTrackFrameRate, motionStreamStopSec, motionTrackQuickPic ))
@@ -1107,18 +1109,18 @@ def timolo():
                 if movePoint2 and startTrack:   # Two sets of movement required
                     trackTimeout = time.time()
                     trackLen = trackDistance(startPos, movePoint2)
-                    if trackLen >  TRACK_TRIG_LEN / 4.0:
+                    if trackLen >  TRACK_TRIG_LEN / 4.0:  # wait until track well started
                         if motionTrackInfo:
                             logging.info("Track Start(%i,%i)  Now(%i,%i) trackLen=%.2f px",
                                startPos[0], startPos[1], movePoint2[0], movePoint2[1], trackLen)
 
                     # Track length triggered           
-                    if trackLen > TRACK_TRIG_LEN:
-                        if trackLen > TRACK_TRIG_LEN + TRACK_TRIG_LEN/4.0:
+                    if trackLen > TRACK_TRIG_LEN:  
+                        if trackLen > TRACK_TRIG_LEN_MAX:   # reduce chance of two objects at different postions
                             motionFound = False
                             if motionTrackInfo:
                                 logging.info("TrackLen %.2f px Exceeded %i px Max Trig Len Allowed.",
-                                                   trackLen, TRACK_TRIG_LEN + TRACK_TRIG_LEN/4.0)
+                                                   trackLen, TRACK_TRIG_LEN_MAX)
                         else:
                             motionFound = True
                             logging.info("Motion Triggered Start(%i,%i)  End(%i,%i) trackLen=%.2f px",
