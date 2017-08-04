@@ -1014,7 +1014,7 @@ def timolo():
         print("Sending Console Messages to %s" % (logFilePath))
         print("Entering Loop for %s%s" % (mostr, tlstr))
     else:
-        logging.info("Entering Loop for %s%s  Please Wait ..." % (mostr, tlstr))
+        logging.info("Entering Loop for %s%s  Ready ..." % (mostr, tlstr))
 
     dotCount = showDots(motionDotsMax)  # reset motion dots
     # Start main program loop here.  Use Ctl-C to exit if run from terminal session.

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-ver="4.10"
+ver="4.20"
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 cd $DIR
@@ -16,8 +16,8 @@ function do_anykey ()
 {
    echo ""
    echo "######################################"
-   echo "#          Review Output             #"     
-   echo "######################################" 
+   echo "#          Review Output             #"
+   echo "######################################"
    read -p "  Press Enter to Return to Main Menu"
 }
 
@@ -25,38 +25,38 @@ function do_anykey ()
 function init_status ()
 {
   if [ -z "$( pgrep -f pi-timolo.py )" ]; then
-    PTMLO_1="Start pi-timolo"
-    PTMLO_2="Start pi-timolo.py in background"
+    PTMLO_1="START"
+    PTMLO_2="pi-timolo.py in background"
   else
      pi_timolo_pid=$( pgrep -f pi-timolo.py )
-     PTMLO_1="Stop pi-timolo"
-     PTMLO_2="Stop pi-timolo.py - PID is $pi_timolo_pid"     
+     PTMLO_1="STOP"
+     PTMLO_2="pi-timolo.py - PID is $pi_timolo_pid"
   fi
 
   if [ -z "$( pgrep -f $DIR/webserver.py )" ]; then
-     WEB_1="Start webserver"
-     WEB_2="Start webserver.py in background"    
+     WEB_1="START"
+     WEB_2="webserver.py in background"
   else
-     webserver_pid=$( pgrep -f $DIR/webserver.py )    
-     WEB_1="Stop webserver"
-     WEB_2="Stop webserver.py - PID is $webserver_pid"    
+     webserver_pid=$( pgrep -f $DIR/webserver.py )
+     WEB_1="STOP"
+     WEB_2="webserver.py - PID is $webserver_pid"
   fi
 }
 
 #------------------------------------------------------------------------------
 function do_pi_timolo ()
 {
-  if [ -z "$( pgrep -f pi-timolo.py )" ]; then 
-     ./pi-timolo.py >/dev/null 2>&1 & 
-     if [ -z "$( pgrep -f pi-timolo.py )" ]; then 
-         whiptail --msgbox "Failed to Start pi-timolo.py   Please Investigate Problem " 20 70     
+  if [ -z "$( pgrep -f pi-timolo.py )" ]; then
+     ./pi-timolo.py >/dev/null 2>&1 &
+     if [ -z "$( pgrep -f pi-timolo.py )" ]; then
+         whiptail --msgbox "Failed to Start pi-timolo.py   Please Investigate Problem " 20 70
      fi
   else
-     pi_timolo_pid=$( pgrep -f pi-timolo.py )  
+     pi_timolo_pid=$( pgrep -f pi-timolo.py )
      sudo kill $pi_timolo_pid
-      if [ ! -z "$( pgrep -f pi-timolo.py )" ]; then 
-          whiptail --msgbox "Failed to Stop pi-timolo.py   Please Investigate Problem" 20 70     
-      fi    
+      if [ ! -z "$( pgrep -f pi-timolo.py )" ]; then
+          whiptail --msgbox "Failed to Stop pi-timolo.py   Please Investigate Problem" 20 70
+      fi
   fi
   do_main_menu
 }
@@ -65,20 +65,20 @@ function do_pi_timolo ()
 function do_webserver ()
 {
   if [ -z "$( pgrep -f $DIR/webserver.py )" ]; then
-     $DIR/webserver.py >/dev/null 2>&1 & 
-     if [ -z "$( pgrep -f $DIR/webserver.py )" ]; then 
+     $DIR/webserver.py >/dev/null 2>&1 &
+     if [ -z "$( pgrep -f $DIR/webserver.py )" ]; then
         whiptail --msgbox "Failed to Start webserver.py   Please Investigate Problem." 20 70
      else
        myip=$(ifconfig | grep 'inet ' | grep -v 127.0.0 | cut -d " " -f 12 | cut -d ":" -f 2 )
        myport=$( grep "web_server_port" config.py | cut -d "=" -f 2 | cut -d "#" -f 1 | awk '{$1=$1};1' )
        whiptail --msgbox --title "Webserver Access" "Access pi-timolo web server from another network computer web browser using url http://$myip:$myport" 15 50
-     fi 
-  else  
-     webserver_pid=$( pgrep -f $DIR/webserver.py )   
+     fi
+  else
+     webserver_pid=$( pgrep -f $DIR/webserver.py )
      sudo kill $webserver_pid
-     if [ ! -z "$( pgrep -f $DIR/webserver.py )" ]; then 
-        whiptail --msgbox "Failed to Stop webserver.py   Please Investigate Problem." 20 70     
-     fi      
+     if [ ! -z "$( pgrep -f $DIR/webserver.py )" ]; then
+        whiptail --msgbox "Failed to Stop webserver.py   Please Investigate Problem." 20 70
+     fi
   fi
   do_main_menu
 }
@@ -89,7 +89,7 @@ function do_makevideo ()
   if [ -e makevideo.sh ] ; then
      ./makevideo.sh
      do_anykey
-     do_makevideo_menu     
+     do_makevideo_menu
   else
      whiptail --msgbox "ERROR - makevideo.sh File Not Found. Please Investigate." 20 60 1
   fi
@@ -97,22 +97,22 @@ function do_makevideo ()
 
 #------------------------------------------------------------------------------
 function do_makevideo_config ()
-{  
+{
   if [ -e $DIR/makevideo.conf ] ; then
      /bin/nano $DIR/makevideo.conf
   else
-     whiptail --msgbox "ERROR - $DIR/makevideo.conf File Not Found. Please Investigate." 20 60 1 
-  fi    
-} 
-  
+     whiptail --msgbox "ERROR - $DIR/makevideo.conf File Not Found. Please Investigate." 20 60 1
+  fi
+}
+
 #------------------------------------------------------------------------------
 function do_makevideo_menu ()
 {
   SELECTION=$(whiptail --title "makevideo.sh Menu" --menu "Arrow/Enter to Run or Tab Key" 20 67 7 --cancel-button Back --ok-button Select \
-  "a Run" "makevideo.sh - motion or timelapse jpg's to mp4 video" \
-  "b Edit" "nano makevideo.conf video settings" \
-  "c View" "makevideo.conf file" \
-  "d Back" "Back to Main Menu"  3>&1 1>&2 2>&3)
+  "a RUN" "makevideo.sh - motion or timelapse jpg's to mp4 video" \
+  "b EDIT" "nano makevideo.conf video settings" \
+  "c VIEW" "makevideo.conf file" \
+  "q BACK" "to Main Menu"  3>&1 1>&2 2>&3)
 
   RET=$?
   if [ $RET -eq 1 ]; then
@@ -126,7 +126,7 @@ function do_makevideo_menu ()
             cat $DIR/makevideo.conf
             do_anykey
             do_makevideo_menu ;;
-      d\ *) do_main_menu ;;
+      q\ *) do_main_menu ;;
       *) whiptail --msgbox "Programmer error: unrecognized option" 10 65 1 ;;
     esac || whiptail --msgbox "There was an error running selection $SELECTION" 10 65 1
   fi
@@ -141,7 +141,7 @@ function do_join_video ()
      do_convid_menu
   else
      whiptail --msgbox "ERROR - convid.sh file Not Found. Please Investigate." 20 65 1
-  fi  
+  fi
 }
 
 #------------------------------------------------------------------------------
@@ -149,34 +149,34 @@ function do_convert_video ()
 {
   if [ -e convid.sh ] ; then
      ./convid.sh convert
-     do_anykey 
-     do_convid_menu     
+     do_anykey
+     do_convid_menu
   else
      whiptail --msgbox "ERROR - convid.sh file Not Found. Please Investigate." 20 65 1
-  fi  
+  fi
 }
 
 #------------------------------------------------------------------------------
 function do_video_config ()
-{  
+{
     if [ -e $DIR/convid.conf ] ; then
         /bin/nano $DIR/convid.conf
     else
-        whiptail --msgbox "ERROR - $DIR/convid.conf File Not Found. Please Investigate." 20 65 1 
-    fi    
-} 
+        whiptail --msgbox "ERROR - $DIR/convid.conf File Not Found. Please Investigate." 20 65 1
+    fi
+}
 
 #------------------------------------------------------------------------------
 function do_convid_menu ()
 {
 
   VID_SEL=$( whiptail --title "convid.sh Menu" --menu "Arrow/Enter to Run or Tab Key" 0 0 0 --cancel-button Back --ok-button Select \
-  "a " "Join multiple motion mp4 videos into larger videos" \
-  "b " "Convert motion h264 files to mp4 videos" \
-  "c " "Edit nano convid.conf settings" \
-  "d " "View convid.conf settings." \
-  "e " "Back to Main Menu" 3>&1 1>&2 2>&3 )
-  
+  "a JOIN" "JOIN multiple motion MP4 videos into larger videos" \
+  "b CONVERT" "motion h264 files to MP4 videos" \
+  "c EDIT" "nano convid.conf settings" \
+  "d VIEW" "convid.conf settings." \
+  "q BACK" "to Main Menu" 3>&1 1>&2 2>&3 )
+
   RET=$?
   if [ $RET -eq 1 ]; then
     do_main_menu
@@ -190,7 +190,7 @@ function do_convid_menu ()
             cat $DIR/convid.conf
             do_anykey
             do_convid_menu ;;
-      e\ *) do_main_menu ;;
+      q\ *) do_main_menu ;;
       *) whiptail --msgbox "Programmer error: unrecognized option" 20 60 1 ;;
     esac || whiptail --msgbox "There was an error running selection $SELECTION" 20 60 1
   fi
@@ -208,8 +208,8 @@ function do_sync ()
 function do_edit_save ()
 {
   if (whiptail --title "Save $var=$newvalue" --yesno "$comment\n $var=$newvalue   was $value" 8 65 --yes-button "Save" --no-button "Cancel" ) then
-    value=$newvalue 
-    
+    value=$newvalue
+
     rm $filename_conf  # Initialize new conf file
     while read configfile ;  do
       if echo "${configfile}" | grep --quiet "${var}" ; then
@@ -218,80 +218,13 @@ function do_edit_save ()
          echo "$configfile" >> $filename_conf
       fi
     done < $pyconfigfile
-    cp $filename_conf $pyconfigfile    
+    cp $filename_conf $pyconfigfile
   fi
   rm $filename_temp
-  rm $filename_conf  
-  do_settings_menu  
+  rm $filename_conf
+  do_settings_menu
 }
 
-#--------------------------------------------------------------------
-function do_edit_variable ()
-{
-  choice=$(cat $filename_temp | grep $SELECTION)
-
-  var=$(echo $choice | cut -d= -f1)
-  value=$(echo $choice | cut -d= -f2)
-  comment=$( cat $filename_conf | grep $var | cut -d# -f2 )
-
-  echo "${value}" | grep --quiet "True"
-  # Exit status 0 means anotherstring was found
-  # Exit status 1 means anotherstring was not found
-  if [ $? = 0 ] ; then
-     newvalue=" False"
-     do_edit_save       
-  else
-     echo "${value}" | grep --quiet "False"
-     if [ $? = 0 ] ; then
-        newvalue=" True"
-        do_edit_save            
-     elif  [ $? = 1 ] ; then       
-        newvalue=$(whiptail --title "Edit $var (Enter Saves or Tab)" \
-                               --inputbox "$comment\n $var=$value" 10 65 "$value" \
-                               --ok-button "Save" 3>&1 1>&2 2>&3)
-        exitstatus=$?
-        if [ ! "$newvalue" = "" ] ; then   # Variable was changed                             
-           if [ $exitstatus -eq 1 ] ; then  # Check if Save selected otherwise it was cancelled
-              do_edit_save                    
-           elif [ $exitstatus -eq 0 ] ; then
-             echo "do_edit_variable - Cancel was pressed"
-             if echo "${value}" | grep --quiet "${newvalue}" ; then
-                do_settings_menu
-             else
-                do_edit_save
-             fi
-           fi
-        fi
-     fi
-  fi
-  do_settings_menu 
-}
-
-#--------------------------------------------------------------------
-function do_edit_menu ()
-{
-  clear
-  echo "Copy $filename_conf from $pyconfigfile  Please Wait ...."
-  cp $pyconfigfile $filename_conf
-  echo "Initialize $filename_temp  Please Wait ...."  
-  cat $filename_conf | grep = | cut -f1 -d# | tr -s [:space:] >$filename_temp
-  echo "Initializing Settings Menu Please Wait ...."    
-  menu_options=()
-  while read -r number text; do
-    menu_options+=( ${number//\"} "${text//\"}" )
-  done < $filename_temp
-  
-  SELECTION=$( whiptail --title "pi-timolo Settings Menu" \
-                       --menu "Arrow/Enter Selects or Tab" 0 0 0 "${menu_options[@]}" --ok-button "Edit" 3>&1 1>&2 2>&3 )  
-  RET=$?  
-  if [ $RET -eq 1 ] ; then
-    do_settings_menu
-  elif [ $RET -eq 0 ]; then
-    cp $pyconfigfile $filename_conf
-    cat $filename_conf | grep = | cut -f1 -d# | tr -s [:space:] >$filename_temp  
-    do_edit_variable
-  fi
-}
 
 #------------------------------------------------------------------------------
 function do_nano_main ()
@@ -299,49 +232,47 @@ function do_nano_main ()
   cp $pyconfigfile $filename_conf
   nano $filename_conf
   if (whiptail --title "Save Nano Edits" --yesno "Save nano changes to $filename_conf\n or cancel all changes" 8 65 --yes-button "Save" --no-button "Cancel" ) then
-    cp $filename_conf $pyconfigfile  
-  fi 
+    cp $filename_conf $pyconfigfile
+  fi
 }
 
 #------------------------------------------------------------------------------
 function do_settings_menu ()
 {
   SET_SEL=$( whiptail --title "Settings Menu" --menu "Arrow/Enter Selects or Tab Key" 0 0 0 --ok-button Select --cancel-button Back \
-  "a " "Menu Edit config.py for pi-timolo & webserver" \
-  "b " "Edit nano config.py for pi-timolo & webserver" \
-  "c " "View config.py for pi-timolo & webserver" \
-  "d " "Edit nano makevideo.conf file" \
-  "e " "View makevideo.conf file" \
-  "f " "Edit nano convid.conf file" \
-  "g " "View convid.conf file" \
-  "h " "Back to Main Menu" 3>&1 1>&2 2>&3 )
+  "a EDIT" "nano config.py for pi-timolo & webserver" \
+  "b VIEW" "config.py for pi-timolo & webserver" \
+  "c EDIT" "nano makevideo.conf file" \
+  "d VIEW" "makevideo.conf file" \
+  "e EDIT" "nano convid.conf file" \
+  "f VIEW" "convid.conf file" \
+  "q QUIT" "to Main Menu" 3>&1 1>&2 2>&3 )
 
   RET=$?
   if [ $RET -eq 1 ]; then
     clear
     rm -f $filename_temp
-    rm -f $filename_conf    
+    rm -f $filename_conf
     do_main_menu
   elif [ $RET -eq 0 ]; then
     case "$SET_SEL" in
-      a\ *) do_edit_menu ;;
-      b\ *) do_nano_main
+      a\ *) do_nano_main
             do_settings_menu ;;
-      c\ *) more -d config.py
+      b\ *) more -d config.py
             do_anykey
             do_settings_menu ;;
-      d\ *) do_makevideo_config ;;
-      e\ *) clear
+      c\ *) do_makevideo_config ;;
+      d\ *) clear
             cat $DIR/makevideo.conf
             do_anykey
             do_settings_menu ;;
-      f\ *) do_video_config 
+      e\ *) do_video_config
             do_settings_menu;;
-      g\ *) clear
+      f\ *) clear
             cat $DIR/convid.conf
             do_anykey
             do_settings_menu ;;
-      h\ *) clear
+      q\ *) clear
             rm -f $filename_temp
             rm -f $filename_conf
             do_main_menu ;;
@@ -354,10 +285,10 @@ function do_settings_menu ()
 #------------------------------------------------------------------------------
 function do_upgrade()
 {
-  if (whiptail --title "GitHub Upgrade pi-timolo" --yesno "Upgrade pi-timolo files from GitHub. Config files will not be changed" 8 65 --yes-button "upgrade" --no-button "Cancel" ) then 
+  if (whiptail --title "GitHub Upgrade pi-timolo" --yesno "Upgrade pi-timolo files from GitHub. Config files will not be changed" 8 65 --yes-button "upgrade" --no-button "Cancel" ) then
     curl -L https://raw.github.com/pageauc/pi-timolo/master/source/pi-timolo-install.sh | bash
     do_anykey
-  fi    
+  fi
 }
 
 #------------------------------------------------------------------------------
@@ -368,7 +299,7 @@ function do_about()
           written by Claude Pageau
 
    Manage pi-timolo operation, config and utilities
-    This script can run via interactive menu or 
+    This script can run via interactive menu or
 
                 menubox syntax
          if no parameter then run menu
@@ -396,12 +327,13 @@ function do_main_menu ()
   SELECTION=$(whiptail --title "Main Menu" --menu "Arrow/Enter Selects or Tab Key" 20 70 10 --cancel-button Quit --ok-button Select \
   "a $PTMLO_1" "$PTMLO_2" \
   "b $WEB_1" "$WEB_2" \
-  "c Create Video" "Make timelapse mp4 video from jpg images" \
-  "d Convert Video" "Convert h264 or Join multiple motion mp4 videos" \
-  "e Sync" "Configure gdrive sync to google drive" \
-  "f Settings" "Change pi-timolo and webserver settings" \
-  "g Upgrade" "Upgrade program files from GitHub.com" "h About" "Information about this program" \
-  "q Quit" "Exit This Program"  3>&1 1>&2 2>&3)
+  "c SETTINGS" "Change Program Configuration Files" \
+  "d CREATE" "MP4 Timelapse Video from jpg Images" \
+  "e CONVERT" "Video from h264 to MP4 or Join multiple MP4 Videos" \
+  "f SYNC" "Configure gdrive sync to google drive" \
+  "g UPGRADE" "Program Files from GitHub.com" \
+  "h ABOUT" "Information About this Program" \
+  "q QUIT" "Exit This Menu Program"  3>&1 1>&2 2>&3)
 
   RET=$?
   if [ $RET -eq 1 ]; then
@@ -410,11 +342,12 @@ function do_main_menu ()
     case "$SELECTION" in
       a\ *) do_pi_timolo ;;
       b\ *) do_webserver ;;
-      c\ *) do_makevideo_menu ;;
-      d\ *) do_convid_menu ;;
-      e\ *) do_sync ;;
-      f\ *) do_settings_menu ;; 
-      g\ *) do_upgrade ;;           
+      c\ *) do_settings_menu ;;
+      
+      d\ *) do_makevideo_menu ;;
+      e\ *) do_convid_menu ;;
+      f\ *) do_sync ;;
+      g\ *) do_upgrade ;;
       h\ *) do_about ;;
       q\ *) clear
             exit 0 ;;
@@ -430,37 +363,37 @@ if [ $# -eq 0 ] ; then
     while true; do
        do_main_menu
     done
-else  
-    # convert to upper case  
+else
+    # convert to upper case
     parm=$(echo $1 | awk '{print toupper($0)}')
 
     case "$parm" in
         HELP)
             do_about
             ;;
-        ABOUT) 
-            do_about 
+        ABOUT)
+            do_about
             ;;
         MENU)
             do_main_menu
             ;;
         UPGRADE)
-            do_upgrade 
-            ;;            
+            do_upgrade
+            ;;
         TIMOLO)
-            do_pi_timolo 
-            ;;            
+            do_pi_timolo
+            ;;
         WEBSERVER)
-            do_webserver 
+            do_webserver
             ;;
         SYNC)
-            do_sync 
-            ;;         
+            do_sync
+            ;;
         TIMELAPSE)
             do_makevideo
             ;;
         JOIN)
-            do_join_video 
+            do_join_video
             ;;
         CONVERT)
             do_convert_video
