@@ -324,7 +324,7 @@ help      - Display help
 function do_main_menu ()
 {
   init_status
-  SELECTION=$(whiptail --title "Main Menu" --menu "Arrow/Enter Selects or Tab Key" 20 70 10 --cancel-button Quit --ok-button Select \
+  SELECTION=$(whiptail --title "pi-timolo Main Menu" --menu "Arrow/Enter Selects or Tab Key" 20 70 10 --cancel-button Quit --ok-button Select \
   "a $PTMLO_1" "$PTMLO_2" \
   "b $WEB_1" "$WEB_2" \
   "c SETTINGS" "Change Program Configuration Files" \
