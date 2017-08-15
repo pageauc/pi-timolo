@@ -4,8 +4,8 @@
 # written by Claude Pageau Jul-2017 (release 7.0)
 # This release uses OpenCV to do Motion Tracking.  It requires updated config.py
 
-progVer = "ver 7.6"
-__version__ = "7.6"   # May test for version number at a future time
+progVer = "ver 7.7"
+__version__ = "7.7"   # May test for version number at a future time
 
 import datetime
 import logging
@@ -74,19 +74,20 @@ import sys
 import time
 import subprocess
 import math
-import picamera
-from picamera import PiCamera
-import picamera.array
-from picamera.array import PiRGBArray
 from threading import Thread
-
 import numpy as np
-if not (sys.version_info > (3, 0)):
-    import pyexiv2
 from PIL import Image
 from PIL import ImageFont
 from PIL import ImageDraw
 from fractions import Fraction
+
+from picamera.array import PiRGBArray
+import picamera
+from picamera import PiCamera
+import picamera.array
+
+if not (sys.version_info > (3, 0)):  # Bypass pyexiv2 if opencv 3 used
+    import pyexiv2
 
 #==================================
 #      System Variables
@@ -241,7 +242,7 @@ def displayInfo(motioncount, timelapsecount):
         print("")
         if motionTrackOn:
             print("Motion Track.. On=%s  Prefix=%s  MinArea=%i sqpx  TrigLen=%i-%i px  TimeOut=%i sec"
-                             % (motionTrackOn, motionPrefix, motionTrackMinArea, 
+                             % (motionTrackOn, motionPrefix, motionTrackMinArea,
                                                       motionTrackTrigLen, TRACK_TRIG_LEN_MAX, motionTrackTimeOut))
             print("               motionTrackInfo=%s   motionDotsOn=%s"  % ( motionTrackInfo, motionDotsOn ))
             print("   Stream .... size=%ix%i  framerate=%i fps  motionStreamStopSec=%.2f  QuickPic=%s" %
@@ -324,7 +325,7 @@ def subDirLatest(directory): # Scan for directories and return most recent
 def subDirCreate(directory, prefix):
     now = datetime.datetime.now()
     # Specify folder naming
-    subDirName = ('%s%d-%02d-%02d-%02d:%02d' % (prefix, now.year, now.month, now.day, now.hour, now.minute))
+    subDirName = ('%s%d-%02d-%02d-%02d%02d' % (prefix, now.year, now.month, now.day, now.hour, now.minute))
     subDirPath = os.path.join(directory, subDirName)
     if not os.path.exists(subDirPath):
         try:
@@ -464,7 +465,7 @@ def freeSpaceUpTo(spaceFreeMB, mediaDir, extension=imageFormat):
     # Use with Caution
     mediaDirPath = os.path.abspath(mediaDir)
     if os.path.isdir(mediaDirPath):
-        MB2Bytes = 1000000  # Conversion from MB to Bytes
+        MB2Bytes = 1048576  # Conversion from MB to Bytes
         targetFreeBytes = spaceFreeMB * MB2Bytes
         fileList = filesToDelete(mediaDir, extension)
         totFiles = len(fileList)
@@ -566,7 +567,7 @@ def writeTextToImage(imagename, datetoprint, daymode):
         if showTextWhiteNight and ( not daymode):
             FOREGROUND = ( 255, 255, 255 )  # rgb settings for black text foreground
             textColour = "White"
-            
+
     img = cv2.imread(imagename)
     height, width, channels = img.shape
     # centre text and compensate for graphics text being wider
@@ -1020,7 +1021,7 @@ def timolo():
     # Start main program loop here.  Use Ctl-C to exit if run from terminal session.
     while True:
         motionFound = False
-        forceMotion = False        
+        forceMotion = False
         if spaceTimerHrs > 0:  # if required check free disk space and delete older files (jpg)
             lastSpaceCheck = freeDiskSpaceCheck(lastSpaceCheck)
 
@@ -1115,8 +1116,8 @@ def timolo():
                             logging.info("Track Start(%i,%i)  Now(%i,%i) trackLen=%.2f px",
                                startPos[0], startPos[1], movePoint2[0], movePoint2[1], trackLen)
 
-                    # Track length triggered           
-                    if trackLen > TRACK_TRIG_LEN:  
+                    # Track length triggered
+                    if trackLen > TRACK_TRIG_LEN:
                         if trackLen > TRACK_TRIG_LEN_MAX:  # reduce chance of two objects at different postions
                             motionFound = False
                             if motionTrackInfo:
@@ -1127,7 +1128,7 @@ def timolo():
                             logging.info("Motion Triggered Start(%i,%i)  End(%i,%i) trackLen=%.2f px",
                                startPos[0], startPos[1], movePoint2[0], movePoint2[1], trackLen)
                         image1 = vs.read()
-                        image2 = image1                        
+                        image2 = image1
                         grayimage1 = cv2.cvtColor(image1, cv2.COLOR_BGR2GRAY)
                         grayimage2 = grayimage1
                         startTrack = False
@@ -1137,7 +1138,7 @@ def timolo():
                 # Track timed out
                 if ((time.time() - trackTimeout > trackTimer) and startTrack):
                     image1 = vs.read()
-                    image2 = image1                    
+                    image2 = image1
                     grayimage1 = cv2.cvtColor(image1, cv2.COLOR_BGR2GRAY)
                     grayimage2 = grayimage1
                     if motionTrackInfo:
@@ -1219,7 +1220,7 @@ def timolo():
                             trackTimeout = time.time()
                             startPos = []
                             startTrack = False
-                            forceMotion = False               
+                            forceMotion = False
 
                     moPath = subDirChecks( motionSubDirMaxHours, motionSubDirMaxFiles, motionDir, motionPrefix)
 
