@@ -4,8 +4,8 @@
 # written by Claude Pageau Jul-2017 (release 7.0)
 # This release uses OpenCV to do Motion Tracking.  It requires updated config.py
 
-progVer = "ver 7.7"
-__version__ = "7.7"   # May test for version number at a future time
+progVer = "ver 7.8"
+__version__ = "7.8"   # May test for version number at a future time
 
 import datetime
 import logging
@@ -402,10 +402,16 @@ def checkImagePath():
         if not os.path.isdir(motionPath):
             logging.info("Create Motion Image Folder %s", motionPath)
             os.makedirs(motionPath)
+            if os.path.exists(motionNumPath):
+               logging.info("Delete Motion dat file %s", motionNumPath)
+               os.remove(motionNumPath)            
     if timelapseOn:
         if not os.path.isdir(timelapsePath):
             logging.info("Create TimeLapse Image Folder %s", timelapsePath)
             os.makedirs(timelapsePath)
+            if os.path.exists(timelapseNumPath):
+               logging.info("Delete TimeLapse dat file %s", timelapseNumPath)
+               os.remove(timelapseNumPath)
 
     # Check for Recent Image Folders and create if they do not already exist.
     if motionRecentMax > 0:
@@ -1053,7 +1059,7 @@ def timolo():
                         takeTimeLapse = False  # Suppress further timelapse images
                 if (takeTimeLapse and timelapseNumOn and (not timelapseNumRecycle)):
                     timelapseStart = datetime.datetime.now()  # Reset timelapse timer
-                    if timelapseNumCount >= (timelapseNumStart + timelapseNumMax):
+                    if timelapseNumMax > 0 and timelapseNumCount >= (timelapseNumStart + timelapseNumMax):
                         print("")
                         logging.info("timelapseNumRecycle=%s and Counter=%i Exceeded: Surpressing Further Timelapse Images"
                               % ( timelapseNumRecycle, timelapseNumStart + timelapseNumMax  ))
