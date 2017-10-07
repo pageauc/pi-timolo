@@ -1,11 +1,11 @@
 #!/usr/bin/python
 
 # pi-timolo - Raspberry Pi Long Duration Timelapse, Motion Tracking, with Low Light Capability
-# written by Claude Pageau Jul-2017 (release 7.0)
+# written by Claude Pageau Jul-2017 (release 7.x)
 # This release uses OpenCV to do Motion Tracking.  It requires updated config.py
 
-progVer = "ver 7.8"
-__version__ = "7.8"   # May test for version number at a future time
+progVer = "ver 7.9"
+__version__ = "7.9"   # May test for version number at a future time
 
 import datetime
 import logging
@@ -1009,6 +1009,10 @@ def timolo():
 
     if timelapseOn and motionTrackOn:
         tlstr = " and " + tlstr
+     
+    if videoRepeatOn: 
+        mostr = "Video Repeat"    
+        tlstr = "" 
     displayInfo(moCnt, tlCnt)  # Display config.py settings
 
     timelapseStart = datetime.datetime.now()
@@ -1155,7 +1159,7 @@ def timolo():
 
                 rightNow = datetime.datetime.now()
                 timeDiff = (rightNow - checkMotionTimer).total_seconds()
-                if timeDiff > motionForce:
+                if motionForce > 0 and timeDiff > motionForce:
                     image1 = vs.read()
                     image2 = image1
                     grayimage1 = cv2.cvtColor(image1, cv2.COLOR_BGR2GRAY)
