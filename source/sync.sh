@@ -38,7 +38,7 @@ CHECK_FOR_SYNC_FILE=true     # true if sync file below is required otherwise set
 SYNC_FILE_PATH=$PROG_DIR/pi-timolo.sync  # name of pi-timolo sync lock filename
 
 # ------------------ Remote Sync Config Settings -------------------
-# Remote configuration will copy a new configuration file from remote google drive 
+# Remote configuration will copy a new configuration file from remote google drive
 # to local pi-timolo config.py file and restart pi-timolo.
 REMOTE_CONFIG_ON=false                 # true - Check for remote config file and install, false - Ignore Checking
 REMOTE_CONFIG_DIR='sync_config_cam1'   # Remote Config Folder on google drive (Will be Created if Does Not Exist)
@@ -46,17 +46,17 @@ REMOTE_CONFIG_FILE='config.py'         # Name of new pi-timolo config file on go
 LOCAL_CONFIG_FILE='config.py'          # pi-timolo configuration variables file (default)
 
 # ------------------ Remote Sync Wipe Settings -------------------
-# Remote Wipe will erase all Files in the syc folder ater syncing 
+# Remote Wipe will erase all Files in the syc folder ater syncing
 # as long as a file wipe.me is located in the remote google drive
 REMOTE_WIPE_ON=false                   # true - Check for wipe.me file and wipe sync folder, false - Ignore Checking
 REMOTE_WIPE_DIR='sync_config_cam1'     # Remote Wipe Folder on google drive (Will be Created if Does Not Exist)
 REMOTE_WIPE_FILE='wipe.me'             # Name of the wipe file on google drive
-REMOTE_WIPE_SAFE=true                  # true - only synced files get deleted but this is slow, false- all jpg files get deleted 
+REMOTE_WIPE_SAFE=true                  # true - only synced files get deleted but this is slow, false- all jpg files get deleted
 
 # -------------------- Watch App Settings --------------------------
 WATCH_APP_ON=false           # false - off  true - Check if app is running and restart or reboot
 WATCH_APP='pi-timolo.py'     # App filename to monitor for Run Status
-FORCE_REBOOT=false           # false - Restart pi-timolo.py if not running    true - Reboot if not running (Use with Caution)  
+FORCE_REBOOT=false           # false - Restart pi-timolo.py if not running    true - Reboot if not running (Use with Caution)
 
 echo "==================== Variable Settings ==========================="
 echo "SYNC_ON             =" $SYNC_ON
@@ -182,7 +182,7 @@ function start_sync ()
     echo "------------------------------------------"
     echo "START   - start_sync - Local Files with Remote Folder"
     # check if gdrive is already running to avoid multiple instances
-    if [ -z "$(pgrep -f gdrive)" ] ; then 
+    if [ -z "$(pgrep -f gdrive)" ] ; then
         if [ "$CHECK_FOR_SYNC_FILE" = true ] ; then
             echo "STATUS  - Script Variable CHECK_FOR_SYNC_FILE=true"
             if [ -e $SYNC_FILE_PATH ] ; then
@@ -302,9 +302,9 @@ function do_config_sync ()
 function do_wipe_sync ()
 {
     # function to wipe local copy of synced files
-    # remote files will not be effected 
+    # remote files will not be effected
     # regular wipes speed up the sync process
-    
+
     echo "------------------------------------------"
     echo "START   - do_wipe_sync - Remote Wipe Checks"
     echo "INFO    - Look for new wipe file on google drive"
@@ -344,11 +344,11 @@ function do_wipe_sync ()
             echo "          to $PROG_DIR/$REMOTE_WIPE_DIR/$REMOTE_WIPE_FILE  (local)"
             /usr/local/bin/gdrive rename -force $REMOTE_WIPE_DIR/$REMOTE_WIPE_FILE $REMOTE_WIPE_FILE.done
             echo "DELETE  - $SYNC_DIR  (local)"
-            if $REMOTE_WIPE_SAFE ; then 
+            if $REMOTE_WIPE_SAFE ; then
                 /usr/local/bin/gdrive list -match-mime jpg $SYNC_DIR | cut -c2- | xargs -n 10 echo rm -f | sh
             else
                 rm $SYNC_DIR/*jpg
-            fi    
+            fi
             echo "SUCCESS - $SYNC_DIR  is now empty"
             echo "------------------------------------------"
             echo "GDRIVE  - Sync push Local /$REMOTE_WIPE_DIR Files to Local to $REMOTE_WIPE_DIR"

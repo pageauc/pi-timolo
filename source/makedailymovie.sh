@@ -76,7 +76,7 @@ fi
 
 # Remove old working folder if it exists
 if [ -d $folder_working ]; then
-  echo "WARN  - Removing previous working folder " $folder_working 
+  echo "WARN  - Removing previous working folder " $folder_working
   sudo rm -R $folder_working
 fi
 
@@ -98,7 +98,7 @@ ls $folder_source/*.jpg |
   do
     new=$(printf "%05d.jpg" ${a}) #05 pad to length of 4 max 99999 images
     ln -s ${not_the_most_recent_file} ${new}
-    let a=a+1  
+    let a=a+1
   done
 )
 cd $DIR      # Return back to launch folder
@@ -111,24 +111,24 @@ if [ $? -ne 0 ]; then
   echo "========================== ERROR ========================================="
   echo "ERROR - avconv Encoding Failed for " $DIR/$moviename " Please Investigate Problem"
   echo "ERROR - Review avconv output for error messages and correct problem"
-  echo "ERROR - avconv Encoding Failed for " $DIR/$moviename >> $error_log_file  
+  echo "ERROR - avconv Encoding Failed for " $DIR/$moviename >> $error_log_file
   exit 1
 else
   if [ ! -d $folder_destination ]; then
     mkdir $folder_destination
     if [ "$?" -ne 0]; then
-      echo "============================ ERROR +======================================" 
+      echo "============================ ERROR +======================================"
       echo "ERROR - Problem Creating Destination Folder " $folder_destination
       echo "ERROR - If destination is a remote folder or mount then check network, destination IP address, permissions, Etc"
       echo "ERROR - Logging event to Error Log ....."
       echo "ERROR - mkdir Failed - " $folder_destination " Could NOT be Created. Please investigate ..." >> $error_log_file
       exit 1
-    fi     
+    fi
   fi
   echo "Copy Daily Movie to Final Destination " $folder_destination
-  cp $DIR/$moviename $folder_destination/$moviename 
+  cp $DIR/$moviename $folder_destination/$moviename
   if [ $? -ne 0 ]; then
-    echo "============================= ERROR +======================================" 
+    echo "============================= ERROR +======================================"
     echo "ERROR - Problem copying " $DIR/$moviename " to " $folder_destination/$moviename
     echo "ERROR - If destination is a remote folder or mount then check network, destination IP address, permissions, Etc"
     echo "ERROR - Logging event to Error Log ....."
@@ -136,33 +136,33 @@ else
     exit 1
   else
     if [ -e $folder_destination/$moviename ]; then
-      echo "=========================================================================="   
+      echo "=========================================================================="
       echo "Success - Daily Movie Saved to " $folder_destination/$moviename
       sudo rm $DIR/$moviename
       echo "STATUS- Processing Completed Successfully ..."
       echo "STATUS- Deleting Working Folder " $folder_working
       sudo rm -R $folder_working
-      if [ $? -ne 0 ]; then 
+      if [ $? -ne 0 ]; then
         echo "ERROR - Could not Delete Working Folder " $folder_working " Please Investigate ..."
-        echo "ERROR - Check for permissions or other possible problems" 
-        echo "============================ ERROR +======================================"           
+        echo "ERROR - Check for permissions or other possible problems"
+        echo "============================ ERROR +======================================"
         exit 1
-      else 
+      else
         if [ "$delete_source_files" = true ] ; then
             echo "WARN  - Deleting Source Files $folder_source/*jpg"
             sudo rm $folder_source/*jpg
         fi
         echo "=========================== SUCCESS ======================================"
-        echo "STATUS- Video Saved to $folder_destination/$moviename"        
+        echo "STATUS- Video Saved to $folder_destination/$moviename"
       fi
     else
-      echo "============================ ERROR +======================================"    
+      echo "============================ ERROR +======================================"
       echo "ERROR - Problem copying " $DIR/$moviename " to " $folder_destination/$moviename
       echo "ERROR - If destination is a remote folder or mount then check network, destination IP address, permissions, Etc"
       echo "ERROR - Logging event to Error Log ....."
       echo "ERROR - Copy Failed - " $DIR/$moviename " to " $folder_destination/$moviename " Please investigate ..." >> $error_log_file
       exit 1
-    fi     
-  fi    
+    fi
+  fi
 fi
 #               ------------------ End Script ----------------------------

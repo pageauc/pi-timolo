@@ -11,19 +11,19 @@
 #
 # sudo nano /etc/fstab
 #
-# Add a similar line below to the fstab.  
+# Add a similar line below to the fstab.
 # This example mounts an external Hard Drive share
-# on a RPI running openelec xbmc.  
+# on a RPI running openelec xbmc.
 # Change the IP address, share name and paths appropriately (exclude the #)
 #
 # //192.168.1.154/sharename/Media/Images /home/pi/rpi-timelapse/xbmc cifs username=root,password=openelec,uid=pi,gid=pi, 0 0
 #
-# Add a crontab entry to the root crontab per the below.  
+# Add a crontab entry to the root crontab per the below.
 # make sure movefiles.sh is executable eg sudo chmod +x movefiles.sh
 #
 # sudo crontab -e
 #
-# Add similar crontab entry as line below (excluding the #). 
+# Add similar crontab entry as line below (excluding the #).
 # This would execute movefiles.sh every 15 minutes
 #
 # */15 * * * * /home/pi/rpi-timelapse/movefiles.sh

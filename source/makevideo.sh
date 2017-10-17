@@ -21,10 +21,10 @@ else
    echo "INFO  - Attempting to download makevideo.conf from GitHub"
    echo "INFO  - Please Wait ...."
    wget https://raw.github.com/pageauc/pi-timolo/master/source/makevideo.conf
-   
+
    if [ -e makevideo.conf ] ; then
-      source $DIR/makevideo.conf 
-   else      
+      source $DIR/makevideo.conf
+   else
       echo "ERROR  - $DIR/makevideo.conf File Not Found."
       echo "ERROR  - Could Not Import $0 variables"
       echo "ERROR  - Please Investigate or Download file from GitHub Repo"
@@ -35,7 +35,7 @@ fi
 
 # ------------- Start Script ------------------
 if [ -e $DIR/$filename_utils_conf ]; then
-    source $DIR/$filename_utils_conf 
+    source $DIR/$filename_utils_conf
 else
     echo "ERROR - Could Not Find Conf File $DIR/utils.conf"
     echo "ERROR - Please Investigate Problem"
@@ -44,7 +44,7 @@ fi
 
 #  Script variables
 tl_folder_working=$DIR"/makevideo_tmp"
-tl_error_log_file=$DIR"/makevideo_error.log"    
+tl_error_log_file=$DIR"/makevideo_error.log"
 tl_source_files=$tl_folder_source/*$tl_files_ext  # Files wildcard that we are looking for
 
 # Output videoname with prefix and date and time (minute only).
@@ -55,10 +55,10 @@ clear
 echo "$0 version $ver written by Claude Pageau"
 echo "============ TIMELAPSE VIDEO SETTINGS ===================================="
 echo "tl_videoname           = $tl_videoname"
-echo "tl_folder_source       = $tl_folder_source" 
-echo "tl_files_ext           = $tl_files_ext" 
-echo "tl_files_sort          = $tl_files_sort "    
-echo "tl_source_files        = $tl_source_files" 
+echo "tl_folder_source       = $tl_folder_source"
+echo "tl_files_ext           = $tl_files_ext"
+echo "tl_files_sort          = $tl_files_sort "
+echo "tl_source_files        = $tl_source_files"
 echo "tl_folder_destination  = $tl_folder_destination"
 echo "tl_delete_source_files = $tl_delete_source_files"
 echo "tl_share_copy_on       = $tl_share_copy_on"
@@ -94,11 +94,11 @@ fi
 
 # Remove old working folder if it exists
 if [ -d $tl_folder_working ] ; then
-    echo "WARN  - Removing previous working folder" $tl_folder_working 
+    echo "WARN  - Removing previous working folder" $tl_folder_working
     sudo rm -R $tl_folder_working
 fi
 
-# Create a new temporary working folder to store soft links 
+# Create a new temporary working folder to store soft links
 # that are numbered sequentially in case source number has gaps
 echo "STATUS- Creating Temporary Working Folder " $tl_folder_working
 mkdir $tl_folder_working
@@ -106,7 +106,7 @@ if [ ! -d $tl_folder_working ] ; then
     echo "ERROR - Problem Creating Temporary Working Folder " $tl_folder_working
     echo "ERROR - mkdir Failed - $tl_folder_working Could NOT be Created." >> $error_log_file
     exit 1
-fi 
+fi
 
 cd $tl_folder_working    # change to working folder
 # Create numbered soft links in working folder that point to image files in source folder
@@ -135,7 +135,7 @@ echo "Making Video ... "$tl_videoname
 echo "=========================================================================="
 /usr/bin/avconv -y -f image2 -r $tl_fps -i $tl_folder_working/%5d.$tl_files_ext -aspect $tl_a_ratio -s $tl_vid_size $tl_folder_destination/$tl_videoname
 if [ $? -ne 0 ] ; then
-  echo "ERROR - avconv Encoding Failed for" $tl_folder_destination/$tl_videoname 
+  echo "ERROR - avconv Encoding Failed for" $tl_folder_destination/$tl_videoname
   echo "ERROR - Review avconv output for Error Messages and Correct Problem"
   echo "ERROR - avconv Encoding Failed for" $tl_folder_destination/$tl_videoname >> $error_log_file
   exit 1

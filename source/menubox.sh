@@ -343,7 +343,7 @@ function do_main_menu ()
       a\ *) do_pi_timolo ;;
       b\ *) do_webserver ;;
       c\ *) do_settings_menu ;;
-      
+
       d\ *) do_makevideo_menu ;;
       e\ *) do_convid_menu ;;
       f\ *) do_sync ;;

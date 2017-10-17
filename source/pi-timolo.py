@@ -404,7 +404,7 @@ def checkImagePath():
             os.makedirs(motionPath)
             if os.path.exists(motionNumPath):
                logging.info("Delete Motion dat file %s", motionNumPath)
-               os.remove(motionNumPath)            
+               os.remove(motionNumPath)
     if timelapseOn:
         if not os.path.isdir(timelapsePath):
             logging.info("Create TimeLapse Image Folder %s", timelapsePath)
@@ -1009,10 +1009,10 @@ def timolo():
 
     if timelapseOn and motionTrackOn:
         tlstr = " and " + tlstr
-     
-    if videoRepeatOn: 
-        mostr = "Video Repeat"    
-        tlstr = "" 
+
+    if videoRepeatOn:
+        mostr = "Video Repeat"
+        tlstr = ""
     displayInfo(moCnt, tlCnt)  # Display config.py settings
 
     timelapseStart = datetime.datetime.now()

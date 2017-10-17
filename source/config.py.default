@@ -71,7 +71,7 @@ motionVideoTimer = 10       # default= 10 seconds of video clip to take if Motio
 motionQuickTLOn = False     # default= False  True=Take a quick time lapse sequence rather than a single image (overrides motionVideoOn)
 motionQuickTLTimer = 10     # default= 10 Duration in seconds of quick time lapse sequence after initial motion detected
 motionQuickTLInterval = 0   # default= 0 seconds between each Quick time lapse image. 0 is fast as possible
-motionForce = 3600          # default= 3600 seconds (1 hr) Force single motion image if no Motion Detected in specified seconds.
+motionForce = 3600          # default= 3600 seconds (1 hr) Off=0  Force an image if no Motion Detected in specified seconds.
 motionNumOn = True          # default= True  True=filenames by sequenced Number  False=filenames by date/time
 motionNumRecycle = True     # default= True when NumMax reached restart at NumStart instead of exiting
 motionNumStart = 1000       # default= 1000 Start 0f motion number sequence
