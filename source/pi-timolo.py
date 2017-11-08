@@ -108,8 +108,8 @@ timelapseNumPath = os.path.join(baseDir, timelapsePrefix + baseFileName + ".dat"
 lockFilePath = os.path.join(baseDir, baseFileName + ".sync")
 
 # Video Stream Settings for motion detection using opencv motion tracking
-CAMERA_WIDTH = 320     # width of video stream
-CAMERA_HEIGHT = 240    # height of video stream
+CAMERA_WIDTH = 640     # width of video stream
+CAMERA_HEIGHT = 480    # height of video stream
 bigImage = motionTrackQPBigger  # increase size of motionTrackQuickPic image
 bigImageWidth = int(CAMERA_WIDTH * bigImage)
 bigImageHeight = int(CAMERA_HEIGHT * bigImage)

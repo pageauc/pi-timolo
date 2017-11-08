@@ -23,7 +23,7 @@ imageNamePrefix = 'cam1-'  # default= 'cam1-' for all image file names. Eg garag
 imageWidth = 1024          # default= 1024 Full Size Image Width in px
 imageHeight = 768          # default= 768  Full Size Image Height in px
 imageFormat = ".jpg"       # default = ".jpg"  image Formats .jpeg .png .gif .bmp
-imageJpegQuality = 20      # default = 20  Valid jpg encoder quality values 1(high) - 40(low)
+imageJpegQuality = 10      # default = 20  Valid jpg encoder quality values 1(high) - 40(low)
 imageVFlip = False         # default= False True Flips image Vertically
 imageHFlip = False         # default= False True Flips image Horizontally
 imageRotation = 0          # Default= 0  Rotate image. Valid values: 0, 90, 180, 270
@@ -53,13 +53,13 @@ nightDarkAdjust = 4.7       # default= 4.7 Factor to fine tune nightDarkThreshol
 # Motion Track Settings
 # ---------------------
 motionTrackOn = True        # default= True True=Turns Motion Detect On, False=Off
-motionTrackQuickPic = True  # default= False True= save a frame image instead of switching out of opencv
+motionTrackQuickPic = False # default= False True= save a frame image instead of switching out of opencv
 motionTrackInfo = True      # default= False Hide detailed track position logging messages
 motionTrackTimeOut = 1      # default= 3 seconds Reset Track if no activity
-motionTrackTrigLen = 50     # default= 75 px Length of motion track to Trigger motionFound
-motionTrackMinArea = 100    # default= 200 sq px  Minimum Area required to start tracking
-motionTrackFrameRate = 25   # default= 25 fps  PiVideoStream setting.  Single core RPI suggest 15 fps
-motionTrackQPBigger = 2.5   # default= 2.5 multiply size of QuickPic saved image from default 320x240
+motionTrackTrigLen = 75     # default= 75 px Length of motion track to Trigger motionFound
+motionTrackMinArea = 200    # default= 200 sq px  Minimum Area required to start tracking
+motionTrackFrameRate = 20   # default= 20 fps  PiVideoStream setting.  Single core RPI suggest 15 fps
+motionTrackQPBigger = 1.5   # default= 1.5 multiply size of QuickPic saved image from default 640x480
 
 # Motion Settings
 # ---------------
