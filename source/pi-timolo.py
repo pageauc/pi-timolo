@@ -4,8 +4,8 @@
 # written by Claude Pageau Jul-2017 (release 7.x)
 # This release uses OpenCV to do Motion Tracking.  It requires updated config.py
 
-progVer = "ver 7.9"
-__version__ = "7.9"   # May test for version number at a future time
+progVer = "ver 7.91"
+__version__ = "7.91"   # May test for version number at a future time
 
 import datetime
 import logging
@@ -434,7 +434,7 @@ def checkImagePath():
 def deleteOldFiles(maxFiles, dirPath, prefix):
     # Delete Oldest files gt or eq to maxfiles that match filename prefix
     try:
-        fileList = sorted(glob.glob(os.path.join(dirPath, prefix + '*')))
+        fileList = sorted(glob.glob(os.path.join(dirPath, prefix + '*')), key=os.path.getmtime)
     except OSError as err:
         logging.error('Problem Reading Directory %s - %s', dirPath, err)
     else:
