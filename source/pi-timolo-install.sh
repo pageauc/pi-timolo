@@ -1,6 +1,6 @@
 #!/bin/bash
 # Convenient pi-timolo-install.sh script written by Claude Pageau 1-Jul-2016
-ver="7.1"
+ver="7.2"
 TIMOLO_DIR='pi-timolo'  # Default folder install location
 
 cd ~
@@ -66,8 +66,10 @@ if [ $? -ne 0 ] ;  then
   wget -O webserver.sh https://raw.github.com/pageauc/pi-timolo/master/source/webserver.sh
   wget -O convid.sh https://raw.github.com/pageauc/pi-timolo/master/source/convid.sh
   wget -O convid.conf https://raw.github.com/pageauc/pi-timolo/master/source/convid.conf
+  wget -O convid.conf.new https://raw.github.com/pageauc/pi-timolo/master/source/convid.conf
   wget -O makevideo.sh https://raw.github.com/pageauc/pi-timolo/master/source/makevideo.sh
   wget -O makevideo.conf https://raw.github.com/pageauc/pi-timolo/master/source/makevideo.conf
+  wget -O makevideo.conf.new https://raw.github.com/pageauc/pi-timolo/master/source/makevideo.conf
   wget -O mvleavelast.sh https://raw.github.com/pageauc/pi-timolo/master/source/mvleavelast.sh
   wget -O myip.sh https://raw.github.com/pageauc/pi-timolo/master/source/myip.sh
   wget -O gdrive https://raw.github.com/pageauc/pi-timolo/master/source/drive_armv6
@@ -84,8 +86,10 @@ else
   wget -O webserver.sh -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/webserver.sh
   wget -O convid.sh -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/convid.sh
   wget -O convid.conf -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/convid.conf
+  wget -O convid.conf.new -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/convid.conf
   wget -O makevideo.sh -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/makevideo.sh
   wget -O makevideo.conf -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/makevideo.conf
+  wget -O makevideo.conf.new -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/makevideo.conf
   wget -O mvleavelast.sh -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/mvleavelast.sh
   wget -O myip.sh -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/myip.sh
   wget -O gdrive -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/drive_armv6
