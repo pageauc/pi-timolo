@@ -4,12 +4,13 @@
 # written by Claude Pageau Jul-2017 (release 7.x)
 # This release uses OpenCV to do Motion Tracking.  It requires updated config.py
 
-progVer = "ver 7.92"
-__version__ = "7.92"   # May test for version number at a future time
+progVer = "ver 7.93"
+__version__ = "7.93"   # May test for version number at a future time
 
 import datetime
 import logging
 import os
+import sys
 import subprocess
 
 mypath = os.path.abspath(__file__)  # Find the full path of this python script
@@ -22,15 +23,17 @@ print("%s %s" %( progName, progVer ))
 print("INFO  - Initializing   One Moment Please ....")
 
 # Check for that pi camaera module is installed and enabled
-commandResult = subprocess.check_output("vcgencmd get_camera", shell=True)
-if (commandResult.find("0")) >= 0:   # -1 is not string not found
-    print("ERROR - Pi Camera Module Not Found %s" % commandResult) ,
+camResult = subprocess.check_output("vcgencmd get_camera", shell=True)
+camResult = camResult.decode("utf-8")
+camResult = camResult.replace("\n", "")
+if (camResult.find("0")) >= 0:   # -1 is not string not found
+    print("ERROR - Pi Camera Module Not Found %s" % camResult)
     print("        Verify that Pi Camera module is Installed Correctly")
     print("        and is Enabled using command sudo raspi-config")
     print("Exiting %s" % progName)
     quit()
 else:
-    print("INFO  - Pi Camera Module Found and Enabled %s" % commandResult ) ,
+    print("INFO  - Pi Camera Module Found and Enabled %s" % camResult )
 
 # Check for variable file to import and error out if not found.
 configFilePath = os.path.join(baseDir, "config.py")
@@ -65,24 +68,19 @@ print("INFO  - Loading Python Libraries ...")  # import remaining python librari
 try:
     import cv2
 except:
-    print("------------------------------------")
-    print("ERROR - Could not import cv2 library")
-    print("")
     if (sys.version_info > (2, 9)):
-        print("python3 failed to import cv2")
-        print("Try installing opencv for python3")
-        print("google for details regarding installing opencv for python3")
+        print("ERROR - python3 Failed to import cv2")
+        print("        Try installing opencv for python3")
+        print("        google for details regarding installing opencv for python3")
     else:
-        print("python2 failed to import cv2")
-        print("Try reinstalling per command")
-        print("sudo apt-get install python-opencv")
-    print("")
-    print("Exiting %s Due to Error" % progName)
+        print("ERROR - python2 Failed to import cv2")
+        print("        Try reinstalling per command")
+        print("        sudo apt-get install python-opencv")
+    print("INFO  - Exiting %s Due to Error" % progName)
     quit()
 
 import glob
 import shutil
-import sys
 import time
 import math
 from threading import Thread
