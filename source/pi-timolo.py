@@ -4,8 +4,8 @@
 # written by Claude Pageau Jul-2017 (release 7.x)
 # This release uses OpenCV to do Motion Tracking.  It requires updated config.py
 
-progVer = "ver 7.93"
-__version__ = "7.93"   # May test for version number at a future time
+progVer = "ver 7.94"
+__version__ = "7.94"   # May test for version number at a future time
 
 import datetime
 import logging
@@ -14,13 +14,14 @@ import sys
 import subprocess
 
 mypath = os.path.abspath(__file__)  # Find the full path of this python script
-baseDir = os.path.dirname(mypath)  # get the path location only (excluding script name)
+baseDir = os.path.dirname(mypath)   # get the path location only (excluding script name)
 baseFileName = os.path.splitext(os.path.basename(mypath))[0]
 progName = os.path.basename(__file__)
 logFilePath = os.path.join(baseDir, baseFileName + ".log")
+
 print("----------------------------------------------------------------------------------------------")
 print("%s %s" %( progName, progVer ))
-print("INFO  - Initializing   One Moment Please ....")
+print("INFO  - Initializing ....")
 
 # Check for that pi camaera module is installed and enabled
 camResult = subprocess.check_output("vcgencmd get_camera", shell=True)
@@ -63,7 +64,7 @@ else:
                     format='%(asctime)s %(levelname)-8s %(funcName)-10s %(message)s',
                     datefmt='%Y-%m-%d %H:%M:%S')
 
-print("INFO  - Loading Python Libraries ...")  # import remaining python libraries
+print("INFO  - Loading Python Libraries Please Wait ...")  # import remaining python libraries
 
 try:
     import cv2
@@ -136,7 +137,12 @@ THRESHOLD_SENSITIVITY = 20  # OpenCV setting for difference image threshold
 class PiVideoStream:
     def __init__(self, resolution=(CAMERA_WIDTH, CAMERA_HEIGHT), framerate=CAMERA_FRAMERATE, rotation=0, hflip=False, vflip=False):
         # initialize the camera and stream
-        self.camera = PiCamera()
+        try:
+           self.camera = PiCamera()
+        except:
+           print("ERROR - PiCamera Already in Use by Another Process")
+           print("INFO  - Exit %s" % progName)
+           quit()        
         self.camera.resolution = resolution
         self.camera.framerate = framerate
         self.camera.hflip = hflip
@@ -1313,9 +1319,18 @@ def videoRepeat():
 
 #-----------------------------------------------------------------------------------------------
 if __name__ == '__main__':
-    print("INFO  - Starting pi-timolo per %s Settings" % configFilePath)
+        
+    # Test if the pi camera is already in use    
+    print("INFO  - Testing if Pi Camera in Use")
+    ts = PiVideoStream().start()
+    time.sleep(3)    
+    ts.stop()
+    time.sleep(1)    
+    print("INFO  - Pi Camera is Available.") 
+    print("INFO  - Starting pi-timolo per %s Settings" % configFilePath)    
     if not verbose:
         print("INFO  - Note: Logging Disabled per Variable verbose=False")
+        
     try:
         if debug:
             dataLogger()
