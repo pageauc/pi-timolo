@@ -4,12 +4,13 @@
 # written by Claude Pageau Jul-2017 (release 7.x)
 # This release uses OpenCV to do Motion Tracking.  It requires updated config.py
 
-progVer = "ver 7.91"
-__version__ = "7.91"   # May test for version number at a future time
+progVer = "ver 7.92"
+__version__ = "7.92"   # May test for version number at a future time
 
 import datetime
 import logging
 import os
+import subprocess
 
 mypath = os.path.abspath(__file__)  # Find the full path of this python script
 baseDir = os.path.dirname(mypath)  # get the path location only (excluding script name)
@@ -18,6 +19,18 @@ progName = os.path.basename(__file__)
 logFilePath = os.path.join(baseDir, baseFileName + ".log")
 print("----------------------------------------------------------------------------------------------")
 print("%s %s" %( progName, progVer ))
+print("INFO  - Initializing   One Moment Please ....")
+
+# Check for that pi camaera module is installed and enabled
+commandResult = subprocess.check_output("vcgencmd get_camera", shell=True)
+if (commandResult.find("0")) >= 0:   # -1 is not string not found
+    print("ERROR - Pi Camera Module Not Found %s" % commandResult) ,
+    print("        Verify that Pi Camera module is Installed Correctly")
+    print("        and is Enabled using command sudo raspi-config")
+    print("Exiting %s" % progName)
+    quit()
+else:
+    print("INFO  - Pi Camera Module Found and Enabled %s" % commandResult ) ,
 
 # Check for variable file to import and error out if not found.
 configFilePath = os.path.join(baseDir, "config.py")
@@ -26,35 +39,34 @@ if not os.path.exists(configFilePath):
     quit()
 else:
     # Read Configuration variables from config.py file
-    print("Importing Configuration Variables from File %s" % ( configFilePath ))
+    print("INFO  - Importing Configuration Variables from File %s" % ( configFilePath ))
     from config import *
 
 # Setup Logging now that variables are imported from config.py
 if logDataToFile:
-    print("Sending Logging Data to %s  (Console Messages Disabled)" %( logFilePath ))
+    print("INFO  - Sending Logging Data to %s  (Console Messages Disabled)" %( logFilePath ))
     logging.basicConfig(level=logging.DEBUG,
                     format='%(asctime)s %(levelname)-8s %(funcName)-10s %(message)s',
                     datefmt='%Y-%m-%d %H:%M:%S',
                     filename=logFilePath,
                     filemode='w')
 elif verbose:
-    print("Logging to Console per Variable verbose=True")
+    print("INFO  - Logging to Console per Variable verbose=True")
     logging.basicConfig(level=logging.DEBUG,
                     format='%(asctime)s %(levelname)-8s %(funcName)-10s %(message)s',
                     datefmt='%Y-%m-%d %H:%M:%S')
 else:
-    print("Logging Disabled per Variable verbose=False")
     logging.basicConfig(level=logging.CRITICAL,
                     format='%(asctime)s %(levelname)-8s %(funcName)-10s %(message)s',
                     datefmt='%Y-%m-%d %H:%M:%S')
 
-print("Loading Python Libraries ...")  # import remaining python libraries
+print("INFO  - Loading Python Libraries ...")  # import remaining python libraries
 
 try:
     import cv2
 except:
     print("------------------------------------")
-    print("Error - Could not import cv2 library")
+    print("ERROR - Could not import cv2 library")
     print("")
     if (sys.version_info > (2, 9)):
         print("python3 failed to import cv2")
@@ -72,7 +84,6 @@ import glob
 import shutil
 import sys
 import time
-import subprocess
 import math
 from threading import Thread
 import numpy as np
@@ -1304,6 +1315,9 @@ def videoRepeat():
 
 #-----------------------------------------------------------------------------------------------
 if __name__ == '__main__':
+    print("INFO  - Starting pi-timolo per %s Settings" % configFilePath)
+    if not verbose:
+        print("INFO  - Note: Logging Disabled per Variable verbose=False")
     try:
         if debug:
             dataLogger()
