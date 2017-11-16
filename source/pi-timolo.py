@@ -4,8 +4,8 @@
 # written by Claude Pageau Jul-2017 (release 7.x)
 # This release uses OpenCV to do Motion Tracking.  It requires updated config.py
 
-progVer = "ver 7.94"
-__version__ = "7.94"   # May test for version number at a future time
+progVer = "ver 7.95"
+__version__ = "7.95"   # May test for version number at a future time
 
 import datetime
 import logging
@@ -20,7 +20,7 @@ progName = os.path.basename(__file__)
 logFilePath = os.path.join(baseDir, baseFileName + ".log")
 
 print("----------------------------------------------------------------------------------------------")
-print("%s %s" %( progName, progVer ))
+print("%s %s  written by Claude Pageau" %( progName, progVer ))
 print("INFO  - Initializing ....")
 
 # Check for that pi camaera module is installed and enabled
