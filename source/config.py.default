@@ -3,8 +3,8 @@
 # Updated - 06-Jul-2017 IMPORTANT - Required for pi-timolo.py ver 7.0 or Greater
 # Done by - Claude Pageau
 
-configTitle = "pi-timolo ver 7.6 Default Settings"
-configName  = "config.py"
+configTitle = "pi-timolo ver 8.0 Default Settings"
+configName  = "config.py.default"
 
 #======================================
 #   pi-timolo.py Settings
@@ -68,6 +68,7 @@ motionPrefix = "mo-"        # default= "mo-" Prefix for all Motion Detect images
 motionCamSleep = 0.7        # default= 0.7 Sec of day sleep so camera can measure AWB before taking photo
 motionVideoOn = False       # default= False  True=Take a video clip rather than image
 motionVideoTimer = 10       # default= 10 seconds of video clip to take if Motion Detected
+motionVideoFPS = 30         # defaykt= 30  If image size reduced to 640x480 then slow motion is possible at 90 fps
 motionQuickTLOn = False     # default= False  True=Take a quick time lapse sequence rather than a single image (overrides motionVideoOn)
 motionQuickTLTimer = 10     # default= 10 Duration in seconds of quick time lapse sequence after initial motion detected
 motionQuickTLInterval = 0   # default= 0 seconds between each Quick time lapse image. 0 is fast as possible
@@ -111,6 +112,7 @@ videoPath = "media/videos"  # default= media/videos Storage folder path for vide
 videoPrefix = "vid-"        # prefix for video filenames
 videoDuration = 120         # default= 120 seconds for each video recording
 videoTimer = 60             # default= 60 minutes  Run Recording Session then Exit  0=Continuous
+videoFPS = 30               # default= 30 fps.  Note slow motion can be achieved at 640x480 resolution at 90fps
 videoNumOn = False          # default= True True=filenames by sequence Number  False=filenames by date/time
 videoNumRecycle = False     # default= False when NumMax reached restart at NumStart instead of exiting
 videoNumStart = 100         # default= 100 Start of video filename number sequence
@@ -150,6 +152,5 @@ web_max_list_entries = 0         # 0 = All or Specify Max right side file entrie
 web_list_height = web_image_height  # Right List - side menu height in px (link selection)
 web_list_by_datetime = True      # True=datetime False=filename
 web_list_sort_descending = True  # reverse sort order (filename or datetime per web_list_by_datetime setting
-
 
 # ---------------------------------------------- End of User Variables -----------------------------------------------------

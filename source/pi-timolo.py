@@ -4,8 +4,8 @@
 # written by Claude Pageau Jul-2017 (release 7.x)
 # This release uses OpenCV to do Motion Tracking.  It requires updated config.py
 
-progVer = "ver 7.96"
-__version__ = "7.96"   # May test for version number at a future time
+progVer = "ver 8.00"
+__version__ = "8.00"   # May test for version number at a future time
 
 import datetime
 import logging
@@ -142,7 +142,7 @@ class PiVideoStream:
         except:
            print("ERROR - PiCamera Already in Use by Another Process")
            print("INFO  - Exit %s" % progName)
-           quit()        
+           quit()
         self.camera.resolution = resolution
         self.camera.framerate = framerate
         self.camera.hflip = hflip
@@ -277,8 +277,8 @@ def displayInfo(motioncount, timelapsecount):
             else:
                 print("   Quick TL .. motionQuickTLOn=%s  Quick Time Lapse Disabled" % (motionQuickTLOn))
             if motionVideoOn:
-                print("   Video ..... motionVideoOn=%s   motionVideoTimer=%i sec   (superseded by QuickTL)"
-                                   % (motionVideoOn, motionVideoTimer))
+                print("   Video ..... motionVideoOn=%s   motionVideoTimer=%i sec  motionVideoFPS=%i (superseded by QuickTL)"
+                                   % (motionVideoOn, motionVideoTimer, motionVideoFPS))
             else:
                 print("   Video ..... motionVideoOn=%s  Motion Video is Disabled" % (motionVideoOn))
             print("   Sub-Dir ... motionSubDirMaxHours=%i (0-off)  motionSubDirMaxFiles=%i (0=off)" %
@@ -785,7 +785,7 @@ def takeQuickTimeLapse(moPath, imagePrefix, motionNumOn, motionNumCount, daymode
             time.sleep(motionQuickTLInterval)
 
 #-----------------------------------------------------------------------------------------------
-def takeVideo(filename, duration):
+def takeVideo(filename, duration, fps=30):
     # Take a short motion video if required
     logging.info("Start: Size %ix%i for %i sec to %s" % (imageWidth, imageHeight, duration, filename))
     if motionVideoOn or videoRepeatOn:
@@ -794,6 +794,7 @@ def takeVideo(filename, duration):
             camera.vflip = imageVFlip
             camera.hflip = imageHFlip
             camera.rotation = imageRotation # You can also use imageVFlip and imageHFlip variables
+            camera.framerate = fps
             if showDateOnImage:
                 rightNow = datetime.datetime.now()
                 dateTimeText = (" Started at %04d-%02d-%02d %02d:%02d:%02d "
@@ -1217,7 +1218,7 @@ def timolo():
                         else:
                             if motionVideoOn:
                                 filename = getVideoName(motionPath, imagePrefix, motionNumOn, motionNumCount)
-                                takeVideo(filename, motionVideoTimer)
+                                takeVideo(filename, motionVideoTimer, motionVideoFPS)
                             else:
                                 filename = getImageName(moPath, imagePrefix, motionNumOn, motionNumCount)
                                 if daymode:
@@ -1228,7 +1229,8 @@ def timolo():
                                                                  motionNumCount, motionNumRecycle, motionNumPath,
                                                                  filename, daymode)
                             if motionRecentMax > 0:
-                                saveRecent(motionRecentMax, motionRecentDir, filename, imagePrefix)
+                                if not motionVideoOn:   # prevent h264 video files from being copied to recent
+                                    saveRecent(motionRecentMax, motionRecentDir, filename, imagePrefix)
 
                         if motionTrackOn:
                             logging.info("Restart PiVideoStream ....")
@@ -1265,8 +1267,8 @@ def videoRepeat():
         os.makedirs(videoPath)
     print("------------------------------------------------------------------------------------------")
     print("VideoRepeat . videoRepeatOn=%s" % videoRepeatOn)
-    print("   Info ..... Size=%ix%i  videoPrefix=%s  videoDuration=%i seconds" %
-                       ( imageWidth, imageHeight, videoPrefix, videoDuration ))
+    print("   Info ..... Size=%ix%i  videoPrefix=%s  videoDuration=%i seconds  videoFPS=%i" %
+                       ( imageWidth, imageHeight, videoPrefix, videoDuration, videoFPS ))
     print("   Vid Path . videoPath=%s" % videoPath)
     print("   Timer .... videoTimer=%i minutes  0=Continuous" % ( videoTimer ))
     print("   Num Seq .. videoNumOn=%s  videoNumRecycle=%s  videoNumStart=%i  videoNumMax=%i 0=Continuous" %
@@ -1285,7 +1287,7 @@ def videoRepeat():
         if spaceTimerHrs > 0:
             lastSpaceCheck = freeDiskSpaceCheck(lastSpaceCheck)
         filename = getVideoName(videoPath, videoPrefix, videoNumOn, videoNumCounter )
-        takeVideo(filename, videoDuration)
+        takeVideo(filename, videoDuration, videoFPS)
         timeUsed = (datetime.datetime.now() - videoStartTime).total_seconds()
         timeRemaining = ( videoTimer*60 - timeUsed ) / 60.0
         videoCount += 1
@@ -1319,18 +1321,18 @@ def videoRepeat():
 
 #-----------------------------------------------------------------------------------------------
 if __name__ == '__main__':
-        
-    # Test if the pi camera is already in use    
+
+    # Test if the pi camera is already in use
     print("INFO  - Testing if Pi Camera in Use")
     ts = PiVideoStream().start()
-    time.sleep(3)    
+    time.sleep(3)
     ts.stop()
-    time.sleep(1)    
-    print("INFO  - Pi Camera is Available.") 
-    print("INFO  - Starting pi-timolo per %s Settings" % configFilePath)    
+    time.sleep(1)
+    print("INFO  - Pi Camera is Available.")
+    print("INFO  - Starting pi-timolo per %s Settings" % configFilePath)
     if not verbose:
         print("INFO  - Note: Logging Disabled per Variable verbose=False")
-        
+
     try:
         if debug:
             dataLogger()
