@@ -4,8 +4,8 @@
 # written by Claude Pageau Jul-2017 (release 7.x)
 # This release uses OpenCV to do Motion Tracking.  It requires updated config.py
 
-progVer = "ver 7.95"
-__version__ = "7.95"   # May test for version number at a future time
+progVer = "ver 7.96"
+__version__ = "7.96"   # May test for version number at a future time
 
 import datetime
 import logging
@@ -27,14 +27,14 @@ print("INFO  - Initializing ....")
 camResult = subprocess.check_output("vcgencmd get_camera", shell=True)
 camResult = camResult.decode("utf-8")
 camResult = camResult.replace("\n", "")
-if (camResult.find("0")) >= 0:   # -1 is not string not found
+if (camResult.find("0")) >= 0:   # -1 is zero not found. Cam OK
     print("ERROR - Pi Camera Module Not Found %s" % camResult)
-    print("        Verify that Pi Camera module is Installed Correctly")
-    print("        and is Enabled using command sudo raspi-config")
+    print("        if supported=0 Enable Camera using command sudo raspi-config")
+    print("        if detected=0 Check Pi Camera Module is Installed Correctly")
     print("Exiting %s" % progName)
     quit()
 else:
-    print("INFO  - Pi Camera Module Found and Enabled %s" % camResult )
+    print("INFO  - Pi Camera Module is Enabled and Connected %s" % camResult )
 
 # Check for variable file to import and error out if not found.
 configFilePath = os.path.join(baseDir, "config.py")
