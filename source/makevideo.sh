@@ -1,6 +1,6 @@
 #!/bin/bash
 
-ver="4.10"
+ver="4.20"
 
 # makevideo.sh written by Claude Pageau.
 # Note - makevideo.sh variables in makevideo.conf
@@ -95,7 +95,7 @@ fi
 # Remove old working folder if it exists
 if [ -d $tl_folder_working ] ; then
     echo "WARN  - Removing previous working folder" $tl_folder_working
-    sudo rm -R $tl_folder_working
+    rm -R $tl_folder_working
 fi
 
 # Create a new temporary working folder to store soft links
@@ -155,13 +155,13 @@ else
       # Skip this file in listing since image may be in progress
       while read not_the_most_recent_file
       do
-        sudo rm $not_the_most_recent_file
+        rm $not_the_most_recent_file
       done
     )
   fi
 
   echo "STATUS- Deleting Working Folder" $tl_folder_working
-  sudo rm -R $tl_folder_working
+  rm -R $tl_folder_working
   if [ $? -ne 0 ] ; then
     echo "ERROR - Could not Delete Working Folder" $tl_folder_working
     echo "ERROR - Check for permissions or other possible problems"
@@ -199,7 +199,7 @@ if [ "$tl_share_copy_on" = true ] ; then
       echo "STATUS-   From" $tl_folder_destination/$tl_videoname
       echo "STATUS-   To  " $tl_share_destination/$tl_videoname
       echo "WARN  - Deleting Local Video File" $tl_folder_destination/$tl_videoname
-      sudo rm -f $tl_folder_destination/$tl_videoname
+      rm -f $tl_folder_destination/$tl_videoname
       if [ -e $tl_folder_destination/$tl_videoname ] ; then
         echo "ERROR - Could Not Delete" $tl_folder_destination/$tl_videoname "After Copy To" $tl_share_destination/$tl_videoname
         echo "ERROR - Please investigate"
