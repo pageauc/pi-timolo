@@ -1,6 +1,6 @@
 #!/bin/bash
 
-ver="4.20"
+ver="4.30"
 
 # makevideo.sh written by Claude Pageau.
 # Note - makevideo.sh variables in makevideo.conf
@@ -12,6 +12,7 @@ ver="4.20"
 # https://github.com/pageauc/pi-timolo/wiki/Utilities
 
 # get current working folder that this script was launched from
+
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 cd $DIR
 
@@ -60,6 +61,8 @@ echo "tl_files_ext           = $tl_files_ext"
 echo "tl_files_sort          = $tl_files_sort "
 echo "tl_source_files        = $tl_source_files"
 echo "tl_folder_destination  = $tl_folder_destination"
+echo "tl_archive_source_files= $tl_archive_source_files"
+echo "tl_archive_dest_folder = $tl_archive_dest_folder"
 echo "tl_delete_source_files = $tl_delete_source_files"
 echo "tl_share_copy_on       = $tl_share_copy_on"
 echo "tl_share_destination   = $tl_share_destination"
@@ -81,7 +84,7 @@ if ! ls $tl_source_files 1> /dev/null 2>&1 ; then
     exit 1
 fi
 
-# Create destination folder if it does note exist
+# Create destination folder if it does not exist
 if [ ! -d $tl_folder_destination ] ; then
     mkdir $tl_folder_destination
     if [ "$?" -ne 0 ]; then
@@ -142,20 +145,43 @@ if [ $? -ne 0 ] ; then
 else
   echo "=========================================================================="
   echo "STATUS- Video Saved to" $tl_folder_destination/$tl_videoname
-
-  if [ "$tl_delete_source_files" = true ] ; then
-    echo "WARN  - Variable tl_delete_source_files="$tl_delete_source_files
-    echo "WARN  - Deleting Source Files $tl_folder_source/*$tl_files"
-    # Be Careful Not to Crash pi-timolo.py by deleting image file in progress
-    ls -t $tl_source_files |
+  
+  # Process archive, delete or do nothing for encoded source image files
+ 
+  if [ "$tl_archive_source_files" = true ] ; then    # Check if archiving enabled   
+    if [ ! -d $tl_archive_dest_folder ] ; then  # Check if archive folder exists
+        echo "ERROR - Archive Folder" $tl_archive_dest_folder "Does Not Exist"
+        echo "ERROR - Check $0 Variable tl_archive_dest_folder and Try Again"
+        echo "ERROR - Archive Folder $tl_archive_dest_folder Does Not Exist." >> $error_log_file
+        exit 1
+    fi   
+    echo "INFO  - Variable tl_archive_source_files="$tl_archive_source_files
+    echo "INFO  - Moving Encoded Source Files $tl_folder_source to $tl_achive_dest_folder"
+    ls $tl_folder_working |     # get directory listing of working folder symlinks
     (
-      # the first line will be the most recent file so ignore it
-      # since it might still be in progress
-      read the_most_recent_file
-      # Skip this file in listing since image may be in progress
-      while read not_the_most_recent_file
+      while read linkFile
       do
-        rm $not_the_most_recent_file
+        imageFilePath=$(readlink -f $tl_folder_working/$linkFile)  # read symlink for full path to image file
+        echo "INFO  - Move $imageFilePath to $tl_archive_dest_folder"
+        mv $imageFilePath $tl_archive_dest_folder  # move image file to archive folder
+      done
+    )  
+   
+  elif [ "$tl_delete_source_files" = true ] ; then   # Check if delete source files is enabled
+    echo "WARN  - Variable tl_delete_source_files="$tl_delete_source_files
+    echo "WARN  - Start Deleting Encoded Source Files in $tl_folder_source"
+
+    ls $tl_folder_working |    # get directory listing of working folder symlinks
+    (
+      while read linkFile
+      do
+        imageFile=$(readlink -f $tl_folder_working/$linkFile)
+        echo "WARN  - Deleting $imageFile"        
+        rm $imageFile
+        if [ -e $imageFile ] ; then
+            echo "ERROR - Delete Failed for $imageFile"
+            echo "ERROR - Delete Failed for " $imageFile >> $error_log_file
+        fi            
       done
     )
   fi
