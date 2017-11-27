@@ -1,6 +1,6 @@
 #!/bin/bash
 
-ver="4.40"
+ver="4.50"
 
 # makevideo.sh written by Claude Pageau.
 # Note - makevideo.sh variables in makevideo.conf
@@ -89,23 +89,23 @@ if [ ! -d $tl_folder_destination ] ; then
 fi
 
 # Create Archive subfolder if archiving enabled One Folder per day
-if [ "$tl_archive_source_files"=true ] ; then    # Check if archiving enabled   
+if [ "$tl_archive_source_files"=true ] ; then    # Check if archiving enabled
     if [ ! -d $tl_archive_dest_folder ] ; then  # Check if archive folder exists
         echo "ERROR - Archive Folder" $tl_archive_dest_folder "Does Not Exist"
         echo "ERROR - Check $0 Variable tl_archive_dest_folder and Try Again"
         echo "ERROR - Archive Folder $tl_archive_dest_folder Does Not Exist." >> $error_log_file
         exit 1
-    fi  
+    fi
     # create date/time stamped subfolder
     subfolderName=$(date '+%Y-%m-%d')  # Dated subfolder name Year/Month/Day  One per day
     if [ ! -d $tl_archive_dest_folder/$subfolderName ] ; then
         echo "INFO  - Create subfolder $tl_archive_dest_folder/$subfolderName"
         mkdir -p $tl_archive_dest_folder/$subfolderName
         if [ ! -d $tl_archive_dest_folder/$subfolderName ] ; then
-            echo "ERROR  -  subfolder create Failed $tl_archive_dest_folder/$subfolderName" 
+            echo "ERROR  -  subfolder create Failed $tl_archive_dest_folder/$subfolderName"
             echo "ERROR  -  subfolder create Failed $tl_archive_dest_folder/$subfolderName" >> $error_log_file
             exit 1
-        fi            
+        fi
     fi
 fi
 
@@ -159,9 +159,9 @@ if [ $? -ne 0 ] ; then
 else
   echo "=========================================================================="
   echo "STATUS- Video Saved to" $tl_folder_destination/$tl_videoname
-  
-  # Process archive, delete or do nothing for encoded source image files 
-  if [ "$tl_archive_source_files"=true ] ; then    # Check if archiving enabled     
+
+  # Process archive, delete or do nothing for encoded source image files
+  if [ "$tl_archive_source_files"=true ] ; then    # Check if archiving enabled
     echo "INFO  - Archive Enabled per tl_archive_source_files="$tl_archive_source_files
     echo "INFO  - Archive Files from $tl_folder_source to $tl_archive_dest_folder/$subfolderName"
     echo "INFO  - This will Take Some Time.  Wait ...."
@@ -172,35 +172,33 @@ else
         imageFilePath=$( readlink -f $tl_folder_working/$linkFile )  # read symlink for full path to image file
         imageFilename=$(basename $imageFilePath)
         # echo "INFO  - Move $imageFilePath to $tl_archive_dest_folder"
-        cp -p -r  $imageFilePath $tl_archive_dest_folder/$subfolderName # copy image file and preserve date/time info to archive folder
+        cp -p  $imageFilePath $tl_archive_dest_folder/$subfolderName # copy image file and preserve timestamp
         if [ -e $tl_archive_dest_folder/$subfolderName/$imageFilename ] ; then
-            rm -rf $imageFilePath 
+            rm -f $imageFilePath   # Remove original image file without prompt
             if [ -e $imageFilePath ] ; then
                 echo "ERROR - Delete Failed $imageFilePath.  Please Investigate ..."
-                echo "ERROR - Delete Failed $imageFilePath.  Please Investigate ..." >> $error_log_file             
-            fi              
+                echo "ERROR - Delete Failed $imageFilePath.  Please Investigate ..." >> $error_log_file
+            fi
         else
             echo "ERROR - Copy Failed $imageFilePath to $tl_archive_dest_folder/$subfolderName"
             echo "ERROR - Copy Failed $imageFilePath to $tl_archive_dest_folder/"$subfolderName >> $error_log_file
         fi
       done
-    )  
-   
+    )
   elif [ "$tl_delete_source_files" = true ] ; then   # Check if delete source files is enabled
     echo "WARN  - Variable tl_delete_source_files="$tl_delete_source_files
     echo "WARN  - Start Deleting Encoded Source Files in $tl_folder_source"
-
     ls $tl_folder_working |    # get directory listing of working folder symlinks
     (
       while read linkFile
       do
         imageFile=$(readlink -f $tl_folder_working/$linkFile)
-        echo "WARN  - Deleting $imageFile"        
-        rm $imageFile
+        echo "WARN  - Deleting $imageFile"
+        rm -f $imageFile
         if [ -e $imageFile ] ; then
             echo "ERROR - Delete Failed for $imageFile"
             echo "ERROR - Delete Failed for $imageFile" >> $error_log_file
-        fi            
+        fi
       done
     )
   fi
@@ -232,7 +230,7 @@ if [ "$tl_share_copy_on" = true ] ; then
     exit 1
   fi
 
-  cp $tl_folder_destination/$tl_videoname $tl_share_destination
+  cp -p $tl_folder_destination/$tl_videoname $tl_share_destination
   if [ $? -ne 0 ]; then
     echo "ERROR - Copy Failed $tl_folder_destination/$tl_videoname to" $tl_share_destination/$tl_videoname
     echo "ERROR - If destination is a remote folder or mount then check network, destination IP address, permissions, Etc"
