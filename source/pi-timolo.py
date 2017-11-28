@@ -602,17 +602,18 @@ def writeTextToImage(imagename, datetoprint, daymode):
     font_path = '/usr/share/fonts/truetype/freefont/FreeSansBold.ttf'
     font = ImageFont.truetype(font_path, showTextFontSize, encoding='unic')
     text = TEXT.decode('utf-8')
-
+    img = Image.open(imagename)
+    
     try:  # Read exif data since ImageDraw does not save this metadata bypass if python3
-        img = Image.open(imagename)
         metadata = pyexiv2.ImageMetadata(imagename)
         metadata.read()
     except:
         pass
 
-    draw = ImageDraw.Draw(img)
+    draw = ImageDraw.Draw(img)      
     # draw.text((x, y),"Sample Text",(r,g,b))
     draw.text(( x, y ), text, FOREGROUND, font=font)
+    img.save(imagename)
     
     try:   # bypass writing exif data if running under python3.
         metadata.write()    # Write previously saved exif data to image file
