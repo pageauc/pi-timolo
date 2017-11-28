@@ -4,8 +4,8 @@
 # written by Claude Pageau Jul-2017 (release 7.x)
 # This release uses OpenCV to do Motion Tracking.  It requires updated config.py
 
-progVer = "ver 8.00"
-__version__ = "8.00"   # May test for version number at a future time
+progVer = "ver 8.10"
+__version__ = "8.10"   # May test for version number at a future time
 
 import datetime
 import logging
@@ -603,15 +603,22 @@ def writeTextToImage(imagename, datetoprint, daymode):
     font = ImageFont.truetype(font_path, showTextFontSize, encoding='unic')
     text = TEXT.decode('utf-8')
 
-    # Read exif data since ImageDraw does not save this metadata
-    img = Image.open(imagename)
-    metadata = pyexiv2.ImageMetadata(imagename)
-    metadata.read()
+    try:  # Read exif data since ImageDraw does not save this metadata bypass if python3
+        img = Image.open(imagename)
+        metadata = pyexiv2.ImageMetadata(imagename)
+        metadata.read()
+    except:
+        pass
 
     draw = ImageDraw.Draw(img)
     # draw.text((x, y),"Sample Text",(r,g,b))
     draw.text(( x, y ), text, FOREGROUND, font=font)
-    img.save(imagename)
+    
+    try:   # bypass writing exif data if running under python3.
+        metadata.write()    # Write previously saved exif data to image file
+    except:
+        pass
+        
     metadata.write()    # Write previously saved exif data to image file
     logging.info("Added %s Text [ %s ]", textColour, datetoprint)
     logging.info("%s" % imagename)
