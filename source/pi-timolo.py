@@ -619,7 +619,6 @@ def writeTextToImage(imagename, datetoprint, daymode):
     except:
         pass
         
-    metadata.write()    # Write previously saved exif data to image file
     logging.info("Added %s Text [ %s ]", textColour, datetoprint)
     logging.info("%s" % imagename)
 
