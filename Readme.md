@@ -12,7 +12,7 @@ This is similar to a dash cam.  Requires the updated config.py.
 There is also a new motionTrackQuickPic feature that saves a stream image rather than switching to normal pi-camera non streaming mode.    
 RPI Forum Post details here https://www.raspberrypi.org/forums/viewtopic.php?p=1183663#p1183663   
 
-***New Release 9.0*** Implement Optional plugins Feature and make python2 compatible    
+***New Release 9.0*** Implement Optional plugins Feature and make python3 compatible    
 For plugins details see https://github.com/pageauc/pi-timolo/wiki/How-to-Use-Plugins    
 for python3 Support Details see https://github.com/pageauc/pi-timolo/wiki/Prerequisites#python-3-support
 
