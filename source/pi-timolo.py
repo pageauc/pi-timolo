@@ -48,9 +48,9 @@ else:
     print("INFO  - Import Configuration Variables from File %s" % ( configFilePath ))
     from config import *
 
+pluginDir = os.path.join(baseDir,"plugins")
 pluginCurrent = os.path.join(pluginDir, "current.py")
 if pluginEnable:     # Check and verify plugin and load variable overlay
-    pluginDir = os.path.join(baseDir,"plugins")
     if pluginName.endswith('.py'):      # Check if there is a .py at the end of pluginName variable
         pluginName = pluginName[:-3]    # Remove .py extensiion
     pluginPath = os.path.join(pluginDir, pluginName + '.py')
