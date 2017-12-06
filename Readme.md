@@ -8,10 +8,13 @@ Release 6.0 with optional DateTime Named subfolders, recent files option and Dis
 Release 6.7 with videoRepeat option to take continuous video clips by filename datetime or seq num and exit by
 specified time or number of videos or run continuous and manage by freedisk space..  
 This is similar to a dash cam.  Requires the updated config.py.   
-***New Release 7.x*** Now uses openCV motion Tracking to track objects above a min size for a designated pixel track trigger length.
+***Release 7.x*** Now uses openCV motion Tracking to track objects above a min size for a designated pixel track trigger length.
 There is also a new motionTrackQuickPic feature that saves a stream image rather than switching to normal pi-camera non streaming mode.    
 RPI Forum Post details here https://www.raspberrypi.org/forums/viewtopic.php?p=1183663#p1183663   
-***Release 9.0*** Implement plugins see https://github.com/pageauc/pi-timolo/wiki/How-to-Use-Plugins
+
+***New Release 9.0*** Implement Optional plugins Feature and make python2 compatible
+For plugins details see https://github.com/pageauc/pi-timolo/wiki/How-to-Use-Plugins    
+for python3 Support Details see https://github.com/pageauc/pi-timolo/wiki/Prerequisites#python-3-support
 
 **See Minimal Upgrade Below** if you have a recent pi-timolo version installed
 
