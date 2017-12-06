@@ -24,8 +24,6 @@ for fname in "${pluginFiles[@]}" ; do
         else
             wget -O $fname "https://raw.github.com/pageauc/pi-timolo/master/source/plugins/$fname"
         fi
-    else
-        wget -O $fname -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/plugins/$fname
     fi
   fi
 done

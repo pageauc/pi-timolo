@@ -64,8 +64,6 @@ for fname in "${timoloFiles[@]}" ; do
         else
             wget -O $fname https://raw.github.com/pageauc/pi-timolo/master/source/$fname
         fi
-    else
-        wget -O $fname -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/$fname
     fi
 done
 
@@ -73,15 +71,15 @@ echo "Download Backup Files  Please Wait ..."
 wget -O config_new.py -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/config.py
 if [ $? -ne 0 ] ;  then
     wget -O config_new.py https://raw.github.com/pageauc/pi-timolo/master/source/config.py
-    wget -O Readme.md -q https://raw.github.com/pageauc/pi-timolo/master/Readme.md   
     wget -O config.py.default https://raw.github.com/pageauc/pi-timolo/master/source/config.py
     wget -O convid.conf.new https://raw.github.com/pageauc/pi-timolo/master/source/convid.conf
+    wget -O Readme.md -q https://raw.github.com/pageauc/pi-timolo/master/Readme.md
     wget -O makevideo.conf.new https://raw.github.com/pageauc/pi-timolo/master/source/makevideo.conf
     wget -O gdrive https://raw.github.com/pageauc/pi-timolo/master/source/drive_armv6
     wget -O media/webserver.txt https://raw.github.com/pageauc/pi-timolo/master/source/webserver.txt
 else
     wget -O config.py.default -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/config.py.default
-    wget -O Readme.md -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/Readme.md    
+    wget -O Readme.md -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/Readme.md
     wget -O convid.conf.new -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/convid.conf
     wget -O makevideo.conf.new -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/makevideo.conf
     wget -O gdrive -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/drive_armv6
