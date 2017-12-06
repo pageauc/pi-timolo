@@ -14,8 +14,8 @@ configName  = "config.py"
 # --------------------------
 # Note - Set verbose to False if script is run in background or from /etc/rc.local
 
-pluginEnable = True        # default= False True reads customized settings from a custom.py file 
-pluginName = "dashcam"     # specify filename in plugins subfolder without .py extension
+pluginEnable = False       # default= False True reads customized settings from a custom.py file
+pluginName = "shopcam"     # specify filename in plugins subfolder without .py extension
 
 verbose = True             # default= True Sends logging Info to Console. False if running script as daeman
 logDataToFile = False      # default= False True logs diagnostic data to a disk file for review
@@ -28,8 +28,8 @@ imageWidth = 1024          # default= 1024 Full Size Image Width in px
 imageHeight = 768          # default= 768  Full Size Image Height in px
 imageFormat = ".jpg"       # default = ".jpg"  image Formats .jpeg .png .gif .bmp
 imageJpegQuality = 10      # default = 20  Valid jpg encoder quality values 1(high) - 40(low)
-imageVFlip = True          # default= False True Flips image Vertically
-imageHFlip = True          # default= False True Flips image Horizontally
+imageVFlip = False         # default= False True Flips image Vertically
+imageHFlip = False         # default= False True Flips image Horizontally
 imageRotation = 0          # Default= 0  Rotate image. Valid values: 0, 90, 180, 270
 noNightShots = False       # default= False True=No Night Images (Motion or Timelapse)
 noDayShots = False         # default= False True=No Day Images (Motion or Timelapse)
