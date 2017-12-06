@@ -48,6 +48,7 @@ else:
     print("INFO  - Import Configuration Variables from File %s" % ( configFilePath ))
     from config import *
 
+pluginCurrent = os.path.join(pluginDir, "current.py")
 if pluginEnable:     # Check and verify plugin and load variable overlay
     pluginDir = os.path.join(baseDir,"plugins")
     if pluginName.endswith('.py'):      # Check if there is a .py at the end of pluginName variable
@@ -79,7 +80,7 @@ if pluginEnable:     # Check and verify plugin and load variable overlay
         print("INFO  - Exiting %s Due to Error" % progName)
         quit()
     else:
-        pluginCurrent = os.path.join(pluginDir, "current.py")
+
         try:    # Copy image file to recent folder
             print("INFO  - Copy %s to %s" %( pluginPath, pluginCurrent ))
             shutil.copy(pluginPath, pluginCurrent)
