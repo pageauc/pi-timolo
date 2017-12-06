@@ -48,9 +48,8 @@ else:
     print("INFO  - Import Configuration Variables from File %s" % ( configFilePath ))
     from config import *
 
-pluginDir = os.path.join(baseDir,"plugins")
-pluginCurrent = os.path.join(pluginDir, "current.py")
 if pluginEnable:     # Check and verify plugin and load variable overlay
+    pluginDir = os.path.join(baseDir,"plugins")
     if pluginName.endswith('.py'):      # Check if there is a .py at the end of pluginName variable
         pluginName = pluginName[:-3]    # Remove .py extensiion
     pluginPath = os.path.join(pluginDir, pluginName + '.py')
@@ -80,7 +79,7 @@ if pluginEnable:     # Check and verify plugin and load variable overlay
         print("INFO  - Exiting %s Due to Error" % progName)
         quit()
     else:
-
+        pluginCurrent = os.path.join(pluginDir, "current.py")
         try:    # Copy image file to recent folder
             print("INFO  - Copy %s to %s" %( pluginPath, pluginCurrent ))
             shutil.copy(pluginPath, pluginCurrent)
@@ -1445,11 +1444,12 @@ if __name__ == '__main__':
         print("")
         pass
     try:
-        if os.path.exists(pluginCurrent):
-            os.remove(pluginCurrent)
-        pluginCurrentpyc = os.path.join(pluginDir, "current.pyc")
-        if os.path.exists(pluginCurrentpyc):
-            os.remove(pluginCurrentpyc)
+        if pluginEnable:
+            if os.path.exists(pluginCurrent):
+                os.remove(pluginCurrent)
+            pluginCurrentpyc = os.path.join(pluginDir, "current.pyc")
+            if os.path.exists(pluginCurrentpyc):
+                os.remove(pluginCurrentpyc)
     except OSError as err:
         print("ERROR - Failed Removal of %s - %s" % ( pluginCurrentpyc, err ))
         print("INFO  - Exiting %s Due to Error" % progName)
