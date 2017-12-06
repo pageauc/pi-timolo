@@ -142,7 +142,6 @@ echo "-------------------------------------------------------------"
 echo "7 - Install plugins"
 echo ""
 ./plugins-install.sh
-cd $TIMOLO_DIR
 
 # Check if pi-timolo-install.sh was launched from pi-timolo folder
 if [ "$DIR" != "$INSTALL_PATH" ]; then
