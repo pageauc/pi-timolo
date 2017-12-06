@@ -51,14 +51,14 @@ if [ -e convid.conf ]; then
   fi
 fi
 
-timoloFiles=("config.py" "config.py.default" "menubox.py" "pi-timolo.py" "pi-timolo.sh" \
+timoloFiles=("config.py" "menubox.py" "pi-timolo.py" "pi-timolo.sh" \
 "pi-timolo-install.sh" "Readme.md" "sync.sh" "webserver.py" "webserver.sh" \
 "convid.sh" "convid.conf" "makevideo.sh" "makevideo.conf" "mvleavelast.sh" "myip.sh" "plugins-install.sh")
 
 for fname in "${timoloFiles[@]}" ; do
     wget_output=$(wget -O $fname -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/$fname)
     if [ $? -ne 0 ]; then
-        wget_output=$(wget -O $fname -q "https://raw.github.com/pageauc/pi-timolo/master/source/plugins/$fname")
+        wget_output=$(wget -O $fname -q https://raw.github.com/pageauc/pi-timolo/master/source/plugins/$fname)
         if [ $? -ne 0 ]; then
             echo "ERROR - $fname wget Download Failed. Possible Cause Internet Problem."
         else
