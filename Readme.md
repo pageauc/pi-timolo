@@ -10,8 +10,8 @@ specified time or number of videos or run continuous and manage by freedisk spac
 This is similar to a dash cam.  Requires the updated config.py.   
 ***New Release 7.x*** Now uses openCV motion Tracking to track objects above a min size for a designated pixel track trigger length.
 There is also a new motionTrackQuickPic feature that saves a stream image rather than switching to normal pi-camera non streaming mode.    
-RPI Forum Post details here https://www.raspberrypi.org/forums/viewtopic.php?p=1183663#p1183663
-Release 9.0 Implement plugins see  https://github.com/pageauc/pi-timolo/wiki/How-to-Use-Plugins
+RPI Forum Post details here https://www.raspberrypi.org/forums/viewtopic.php?p=1183663#p1183663   
+***Release 9.0*** Implement plugins see https://github.com/pageauc/pi-timolo/wiki/How-to-Use-Plugins
 
 **See Minimal Upgrade Below** if you have a recent pi-timolo version installed
 
