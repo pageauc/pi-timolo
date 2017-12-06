@@ -51,7 +51,7 @@ if [ -e convid.conf ]; then
   fi
 fi
 
-timolofiles=("config.py" "config.py.default" "menubox.py" "pi-timolo.py" "pi-timolo.sh" \
+timoloFiles=("config.py" "config.py.default" "menubox.py" "pi-timolo.py" "pi-timolo.sh" \
 "pi-timolo-install.sh" "Readme.md" "sync.sh" "webserver.py" "webserver.sh" \
 "convid.sh" "convid.conf" "makevideo.sh" "makevideo.conf" "mvleavelast.sh" "myip.sh" "plugins-install.sh")
 
