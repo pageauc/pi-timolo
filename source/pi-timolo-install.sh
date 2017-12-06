@@ -51,8 +51,8 @@ if [ -e convid.conf ]; then
   fi
 fi
 
-timoloFiles=("config.py" "menubox.py" "pi-timolo.py" "pi-timolo.sh" \
-"pi-timolo-install.sh" "Readme.md" "sync.sh" "webserver.py" "webserver.sh" \
+timoloFiles=("config.py" "menubox.sh" "pi-timolo.py" "pi-timolo.sh" \
+"pi-timolo-install.sh" "sync.sh" "webserver.py" "webserver.sh" \
 "convid.sh" "convid.conf" "makevideo.sh" "makevideo.conf" "mvleavelast.sh" "myip.sh" "plugins-install.sh")
 
 for fname in "${timoloFiles[@]}" ; do
@@ -73,6 +73,7 @@ echo "Download Backup Files  Please Wait ..."
 wget -O config_new.py -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/config.py
 if [ $? -ne 0 ] ;  then
     wget -O config_new.py https://raw.github.com/pageauc/pi-timolo/master/source/config.py
+    wget -O Readme.md -q https://raw.github.com/pageauc/pi-timolo/master/Readme.md   
     wget -O config.py.default https://raw.github.com/pageauc/pi-timolo/master/source/config.py
     wget -O convid.conf.new https://raw.github.com/pageauc/pi-timolo/master/source/convid.conf
     wget -O makevideo.conf.new https://raw.github.com/pageauc/pi-timolo/master/source/makevideo.conf
@@ -80,6 +81,7 @@ if [ $? -ne 0 ] ;  then
     wget -O media/webserver.txt https://raw.github.com/pageauc/pi-timolo/master/source/webserver.txt
 else
     wget -O config.py.default -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/config.py.default
+    wget -O Readme.md -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/Readme.md    
     wget -O convid.conf.new -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/convid.conf
     wget -O makevideo.conf.new -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/makevideo.conf
     wget -O gdrive -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/drive_armv6
