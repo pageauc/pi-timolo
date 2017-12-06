@@ -16,9 +16,9 @@ for fname in "${pluginFiles[@]}" ; do
   if [ -f $fname ]; then     # check if local file exists.
     echo "INFO  - $fname Skip Download Since Local Copy Found"
   else
-    wget_output=$(wget $fname -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/plugins/$fname)
+    wget_output=$(wget -O $fname -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/plugins/$fname)
     if [ $? -ne 0 ]; then
-        wget_output=$(wget $fname -q "https://raw.github.com/pageauc/pi-timolo/master/source/plugins/$fname")
+        wget_output=$(wget -O $fname -q https://raw.github.com/pageauc/pi-timolo/master/source/plugins/$fname)
         if [ $? -ne 0 ]; then
             echo "ERROR - $fname wget Download Failed. Possible Cause Internet Problem."
         else
