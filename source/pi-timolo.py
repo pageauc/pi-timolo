@@ -4,14 +4,16 @@
 # written by Claude Pageau Jul-2017 (release 7.x)
 # This release uses OpenCV to do Motion Tracking.  It requires updated config.py
 
-progVer = "ver 8.10"
-__version__ = "8.10"   # May test for version number at a future time
+progVer = "ver 9.0"
+__version__ = "9.0"   # May test for version number at a future time
 
 import datetime
 import logging
 import os
 import sys
 import subprocess
+import shutil
+import glob
 
 mypath = os.path.abspath(__file__)  # Find the full path of this python script
 baseDir = os.path.dirname(mypath)   # get the path location only (excluding script name)
@@ -23,28 +25,85 @@ print("-------------------------------------------------------------------------
 print("%s %s  written by Claude Pageau" %( progName, progVer ))
 print("INFO  - Initializing ....")
 
-# Check for that pi camaera module is installed and enabled
+# Check that pi camaera module is installed and enabled
 camResult = subprocess.check_output("vcgencmd get_camera", shell=True)
 camResult = camResult.decode("utf-8")
 camResult = camResult.replace("\n", "")
-if (camResult.find("0")) >= 0:   # -1 is zero not found. Cam OK
+if (camResult.find("0")) >= 0:   # Was a 0 found in vcgencmd output
     print("ERROR - Pi Camera Module Not Found %s" % camResult)
     print("        if supported=0 Enable Camera using command sudo raspi-config")
     print("        if detected=0 Check Pi Camera Module is Installed Correctly")
-    print("Exiting %s" % progName)
+    print("INFO  - Exiting %s Due to Error" % progName)
     quit()
 else:
     print("INFO  - Pi Camera Module is Enabled and Connected %s" % camResult )
 
-# Check for variable file to import and error out if not found.
+# Check for config.py variable file to import and error out if not found.
 configFilePath = os.path.join(baseDir, "config.py")
 if not os.path.exists(configFilePath):
     print("ERROR - Cannot Import Configuration Variables. Missing Configuration File %s" % ( configFilePath ))
     quit()
 else:
     # Read Configuration variables from config.py file
-    print("INFO  - Importing Configuration Variables from File %s" % ( configFilePath ))
+    print("INFO  - Import Configuration Variables from File %s" % ( configFilePath ))
     from config import *
+
+if pluginEnable:     # Check and verify plugin and load variable overlay
+    pluginDir = os.path.join(baseDir,"plugins")
+    if pluginName.endswith('.py'):      # Check if there is a .py at the end of pluginName variable
+        pluginName = pluginName[:-3]    # Remove .py extensiion
+    pluginPath = os.path.join(pluginDir, pluginName + '.py')
+    print("INFO  - pluginEnabled - loading pluginName %s" % pluginPath)
+    if not os.path.isdir(pluginDir):
+        print("ERROR - plugin Directory Not Found at %s" % pluginDir )
+        print("        Suggest you Rerun github curl install script to install plugins")
+        print("        https://github.com/pageauc/pi-timolo/wiki/How-to-Install-or-Upgrade#quick-install")
+        print("INFO  - Exiting %s Due to Error" % progName)
+        quit()
+
+    elif not os.path.exists(pluginPath):
+        print("ERROR - File Not Found pluginName %s" % pluginPath )
+        print("        Check Spelling of pluginName Value in %s" % configFilePath)
+        print("        ------- Valid Names -------")
+        validPlugin = glob.glob(pluginDir + "/*py")
+        validPlugin.sort()
+        for entry in validPlugin:
+            pluginFile = os.path.basename(entry)
+            plugin = pluginFile.rsplit('.', 1)[0]
+            if not ((plugin == "__init__") or (plugin == "current")):
+                print("        %s"  % plugin)
+        print("        ------- End of List -------")
+        print("        Note: pluginName Should Not have .py Ending.")
+        print("INFO  - or Rerun github curl install command.  See github wiki")
+        print("        https://github.com/pageauc/pi-timolo/wiki/How-to-Install-or-Upgrade#quick-install")
+        print("INFO  - Exiting %s Due to Error" % progName)
+        quit()
+    else:
+        pluginCurrent = os.path.join(pluginDir, "current.py")
+        try:    # Copy image file to recent folder
+            print("INFO  - Copy %s to %s" %( pluginPath, pluginCurrent ))
+            shutil.copy(pluginPath, pluginCurrent)
+        except OSError as err:
+            print('ERROR - Copy Failed from %s to %s - %s' % ( pluginPath, pluginCurrent, err))
+            Pring("        Check permissions, disk space, Etc.")
+            print("INFO  - Exiting %s Due to Error" % progName)
+            quit()
+        print("INFO  - Import Plugin %s" % pluginPath)
+        sys.path.insert(0,pluginDir)    # add plugin directory to program PATH
+        from plugins.current import *
+        try:
+            if os.path.exists(pluginCurrent):
+                os.remove(pluginCurrent)
+            pluginCurrentpyc = os.path.join(pluginDir, "current.pyc")
+            if os.path.exists(pluginCurrentpyc):
+                os.remove(pluginCurrentpyc)
+        except OSError as err:
+            print("ERROR - Failed Removal of %s - %s" % ( pluginCurrentpyc, err ))
+            print("INFO  - Exiting %s Due to Error" % progName)
+
+
+else:
+    print("INFO  - No Plugins Enabled per pluginEnable=%s" % pluginEnable)
 
 # Setup Logging now that variables are imported from config.py
 if logDataToFile:
@@ -65,14 +124,13 @@ else:
                     datefmt='%Y-%m-%d %H:%M:%S')
 
 print("INFO  - Loading Python Libraries Please Wait ...")  # import remaining python libraries
-
 try:
     import cv2
 except:
     if (sys.version_info > (2, 9)):
-        print("ERROR - python3 Failed to import cv2")
+        print("ERROR - python3 Failed to import cv2 opencv ver 3.x")
         print("        Try installing opencv for python3")
-        print("        google for details regarding installing opencv for python3")
+        print("        see https://github.com/pageauc/opencv3-setup")
     else:
         print("ERROR - python2 Failed to import cv2")
         print("        Try reinstalling per command")
@@ -80,8 +138,30 @@ except:
     print("INFO  - Exiting %s Due to Error" % progName)
     quit()
 
-import glob
-import shutil
+try:
+    import picamera
+except:
+    print("ERROR - Problem importing picamera")
+    print("        Try the following commands to import approriate version")
+    if (sys.version_info > (2, 9)):
+        print("        sudo apt-get install python3-picamera")
+    else:
+        print("        sudo apt-get install python-picamera")
+    print("     or")
+
+    print("INFO  - Exiting %s Due to Error" % progName)
+    quit()
+
+from picamera import PiCamera
+from picamera.array import PiRGBArray
+import picamera.array
+
+# For python3 install of pyexiv2 lib See https://github.com/pageauc/pi-timolo/issues/79
+try:  # Bypass pyexiv2 if library Not Found  (Transfers image exif data in writeTextToImage)
+    import pyexiv2
+except:
+    pass
+
 import time
 import math
 from threading import Thread
@@ -91,19 +171,10 @@ from PIL import ImageFont
 from PIL import ImageDraw
 from fractions import Fraction
 
-from picamera.array import PiRGBArray
-import picamera
-from picamera import PiCamera
-import picamera.array
-
-if not (sys.version_info > (3, 0)):  # Bypass pyexiv2 if opencv 3 used
-    import pyexiv2
-
 #==================================
 #      System Variables
-# Should not need to be customized
+# Should Not need to be customized
 #==================================
-
 SECONDS2MICRO = 1000000    # Used to convert from seconds to microseconds
 nightMaxShut = int(nightMaxShutSec * SECONDS2MICRO)  # default=5 sec IMPORTANT- 6 sec works sometimes but occasionally locks RPI and HARD reboot required to clear
 darkAdjust = int((SECONDS2MICRO/5.0) * nightDarkAdjust)
@@ -141,7 +212,7 @@ class PiVideoStream:
            self.camera = PiCamera()
         except:
            print("ERROR - PiCamera Already in Use by Another Process")
-           print("INFO  - Exit %s" % progName)
+           print("INFO  - Exiting %s Due to Error" % progName)
            quit()
         self.camera.resolution = resolution
         self.camera.framerate = framerate
@@ -239,6 +310,7 @@ def displayInfo(motioncount, timelapsecount):
     if verbose:
         print("-------------------------------------- Settings ----------------------------------------------")
         print("Config File .. configName=%s  configTitle=%s" % (configName, configTitle))
+        print("     Plugin .. pluginEnable=%s  pluginName=%s (Overlays config.py Settings)" % (pluginEnable, pluginName))
         print("")
         print("Image Info ... Size=%ix%i  Prefix=%s  VFlip=%s  HFlip=%s  Rotation=%i  Preview=%s"
               % (imageWidth, imageHeight, imageNamePrefix, imageVFlip, imageHFlip, imageRotation, imagePreview))
@@ -411,39 +483,50 @@ def subDirChecks(maxHours, maxFiles, directory, prefix):
     return subDirPath
 
 #-----------------------------------------------------------------------------------------------
-def checkImagePath():
+def checkMediaPaths():
     # Checks for image folders and creates them if they do not already exist.
     if motionTrackOn:
         if not os.path.isdir(motionPath):
-            logging.info("Create Motion Image Folder %s", motionPath)
-            os.makedirs(motionPath)
+            logging.info("INFO  - Create Motion Media Folder %s", motionPath)
+            try:
+                os.makedirs(motionPath)
+            except OSError as err:
+                print("ERROR - Could Not Create %s - %s" % (motionPath, err))
+                quit()
             if os.path.exists(motionNumPath):
-               logging.info("Delete Motion dat file %s", motionNumPath)
-               os.remove(motionNumPath)
+                logging.info("INFO  - Delete Motion dat File %s", motionNumPath)
+                os.remove(motionNumPath)
+
     if timelapseOn:
         if not os.path.isdir(timelapsePath):
-            logging.info("Create TimeLapse Image Folder %s", timelapsePath)
-            os.makedirs(timelapsePath)
+            logging.info("INFO  - Create TimeLapse Image Folder %s", timelapsePath)
+            try:
+                os.makedirs(timelapsePath)
+            except OSError as err:
+                print("ERROR - Could Not Create %s - %s" % ( motionPath, err ))
+                quit()
             if os.path.exists(timelapseNumPath):
-               logging.info("Delete TimeLapse dat file %s", timelapseNumPath)
+               print("INFO  - Delete TimeLapse dat file %s" % timelapseNumPath)
                os.remove(timelapseNumPath)
 
     # Check for Recent Image Folders and create if they do not already exist.
     if motionRecentMax > 0:
         if not os.path.isdir(motionRecentDir):
-            logging.info("Create Motion Recent Folder %s", motionRecentDir)
+            logging.info("INFO  - Create Motion Recent Folder %s", motionRecentDir)
             try:
                 os.makedirs(motionRecentDir)
             except OSError as err:
-                logging.error('Failed to Create %s - %s', motionRecentDir, err)
+                print('ERROR - Failed to Create %s - %s' % ( motionRecentDir, err ))
+                quit()
 
     if timelapseRecentMax > 0:
         if not os.path.isdir(timelapseRecentDir):
-            logging.info("Create TimeLapse Recent Folder %s", timelapseRecentDir)
+            print("INFO  - Create TimeLapse Recent Folder %s" % timelapseRecentDir)
             try:
                 os.makedirs(timelapseRecentDir)
             except OSError as err:
-                logging.error('Failed to Create %s - %s', timelapseRecentDir, err)
+                print('ERROR - Failed to Create %s - %s' % ( timelapseRecentDir, err ))
+                quit()
 
 #-----------------------------------------------------------------------------------------------
 def deleteOldFiles(maxFiles, dirPath, prefix):
@@ -601,26 +684,32 @@ def writeTextToImage(imagename, datetoprint, daymode):
     TEXT = imageNamePrefix + datetoprint
     font_path = '/usr/share/fonts/truetype/freefont/FreeSansBold.ttf'
     font = ImageFont.truetype(font_path, showTextFontSize, encoding='unic')
-    text = TEXT.decode('utf-8')
+    try:
+        text = TEXT.decode('utf-8')   # required for python2
+    except:
+        text = TEXT   # Just set for python3
+        pass
     img = Image.open(imagename)
-    
-    try:  # Read exif data since ImageDraw does not save this metadata bypass if python3
+
+    # For python3 install of pyexiv2 lib See https://github.com/pageauc/pi-timolo/issues/79
+    try:  # Read exif data since ImageDraw does not save this metadata
         metadata = pyexiv2.ImageMetadata(imagename)
         metadata.read()
     except:
         pass
 
-    draw = ImageDraw.Draw(img)      
+    draw = ImageDraw.Draw(img)
     # draw.text((x, y),"Sample Text",(r,g,b))
     draw.text(( x, y ), text, FOREGROUND, font=font)
     img.save(imagename)
-    
-    try:   # bypass writing exif data if running under python3.
+    logging.info("Added %s Text [ %s ]", textColour, datetoprint)
+
+    try:
         metadata.write()    # Write previously saved exif data to image file
     except:
+        logging.warn("Image EXIF Data Not Transferred.")
         pass
-        
-    logging.info("Added %s Text [ %s ]", textColour, datetoprint)
+
     logging.info("%s" % imagename)
 
 #-----------------------------------------------------------------------------------------------
@@ -794,7 +883,8 @@ def takeQuickTimeLapse(moPath, imagePrefix, motionNumOn, motionNumCount, daymode
 #-----------------------------------------------------------------------------------------------
 def takeVideo(filename, duration, fps=30):
     # Take a short motion video if required
-    logging.info("Start: Size %ix%i for %i sec to %s" % (imageWidth, imageHeight, duration, filename))
+    logging.info("File : %s" % (filename))
+    logging.info("Start: Size %ix%i for %i sec at %i fps" % (imageWidth, imageHeight, duration, fps))
     if motionVideoOn or videoRepeatOn:
         with picamera.PiCamera() as camera:
             camera.resolution = (imageWidth, imageHeight)
@@ -975,7 +1065,7 @@ def dataLogger():
 def timolo():
     # Main program initialization and logic loop
     dotCount = 0   # Counter for showDots() display if not motion found (shows system is working)
-    checkImagePath()
+    checkMediaPaths()
     timelapseNumCount = 0
     motionNumCount = 0
     tlstr = ""  # Used to display if timelapse is selected
@@ -1328,9 +1418,8 @@ def videoRepeat():
 
 #-----------------------------------------------------------------------------------------------
 if __name__ == '__main__':
-
     # Test if the pi camera is already in use
-    print("INFO  - Testing if Pi Camera in Use")
+    print("INFO  - Testing if Pi Camera is in Use")
     ts = PiVideoStream().start()
     time.sleep(3)
     ts.stop()
@@ -1339,7 +1428,6 @@ if __name__ == '__main__':
     print("INFO  - Starting pi-timolo per %s Settings" % configFilePath)
     if not verbose:
         print("INFO  - Note: Logging Disabled per Variable verbose=False")
-
     try:
         if debug:
             dataLogger()
@@ -1354,5 +1442,15 @@ if __name__ == '__main__':
         print("%s %s - Exiting" % (progName, progVer))
         print("+++++++++++++++++++++++++++++++++++")
         print("")
-        quit(0)
+        pass
+    try:
+        if os.path.exists(pluginCurrent):
+            os.remove(pluginCurrent)
+        pluginCurrentpyc = os.path.join(pluginDir, "current.pyc")
+        if os.path.exists(pluginCurrentpyc):
+            os.remove(pluginCurrentpyc)
+    except OSError as err:
+        print("ERROR - Failed Removal of %s - %s" % ( pluginCurrentpyc, err ))
+        print("INFO  - Exiting %s Due to Error" % progName)
+    quit(0)
 

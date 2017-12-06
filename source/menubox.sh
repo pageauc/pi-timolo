@@ -1,6 +1,6 @@
 #!/bin/bash
 
-ver="4.20"
+ver="9.00"
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 cd $DIR
@@ -242,11 +242,11 @@ function do_settings_menu ()
   SET_SEL=$( whiptail --title "Settings Menu" --menu "Arrow/Enter Selects or Tab Key" 0 0 0 --ok-button Select --cancel-button Back \
   "a EDIT" "nano config.py for pi-timolo & webserver" \
   "b VIEW" "config.py for pi-timolo & webserver" \
-  "c EDIT" "nano makevideo.conf file" \
-  "d VIEW" "makevideo.conf file" \
-  "e EDIT" "nano convid.conf file" \
-  "f VIEW" "convid.conf file" \
-  "q QUIT" "to Main Menu" 3>&1 1>&2 2>&3 )
+  "c EDIT" "nano makevideo.conf" \
+  "d VIEW" "makevideo.conf" \
+  "e EDIT" "nano convid.conf" \
+  "f VIEW" "convid.conf" \
+  "q BACK" "to Main Menu" 3>&1 1>&2 2>&3 )
 
   RET=$?
   if [ $RET -eq 1 ]; then
@@ -275,6 +275,53 @@ function do_settings_menu ()
       q\ *) clear
             rm -f $filename_temp
             rm -f $filename_conf
+            do_main_menu ;;
+      *) whiptail --msgbox "Programmer error: unrecognized option" 20 60 1 ;;
+    esac || whiptail --msgbox "There was an error running selection $SELECTION" 20 60 1
+  fi
+
+}
+
+#------------------------------------------------------------------------------
+function do_plugins_menu ()
+{
+  SET_SEL=$( whiptail --title "Edit Plugins Menu" --menu "Arrow/Enter Selects or Tab Key" 0 0 0 --ok-button Select --cancel-button Back \
+  "a secfast" "nano plugins/secfast.py" \
+  "b secstill" "nano plugins/secstill.py" \
+  "c secvid" "nano plugins/secvid.py" \
+  "d secQTL" "nano plugins/secQTL.py" \
+  "e TLlong" "nano plugins/TLlong.py" \
+  "f TLshort" "nano plugins/TLshort.py" \
+  "g shopcam" "nano plugins/shopcam.py" \
+  "h dashcam" "nano plugins/dashcam.py" \
+  "i slowmo" "nano plugins/slowmo.py" \
+  "q BACK" "to Main Menu" 3>&1 1>&2 2>&3 )
+
+  RET=$?
+  if [ $RET -eq 1 ]; then
+
+    do_main_menu
+  elif [ $RET -eq 0 ]; then
+    case "$SET_SEL" in
+      a\ *) nano plugins/secfast.py
+            do_plugins_menu ;;
+      b\ *) nano plugins/secstill.py
+            do_plugins_menu ;;
+      c\ *) nano plugins/secvid.py
+            do_plugins_menu ;;
+      d\ *) nano plugins/secQTL.py
+            do_plugins_menu ;;
+      e\ *) nano plugins/TLlong.py
+            do_plugins_menu;;
+      f\ *) nano plugins/TLshort.py
+            do_plugins_menu ;;
+      g\ *) nano plugins/shopcam.py
+            do_plugins_menu ;;
+      h\ *) nano plugins/dashcam.py
+            do_plugins_menu ;;
+      i\ *) nano plugins/slowmo.py
+            do_plugins_menu ;;
+      q\ *) clear
             do_main_menu ;;
       *) whiptail --msgbox "Programmer error: unrecognized option" 20 60 1 ;;
     esac || whiptail --msgbox "There was an error running selection $SELECTION" 20 60 1
@@ -328,11 +375,12 @@ function do_main_menu ()
   "a $PTMLO_1" "$PTMLO_2" \
   "b $WEB_1" "$WEB_2" \
   "c SETTINGS" "Change Program Configuration Files" \
-  "d CREATE" "MP4 Timelapse Video from jpg Images" \
-  "e CONVERT" "Video from h264 to MP4 or Join multiple MP4 Videos" \
-  "f SYNC" "Configure gdrive sync to google drive" \
-  "g UPGRADE" "Program Files from GitHub.com" \
-  "h ABOUT" "Information About this Program" \
+  "d PLUGINS" "Edit Plugin Files" \
+  "e CREATE" "MP4 Timelapse Video from jpg Images" \
+  "f CONVERT" "Video from h264 to MP4 or Join multiple MP4 Videos" \
+  "g SYNC" "Configure gdrive sync to google drive" \
+  "h UPGRADE" "Program Files from GitHub.com" \
+  "i ABOUT" "Information About this Program" \
   "q QUIT" "Exit This Menu Program"  3>&1 1>&2 2>&3)
 
   RET=$?
@@ -343,12 +391,12 @@ function do_main_menu ()
       a\ *) do_pi_timolo ;;
       b\ *) do_webserver ;;
       c\ *) do_settings_menu ;;
-
-      d\ *) do_makevideo_menu ;;
-      e\ *) do_convid_menu ;;
-      f\ *) do_sync ;;
-      g\ *) do_upgrade ;;
-      h\ *) do_about ;;
+      d\ *) do_plugins_menu ;;
+      e\ *) do_makevideo_menu ;;
+      f\ *) do_convid_menu ;;
+      g\ *) do_sync ;;
+      h\ *) do_upgrade ;;
+      i\ *) do_about ;;
       q\ *) clear
             exit 0 ;;
          *) whiptail --msgbox "Programmer error: unrecognized option" 20 60 1 ;;

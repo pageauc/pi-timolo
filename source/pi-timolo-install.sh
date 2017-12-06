@@ -1,6 +1,6 @@
 #!/bin/bash
 # Convenient pi-timolo-install.sh script written by Claude Pageau 1-Jul-2016
-ver="7.2"
+ver="9.0"
 TIMOLO_DIR='pi-timolo'  # Default folder install location
 
 cd ~
@@ -51,57 +51,49 @@ if [ -e convid.conf ]; then
   fi
 fi
 
-wget -O media/webserver.txt https://raw.github.com/pageauc/pi-timolo/master/source/webserver.txt
+timolofiles=("config.py" "config.py.default" "menubox.py" "pi-timolo.py" "pi-timolo.sh" \
+"pi-timolo-install.sh" "Readme.md" "sync.sh" "webserver.py" "webserver.sh" \
+"convid.sh" "convid.conf" "makevideo.sh" "makevideo.conf" "mvleavelast.sh" "myip.sh" "plugins-install.sh")
+
+for fname in "${timoloFiles[@]}" ; do
+    wget_output=$(wget $fname -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/$fname)
+    if [ $? -ne 0 ]; then
+        wget_output=$(wget $fname -q "https://raw.github.com/pageauc/pi-timolo/master/source/plugins/$fname")
+        if [ $? -ne 0 ]; then
+            echo "ERROR - $fname wget Download Failed. Possible Cause Internet Problem."
+        else
+            wget -O $fname https://raw.github.com/pageauc/pi-timolo/master/source/$fname
+        fi
+    else
+        wget -O $fname -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/$fname
+    fi
+done
+
+echo "Download Backup Files  Please Wait ..."
 wget -O config_new.py -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/config.py
 if [ $? -ne 0 ] ;  then
-  wget -O config.py https://raw.github.com/pageauc/pi-timolo/master/source/config.py
-  wget -O config.py.default https://raw.github.com/pageauc/pi-timolo/master/source/config.py.default
-  wget -O menubox.sh https://raw.github.com/pageauc/pi-timolo/master/source/menubox.sh
-  wget -O pi-timolo.py https://raw.github.com/pageauc/pi-timolo/master/source/pi-timolo.py
-  wget -O pi-timolo.sh https://raw.github.com/pageauc/pi-timolo/master/source/pi-timolo.sh
-  wget -O pi-timolo-install.sh https://raw.github.com/pageauc/pi-timolo/master/source/pi-timolo-install.sh
-  wget -O Readme.md https://raw.github.com/pageauc/pi-timolo/master/Readme.md
-  wget -O sync.sh https://raw.github.com/pageauc/pi-timolo/master/source/sync.sh
-  wget -O webserver.py https://raw.github.com/pageauc/pi-timolo/master/source/webserver.py
-  wget -O webserver.sh https://raw.github.com/pageauc/pi-timolo/master/source/webserver.sh
-  wget -O convid.sh https://raw.github.com/pageauc/pi-timolo/master/source/convid.sh
-  wget -O convid.conf https://raw.github.com/pageauc/pi-timolo/master/source/convid.conf
-  wget -O convid.conf.new https://raw.github.com/pageauc/pi-timolo/master/source/convid.conf
-  wget -O makevideo.sh https://raw.github.com/pageauc/pi-timolo/master/source/makevideo.sh
-  wget -O makevideo.conf https://raw.github.com/pageauc/pi-timolo/master/source/makevideo.conf
-  wget -O makevideo.conf.new https://raw.github.com/pageauc/pi-timolo/master/source/makevideo.conf
-  wget -O mvleavelast.sh https://raw.github.com/pageauc/pi-timolo/master/source/mvleavelast.sh
-  wget -O myip.sh https://raw.github.com/pageauc/pi-timolo/master/source/myip.sh
-  wget -O gdrive https://raw.github.com/pageauc/pi-timolo/master/source/drive_armv6
+    wget -O config_new.py https://raw.github.com/pageauc/pi-timolo/master/source/config.py
+    wget -O config.py.default https://raw.github.com/pageauc/pi-timolo/master/source/config.py
+    wget -O convid.conf.new https://raw.github.com/pageauc/pi-timolo/master/source/convid.conf
+    wget -O makevideo.conf.new https://raw.github.com/pageauc/pi-timolo/master/source/makevideo.conf
+    wget -O gdrive https://raw.github.com/pageauc/pi-timolo/master/source/drive_armv6
+    wget -O media/webserver.txt https://raw.github.com/pageauc/pi-timolo/master/source/webserver.txt
 else
-  wget -O config.py -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/config.py
-  wget -O config.py.default -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/config.py.default
-  wget -O menubox.sh -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/menubox.sh
-  wget -O pi-timolo.py -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/pi-timolo.py
-  wget -O pi-timolo.sh -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/pi-timolo.sh
-  wget -O pi-timolo-install.sh -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/pi-timolo-install.sh
-  wget -O Readme.md -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/Readme.md
-  wget -O sync.sh -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/sync.sh
-  wget -O webserver.py -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/webserver.py
-  wget -O webserver.sh -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/webserver.sh
-  wget -O convid.sh -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/convid.sh
-  wget -O convid.conf -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/convid.conf
-  wget -O convid.conf.new -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/convid.conf
-  wget -O makevideo.sh -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/makevideo.sh
-  wget -O makevideo.conf -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/makevideo.conf
-  wget -O makevideo.conf.new -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/makevideo.conf
-  wget -O mvleavelast.sh -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/mvleavelast.sh
-  wget -O myip.sh -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/myip.sh
-  wget -O gdrive -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/drive_armv6
+    wget -O config.py.default -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/config.py.default
+    wget -O convid.conf.new -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/convid.conf
+    wget -O makevideo.conf.new -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/makevideo.conf
+    wget -O gdrive -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/drive_armv6
+    wget -O media/webserver.txt -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/webserver.txt
 fi
 
-echo "Done Download"
 echo "-------------------------------------------------------------"
 echo "2 - Make Required Files Executable"
 echo ""
 chmod +x *py
 chmod -x config*py
 chmod +x *sh
+dos2unix *sh
+dos2unix *py
 echo "Done Permissions"
 echo "-------------------------------------------------------------"
 # check if system was updated today
@@ -127,7 +119,7 @@ echo "------------------------------------------------"
 echo ""
 echo "5 - Installing pi-timolo Dependencies"
 echo ""
-sudo apt-get install -yq python-picamera python-imaging dos2unix python-pyexiv2 libav-tools
+sudo apt-get install -yq python-picamera python3-picamera python-imaging dos2unix python-pyexiv2 libav-tools
 sudo apt-get install -yq python-scipy  # New Dependency for enhanced motion detection
 sudo apt-get install -yq gpac   # required for MP4Box video converter
 sudo apt-get install -yq fonts-freefont-ttf # Required for Jessie Lite Only
@@ -146,10 +138,12 @@ else
   echo "        pi-timolo syncing feature will not be available."
 fi
 
-dos2unix *sh
-dos2unix *py
+echo "-------------------------------------------------------------"
+echo "7 - Install plugins"
+echo ""
+$TIMOLO_DIR/plugins-install.sh
+cd $TIMOLO_DIR
 
-cd $DIR
 # Check if pi-timolo-install.sh was launched from pi-timolo folder
 if [ "$DIR" != "$INSTALL_PATH" ]; then
   if [ -e 'pi-timolo-install.sh' ]; then
@@ -173,59 +167,60 @@ if [ -e 'makedailymovie.sh' ]; then
   rm makedailymovie.sh
 fi
 
-echo "Done Dependencies"
-echo "-----------------------------------------------"
-echo "7 - $STATUS Complete"
-echo "-----------------------------------------------"
-echo "Note:"
-echo "1 - Reboot RPI if there are significant Raspbian system updates."
-echo "2 - If config.py already exists then old file is config.py.prev"
-echo "3 - Check pi-timolo variable settings in config.py per comments"
-echo "    cd ~/pi-timolo"
-echo "    nano config.py"
-echo "    ctrl-x y to save and quit nano editor"
-echo "4 - To Run pi-timolo perform the following in SSH or terminal session"
-echo "    cd ~/pi-timolo"
-echo "    ./pi-timolo.py"
-echo "-------------------------------------------------------------"
-echo "              IMPORTANT UPGRADE INFORMATION"
-echo "1 - makemovie.sh and makedailymovie.sh have been deleted"
-echo "    They are Now Replaced by makevideo.sh and convid.sh"
-echo "2 - If this is an upgrade then config.py will be replaced."
-echo "    and previous will be config.py.prev. If version is 4.30 or greater"
-echo "    cp config.py.prev config.py to restore previous config.py"
-echo "    otherwise you will need to edit the new config.py with your previous settings"
-echo "    that are in the config.prev file."
-echo "3 - A new menubox.sh has been added to make admin easier"
-echo "4 - Variable settings are now stored in .conf files or config.py"
-echo "    This allows upgrading without loosing settings"
-echo "5 - motion, timelapse, video folder are now in media folder"
-echo "6 - Existing config files will Not be overwritten.  New files will be"
-echo "    .1, .2 etc or config.py new file will be config_new.py"
-echo "------------------------------------------------------------------"
-echo "For further details See Readme.md or GitHub wiki"
-echo "here https://github.com/pageauc/pi-timolo/wiki"
+echo "Done Dependencies
+-----------------------------------------------
+7 - $STATUS Complete
+-----------------------------------------------
+Note:
+1 - Reboot RPI if there are significant Raspbian system updates.
+2 - If config.py already exists then old file is config.py.prev
+3 - Check pi-timolo variable settings in config.py per comments
+    cd ~/pi-timolo
+    nano config.py
+    ctrl-x y to save and quit nano editor
+4 - To Run pi-timolo perform the following in SSH or terminal session
+    cd ~/pi-timolo
+    ./pi-timolo.py
+-------------------------------------------------------------"
+
+echo "              IMPORTANT UPGRADE INFORMATION
+1 - makemovie.sh and makedailymovie.sh have been deleted
+    They are Now Replaced by makevideo.sh and convid.sh
+2 - If this is an upgrade then config.py will be replaced.
+    and previous will be config.py.prev. If version is 4.30 or greater
+    cp config.py.prev config.py to restore previous config.py
+    otherwise you will need to edit the new config.py with your previous settings
+    that are in the config.prev file.
+3 - A new menubox.sh has been added to make admin easier
+4 - Variable settings are now stored in .conf files or config.py
+    This allows upgrading without loosing settings
+5 - motion, timelapse, video folder are now in media folder
+6 - Existing config files will Not be overwritten.  New files will be
+    .1, .2 etc or config.py new file will be config_new.py
+------------------------------------------------------------------
+For further details See Readme.md or GitHub wiki
+here https://github.com/pageauc/pi-timolo/wiki"
 
 if ! grep -q "web_server_root" config.py ; then
    cp config_new.py config.py
-   echo ""
-   echo "IMPORTANT:  Your config.py has been Upgraded"
-   echo "and Replaced with config_new.py"
-   echo "Your previous settings are in config.py.prev"
+   echo "
+   IMPORTANT:  Your config.py has been Upgraded
+   and Replaced with config_new.py
+   Your previous settings are in config.py.prev"
 fi
 echo "====================================================="
 if [ ! -e /usr/bin/mc ]; then
-   echo ""
-   echo "-----  Optional Install of Midnight Commander -----"
-   echo "This is an Interactive Console File Manager"
-   echo "It can utilize mouse/function keys in SSH session"
-   echo "and makes managing local files on the RPI easier"
-   echo "Another option is to use filezilla on a windows computer"
-   echo "To Installing Midnight Commander execute command below."
-   echo ""
-   echo "    sudo apt-get install mc "
-   echo ""
-   echo "type mc to Run Midnight Commander"
+   echo "
+   -----  Optional Install of Midnight Commander -----
+   This is an Interactive Console File Manager
+   It can utilize mouse/function keys in SSH session
+   and makes managing local files on the RPI easier
+   Another option is to use filezilla on a windows computer
+   To Installing Midnight Commander execute command below.
+
+       sudo apt-get install mc
+
+   type mc to Run Midnight Commander"
 fi
 echo "Good Luck Claude ..."
 echo "Bye"
