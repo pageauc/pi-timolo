@@ -12,9 +12,9 @@ This is similar to a dash cam.  Requires the updated config.py.
 There is also a new motionTrackQuickPic feature that saves a stream image rather than switching to normal pi-camera non streaming mode.    
 RPI Forum Post details here https://www.raspberrypi.org/forums/viewtopic.php?p=1183663#p1183663   
 
-***New Release 9.0*** Implement Optional plugins Feature and make python3 compatible    
+***New Release 9.0*** Implement Optional plugins Feature and make program python3 compatible    
 For plugins details see https://github.com/pageauc/pi-timolo/wiki/How-to-Use-Plugins    
-for python3 Support Details see https://github.com/pageauc/pi-timolo/wiki/Prerequisites#python-3-support
+For python3 Support Details see https://github.com/pageauc/pi-timolo/wiki/Prerequisites#python-3-support
 
 **See Minimal Upgrade Below** if you have a recent pi-timolo version installed
 
@@ -29,7 +29,9 @@ can securely synchronize files with a users google drive.  This works well for r
 cameras. Camera config.py settings can be administered remotely from a google drive using sync.sh.
 Includes makevideo.sh to create timelapse or motion lapse videos from images, convid.sh to convert/combine 
 h264 to mp4 format, a simple minumum or no setup web server to view images or videos and menubox.sh 
-to admin settings and stop start pi-timolo and webserver as background tasks.
+to admin settings and stop start pi-timolo and webserver as background tasks. Recently added
+optional plugin feature that allows overlaying config.py settings with custom settings for
+specific tasks.  
         
 see Github Wiki for More Details https://github.com/pageauc/pi-timolo/wiki    
  
