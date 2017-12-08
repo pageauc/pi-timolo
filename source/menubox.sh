@@ -201,7 +201,6 @@ function do_convid_menu ()
 function do_sync ()
 {
   whiptail --msgbox "Insert gdrive sync Code Here" 20 60 1
-
 }
 
 #--------------------------------------------------------------------
@@ -224,7 +223,6 @@ function do_edit_save ()
   rm $filename_conf
   do_settings_menu
 }
-
 
 #------------------------------------------------------------------------------
 function do_nano_main ()
@@ -371,7 +369,8 @@ help      - Display help
 function do_main_menu ()
 {
   init_status
-  SELECTION=$(whiptail --title "pi-timolo Main Menu" --menu "Arrow/Enter Selects or Tab Key" 20 70 10 --cancel-button Quit --ok-button Select \
+  temp="$(/opt/vc/bin/vcgencmd measure_temp)"  
+  SELECTION=$(whiptail --title "pi-timolo Main Menu" --menu "Arrow/Enter Selects or Tab Key" 0 0 0 --cancel-button Quit --ok-button Select \
   "a $PTMLO_1" "$PTMLO_2" \
   "b $WEB_1" "$WEB_2" \
   "c SETTINGS" "Change Program Configuration Files" \
@@ -381,6 +380,7 @@ function do_main_menu ()
   "g SYNC" "Configure gdrive sync to google drive" \
   "h UPGRADE" "Program Files from GitHub.com" \
   "i ABOUT" "Information About this Program" \
+  "j STATUS" "CPU $temp   Select to Refresh" \
   "q QUIT" "Exit This Menu Program"  3>&1 1>&2 2>&3)
 
   RET=$?
@@ -397,6 +397,7 @@ function do_main_menu ()
       g\ *) do_sync ;;
       h\ *) do_upgrade ;;
       i\ *) do_about ;;
+      j\ *) do_main_menu ;;
       q\ *) clear
             exit 0 ;;
          *) whiptail --msgbox "Programmer error: unrecognized option" 20 60 1 ;;
