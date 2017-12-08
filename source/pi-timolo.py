@@ -4,8 +4,8 @@
 # written by Claude Pageau Jul-2017 (release 7.x)
 # This release uses OpenCV to do Motion Tracking.  It requires updated config.py
 
-progVer = "ver 9.0"
-__version__ = "9.0"   # May test for version number at a future time
+progVer = "ver 9.1"
+__version__ = "9.1"   # May test for version number at a future time
 
 import datetime
 import logging
@@ -101,7 +101,6 @@ if pluginEnable:     # Check and verify plugin and load variable overlay
             print("ERROR - Failed Removal of %s - %s" % ( pluginCurrentpyc, err ))
             print("INFO  - Exiting %s Due to Error" % progName)
 
-
 else:
     print("INFO  - No Plugins Enabled per pluginEnable=%s" % pluginEnable)
 
@@ -139,20 +138,19 @@ except:
     quit()
 
 try:
-    import picamera
+    from picamera import PiCamera
 except:
-    print("ERROR - Problem importing picamera")
-    print("        Try the following commands to import approriate version")
+    print("ERROR - Problem importing picamera module")
+    print("        Try command below to import module")
+    print("")
     if (sys.version_info > (2, 9)):
         print("        sudo apt-get install python3-picamera")
     else:
         print("        sudo apt-get install python-picamera")
-    print("     or")
-
+    print("")
     print("INFO  - Exiting %s Due to Error" % progName)
     quit()
 
-from picamera import PiCamera
 from picamera.array import PiRGBArray
 import picamera.array
 
@@ -220,8 +218,7 @@ class PiVideoStream:
         self.camera.vflip = vflip
         self.camera.rotation = rotation
         self.rawCapture = PiRGBArray(self.camera, size=resolution)
-        self.stream = self.camera.capture_continuous(self.rawCapture,
-            format="bgr", use_video_port=True)
+        self.stream = self.camera.capture_continuous(self.rawCapture, format="bgr", use_video_port=True)
         # initialize the frame and the variable used to indicate
         # if the thread should be stopped
         self.frame = None
@@ -798,10 +795,10 @@ def takeDayImage(filename, cam_sleep_time):
         time.sleep(cam_sleep_time)   # use motion or TL camera sleep to get AWB
         if imagePreview:
             camera.start_preview()
-        if imageFormat == ".jpg" :
-            camera.capture(filename, use_video_port=useVideoPort, format='jpeg',quality=imageJpegQuality)
+        if imageFormat == ".jpg":   # Set quality if image is jpg
+            camera.capture(filename, quality=imageJpegQuality)
         else:
-            camera.capture(filename, use_video_port=useVideoPort)
+            camera.capture(filename)
         camera.close()
     logging.info("camSleepSec=%.2f exp=auto awb=auto Size=%ix%i "
               % ( cam_sleep_time, imageWidth, imageHeight ))
@@ -1138,7 +1135,10 @@ def timolo():
         print("Sending Console Messages to %s" % (logFilePath))
         print("Entering Loop for %s%s" % (mostr, tlstr))
     else:
-        logging.info("Entering Loop for %s%s  Ready ..." % (mostr, tlstr))
+        if pluginEnable:
+            logging.info("plugin %s - Start %s%s Loop ..." % ( pluginName, mostr, tlstr))
+        else:
+            logging.info("Start %s%s Loop ..." % (mostr, tlstr))
 
     dotCount = showDots(motionDotsMax)  # reset motion dots
     # Start main program loop here.  Use Ctl-C to exit if run from terminal session.
@@ -1187,7 +1187,12 @@ def timolo():
                         dotCount = showDots(motionDotsMax + 2)  # reset motion dots
                     else:
                         print("")
-                    logging.info("Scheduled Time Lapse Image - daymode=%s", daymode)
+                    if pluginEnable:
+                        logging.info("%s Sched TimeLapse  daymode=%s  Timer=%i sec",
+                                                              pluginName, daymode, timelapseTimer)
+                    else:
+                        logging.info("Sched TimeLapse  daymode=%s  Timer=%i sec",
+                                                                   daymode, timelapseTimer)
                     imagePrefix = timelapsePrefix + imageNamePrefix
                     filename = getImageName(tlPath, imagePrefix, timelapseNumOn, timelapseNumCount)
                     if motionTrackOn:
@@ -1248,8 +1253,12 @@ def timolo():
                                                    trackLen, TRACK_TRIG_LEN_MAX)
                         else:
                             motionFound = True
-                            logging.info("Motion Triggered Start(%i,%i)  End(%i,%i) trackLen=%.2f px",
-                               startPos[0], startPos[1], movePoint2[0], movePoint2[1], trackLen)
+                            if pluginEnable:
+                                logging.info("%s Motion Triggered Start(%i,%i)  End(%i,%i) trackLen=%.2f px", pluginName,
+                                startPos[0], startPos[1], movePoint2[0], movePoint2[1], trackLen)
+                            else:
+                                logging.info("Motion Triggered Start(%i,%i)  End(%i,%i) trackLen=%.2f px",
+                                startPos[0], startPos[1], movePoint2[0], movePoint2[1], trackLen)
                         image1 = vs.read()
                         image2 = image1
                         grayimage1 = cv2.cvtColor(image1, cv2.COLOR_BGR2GRAY)
@@ -1425,9 +1434,14 @@ if __name__ == '__main__':
     ts.stop()
     time.sleep(1)
     print("INFO  - Pi Camera is Available.")
-    print("INFO  - Starting pi-timolo per %s Settings" % configFilePath)
+    if pluginEnable:
+        print("INFO  - Start pi-timolo per %s and plugins/%s.py Settings" % (configFilePath, pluginName))
+    else:
+        print("INFO  - Start pi-timolo per %s Settings" % configFilePath)
+
     if not verbose:
         print("INFO  - Note: Logging Disabled per Variable verbose=False")
+
     try:
         if debug:
             dataLogger()
@@ -1435,6 +1449,7 @@ if __name__ == '__main__':
             videoRepeat()
         else:
             timolo()
+
     except KeyboardInterrupt:
         print("")
         print("+++++++++++++++++++++++++++++++++++")
