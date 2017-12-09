@@ -15,8 +15,9 @@ configName  = "config.py"
 # Note - Set verbose to False if script is run in background or from /etc/rc.local
 
 pluginEnable = False       # default= False True reads customized settings from a custom.py file
-pluginName = "shopcam"     # specify filename in plugins subfolder without .py extension
-
+pluginName = "shopcam"     # Specify filename in plugins subfolder without .py extension per below
+                           # TLlong, TLshort, secfast, secstill, secvid, secQTL, shopcam, dashcam, slowmo
+                           
 verbose = True             # default= True Sends logging Info to Console. False if running script as daeman
 logDataToFile = False      # default= False True logs diagnostic data to a disk file for review
 debug = False              # default= False True = debug mode returns pixel average data for tuning
