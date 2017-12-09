@@ -106,7 +106,7 @@ class DirectoryHandler(SimpleHTTPRequestHandler):
                           # display second entry in right list since list[0] may still be in progress
         else:
             f.write('src="%s" name="imgbox" id="imgbox" alt="%s">'
-                          % (list[1], web_page_title))
+                          % (list[0], web_page_title))
                           # display second entry in right list since list[0] may still be in progress
 
         f.write('<p>iframes are not supported by your browser.</p></iframe>')

@@ -7,7 +7,8 @@ You have a project where you want to capture a slow motion video
 sequence.  This plugin will monitor the camera view using motion
 tracking and tigger a video at a high fps.  640x480 at 90 fps
 This would be suitable for example capturing humming birds or other
-fast moving objects in the camera view.
+fast moving objects in the camera view. Note this configuration
+is setup to exit after 10 videos per motionNumMax and motionNumRecycle=False
 
 NOTE:  Slow Motion can also be done using videoRepeatOn=True (dashcam mode)
 but would Not be triggered by motion but would run a series of
@@ -27,7 +28,7 @@ showDateOnImage = False      # default= True False=Do Not display date/time text
 
 motionPrefix = "mo-"         # default= "mo-" Prefix for all Motion Detect images
 motionDir = "media/slowmo"   # default= "media/slowmo"  Folder Path for Motion Detect Image Storage
-motionVideoTimer = 60        # default= 60 seconds of video clip to take if Motion Detected
+motionVideoTimer = 30        # default= 30 seconds of video clip to take if Motion Detected
 motionNumOn = True           # default= False  True=filenames by sequenced Number  False=filenames by date/time
 # Use settings below if motionNumOn = True
 motionNumRecycle = False     # default= True when NumMax reached restart at NumStart instead of exiting
