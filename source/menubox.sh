@@ -1,6 +1,6 @@
 #!/bin/bash
 
-ver="9.00"
+ver="9.10"
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 cd $DIR
@@ -194,7 +194,6 @@ function do_convid_menu ()
       *) whiptail --msgbox "Programmer error: unrecognized option" 20 60 1 ;;
     esac || whiptail --msgbox "There was an error running selection $SELECTION" 20 60 1
   fi
-
 }
 
 #------------------------------------------------------------------------------
@@ -277,54 +276,56 @@ function do_settings_menu ()
       *) whiptail --msgbox "Programmer error: unrecognized option" 20 60 1 ;;
     esac || whiptail --msgbox "There was an error running selection $SELECTION" 20 60 1
   fi
-
 }
 
 #------------------------------------------------------------------------------
 function do_plugins_menu ()
 {
   SET_SEL=$( whiptail --title "Edit Plugins Menu" --menu "Arrow/Enter Selects or Tab Key" 0 0 0 --ok-button Select --cancel-button Back \
-  "a secfast" "nano plugins/secfast.py" \
-  "b secstill" "nano plugins/secstill.py" \
-  "c secvid" "nano plugins/secvid.py" \
-  "d secQTL" "nano plugins/secQTL.py" \
-  "e TLlong" "nano plugins/TLlong.py" \
-  "f TLshort" "nano plugins/TLshort.py" \
-  "g shopcam" "nano plugins/shopcam.py" \
-  "h dashcam" "nano plugins/dashcam.py" \
-  "i slowmo" "nano plugins/slowmo.py" \
+  "a config" "nano config.py - plugin vars override" \
+  "b secfast" "nano plugins/secfast.py" \
+  "c secstill" "nano plugins/secstill.py" \
+  "d secvid" "nano plugins/secvid.py" \
+  "e secQTL" "nano plugins/secQTL.py" \
+  "f TLlong" "nano plugins/TLlong.py" \
+  "g TLshort" "nano plugins/TLshort.py" \
+  "h shopcam" "nano plugins/shopcam.py" \
+  "i dashcam" "nano plugins/dashcam.py" \
+  "j slowmo" "nano plugins/slowmo.py" \
   "q BACK" "to Main Menu" 3>&1 1>&2 2>&3 )
 
   RET=$?
   if [ $RET -eq 1 ]; then
-
     do_main_menu
   elif [ $RET -eq 0 ]; then
     case "$SET_SEL" in
-      a\ *) nano plugins/secfast.py
+      a\ *) rm -f $filename_temp
+            rm -f $filename_conf
+            do_nano_main
             do_plugins_menu ;;
-      b\ *) nano plugins/secstill.py
+      b\ *) nano plugins/secfast.py
             do_plugins_menu ;;
-      c\ *) nano plugins/secvid.py
+      c\ *) nano plugins/secstill.py
             do_plugins_menu ;;
-      d\ *) nano plugins/secQTL.py
+      d\ *) nano plugins/secvid.py
             do_plugins_menu ;;
-      e\ *) nano plugins/TLlong.py
+      e\ *) nano plugins/secQTL.py
+            do_plugins_menu ;;
+      f\ *) nano plugins/TLlong.py
             do_plugins_menu;;
-      f\ *) nano plugins/TLshort.py
+      g\ *) nano plugins/TLshort.py
             do_plugins_menu ;;
-      g\ *) nano plugins/shopcam.py
+      h\ *) nano plugins/shopcam.py
             do_plugins_menu ;;
-      h\ *) nano plugins/dashcam.py
+      i\ *) nano plugins/dashcam.py
             do_plugins_menu ;;
-      i\ *) nano plugins/slowmo.py
+      j\ *) nano plugins/slowmo.py
             do_plugins_menu ;;
       q\ *) clear
             do_main_menu ;;
       *) whiptail --msgbox "Programmer error: unrecognized option" 20 60 1 ;;
     esac || whiptail --msgbox "There was an error running selection $SELECTION" 20 60 1
   fi
-
 }
 
 #------------------------------------------------------------------------------
@@ -369,7 +370,7 @@ help      - Display help
 function do_main_menu ()
 {
   init_status
-  temp="$(/opt/vc/bin/vcgencmd measure_temp)"  
+  temp="$(/opt/vc/bin/vcgencmd measure_temp)"
   SELECTION=$(whiptail --title "pi-timolo Main Menu" --menu "Arrow/Enter Selects or Tab Key" 0 0 0 --cancel-button Quit --ok-button Select \
   "a $PTMLO_1" "$PTMLO_2" \
   "b $WEB_1" "$WEB_2" \

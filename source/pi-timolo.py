@@ -186,7 +186,7 @@ timelapsePath = os.path.join(baseDir, timelapseDir)  # Store Time Lapse images
 timelapseNumPath = os.path.join(baseDir, timelapsePrefix + baseFileName + ".dat")  # dat file to save currentCount
 lockFilePath = os.path.join(baseDir, baseFileName + ".sync")
 
-# Video Stream Settings for motion detection using opencv motion tracking
+# Video Stream Settings for motion Tracking using opencv motion tracking
 CAMERA_WIDTH = 640     # width of video stream
 CAMERA_HEIGHT = 480    # height of video stream
 bigImage = motionTrackQPBigger  # increase size of motionTrackQuickPic image
@@ -355,7 +355,7 @@ def displayInfo(motioncount, timelapsecount):
             print("   Recent .... motionRecentMax=%i (0=off)  motionRecentDir=%s" %
                                 ( motionRecentMax, motionRecentDir ))
         else:
-            print("Motion ....... motionTrackOn=%s  Motion Detection is Disabled)" % (motionTrackOn))
+            print("Motion ....... motionTrackOn=%s  Motion Tracking is Disabled)" % (motionTrackOn))
         print("")
         if timelapseOn:
             print("Time Lapse ... On=%s  Prefix=%s   Timer=%i sec   timelapseExitSec=%i (0=Continuous)"
@@ -1086,7 +1086,7 @@ def timolo():
             tlCnt = str(timelapseNumCount)
 
     if motionTrackOn:
-        mostr = "Motion Detect"
+        mostr = "Motion Tracking"
         # Check if motion subDirs reqd and create one if required if non exists
         moPath = subDirChecks( motionSubDirMaxHours, motionSubDirMaxFiles,
                                motionDir, motionPrefix)
@@ -1224,7 +1224,7 @@ def timolo():
                     tlPath = subDirChecks( timelapseSubDirMaxHours, timelapseSubDirMaxFiles, timelapseDir, timelapsePrefix)
 
             if motionTrackOn:
-                # IMPORTANT - Night motion detection may not work very well due to long exposure times and low light
+                # IMPORTANT - Night motion tracking may not work very well due to long exposure times and low light
                 image2 = vs.read()
                 grayimage2 = cv2.cvtColor(image2, cv2.COLOR_BGR2GRAY)
                 movePoint1 = trackPoint(grayimage1, grayimage2)
