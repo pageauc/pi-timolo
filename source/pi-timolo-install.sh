@@ -52,7 +52,7 @@ if [ -e convid.conf ]; then
 fi
 
 timoloFiles=("config.py" "menubox.sh" "pi-timolo.py" "pi-timolo.sh" \
-"pi-timolo-install.sh" "sync.sh" "webserver.py" "webserver.sh" rclone-install.sh\
+"pi-timolo-install.sh" "sync.sh" "webserver.py" "webserver.sh" "rclone-install.sh" \
 "convid.sh" "convid.conf" "makevideo.sh" "makevideo.conf" "mvleavelast.sh" "myip.sh" "plugins-install.sh")
 
 for fname in "${timoloFiles[@]}" ; do
