@@ -71,7 +71,6 @@ echo "Download Backup Files  Please Wait ..."
 wget -O config_new.py -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/config.py
 if [ $? -ne 0 ] ;  then
     wget -O config_new.py https://raw.github.com/pageauc/pi-timolo/master/source/config.py
-    wget -O config.py.default https://raw.github.com/pageauc/pi-timolo/master/source/config.py
     wget -O convid.conf.new https://raw.github.com/pageauc/pi-timolo/master/source/convid.conf
     wget -O Readme.md -q https://raw.github.com/pageauc/pi-timolo/master/Readme.md
     wget -O makevideo.conf.new https://raw.github.com/pageauc/pi-timolo/master/source/makevideo.conf
