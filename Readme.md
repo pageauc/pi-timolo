@@ -7,7 +7,7 @@ YouTube Videos https://www.youtube.com/playlist?list=PLLXJw_uJtQLa11A4qjVpn2D2T0
 * Release 6.0 with optional DateTime Named subfolders, recent files option and Disk Space Management + Misc updates 
 * Release 6.7 with videoRepeat option to take continuous video clips by filename datetime or seq num and exit by
 specified time or number of videos or run continuous and manage by freedisk space. This is similar to a dash cam.  Requires the updated config.py.   
-* Release 7.x*** Now uses openCV motion Tracking to track objects above a min size for a designated pixel track trigger length.
+* Release 7.x Now uses openCV motion Tracking to track objects above a min size for a designated pixel track trigger length.
 There is also a new motionTrackQuickPic feature that saves a stream image rather than switching to normal pi-camera non streaming mode.
 RPI Forum Post details here https://www.raspberrypi.org/forums/viewtopic.php?p=1183663#p1183663   
 
