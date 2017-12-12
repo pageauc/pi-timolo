@@ -25,7 +25,7 @@ fi
 if [ -f /usr/bin/rclone ]; then
     echo "rclone installed to /usr/bin/rclone"
     echo "-------------------------------------------------------------------------------"
-    echo "To configure rclone on RPI
+    echo "To configure one rclone remote service on RPI.
 
     1 Open SSH login session to RPI and execute command below
 

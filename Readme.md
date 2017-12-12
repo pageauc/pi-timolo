@@ -3,17 +3,16 @@
 ### Wiki https://github.com/pageauc/pi-timolo/wiki     
 YouTube Videos https://www.youtube.com/playlist?list=PLLXJw_uJtQLa11A4qjVpn2D2T0pgfaSG0
 
-Release 5.0 with optional video stream thread, improved day/night transitions with no greenish images + Misc updates
-Release 6.0 with optional DateTime Named subfolders, recent files option and Disk Space Management + Misc updates 
-Release 6.7 with videoRepeat option to take continuous video clips by filename datetime or seq num and exit by
-specified time or number of videos or run continuous and manage by freedisk space..  
-This is similar to a dash cam.  Requires the updated config.py.   
-***Release 7.x*** Now uses openCV motion Tracking to track objects above a min size for a designated pixel track trigger length.
-There is also a new motionTrackQuickPic feature that saves a stream image rather than switching to normal pi-camera non streaming mode.    
+* Release 5.0 with optional video stream thread, improved day/night transitions with no greenish images + Misc updates
+* Release 6.0 with optional DateTime Named subfolders, recent files option and Disk Space Management + Misc updates 
+* Release 6.7 with videoRepeat option to take continuous video clips by filename datetime or seq num and exit by
+specified time or number of videos or run continuous and manage by freedisk space. This is similar to a dash cam.  Requires the updated config.py.   
+* Release 7.x*** Now uses openCV motion Tracking to track objects above a min size for a designated pixel track trigger length.
+There is also a new motionTrackQuickPic feature that saves a stream image rather than switching to normal pi-camera non streaming mode.
 RPI Forum Post details here https://www.raspberrypi.org/forums/viewtopic.php?p=1183663#p1183663   
 
-***New Release 9.0*** Implement Optional plugins Feature and make program python3 compatible    
-For plugins details see https://github.com/pageauc/pi-timolo/wiki/How-to-Use-Plugins    
+* ***New Release 9.x*** Implement Optional plugin Feature, made program python3 compatible, Added rclone install and wiki
+For plugins details see https://github.com/pageauc/pi-timolo/wiki/How-to-Use-Plugins
 For python3 Support Details see https://github.com/pageauc/pi-timolo/wiki/Prerequisites#python-3-support
 
 **See Minimal Upgrade Below** if you have a recent pi-timolo version installed
