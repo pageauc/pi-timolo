@@ -3,11 +3,11 @@
 ### Wiki https://github.com/pageauc/pi-timolo/wiki     
 YouTube Videos https://www.youtube.com/playlist?list=PLLXJw_uJtQLa11A4qjVpn2D2T0pgfaSG0
 
-* Release 5.0 with optional video stream thread, improved day/night transitions with no greenish images + Misc updates
-* Release 6.0 with optional DateTime Named subfolders, recent files option and Disk Space Management + Misc updates 
-* Release 6.7 with videoRepeat option to take continuous video clips by filename datetime or seq num and exit by
+* Release 5.0 Added optional video stream thread, improved day/night transitions with no greenish images + Misc updates
+* Release 6.0 Added optional DateTime Named subfolders, recent files option and Disk Space Management + Misc updates 
+* Release 6.7 Added videoRepeat option to take continuous video clips by filename datetime or seq num and exit by
 specified time or number of videos or run continuous and manage by freedisk space. This is similar to a dash cam.  Requires the updated config.py.   
-* Release 7.x Now uses openCV motion Tracking to track objects above a min size for a designated pixel track trigger length.
+* Release 7.x Added openCV motion Tracking to track objects above a min size for a designated pixel track trigger length.
 There is also a new motionTrackQuickPic feature that saves a stream image rather than switching to normal pi-camera non streaming mode.
 RPI Forum Post details here https://www.raspberrypi.org/forums/viewtopic.php?p=1183663#p1183663   
 
@@ -21,12 +21,16 @@ For python3 Support Details see https://github.com/pageauc/pi-timolo/wiki/Prereq
 ### Description
 pi-timolo is a python picamara module application for a Raspberry PI computer (RPI).
 A RPI camera module must be attached. pi-timolo can take timelapse and motion detection
-images/videos, separately or together. Takes Long exposure Night (lowlight) images for
-Time Lapse and/or Motion. Has smooth twilight transitions based on a threshold light
-setting, so a real time clock is not required. Customization settings are saved in a config.py and conf files.
-The application is primarily designed for headless operation and includes sync.sh that
-can securely synchronize files with a users google drive.  This works well for remote security
+images/videos, separately or together. 
+
+Takes Long exposure Night (lowlight) images for Time Lapse and/or Motion. Has smooth twilight transitions based on a threshold light
+setting, so a real time clock is not required. Customization settings are saved in a config.py and conf files and optional special
+purpose plugin config files.
+
+The application is primarily designed for headless operation and includes sync.sh and rclone that
+can securely synchronize files with a users remote storage service. This works well for remote security
 cameras. Camera config.py settings can be administered remotely from a google drive using sync.sh.
+
 Includes makevideo.sh to create timelapse or motion lapse videos from images, convid.sh to convert/combine 
 h264 to mp4 format, a simple minumum or no setup web server to view images or videos and menubox.sh 
 to admin settings and stop start pi-timolo and webserver as background tasks. Recently added
