@@ -1,6 +1,6 @@
 #!/bin/bash
 # Convenient pi-timolo-install.sh script written by Claude Pageau 1-Jul-2016
-ver="9.0"
+ver="9.1"
 TIMOLO_DIR='pi-timolo'  # Default folder install location
 
 cd ~
@@ -52,7 +52,7 @@ if [ -e convid.conf ]; then
 fi
 
 timoloFiles=("config.py" "menubox.sh" "pi-timolo.py" "pi-timolo.sh" \
-"pi-timolo-install.sh" "sync.sh" "webserver.py" "webserver.sh" \
+"pi-timolo-install.sh" "sync.sh" "webserver.py" "webserver.sh" rclone-install.sh\
 "convid.sh" "convid.conf" "makevideo.sh" "makevideo.conf" "mvleavelast.sh" "myip.sh" "plugins-install.sh")
 
 for fname in "${timoloFiles[@]}" ; do
