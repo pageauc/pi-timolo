@@ -11,8 +11,9 @@ specified time or number of videos or run continuous and manage by freedisk spac
 There is also a new motionTrackQuickPic feature that saves a stream image rather than switching to normal pi-camera non streaming mode.
 RPI Forum Post details here https://www.raspberrypi.org/forums/viewtopic.php?p=1183663#p1183663   
 
-* ***New Release 9.x*** Implement Optional plugin Feature, made program python3 compatible, Added rclone install and wiki
+* ***New Release 9.x*** Added Optional plugin Feature, made python3 compatible, Added rclone install and wiki
 For plugins details see https://github.com/pageauc/pi-timolo/wiki/How-to-Use-Plugins
+For rclone details see https://github.com/pageauc/pi-timolo/wiki/How-to-Setup-rclone
 For python3 Support Details see https://github.com/pageauc/pi-timolo/wiki/Prerequisites#python-3-support
 
 **See Minimal Upgrade Below** if you have a recent pi-timolo version installed
