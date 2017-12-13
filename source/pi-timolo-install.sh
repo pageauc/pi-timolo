@@ -1,6 +1,6 @@
 #!/bin/bash
 # Convenient pi-timolo-install.sh script written by Claude Pageau 1-Jul-2016
-ver="9.2"
+ver="9.3"
 TIMOLO_DIR='pi-timolo'  # Default folder install location
 
 cd ~
@@ -70,7 +70,7 @@ done
 echo "Download Backup Files  Please Wait ..."
 wget -O config_new.py -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/config.py
 if [ $? -ne 0 ] ;  then
-    wget -O config_new.py https://raw.github.com/pageauc/pi-timolo/master/source/config.py
+    wget -O config.py.new https://raw.github.com/pageauc/pi-timolo/master/source/config.py
     wget -O convid.conf.new https://raw.github.com/pageauc/pi-timolo/master/source/convid.conf
     wget -O makevideo.conf.new https://raw.github.com/pageauc/pi-timolo/master/source/makevideo.conf
     wget -O Readme.md -q https://raw.github.com/pageauc/pi-timolo/master/Readme.md 

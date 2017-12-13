@@ -49,6 +49,6 @@ rclone sync -v /home/pi/pi-timolo/media/motion gdmedia:media/motion
 
 To upgrade
 
-./rclone-install.sh upgrade
+  ./rclone-install.sh upgrade
 
 Note Instructions were tested with google drive."
