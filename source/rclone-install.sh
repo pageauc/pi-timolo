@@ -1,8 +1,8 @@
 #!/bin/bash
-ver="0.1"
+ver="0.2"
 echo "$0 ver $ver written by Claude Pageau"
 
-if [ ! -z "$1" ] ; then
+if [ ! -f /usr/bin/rclone -o ! -z "$1" ]; then
     echo "-------------------------------------------------------------------------------"
     echo "Download https://downloads.rclone.org/rclone-v1.38-linux-arm.zip"
     wget wget -O rclone.zip -q --show-progress https://downloads.rclone.org/rclone-v1.38-linux-arm.zip
@@ -21,47 +21,34 @@ if [ ! -z "$1" ] ; then
     rm rclone.zip
     rm -r rclone-v1.38-linux-arm
 fi
+echo "rclone installed at /usr/bin/rclone"
+echo "-------------------------------------------------------------------------------"
+echo "                       INSTRUCTIONS
+1 You will be required to have a login account on the remote service
+  Open putty SSH login session to RPI and execute command below
 
-if [ -f /usr/bin/rclone ]; then
-    echo "rclone installed to /usr/bin/rclone"
-    echo "-------------------------------------------------------------------------------"
-    echo "To configure one rclone remote service on RPI.
+  rclone config
 
-    1 Open SSH login session to RPI and execute command below
+  Follow rclone prompts. For more Details See
+  https://github.com/pageauc/pi-timolo/wiki/How-to-Setup-rclone
+2 When prompted specify a remote name to idenify remote resource.
+  eg gdmedia
+3 On RPI, left click and highlight rclone url link (do not hit enter)
+4 on computer web browser url bar right click paste and go.
+4 On computer web browser security page, Confirm access.
+5 Copy web browser access security token and paste
+  into RPI SSH session rclone prompt. Enter to accept
+6 To test remote service access. Execute the following where
+  gdmedia is the name you gave your remote service
 
-      rclone config
+  rclone ls gdmedia:/
 
-      Follow rclone prompts. For more Details see  https://rclone.org/
-      You will be required to have a login account on the remote service
-    2 When prompted specify a remote name to idenify remote resource.
-      eg gdmedia
-    3 On RPI, mouse highlight rclone url link (do not hit enter)
-      then in logged web browser url bar right click paste and go .
-    4 On computer web browser security page, Confirm access.
-    5 Copy web browser access security token and paste
-      into RPI SSH session rclone prompt. Enter to accept
-    6 To test remote service access. Execute the following where
-      gdmedia is the name you gave your remote service
+Example sync command make source identical to destination
 
-      rclone ls gdmedia:/
+rclone sync -v /home/pi/pi-timolo/media/motion gdmedia:media/motion
 
-    Example sync From RPI folder
-                   To remote service name and folder
+To upgrade
 
-    rclone /home/pi/pi-timolo/media/motion gdmedia:media/motion
+./rclone-install.sh upgrade
 
-    Good Luck Claude ..
-    "
-    exit 0
-else
-    echo "-------------------------------------------------------------------------------
-rclone Allows syncing files from/to many remote storage services
-    
-rclone Not Installed. Specify a parameter per example below
-
-    ./rclone-install.sh install
-    
-Follow installation instructions after install is complete.
 Note Instructions were tested with google drive."
-    exit 1
-fi

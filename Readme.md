@@ -10,7 +10,6 @@ specified time or number of videos or run continuous and manage by freedisk spac
 * Release 7.x Added openCV motion Tracking to track objects above a min size for a designated pixel track trigger length.
 There is also a new motionTrackQuickPic feature that saves a stream image rather than switching to normal pi-camera non streaming mode.
 RPI Forum Post details here https://www.raspberrypi.org/forums/viewtopic.php?p=1183663#p1183663   
-
 * ***New Release 9.x*** Added Optional plugin Feature, made python3 compatible, Added rclone install and wiki
 For plugins details see https://github.com/pageauc/pi-timolo/wiki/How-to-Use-Plugins
 For rclone details see https://github.com/pageauc/pi-timolo/wiki/How-to-Setup-rclone
