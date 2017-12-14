@@ -24,11 +24,11 @@ echo "-------------------------------------------------------------"
 echo "      pi-timolo Install.sh script ver $ver"
 echo "Install or Upgrade pi-timolo Pi, Timelapse, Motion, Low Light"
 echo "-------------------------------------------------------------"
-echo "1 $STATUS pi-timolo from github repo"
+echo "$STATUS pi-timolo from github repo"
 echo ""
 
-if [ -e config.py ]; then
-  if [ ! -e config.py.orig ]; then
+if [ -f config.py ]; then
+  if [ ! -f config.py.orig ]; then
      echo "Save config.py to config.py.orig"
      cp config.py config.py.orig
   fi
@@ -67,7 +67,6 @@ for fname in "${timoloFiles[@]}" ; do
     fi
 done
 
-echo "$STATUS - Download Backup Files  Please Wait ..."
 wget -O config.py.new -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/config.py
 if [ $? -ne 0 ] ;  then
     wget -O config.py.new https://raw.github.com/pageauc/pi-timolo/master/source/config.py
@@ -77,7 +76,6 @@ if [ $? -ne 0 ] ;  then
     wget -O media/webserver.txt https://raw.github.com/pageauc/pi-timolo/master/source/webserver.txt
     # wget -O gdrive https://raw.github.com/pageauc/pi-timolo/master/source/drive_armv6
 else
-    wget -O config.py.new -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/config.py
     wget -O convid.conf.new -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/convid.conf
     wget -O makevideo.conf.new -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/makevideo.conf
     wget -O Readme.md -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/Readme.md
@@ -104,10 +102,9 @@ if [ ! -f /usr/bin/rclone ]; then
     rm rclone.zip
     rm -r rclone-v1.38-linux-arm
 fi
-echo "rclone installed at /usr/bin/rclone"
 
 echo "-------------------------------------------------------------"
-echo "2 - Make Required Files Executable"
+echo "$STATUS Make Required Files Executable"
 echo ""
 chmod +x *py
 chmod -x config*py
@@ -120,34 +117,30 @@ echo "-------------------------------------------------------------"
 NOW="$( date +%d-%m-%y )"
 LAST="$( date -r /var/lib/dpkg/info +%d-%m-%y )"
 if [ "$NOW" == "$LAST" ] ; then
-  echo "4 Raspbian System is Up To Date"
+  echo "Raspbian System is Up To Date"
 else
-  echo "3 - Performing Raspbian System Update"
-  echo "    This Will Take Some Time ...."
+  echo "Performing Raspbian System Update"
+  echo "  This Will Take Some Time ...."
   sudo apt-get -y update
   echo "Done Rasbian Update"
-  echo "4 - Performing Raspbian System Upgrade"
-  echo "    This Will Take Some Time ...."
+  echo "Performing Raspbian System Upgrade"
+  echo "  This Will Take Some Time ...."
   sudo apt-get -y upgrade
   echo "Done Raspbian Upgrade"
 fi
-echo "5 $STATUS Installing pi-timolo Dependencies Wait ..."
+echo "$STATUS Installing pi-timolo Dependencies Wait ..."
 sudo apt-get install -yq python-picamera python3-picamera python-imaging dos2unix python-pyexiv2 libav-tools
 sudo apt-get install -yq python-scipy  # New Dependency for enhanced motion detection
 sudo apt-get install -yq gpac   # required for MP4Box video converter
 sudo apt-get install -yq fonts-freefont-ttf # Required for Jessie Lite Only
 sudo apt-get install -yq python-opencv
-echo "Done Dependencies Install"
+echo "$STATUS Done Dependencies Install"
 
-if [ ! -f /usr/local/bin/gdrive ]; then
-  if [ -f gdrive ]; then
-      rm gdrive
-  fi
-else
-  echo "WARN - gdrive Not Installed ..."
+if [ -f gdrive ]; then
+   rm gdrive
 fi
 
-echo "7 - $STATUS Installing plugins Wait ..."
+echo "$STATUS Installing plugins Wait ..."
 ./plugins-install.sh
 
 # Check if pi-timolo-install.sh was launched from pi-timolo folder
@@ -172,20 +165,28 @@ if [ -f 'makedailymovie.sh' ]; then
   echo "$STATUS Delete Old makedailymovie.sh"
   rm makedailymovie.sh
 fi
+
+if [ -f /usr/local/bin/gdrive ]; then
+  echo "$STATUS rclone is installed at /usr/bin/rclone"
+fi
+
 echo "
 -----------------------------------------------
-pi-timolo $STATUS Complete
+$STATUS pi-timolo Complete
 -----------------------------------------------
 Minimal Instructions:
 1 - Reboot RPI if there are significant Raspbian system updates.
 2 - If config.py already exists then old file is config.py.prev
-3 - Check pi-timolo variable settings in config.py per comments
-    cd ~/pi-timolo
-    nano config.py
-    ctrl-x y to save and quit nano editor
-4 - To Run pi-timolo perform the following in RPI SSH or terminal session
+3 - To Test Run pi-timolo execute the following commands in RPI SSH
+    or terminal session. Default is Timelapse and Motion Track On
+
     cd ~/pi-timolo
     ./pi-timolo.py
+
+4 - To manage pi-timolo, Run menubox.sh execute the following
+
+    cd ~/pi-timolo
+    ./menubox.sh
 
 For Detailed Instructions See Wiki https://github.com/pageauc/pi-timolo/wiki
 
