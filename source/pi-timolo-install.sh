@@ -161,6 +161,7 @@ else
   sudo apt-get -y upgrade
   echo "Done Raspbian Upgrade"
 fi
+
 echo "$STATUS Installing pi-timolo Dependencies Wait ..."
 sudo apt-get install -yq python-picamera python3-picamera python-imaging dos2unix python-pyexiv2 libav-tools
 sudo apt-get install -yq python-scipy  # New Dependency for enhanced motion detection
@@ -168,7 +169,6 @@ sudo apt-get install -yq gpac   # required for MP4Box video converter
 sudo apt-get install -yq fonts-freefont-ttf # Required for Jessie Lite Only
 sudo apt-get install -yq python-opencv
 echo "$STATUS Done Dependencies Install"
-
 
 # Check if pi-timolo-install.sh was launched from pi-timolo folder
 if [ "$DIR" != "$INSTALL_PATH" ]; then
