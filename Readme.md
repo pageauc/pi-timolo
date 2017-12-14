@@ -1,7 +1,6 @@
 # pi-timolo - 
 ### Raspberry (Pi)camera, (Ti)melapse, (Mo)tion, (Lo)wlight
-### For Details See [Wiki Instructions](https://github.com/pageauc/pi-timolo/wiki) and
-[YouTube Videos](https://www.youtube.com/playlist?list=PLLXJw_uJtQLa11A4qjVpn2D2T0pgfaSG0)
+### For Details See [Wiki Instructions](https://github.com/pageauc/pi-timolo/wiki) and [YouTube Videos](https://www.youtube.com/playlist?list=PLLXJw_uJtQLa11A4qjVpn2D2T0pgfaSG0)
 
 * ***NOTICE*** gdrive is no longer installed with pi-timolo-install.sh, I have been testing
 rclone and it is now the default. If /usr/local/bin/gdrive exists, It will remain.   
