@@ -3,9 +3,9 @@
 ### [Wiki Instructions](https://github.com/pageauc/pi-timolo/wiki)     
 ### [YouTube Videos](https://www.youtube.com/playlist?list=PLLXJw_uJtQLa11A4qjVpn2D2T0pgfaSG0)
 
-* ***NOTICE - Although gdrive is currently installed with pi-timolo, I have been testing
+* ***NOTICE*** Although gdrive is currently installed with pi-timolo, I have been testing
 rclone and plan to make it the default and remove gdrive from the install. I recommend
-you install rclone per [Wiki - How to Setup Rclone](https://github.com/pageauc/pi-timolo/wiki/How-to-Setup-rclone) *** 
+you install rclone per [Wiki - How to Setup Rclone](https://github.com/pageauc/pi-timolo/wiki/How-to-Setup-rclone) 
 
 ### Quick Install
 For Easy pi-timolo-install.sh onto raspbian RPI. 
