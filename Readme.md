@@ -1,4 +1,4 @@
-# pi-timolo - 
+# pi-timolo
 ### Raspberry (Pi)camera, (Ti)melapse, (Mo)tion, (Lo)wlight
 ### For Details See [Wiki Instructions](https://github.com/pageauc/pi-timolo/wiki) and [YouTube Videos](https://www.youtube.com/playlist?list=PLLXJw_uJtQLa11A4qjVpn2D2T0pgfaSG0)
 
@@ -7,19 +7,22 @@ rclone and it is now the default. If /usr/local/bin/gdrive exists, It will remai
 see [Wiki - How to Setup Rclone](https://github.com/pageauc/pi-timolo/wiki/How-to-Setup-rclone) 
 
 ### Quick Install
-For Easy pi-timolo-install.sh onto raspbian RPI. 
-
-    curl -L https://raw.github.com/pageauc/pi-timolo/master/source/pi-timolo-install.sh | bash
+**IMPORTANT** - A raspbian apt-get update and upgrade will be performed as part of install
+so it may take some time if these are not up-to-date       
 
 From a computer logged into the RPI via SSH(Putty) or desktop terminal session  
 * Use left mouse and hold to highlight curl command above, right click, copy.  
 * Select RPI SSH(Putty) window, mouse right click, paste.   
-The command will download and execute the GitHub pi-timolo-install.sh script.   
+The command below will download and execute the GitHub pi-timolo-install.sh script
 
-**IMPORTANT** - A raspbian apt-get update and upgrade will be performed as part of install
-so it may take some time if these are not up-to-date       
+    curl -L https://raw.github.com/pageauc/pi-timolo/master/source/pi-timolo-install.sh | bash
+    
+To Test Run default configuration - motion track(HD image) plus timelapse(5 min interval). 
+ 
+    cd ~/pi-timolo
+    ./pi-timolo.py
 
-For configuration and operation of pi-timolo See pi-timolo wiki https://github.com/pageauc/pi-timolo/wiki
+see Github Wiki for More Details https://github.com/pageauc/pi-timolo/wiki
 
 ### Description
 pi-timolo is a python 2/3 picamara module application for a Raspberry PI computer (RPI).
@@ -79,17 +82,18 @@ the pi-timolo-install.sh script code before executing.
     chmod +x pi-timolo-install.sh
     ./pi-timolo-install.sh
     
-### Run pi-timolo 
-Default is motion only see config.py for detailed settings   
+### How to Test Run pi-timolo.py 
+Default is motion tracking Full image and Timelapse (5 minute interval) see config.py for detailed settings   
     
     cd ~/pi-timolo
     ./pi-timolo.py   
  
 ### Menubox
-The lastest version of pi-timolo has a whiptail admin menu system. The menu's allow
-start/stop of pi-timolo.py and webserver.py as background tasks, as well as
+pi-timolo has a whiptail administration menu system. The menu's allow
+start/stop of pi-timolo.py and/or webserver.py as background tasks, as well as
 editing configuration files, making timelapse videos from jpg images, converting or joining mp4 files Etc.    
-To run from ssh console or terminal session.
+
+To run menubox.sh from ssh console or terminal session execute commands below.
 
     cd ~/pi-timolo
     ./menubox.sh
