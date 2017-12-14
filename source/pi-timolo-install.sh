@@ -32,10 +32,6 @@ if [ -f config.py ]; then
      echo "Save config.py to config.py.orig"
      cp config.py config.py.orig
   fi
-  echo "Backup config.py to config.py.prev"
-  cp config.py config.py.prev
-else
-  wget -O config.py -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/config.py
 fi
 
 if [ -e convid.conf.1 ]; then
