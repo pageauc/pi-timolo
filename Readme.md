@@ -1,24 +1,29 @@
-# pi-timolo
+# pi-timolo - picamera timelapse motion lowlight
 ### Raspberry (Pi) - (Ti)melapse, (Mo)tion, (Lo)wlight
 ### Wiki https://github.com/pageauc/pi-timolo/wiki     
 YouTube Videos https://www.youtube.com/playlist?list=PLLXJw_uJtQLa11A4qjVpn2D2T0pgfaSG0
 
-* Release 5.0 Added optional video stream thread, improved day/night transitions with no greenish images + Misc updates
-* Release 6.0 Added optional DateTime Named subfolders, recent files option and Disk Space Management + Misc updates 
-* Release 6.7 Added videoRepeat option to take continuous video clips by filename datetime or seq num and exit by
-specified time or number of videos or run continuous and manage by freedisk space. This is similar to a dash cam.  Requires the updated config.py.   
-* Release 7.x Added openCV motion Tracking to track objects above a min size for a designated pixel track trigger length.
-There is also a new motionTrackQuickPic feature that saves a stream image rather than switching to normal pi-camera non streaming mode.
-RPI Forum Post details here https://www.raspberrypi.org/forums/viewtopic.php?p=1183663#p1183663   
-* ***New Release 9.x*** Added Optional plugin Feature, made python3 compatible, Added rclone install and wiki
-For plugins details see https://github.com/pageauc/pi-timolo/wiki/How-to-Use-Plugins
-For rclone details see https://github.com/pageauc/pi-timolo/wiki/How-to-Setup-rclone
-For python3 Support Details see https://github.com/pageauc/pi-timolo/wiki/Prerequisites#python-3-support
+* ***NOTICE***  Although gdrive is currently installed with pi-timolo, I have been testing
+rclone and plan to make it the default and remove gdrive from the install. I recommend
+you install rclone per [Wiki - How to Setup Rclone](https://github.com/pageauc/pi-timolo/wiki/How-to-Setup-rclone) 
 
-**See Minimal Upgrade Below** if you have a recent pi-timolo version installed
+### Quick Install
+For Easy pi-timolo-install.sh onto raspbian RPI. 
+
+    curl -L https://raw.github.com/pageauc/pi-timolo/master/source/pi-timolo-install.sh | bash
+
+From a computer logged into the RPI via SSH(Putty) or desktop terminal session  
+* Use left mouse and hold to highlight curl command above, right click, copy.  
+* Select RPI SSH(Putty) window, mouse right click, paste.   
+The command will download and execute the GitHub pi-timolo-install.sh script.   
+
+**IMPORTANT** - A raspbian apt-get update and upgrade will be performed as part of install
+so it may take some time if these are not up-to-date       
+
+For configuration and operation of pi-timolo See pi-timolo wiki https://github.com/pageauc/pi-timolo/wiki
 
 ### Description
-pi-timolo is a python picamara module application for a Raspberry PI computer (RPI).
+pi-timolo is a python 2/3 picamara module application for a Raspberry PI computer (RPI).
 A RPI camera module must be attached. pi-timolo can take timelapse and motion detection
 images/videos, separately or together. 
 
@@ -37,19 +42,21 @@ optional plugin feature that allows overlaying config.py settings with custom se
 specific tasks.  
         
 see Github Wiki for More Details https://github.com/pageauc/pi-timolo/wiki    
- 
-### Quick Install
-For Easy pi-timolo-install.sh onto raspbian RPI. 
 
-    curl -L https://raw.github.com/pageauc/pi-timolo/master/source/pi-timolo-install.sh | bash
+### Recent Release History
+* Release 5.0 Added optional video stream thread, improved day/night transitions with no greenish images + Misc updates
+* Release 6.0 Added optional DateTime Named subfolders, recent files option and Disk Space Management + Misc updates 
+* Release 6.7 Added videoRepeat option to take continuous video clips by filename datetime or seq num and exit by
+specified time or number of videos or run continuous and manage by freedisk space. This is similar to a dash cam. Requires the updated config.py.   
+* Release 7.x Added openCV motion Tracking to track objects above a min size for a designated pixel track trigger length.
+There is also a new motionTrackQuickPic feature that saves a stream image rather than switching to normal pi-camera non streaming mode.
+RPI Forum Post details here https://www.raspberrypi.org/forums/viewtopic.php?p=1183663#p1183663   
+* ***New Release 9.x*** Added Optional plugin Feature, made python3 compatible, Added rclone install and wiki
+For plugins details see https://github.com/pageauc/pi-timolo/wiki/How-to-Use-Plugins
+For rclone details see https://github.com/pageauc/pi-timolo/wiki/How-to-Setup-rclone
+For python3 Support Details see https://github.com/pageauc/pi-timolo/wiki/Prerequisites#python-3-support
 
-From a computer logged into the RPI via SSH(Putty) or desktop terminal session  
-* Use mouse to highlight curl command above, right click, copy.  
-* Select RPI SSH(Putty) window, mouse right click, paste.   
-The command will download and execute the GitHub pi-timolo-install.sh script   
-
-**IMPORTANT** - A raspbian apt-get update and upgrade will be performed as part of install
-so it may take some time if these are not up-to-date       
+**See Minimal Upgrade Below** if you have a recent pi-timolo version installed
 
 ### Minimal Upgrade
 If you are just interested in a minimal upgrade (must have pi-timolo previously installed)
