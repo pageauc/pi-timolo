@@ -1,6 +1,6 @@
 #!/bin/bash
 # Convenient pi-timolo-install.sh script written by Claude Pageau 1-Jul-2016
-ver="9.4"
+ver="9.5"
 TIMOLO_DIR='pi-timolo'  # Default folder install location
 
 cd ~
@@ -51,9 +51,15 @@ if [ -e convid.conf ]; then
   fi
 fi
 
-timoloFiles=("config.py" "menubox.sh" "pi-timolo.py" "pi-timolo.sh" \
+if [ -f /usr/bin/rclone ]; then
+  timoloFiles=("menubox.sh" "pi-timolo.py" "pi-timolo.sh" "pi-timolo-install.sh" \
+"sync.sh" "webserver.py" "webserver.sh" "rclone-install.sh" \
+"convid.sh" "makevideo.sh" "mvleavelast.sh" "myip.sh" "plugins-install.sh" "rclone-sync.sh")
+else
+  timoloFiles=("config.py" "menubox.sh" "pi-timolo.py" "pi-timolo.sh" \
 "pi-timolo-install.sh" "sync.sh" "webserver.py" "webserver.sh" "rclone-install.sh" \
-"convid.sh" "convid.conf" "makevideo.sh" "makevideo.conf" "mvleavelast.sh" "myip.sh" "plugins-install.sh")
+"convid.sh" "convid.conf" "makevideo.sh" "makevideo.conf" "mvleavelast.sh" "myip.sh" "plugins-install.sh" "rclone-sync.sh")
+fi
 
 for fname in "${timoloFiles[@]}" ; do
     wget_output=$(wget -O $fname -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/$fname)
@@ -83,8 +89,35 @@ else
     # wget -O gdrive -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/drive_armv6
 fi
 
+echo "$STATUS Installing plugins Wait ..."
+PLUGINS_DIR='plugins'  # Default folder install location
+pluginFiles=("__init__.py" "dashcam.py" "secfast.py" "secQTL.py" "secstill.py" \
+"secvid.py" "shopcam.py" "slowmo.py" "TLlong.py" "TLshort.py")
+mkdir -p $PLUGINS_DIR
+cd $PLUGINS_DIR
+INSTALL_PATH=$( pwd )
+echo "Plugins Install Path is $INSTALL_PATH"
+
+for fname in "${pluginFiles[@]}" ; do
+  if [ -f $fname ]; then     # check if local file exists.
+    echo "INFO  - $fname Skip Download Since Local Copy Found"
+  else
+    wget_output=$(wget -O $fname -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/plugins/$fname)
+    if [ $? -ne 0 ]; then
+        wget_output=$(wget -O $fname -q https://raw.github.com/pageauc/pi-timolo/master/source/plugins/$fname)
+        if [ $? -ne 0 ]; then
+            echo "ERROR - $fname wget Download Failed. Possible Cause Internet Problem."
+        else
+            wget -O $fname "https://raw.github.com/pageauc/pi-timolo/master/source/plugins/$fname"
+        fi
+    fi
+  fi
+done
+cd ..
+echo "$STATUS Done plugins Install as Required."
+
 if [ ! -f /usr/bin/rclone ]; then
-    echo "$STATUS rclone"
+    echo "$STATUS rclone Download and Setup"
     echo "Download https://downloads.rclone.org/rclone-v1.38-linux-arm.zip"
     wget wget -O rclone.zip -q --show-progress https://downloads.rclone.org/rclone-v1.38-linux-arm.zip
     echo "unzip rclone.zip to folder rclone-v1.38-linux-arm"
@@ -136,12 +169,6 @@ sudo apt-get install -yq fonts-freefont-ttf # Required for Jessie Lite Only
 sudo apt-get install -yq python-opencv
 echo "$STATUS Done Dependencies Install"
 
-if [ -f gdrive ]; then
-   rm gdrive
-fi
-
-echo "$STATUS Installing plugins Wait ..."
-./plugins-install.sh
 
 # Check if pi-timolo-install.sh was launched from pi-timolo folder
 if [ "$DIR" != "$INSTALL_PATH" ]; then
@@ -149,6 +176,10 @@ if [ "$DIR" != "$INSTALL_PATH" ]; then
     echo "$STATUS Cleanup pi-timolo-install.sh"
     rm pi-timolo-install.sh
   fi
+fi
+
+if [ -f gdrive ]; then
+   rm gdrive
 fi
 
 if [ -f 'install.sh' ]; then
@@ -166,7 +197,7 @@ if [ -f 'makedailymovie.sh' ]; then
   rm makedailymovie.sh
 fi
 
-if [ -f /usr/local/bin/gdrive ]; then
+if [ -f /usr/bin/rclone ]; then
   echo "$STATUS rclone is installed at /usr/bin/rclone"
 fi
 
@@ -183,7 +214,7 @@ Minimal Instructions:
     cd ~/pi-timolo
     ./pi-timolo.py
 
-4 - To manage pi-timolo, Run menubox.sh execute the following
+4 - To manage pi-timolo, Run menubox.sh Execute commands below
 
     cd ~/pi-timolo
     ./menubox.sh
