@@ -3,17 +3,17 @@
 ### For Details See [Wiki Instructions](https://github.com/pageauc/pi-timolo/wiki) and [YouTube Videos](https://www.youtube.com/playlist?list=PLLXJw_uJtQLa11A4qjVpn2D2T0pgfaSG0)
 
 * ***NOTICE*** gdrive is no longer installed with pi-timolo-install.sh, I have been testing
-rclone and it is now the default. If /usr/local/bin/gdrive exists, It will remain.   
-see [Wiki - How to Setup Rclone](https://github.com/pageauc/pi-timolo/wiki/How-to-Setup-rclone) 
+rclone and it is now the default. See [Wiki - How to Setup Rclone](https://github.com/pageauc/pi-timolo/wiki/How-to-Setup-rclone)
+If /usr/local/bin/gdrive exists, It will remain.   
 
 ### Quick Install
 **IMPORTANT** - A raspbian apt-get update and upgrade will be performed as part of install
-so it may take some time if these are not up-to-date       
+so it may take some time if these are not up-to-date.      
 
 From a computer logged into the RPI via SSH(Putty) or desktop terminal session  
-* Use left mouse and hold to highlight curl command above, right click, copy.  
+* Use left mouse and hold to highlight curl command below, right click, copy.  
 * Select RPI SSH(Putty) window, mouse right click, paste.   
-The command below will download and execute the GitHub pi-timolo-install.sh script
+The command below will download and execute the GitHub pi-timolo-install.sh script.
 
     curl -L https://raw.github.com/pageauc/pi-timolo/master/source/pi-timolo-install.sh | bash
     
