@@ -10,7 +10,6 @@ If /usr/local/bin/gdrive exists, It will remain.
 **IMPORTANT** - A raspbian apt-get update and upgrade will be performed as part of install
 so it may take some time if these are not up-to-date.      
 
-## Quick Install
 Step 1 Highlight curl command in code box below using mouse left button. Right click mouse in highlighted area and Copy.     
 Step 2 On RPI putty SSH or terminal session right click, select paste then Enter to download and run script.     
 
@@ -18,8 +17,8 @@ Step 2 On RPI putty SSH or terminal session right click, select paste then Enter
 
 The command above will download and Run the GitHub pi-timolo-install.sh script.   
 
-## Test Install
-To Test Run default configuration - motion track(HD image) plus timelapse(5 min interval). 
+### Test Install
+To Test Run default config.py - motion track(HD image) plus timelapse(5 min interval). 
  
     cd ~/pi-timolo
     ./pi-timolo.py
