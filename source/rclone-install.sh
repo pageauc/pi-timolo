@@ -21,7 +21,7 @@ if [ ! -f /usr/bin/rclone -o ! -z "$1" ]; then
     rm rclone.zip
     rm -r rclone-v1.38-linux-arm
     wget -O rclone-sync.sh https://raw.github.com/pageauc/pi-timolo/master/source/rclone-sync.sh
-    chmod +x rclone-sync.sh    
+    chmod +x rclone-sync.sh
 fi
 echo "rclone installed at /usr/bin/rclone"
 echo "-------------------------------------------------------------------------------"
@@ -35,7 +35,7 @@ echo "                       INSTRUCTIONS
   https://github.com/pageauc/pi-timolo/wiki/How-to-Setup-rclone
 2 At name> prompt specify a reference name  eg gdmedia
 3 At storage> prompt Enter a remote storage number from List
-4 Select Auto Config, At Link: prompt, left click 
+4 Select Auto Config, At Link: prompt, left click
   and highlight rclone url link (do not hit enter)
 5 on computer web browser url bar right click paste and go.
 6 On computer web browser security page, Confirm access.
