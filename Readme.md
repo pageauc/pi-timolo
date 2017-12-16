@@ -3,8 +3,8 @@
 ### For Details See [Wiki Instructions](https://github.com/pageauc/pi-timolo/wiki) and [YouTube Videos](https://www.youtube.com/playlist?list=PLLXJw_uJtQLa11A4qjVpn2D2T0pgfaSG0)
 
 * ***NOTICE*** gdrive is no longer installed with pi-timolo-install.sh, I have been testing
-rclone and it is now the default. See [Wiki - How to Setup Rclone](https://github.com/pageauc/pi-timolo/wiki/How-to-Setup-rclone)
-If /usr/local/bin/gdrive exists, It will remain.   
+rclone and it is now the default. See [Wiki - How to Setup Rclone](https://github.com/pageauc/pi-timolo/wiki/How-to-Setup-rclone).
+If ***/usr/local/bin/gdrive*** Exists, It Will Remain.   
 
 ### Quick Install
 **IMPORTANT** - A raspbian apt-get update and upgrade will be performed as part of install
@@ -23,7 +23,7 @@ To Test Run default config.py - motion track(HD image) plus timelapse(5 min inte
     cd ~/pi-timolo
     ./pi-timolo.py
 
-see Github Wiki for More Details https://github.com/pageauc/pi-timolo/wiki
+### For Detailed Instructions See [pi-timolo Wiki](https://github.com/pageauc/pi-timolo/wiki)
 
 ### Description
 pi-timolo is a python 2/3 picamara module application for a Raspberry PI computer (RPI).
@@ -83,12 +83,6 @@ the pi-timolo-install.sh script code before executing.
     chmod +x pi-timolo-install.sh
     ./pi-timolo-install.sh
     
-### How to Test Run pi-timolo.py 
-Default is motion tracking Full image and Timelapse (5 minute interval) see config.py for detailed settings   
-    
-    cd ~/pi-timolo
-    ./pi-timolo.py   
- 
 ### Menubox
 pi-timolo has a whiptail administration menu system. The menu's allow
 start/stop of pi-timolo.py and/or webserver.py as background tasks, as well as
