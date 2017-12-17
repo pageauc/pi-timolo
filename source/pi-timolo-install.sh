@@ -91,8 +91,6 @@ pluginFiles=("__init__.py" "dashcam.py" "secfast.py" "secQTL.py" "secstill.py" \
 "secvid.py" "shopcam.py" "slowmo.py" "TLlong.py" "TLshort.py")
 mkdir -p $PLUGINS_DIR
 cd $PLUGINS_DIR
-INSTALL_PATH=$( pwd )
-echo "Plugins Install Path is $INSTALL_PATH"
 
 for fname in "${pluginFiles[@]}" ; do
   if [ -f $fname ]; then     # check if local file exists.
