@@ -66,7 +66,7 @@ echo "Working ..."
 if [ ! -d $tl_folder_source ] ; then
     echo "ERROR - Source Folder" $tl_folder_source "Does Not Exist"
     echo "ERROR - Check $0 Variable folder_source and Try Again"
-    echo "ERROR - Source Folder $tl_folder_source Does Not Exist." >> $error_log_file
+    echo "ERROR - Source Folder $tl_folder_source Does Not Exist." >> $tl_error_log_file
     exit 1
 fi
 
@@ -83,7 +83,7 @@ if [ ! -d $tl_folder_destination ] ; then
     if [ "$?" -ne 0 ]; then
         echo "ERROR - Problem Creating Destination Folder" $tl_folder_destination
         echo "ERROR - If destination is a remote folder or mount then check network, destination IP address, permissions, Etc"
-        echo "ERROR - mkdir Failed - $tl_folder_destination Could NOT be Created." >> $error_log_file
+        echo "ERROR - mkdir Failed - $tl_folder_destination Could NOT be Created." >> $tl_error_log_file
         exit 1
     fi
 fi
@@ -93,7 +93,7 @@ if [ "$tl_archive_source_files" = true ] ; then    # Check if archiving enabled
     if [ ! -d $tl_archive_dest_folder ] ; then  # Check if archive folder exists
         echo "ERROR - Archive Folder" $tl_archive_dest_folder "Does Not Exist"
         echo "ERROR - Check $0 Variable tl_archive_dest_folder and Try Again"
-        echo "ERROR - Archive Folder $tl_archive_dest_folder Does Not Exist." >> $error_log_file
+        echo "ERROR - Archive Folder $tl_archive_dest_folder Does Not Exist." >> $tl_error_log_file
         exit 1
     fi
     # create date/time stamped subfolder
@@ -103,7 +103,7 @@ if [ "$tl_archive_source_files" = true ] ; then    # Check if archiving enabled
         mkdir -p $tl_archive_dest_folder/$subfolderName
         if [ ! -d $tl_archive_dest_folder/$subfolderName ] ; then
             echo "ERROR  -  subfolder create Failed $tl_archive_dest_folder/$subfolderName"
-            echo "ERROR  -  subfolder create Failed $tl_archive_dest_folder/$subfolderName" >> $error_log_file
+            echo "ERROR  -  subfolder create Failed $tl_archive_dest_folder/$subfolderName" >> $tl_error_log_file
             exit 1
         fi
     fi
@@ -121,7 +121,7 @@ echo "STATUS- Creating Temporary Working Folder " $tl_folder_working
 mkdir $tl_folder_working
 if [ ! -d $tl_folder_working ] ; then
     echo "ERROR - Problem Creating Temporary Working Folder " $tl_folder_working
-    echo "ERROR - mkdir Failed - $tl_folder_working Could NOT be Created." >> $error_log_file
+    echo "ERROR - mkdir Failed - $tl_folder_working Could NOT be Created." >> $tl_error_log_file
     exit 1
 fi
 
@@ -154,7 +154,7 @@ echo "==========================================================================
 if [ $? -ne 0 ] ; then
   echo "ERROR - avconv Encoding Failed for" $tl_folder_destination/$tl_videoname
   echo "ERROR - Review avconv output for Error Messages and Correct Problem"
-  echo "ERROR - avconv Encoding Failed for" $tl_folder_destination/$tl_videoname >> $error_log_file
+  echo "ERROR - avconv Encoding Failed for" $tl_folder_destination/$tl_videoname >> $tl_error_log_file
   exit 1
 else
   echo "=========================================================================="
@@ -177,11 +177,11 @@ else
             rm -f $imageFilePath   # Remove original image file without prompt
             if [ -e $imageFilePath ] ; then
                 echo "ERROR - Delete Failed $imageFilePath.  Please Investigate ..."
-                echo "ERROR - Delete Failed $imageFilePath.  Please Investigate ..." >> $error_log_file
+                echo "ERROR - Delete Failed $imageFilePath.  Please Investigate ..." >> $tl_error_log_file
             fi
         else
             echo "ERROR - Copy Failed $imageFilePath to $tl_archive_dest_folder/$subfolderName"
-            echo "ERROR - Copy Failed $imageFilePath to $tl_archive_dest_folder/"$subfolderName >> $error_log_file
+            echo "ERROR - Copy Failed $imageFilePath to $tl_archive_dest_folder/"$subfolderName >> $tl_error_log_file
         fi
       done
     )
@@ -197,7 +197,7 @@ else
         rm -f $imageFile
         if [ -e $imageFile ] ; then
             echo "ERROR - Delete Failed for $imageFile"
-            echo "ERROR - Delete Failed for $imageFile" >> $error_log_file
+            echo "ERROR - Delete Failed for $imageFile" >> $tl_error_log_file
         fi
       done
     )
@@ -208,7 +208,7 @@ else
   if [ $? -ne 0 ] ; then
     echo "ERROR - Could not Delete Working Folder" $tl_folder_working
     echo "ERROR - Check for permissions or other possible problems"
-    echo "ERROR - Could not Delete Working Folder" $tl_folder_working >> $error_log_file
+    echo "ERROR - Could not Delete Working Folder" $tl_folder_working >> $tl_error_log_file
     exit 1
   fi
 fi
@@ -226,7 +226,7 @@ if [ "$tl_share_copy_on" = true ] ; then
     echo "ERROR - Failed to Copy" $tl_folder_destination/$tl_videoname "to" $tl_share_destination "Because It is NOT Mounted"
     echo "ERROR - Please Investigate Mount Problem and Try Again"
     echo "ERROR - Once Resolved You Will Need to Manually Transfer Previous Video Files"
-    echo "ERROR - Failed to Copy" $tl_folder_destination/$tl_videoname "to" $tl_share_destination "Because It is NOT Mounted" >> $error_log_file
+    echo "ERROR - Failed to Copy" $tl_folder_destination/$tl_videoname "to" $tl_share_destination "Because It is NOT Mounted" >> $tl_error_log_file
     exit 1
   fi
 
@@ -234,7 +234,7 @@ if [ "$tl_share_copy_on" = true ] ; then
   if [ $? -ne 0 ]; then
     echo "ERROR - Copy Failed $tl_folder_destination/$tl_videoname to" $tl_share_destination/$tl_videoname
     echo "ERROR - If destination is a remote folder or mount then check network, destination IP address, permissions, Etc"
-    echo "ERROR - Copy Failed from" $tl_folder_destination/$tl_videoname "to" $tl_share_destination/$tl_videoname >> $error_log_file
+    echo "ERROR - Copy Failed from" $tl_folder_destination/$tl_videoname "to" $tl_share_destination/$tl_videoname >> $tl_error_log_file
     exit 1
   else
     if [ -e $tl_share_destination/$tl_videoname ] ; then
@@ -246,13 +246,13 @@ if [ "$tl_share_copy_on" = true ] ; then
       if [ -e $tl_folder_destination/$tl_videoname ] ; then
         echo "ERROR - Could Not Delete" $tl_folder_destination/$tl_videoname "After Copy To" $tl_share_destination/$tl_videoname
         echo "ERROR - Please investigate"
-        echo "ERROR - Could Not Delete" $tl_folder_destination/$tl_videoname "After Copy To" $tl_share_destination/$tl_videoname >> $error_log_file
+        echo "ERROR - Could Not Delete" $tl_folder_destination/$tl_videoname "After Copy To" $tl_share_destination/$tl_videoname >> $tl_error_log_file
         exit 1
       fi
     else
       echo "ERROR - Problem copying $tl_folder_destination/$tl_videoname to $tl_share_destination/$tl_videoname"
       echo "ERROR - If destination is a remote folder or mount then check network, destination IP address, permissions, Etc"
-      echo "ERROR - Copy Failed from" $tl_folder_destination/$tl_videoname "to" $tl_share_destination/$tl_videoname >> $error_log_file
+      echo "ERROR - Copy Failed from" $tl_folder_destination/$tl_videoname "to" $tl_share_destination/$tl_videoname >> $tl_error_log_file
       exit 1
     fi
   fi
