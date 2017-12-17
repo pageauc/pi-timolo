@@ -1,6 +1,6 @@
 #!/bin/bash
 
-ver="4.50"
+ver="4.6"
 
 # makevideo.sh written by Claude Pageau.
 # Note - makevideo.sh variables in makevideo.conf
@@ -89,7 +89,7 @@ if [ ! -d $tl_folder_destination ] ; then
 fi
 
 # Create Archive subfolder if archiving enabled One Folder per day
-if [ "$tl_archive_source_files"=true ] ; then    # Check if archiving enabled
+if [ "$tl_archive_source_files" = true ] ; then    # Check if archiving enabled
     if [ ! -d $tl_archive_dest_folder ] ; then  # Check if archive folder exists
         echo "ERROR - Archive Folder" $tl_archive_dest_folder "Does Not Exist"
         echo "ERROR - Check $0 Variable tl_archive_dest_folder and Try Again"
