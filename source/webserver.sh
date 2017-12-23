@@ -9,7 +9,7 @@ progname="webserver.py"
 
 echo "$0 ver 1.1 written by Claude Pageau"
 echo "-----------------------------------------------"
-cd $progpath
+cd "$progpath"
 
 # Check if progname exists
 if [ ! -e $progpath/$progname ] ; then
