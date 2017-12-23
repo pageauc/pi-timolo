@@ -188,7 +188,7 @@ $STATUS pi-timolo Complete
 -----------------------------------------------
 Minimal Instructions:
 1 - Reboot RPI if there are significant Raspbian system updates.
-2 - If config.py already exists then old file is config.py.prev
+2 - If config.py already exists then latest file is config.py.new
 3 - To Test Run pi-timolo execute the following commands in RPI SSH
     or terminal session. Default is Timelapse and Motion Track On
 
