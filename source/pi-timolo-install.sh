@@ -1,6 +1,6 @@
 #!/bin/bash
 # Convenient pi-timolo-install.sh script written by Claude Pageau 1-Jul-2016
-ver="9.6"
+ver="9.7"
 TIMOLO_DIR='pi-timolo'  # Default folder install location
 
 cd ~
@@ -27,34 +27,19 @@ echo "-------------------------------------------------------------"
 echo "$STATUS pi-timolo from github repo"
 echo ""
 
-if [ -f config.py ]; then
-  if [ ! -f config.py.orig ]; then
-     echo "Save config.py to config.py.orig"
-     cp config.py config.py.orig
-  fi
-fi
-
 if [ -e convid.conf.1 ]; then
   rm convid.conf.1
   rm makevideo.conf.1
 fi
 
-if [ -e convid.conf ]; then
-  if [ ! -e convid.conf.orig ]; then
-    echo "Backup convid.conf and makevideo.conf to .orig files"
-    cp convid.conf convid.conf.orig
-    cp makevideo.conf makevideo.conf.orig
-  fi
-fi
-
 if [ -f /usr/bin/rclone ]; then
   timoloFiles=("menubox.sh" "pi-timolo.py" "pi-timolo.sh" "pi-timolo-install.sh" \
-"sync.sh" "webserver.py" "webserver.sh" "rclone-install.sh" \
-"convid.sh" "makevideo.sh" "mvleavelast.sh" "myip.sh" "plugins-install.sh" "rclone-sync.sh")
+"sync.sh" "webserver.py" "webserver.sh"  \
+"convid.sh" "makevideo.sh" "mvleavelast.sh" "rclone-sync.sh")
 else
-  timoloFiles=("config.py" "menubox.sh" "pi-timolo.py" "pi-timolo.sh" \
-"pi-timolo-install.sh" "sync.sh" "webserver.py" "webserver.sh" "rclone-install.sh" \
-"convid.sh" "convid.conf" "makevideo.sh" "makevideo.conf" "mvleavelast.sh" "myip.sh" "plugins-install.sh")
+  timoloFiles=("config.py" "menubox.sh" "pi-timolo.py" "pi-timolo.sh" "pi-timolo-install.sh" \
+ "sync.sh" "webserver.py" "webserver.sh" \
+"convid.sh" "convid.conf" "makevideo.sh" "makevideo.conf" "mvleavelast.sh")
 fi
 
 for fname in "${timoloFiles[@]}" ; do
