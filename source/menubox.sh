@@ -1,6 +1,6 @@
 #!/bin/bash
 
-ver="9.10"
+ver="9.6"
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 cd $DIR
@@ -197,9 +197,76 @@ function do_convid_menu ()
 }
 
 #------------------------------------------------------------------------------
-function do_sync ()
+function do_sync_menu ()
 {
-  whiptail --msgbox "Insert gdrive sync Code Here" 20 60 1
+  SET_SEL=$( whiptail --title "Sync Menu" --menu "Arrow/Enter Selects or Tab Key" 0 0 0 --ok-button Select --cancel-button Back \
+  "a EDIT" "nano rclone-sync.sh" \
+  "b VIEW" "Review Settings" \
+  "c RUN" "Test Run rclone-sync.sh" \
+  "d CONFIG" "rclone config See GitHub Wiki for Details" \
+  "e ABOUT" "Rclone Remote Storage Sync" \
+  "q BACK" "to Main Menu" 3>&1 1>&2 2>&3 )
+
+  RET=$?
+  if [ $RET -eq 1 ]; then
+    do_main_menu
+  elif [ $RET -eq 0 ]; then
+    case "$SET_SEL" in
+      a\ *) nano rclone-sync.sh
+            clear
+            do_sync_menu ;;
+      b\ *) clear
+            cat rclone-sync.sh
+            do_anykey
+            clear
+            do_sync_menu;;
+      c\ *) clear
+            ./rclone-sync.sh
+            do_anykey
+            clear
+            do_sync_menu;;
+      d\ *) clear
+            rclone config
+            do_anykey
+            clear
+            do_sync_menu ;;
+      e\ *) do_sync_about
+            do_sync_menu ;;
+      q\ *) clear
+            do_main_menu ;;
+      *) whiptail --msgbox "Programmer error: unrecognised option" 20 60 1 ;;
+    esac || whiptail --msgbox "There was an error running selection $SELECTION" 20 60 1
+  fi
+}
+
+function do_sync_about
+{
+  whiptail --title "About Sync" --msgbox "\
+Rclone is now the default pi-timolo remote storage sync utility.
+You Must Configure a Remote Storage Service before using.
+gdrive is no longer installed but will remain if already installed.
+
+For More Details See Wiki per link below
+https://github.com/pageauc/pi-timolo/wiki/How-to-Setup-rclone
+
+Select EDIT menu to change rclone-sync.sh script variables.
+ctrl-x y to save changes and exit nano otherwise respond n.
+
+Select CONFIG menu to run rclone config menu.
+You will need details about Remote Storage Service.
+
+Select RUN menu to Test rclone-sync.sh changes.
+or manually Run the command below from a console session.
+
+    ./rclone-sync.sh
+
+If you want to Run Rclone install separately for another project.
+See my GitHub Project https://github.com/pageauc/rclone4pi
+
+                           -----
+\
+" 0 0 0
+
 }
 
 #--------------------------------------------------------------------
@@ -378,7 +445,7 @@ function do_main_menu ()
   "d PLUGINS" "Edit Plugin Files" \
   "e CREATE" "MP4 Timelapse Video from jpg Images" \
   "f CONVERT" "Video from h264 to MP4 or Join multiple MP4 Videos" \
-  "g SYNC" "Configure gdrive sync to google drive" \
+  "g SYNC" "Manage Rclone Remote Storage Sync" \
   "h UPGRADE" "Program Files from GitHub.com" \
   "i ABOUT" "Information About this Program" \
   "j STATUS" "CPU $temp   Select to Refresh" \
@@ -395,7 +462,7 @@ function do_main_menu ()
       d\ *) do_plugins_menu ;;
       e\ *) do_makevideo_menu ;;
       f\ *) do_convid_menu ;;
-      g\ *) do_sync ;;
+      g\ *) do_sync_menu ;;
       h\ *) do_upgrade ;;
       i\ *) do_about ;;
       j\ *) do_main_menu ;;
