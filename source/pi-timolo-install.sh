@@ -33,11 +33,11 @@ if [ -e convid.conf.1 ]; then
 fi
 
 if [ -f /usr/bin/rclone ]; then
-  timoloFiles=("menubox.sh" "pi-timolo.py" "pi-timolo.sh" "pi-timolo-install.sh" \
+  timoloFiles=("menubox.sh" "pi-timolo.py" "pi-timolo.sh"  \
 "sync.sh" "webserver.py" "webserver.sh"  \
 "convid.sh" "makevideo.sh" "mvleavelast.sh" "rclone-sync.sh")
 else
-  timoloFiles=("config.py" "menubox.sh" "pi-timolo.py" "pi-timolo.sh" "pi-timolo-install.sh" \
+  timoloFiles=("config.py" "menubox.sh" "pi-timolo.py" "pi-timolo.sh" \
  "sync.sh" "webserver.py" "webserver.sh" \
 "convid.sh" "convid.conf" "makevideo.sh" "makevideo.conf" "mvleavelast.sh")
 fi
