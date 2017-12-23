@@ -1,6 +1,6 @@
 #!/bin/bash
 # Convenient pi-timolo-install.sh script written by Claude Pageau 1-Jul-2016
-ver="9.5"
+ver="9.6"
 TIMOLO_DIR='pi-timolo'  # Default folder install location
 
 cd ~
@@ -54,7 +54,7 @@ if [ -f /usr/bin/rclone ]; then
 else
   timoloFiles=("config.py" "menubox.sh" "pi-timolo.py" "pi-timolo.sh" \
 "pi-timolo-install.sh" "sync.sh" "webserver.py" "webserver.sh" "rclone-install.sh" \
-"convid.sh" "convid.conf" "makevideo.sh" "makevideo.conf" "mvleavelast.sh" "myip.sh" "plugins-install.sh" "rclone-sync.sh")
+"convid.sh" "convid.conf" "makevideo.sh" "makevideo.conf" "mvleavelast.sh" "myip.sh" "plugins-install.sh")
 fi
 
 for fname in "${timoloFiles[@]}" ; do
@@ -76,12 +76,14 @@ if [ $? -ne 0 ] ;  then
     wget -O makevideo.conf.new https://raw.github.com/pageauc/pi-timolo/master/source/makevideo.conf
     wget -O Readme.md -q https://raw.github.com/pageauc/pi-timolo/master/Readme.md
     wget -O media/webserver.txt https://raw.github.com/pageauc/pi-timolo/master/source/webserver.txt
+    wget -O rclone-sync-new.sh https://raw.github.com/pageauc/pi-timolo/master/source/rclone-sync.sh
     # wget -O gdrive https://raw.github.com/pageauc/pi-timolo/master/source/drive_armv6
 else
     wget -O convid.conf.new -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/convid.conf
     wget -O makevideo.conf.new -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/makevideo.conf
     wget -O Readme.md -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/Readme.md
     wget -O media/webserver.txt -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/webserver.txt
+    wget -O rclone-sync-new.sh -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/rclone-sync.sh
     # wget -O gdrive -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/drive_armv6
 fi
 
