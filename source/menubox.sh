@@ -296,15 +296,35 @@ function do_plugins_edit ()
 }
 
 #------------------------------------------------------------------------------
+function do_sync_run ()
+{
+    menutitle="Select rclone sync Script to Run"
+    startdir="/home/pi/pi-timolo"
+    filext='sh'
+
+    Filebrowser "$menutitle" "$startdir"
+
+    exitstatus=$?
+    if [ $exitstatus -eq 0 ]; then
+        if [ "$selection" == "" ]; then
+            echo "User Pressed Esc with No File Selection"
+        else
+            $filepath/$filename
+            do_anykey
+        fi
+    else
+        echo "User Pressed Cancel. with No File Selected"
+    fi
+}
+
+#------------------------------------------------------------------------------
 function do_sync_menu ()
 {
   SET_SEL=$( whiptail --title "Sync Menu" --menu "Arrow/Enter Selects or Tab Key" 0 0 0 --ok-button Select --cancel-button Back \
-  "a EDIT" "nano rclone-sync.sh" \
-  "b VIEW" "Review Settings" \
-  "c RUN" "Test Run rclone-sync.sh" \
-  "d CONFIG" "rclone config See GitHub Wiki for Details" \
-  "e SELECT" "rclone shell script to nano Edit" \
-  "f ABOUT" "Rclone Remote Storage Sync" \
+  "a EDIT" "Select rclone- sh File to Edit with nano" \
+  "b RUN" "Run Selected Rclone sh Script" \
+  "c CONFIG" "Run rclone config See GitHub Wiki for Details" \
+  "d ABOUT" "Rclone Remote Storage Sync" \
   "q BACK" "to Main Menu" 3>&1 1>&2 2>&3 )
 
   RET=$?
@@ -312,27 +332,16 @@ function do_sync_menu ()
     do_main_menu
   elif [ $RET -eq 0 ]; then
     case "$SET_SEL" in
-      a\ *) nano rclone-sync.sh
-            clear
+      a\ *) do_nano_edit
             do_sync_menu ;;
-      b\ *) clear
-            cat rclone-sync.sh
-            do_anykey
-            clear
-            do_sync_menu;;
+      b\ *) do_sync_run
+            do_sync_menu ;;
       c\ *) clear
-            ./rclone-sync.sh
-            do_anykey
-            clear
-            do_sync_menu;;
-      d\ *) clear
             rclone config
             do_anykey
             clear
             do_sync_menu ;;
-      e\ *) do_nano_edit
-            do_sync_menu ;;
-      f\ *) do_sync_about
+      d\ *) do_sync_about
             do_sync_menu ;;
       q\ *) clear
             do_main_menu ;;
