@@ -4,9 +4,11 @@ ver="9.71"
 TIMOLO_DIR='pi-timolo'  # Default folder install location
 
 cd ~
+is_upgrade=false
 if [ -d "$TIMOLO_DIR" ] ; then
   STATUS="Upgrade"
   echo "Upgrade pi-timolo files"
+  is_upgrade=true
 else
   echo "New pi-timolo Install"
   STATUS="New Install"
@@ -32,11 +34,13 @@ if [ -e convid.conf.1 ]; then
   rm makevideo.conf.1
 fi
 
-if [ -f /usr/bin/rclone ]; then
+# check if this is an upgrade and bypass update of configuration files
+if [ "$is_upgrade" = true ]; then
   timoloFiles=("menubox.sh" "pi-timolo.py" "pi-timolo.sh"  \
 "sync.sh" "webserver.py" "webserver.sh"  \
 "convid.sh" "makevideo.sh" "mvleavelast.sh" "rclone-sync.sh" \
 "rclone-recent.sh" "rclone-motion.sh" "rclone-cleanup.sh")
+
 else
   timoloFiles=("config.py" "menubox.sh" "pi-timolo.py" "pi-timolo.sh" \
  "sync.sh" "webserver.py" "webserver.sh" \
@@ -100,25 +104,24 @@ done
 cd ..
 echo "$STATUS Done plugins Install as Required."
 
-if [ ! -f /usr/bin/rclone ]; then
-    echo "Download https://downloads.rclone.org/rclone-current-linux-arm.zip"
-    wget wget -O rclone.zip -q --show-progress https://downloads.rclone.org/rclone-current-linux-arm.zip
-    echo "unzip rclone.zip to folder rclone-tmp"
-    unzip -o -j -d rclone-tmp rclone.zip
-    echo "Install files and man pages"
-    cd rclone-tmp
-    sudo cp rclone /usr/bin/
-    sudo chown root:root /usr/bin/rclone
-    sudo chmod 755 /usr/bin/rclone
-    sudo mkdir -p /usr/local/share/man/man1
-    sudo cp rclone.1 /usr/local/share/man/man1/
-    sudo mandb
-    cd ..
-    echo "Deleting rclone.zip and Folder rclone-tmp"
-    rm rclone.zip
-    rm -r rclone-tmp
-    wget -O rclone-sync.sh https://raw.github.com/pageauc/pi-timolo/master/source/rclone-sync.sh
-fi
+# Install rclone with latest version
+echo "Download https://downloads.rclone.org/rclone-current-linux-arm.zip"
+wget wget -O rclone.zip -q --show-progress https://downloads.rclone.org/rclone-current-linux-arm.zip
+echo "unzip rclone.zip to folder rclone-tmp"
+unzip -o -j -d rclone-tmp rclone.zip
+echo "Install files and man pages"
+cd rclone-tmp
+sudo cp rclone /usr/bin/
+sudo chown root:root /usr/bin/rclone
+sudo chmod 755 /usr/bin/rclone
+sudo mkdir -p /usr/local/share/man/man1
+sudo cp rclone.1 /usr/local/share/man/man1/
+sudo mandb
+cd ..
+echo "Deleting rclone.zip and Folder rclone-tmp"
+rm rclone.zip
+rm -r rclone-tmp
+wget -O rclone-sync.sh https://raw.github.com/pageauc/pi-timolo/master/source/rclone-sync.sh
 
 echo "-------------------------------------------------------------"
 echo "$STATUS Make Required Files Executable"
