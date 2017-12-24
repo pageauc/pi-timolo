@@ -15,7 +15,8 @@ Step 2 On RPI putty SSH or terminal session right click, select paste then Enter
 
     curl -L https://raw.github.com/pageauc/pi-timolo/master/source/pi-timolo-install.sh | bash
 
-The command above will download and Run the GitHub pi-timolo-install.sh script.   
+The command above will download and Run the GitHub pi-timolo-install.sh script. 
+An upgrade will not overwrite configuration files.   
 
 ### Test Install
 To Test Run default config.py - motion track(HD image) plus timelapse(5 min interval). 
@@ -74,7 +75,7 @@ from a logged in ssh or terminal session execute the following commands.
     
 Edit config.py to transfer any customized settings from config.py.old  
     
-### or Manual Install   
+### Manual Install   
 From logged in RPI SSH session or console terminal perform the following. You can review
 the pi-timolo-install.sh script code before executing.
 
