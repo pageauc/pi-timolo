@@ -1,6 +1,6 @@
 #!/bin/bash
 
-ver="9.6"
+ver="9.7"
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 cd $DIR
@@ -197,6 +197,105 @@ function do_convid_menu ()
 }
 
 #------------------------------------------------------------------------------
+function Filebrowser()
+{
+# first parameter is Menu Title
+# second parameter is optional dir path to starting folder
+# otherwise current folder is selected
+
+    if [ -z $2 ] ; then
+        dir_list=$(ls -lhp  | awk -F ' ' ' { print $9 " " $5 } ')
+    else
+        cd "$2"
+        dir_list=$(ls -lhp  | awk -F ' ' ' { print $9 " " $5 } ')
+    fi
+
+    curdir=$(pwd)
+    if [ "$curdir" == "/" ] ; then  # Check if you are at root folder
+        selection=$(whiptail --title "$1" \
+                              --menu "PgUp/PgDn/Arrow Enter Selects File/Folder\nor Tab Key\n$curdir" 0 0 0 \
+                              --cancel-button Cancel \
+                              --ok-button Select $dir_list 3>&1 1>&2 2>&3)
+    else   # Not Root Dir so show ../ BACK Selection in Menu
+        selection=$(whiptail --title "$1" \
+                              --menu "PgUp/PgDn/Arrow Enter Selects File/Folder\nor Tab Key\n$curdir" 0 0 0 \
+                              --cancel-button Cancel \
+                              --ok-button Select ../ BACK $dir_list 3>&1 1>&2 2>&3)
+    fi
+
+    RET=$?
+    if [ $RET -eq 1 ]; then  # Check if User Selected Cancel
+       return 1
+    elif [ $RET -eq 0 ]; then
+       if [[ -d "$selection" ]]; then  # Check if Directory Selected
+          Filebrowser "$1" "$selection"
+       elif [[ -f "$selection" ]]; then  # Check if File Selected
+          if [[ $selection == *$filext ]]; then   # Check if selected File has .jpg extension
+            if (whiptail --title "Confirm Selection" --yesno "DirPath : $curdir\nFileName: $selection" 0 0 \
+                         --yes-button "Confirm" \
+                         --no-button "Retry"); then
+                filename="$selection"
+                filepath="$curdir"    # Return full filepath  and filename as selection variables
+            else
+                Filebrowser "$1" "$curdir"
+            fi
+          else   # Not jpg so Inform User and restart
+             whiptail --title "ERROR: File Must have .jpg Extension" \
+                      --msgbox "$selection\nYou Must Select a jpg Image File" 0 0
+             Filebrowser "$1" "$curdir"
+          fi
+       else
+          # Could not detect a file or folder so Try Again
+          whiptail --title "ERROR: Selection Error" \
+                   --msgbox "Error Changing to Path $selection" 0 0
+          Filebrowser "$1" "$curdir"
+       fi
+    fi
+}
+
+#------------------------------------------------------------------------------
+function do_nano_edit ()
+{
+    menutitle="Select File to Edit"
+    startdir="/home/pi/pi-timolo"
+    filext='sh'
+
+    Filebrowser "$menutitle" "$startdir"
+
+    exitstatus=$?
+    if [ $exitstatus -eq 0 ]; then
+        if [ "$selection" == "" ]; then
+            echo "User Pressed Esc with No File Selection"
+        else
+            nano $filepath/$filename
+        fi
+    else
+        echo "User Pressed Cancel. with No File Selected"
+    fi
+}
+
+#------------------------------------------------------------------------------
+function do_plugins_edit ()
+{
+    menutitle="Select File to Edit"
+    startdir="/home/pi/pi-timolo/plugins"
+    filext='py'
+
+    Filebrowser "$menutitle" "$startdir"
+
+    exitstatus=$?
+    if [ $exitstatus -eq 0 ]; then
+        if [ "$selection" == "" ]; then
+            echo "User Pressed Esc with No File Selection"
+        else
+            nano $filepath/$filename
+        fi
+    else
+        echo "User Pressed Cancel. with No File Selected"
+    fi
+}
+
+#------------------------------------------------------------------------------
 function do_sync_menu ()
 {
   SET_SEL=$( whiptail --title "Sync Menu" --menu "Arrow/Enter Selects or Tab Key" 0 0 0 --ok-button Select --cancel-button Back \
@@ -204,7 +303,8 @@ function do_sync_menu ()
   "b VIEW" "Review Settings" \
   "c RUN" "Test Run rclone-sync.sh" \
   "d CONFIG" "rclone config See GitHub Wiki for Details" \
-  "e ABOUT" "Rclone Remote Storage Sync" \
+  "e SELECT" "rclone shell script to nano Edit" \
+  "f ABOUT" "Rclone Remote Storage Sync" \
   "q BACK" "to Main Menu" 3>&1 1>&2 2>&3 )
 
   RET=$?
@@ -230,7 +330,9 @@ function do_sync_menu ()
             do_anykey
             clear
             do_sync_menu ;;
-      e\ *) do_sync_about
+      e\ *) do_nano_edit
+            do_sync_menu ;;
+      f\ *) do_sync_about
             do_sync_menu ;;
       q\ *) clear
             do_main_menu ;;
@@ -359,6 +461,7 @@ function do_plugins_menu ()
   "h shopcam" "nano plugins/shopcam.py" \
   "i dashcam" "nano plugins/dashcam.py" \
   "j slowmo" "nano plugins/slowmo.py" \
+  "k SELECT" "plugin File to nano Edit" \
   "q BACK" "to Main Menu" 3>&1 1>&2 2>&3 )
 
   RET=$?
@@ -387,6 +490,8 @@ function do_plugins_menu ()
       i\ *) nano plugins/dashcam.py
             do_plugins_menu ;;
       j\ *) nano plugins/slowmo.py
+            do_plugins_menu ;;
+      k\ *) do_plugins_edit
             do_plugins_menu ;;
       q\ *) clear
             do_main_menu ;;
