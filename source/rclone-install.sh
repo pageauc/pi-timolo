@@ -7,7 +7,7 @@ if [ ! -f /usr/bin/rclone -o ! -z "$1" ]; then
     echo "Download https://downloads.rclone.org/rclone-v1.38-linux-arm.zip"
     wget wget -O rclone.zip -q --show-progress https://downloads.rclone.org/rclone-current-linux-arm.zip
     echo "unzip rclone.zip to folder rclone-tmp"
-    unzip -o -d rclone-tmp rclone.zip
+    unzip -o -j -d rclone-tmp rclone.zip
     echo "Install files and man pages"
     cd rclone-tmp
     sudo cp rclone /usr/bin/

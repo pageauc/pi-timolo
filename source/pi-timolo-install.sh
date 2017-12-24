@@ -101,11 +101,10 @@ cd ..
 echo "$STATUS Done plugins Install as Required."
 
 if [ ! -f /usr/bin/rclone ]; then
-
     echo "Download https://downloads.rclone.org/rclone-current-linux-arm.zip"
     wget wget -O rclone.zip -q --show-progress https://downloads.rclone.org/rclone-current-linux-arm.zip
     echo "unzip rclone.zip to folder rclone-tmp"
-    unzip -o -d rclone-tmp rclone.zip
+    unzip -o -j -d rclone-tmp rclone.zip
     echo "Install files and man pages"
     cd rclone-tmp
     sudo cp rclone /usr/bin/
