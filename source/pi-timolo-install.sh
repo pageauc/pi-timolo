@@ -1,6 +1,6 @@
 #!/bin/bash
 # Convenient pi-timolo-install.sh script written by Claude Pageau 1-Jul-2016
-ver="9.7"
+ver="9.71"
 TIMOLO_DIR='pi-timolo'  # Default folder install location
 
 cd ~
@@ -35,11 +35,13 @@ fi
 if [ -f /usr/bin/rclone ]; then
   timoloFiles=("menubox.sh" "pi-timolo.py" "pi-timolo.sh"  \
 "sync.sh" "webserver.py" "webserver.sh"  \
-"convid.sh" "makevideo.sh" "mvleavelast.sh" "rclone-sync.sh")
+"convid.sh" "makevideo.sh" "mvleavelast.sh" "rclone-sync.sh" \
+"rclone-recent.sh" "rclone-motion.sh" "rclone-cleanup.sh")
 else
   timoloFiles=("config.py" "menubox.sh" "pi-timolo.py" "pi-timolo.sh" \
  "sync.sh" "webserver.py" "webserver.sh" \
-"convid.sh" "convid.conf" "makevideo.sh" "makevideo.conf" "mvleavelast.sh")
+"convid.sh" "convid.conf" "makevideo.sh" "makevideo.conf" "mvleavelast.sh" \
+"rclone-recent.sh" "rclone-motion.sh" "rclone-cleanup.sh")
 fi
 
 for fname in "${timoloFiles[@]}" ; do
@@ -76,6 +78,7 @@ echo "$STATUS Installing plugins Wait ..."
 PLUGINS_DIR='plugins'  # Default folder install location
 pluginFiles=("__init__.py" "dashcam.py" "secfast.py" "secQTL.py" "secstill.py" \
 "secvid.py" "shopcam.py" "slowmo.py" "TLlong.py" "TLshort.py")
+
 mkdir -p $PLUGINS_DIR
 cd $PLUGINS_DIR
 
