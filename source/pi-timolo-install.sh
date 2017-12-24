@@ -101,13 +101,13 @@ cd ..
 echo "$STATUS Done plugins Install as Required."
 
 if [ ! -f /usr/bin/rclone ]; then
-    echo "$STATUS rclone Download and Setup"
-    echo "Download https://downloads.rclone.org/rclone-v1.38-linux-arm.zip"
-    wget wget -O rclone.zip -q --show-progress https://downloads.rclone.org/rclone-v1.38-linux-arm.zip
-    echo "unzip rclone.zip to folder rclone-v1.38-linux-arm"
-    unzip -o rclone.zip
-    echo "Installing rclone files and man pages"
-    cd rclone-v1.38-linux-arm
+
+    echo "Download https://downloads.rclone.org/rclone-current-linux-arm.zip"
+    wget wget -O rclone.zip -q --show-progress https://downloads.rclone.org/rclone-current-linux-arm.zip
+    echo "unzip rclone.zip to folder rclone-tmp"
+    unzip -o -d rclone-tmp rclone.zip
+    echo "Install files and man pages"
+    cd rclone-tmp
     sudo cp rclone /usr/bin/
     sudo chown root:root /usr/bin/rclone
     sudo chmod 755 /usr/bin/rclone
@@ -115,9 +115,10 @@ if [ ! -f /usr/bin/rclone ]; then
     sudo cp rclone.1 /usr/local/share/man/man1/
     sudo mandb
     cd ..
-    echo "Deleting rclone.zip and rclone-v1.38-linux-arm folder"
+    echo "Deleting rclone.zip and Folder rclone-tmp"
     rm rclone.zip
-    rm -r rclone-v1.38-linux-arm
+    rm -r rclone-tmp
+    wget -O rclone-sync.sh https://raw.github.com/pageauc/pi-timolo/master/source/rclone-sync.sh
 fi
 
 echo "-------------------------------------------------------------"

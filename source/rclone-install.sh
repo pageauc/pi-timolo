@@ -1,15 +1,15 @@
 #!/bin/bash
-ver="9.5"
+ver="9.6"
 echo "$0 ver $ver written by Claude Pageau"
 
 if [ ! -f /usr/bin/rclone -o ! -z "$1" ]; then
     echo "-------------------------------------------------------------------------------"
     echo "Download https://downloads.rclone.org/rclone-v1.38-linux-arm.zip"
-    wget wget -O rclone.zip -q --show-progress https://downloads.rclone.org/rclone-v1.38-linux-arm.zip
-    echo "unzip rclone.zip to folder rclone-v1.38-linux-arm"
-    unzip -o rclone.zip
+    wget wget -O rclone.zip -q --show-progress https://downloads.rclone.org/rclone-current-linux-arm.zip
+    echo "unzip rclone.zip to folder rclone-tmp"
+    unzip -o -d rclone-tmp rclone.zip
     echo "Install files and man pages"
-    cd rclone-v1.38-linux-arm
+    cd rclone-tmp
     sudo cp rclone /usr/bin/
     sudo chown root:root /usr/bin/rclone
     sudo chmod 755 /usr/bin/rclone
@@ -17,9 +17,9 @@ if [ ! -f /usr/bin/rclone -o ! -z "$1" ]; then
     sudo cp rclone.1 /usr/local/share/man/man1/
     sudo mandb
     cd ..
-    echo "Deleting rclone.zip and rclone-v1.38-linux-arm folder"
+    echo "Deleting rclone.zip and Folder rclone-tmp"
     rm rclone.zip
-    rm -r rclone-v1.38-linux-arm
+    rm -r rclone-tmp
     wget -O rclone-sync.sh https://raw.github.com/pageauc/pi-timolo/master/source/rclone-sync.sh
     chmod +x rclone-sync.sh
 fi
