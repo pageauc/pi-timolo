@@ -161,7 +161,7 @@ else
   echo "STATUS- Video Saved to" $tl_folder_destination/$tl_videoname
 
   # Process archive, delete or do nothing for encoded source image files
-  if [ "$tl_archive_source_files"=true ] ; then    # Check if archiving enabled
+  if [ "$tl_archive_source_files" = true ] ; then    # Check if archiving enabled
     echo "INFO  - Archive Enabled per tl_archive_source_files="$tl_archive_source_files
     echo "INFO  - Archive Files from $tl_folder_source to $tl_archive_dest_folder/$subfolderName"
     echo "INFO  - This will Take Some Time.  Wait ...."
