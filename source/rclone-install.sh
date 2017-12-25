@@ -1,7 +1,14 @@
 #!/bin/bash
 ver="9.7"
-echo "$0 ver $ver written by Claude Pageau"
+echo "rclone-install.sh ver $ver written by Claude Pageau"
 echo "-------------------------------------------------------------------------------"
+if [ -f /usr/bin/rclone ]; then
+    echo "Rclone Reinstall/Upgrade"
+    /usr/bin/rclone -V
+else
+    echo "Rclone New Install"
+fi
+
 echo "Download https://downloads.rclone.org/rclone-current-linux-arm.zip"
 wget wget -O rclone.zip -q --show-progress https://downloads.rclone.org/rclone-current-linux-arm.zip
 echo "unzip rclone.zip to folder rclone-tmp"
@@ -52,6 +59,7 @@ rclone sync -v /home/pi/pi-timolo/media/motion gdmedia:media/motion
 
 Note: Instructions were tested with google drive.
 "
+rm rclone-install.sh
 else
   echo "Problem Installing rclone.  Please Investigate"
 fi
