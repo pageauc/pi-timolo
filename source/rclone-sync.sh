@@ -22,7 +22,7 @@ if pidof -o %PPID -x "$progName"; then
     echo "WARN  - $progName Already Running. Only One Allowed."
 else
     if [ -f /usr/bin/rclone ]; then
-        echo "$STATUS rclone is installed at /usr/bin/rclone"
+        echo "rclone is installed at /usr/bin/rclone"
         rclone -V
         echo "cd $syncRoot"
         cd "$syncRoot"
