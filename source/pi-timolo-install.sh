@@ -1,6 +1,6 @@
 #!/bin/bash
 # Convenient pi-timolo-install.sh script written by Claude Pageau 1-Jul-2016
-ver="9.72"
+ver="9.73"
 TIMOLO_DIR='pi-timolo'  # Default folder install location
 
 cd ~
@@ -187,6 +187,9 @@ fi
 
 if [ -f /usr/bin/rclone ]; then
   echo "$STATUS rclone is installed at /usr/bin/rclone"
+  rclone -V
+else
+  echo "$STATUS Problem Installing rclone.  Please Investigate"
 fi
 
 echo "
@@ -197,7 +200,7 @@ Minimal Instructions:
 1 - Reboot RPI if there are significant Raspbian system updates.
 2 - If config.py already exists then latest file is config.py.new
 3 - To Test Run pi-timolo execute the following commands in RPI SSH
-    or terminal session. Default is Timelapse and Motion Track On
+    or terminal session. Default is Motion Track On and TimeLapse On
 
     cd ~/pi-timolo
     ./pi-timolo.py
