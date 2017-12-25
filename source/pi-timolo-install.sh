@@ -1,6 +1,6 @@
 #!/bin/bash
 # Convenient pi-timolo-install.sh script written by Claude Pageau 1-Jul-2016
-ver="9.74"
+ver="9.75"
 TIMOLO_DIR='pi-timolo'  # Default folder install location
 
 cd ~
@@ -133,21 +133,22 @@ chmod +x *sh
 
 echo "Done Permissions"
 echo "-------------------------------------------------------------"
+
 # check if system was updated today
-NOW="$( date +%d-%m-%y )"
-LAST="$( date -r /var/lib/dpkg/info +%d-%m-%y )"
-if [ "$NOW" == "$LAST" ] ; then
-  echo "Raspbian System is Up To Date"
-else
-  echo "Performing Raspbian System Update"
-  echo "  This Will Take Some Time ...."
-  sudo apt-get -y update
-  echo "Done Rasbian Update"
-  echo "Performing Raspbian System Upgrade"
-  echo "  This Will Take Some Time ...."
-  sudo apt-get -y upgrade
-  echo "Done Raspbian Upgrade"
-fi
+# NOW="$( date +%d-%m-%y )"
+# LAST="$( date -r /var/lib/dpkg/info +%d-%m-%y )"
+# if [ "$NOW" == "$LAST" ] ; then
+#  echo "Raspbian System is Up To Date"
+# else
+#  echo "Performing Raspbian System Update"
+#  echo "  This Will Take Some Time ...."
+#  sudo apt-get -y update
+#  echo "Done Rasbian Update"
+#  echo "Performing Raspbian System Upgrade"
+#  echo "  This Will Take Some Time ...."
+#  sudo apt-get -y upgrade
+#  echo "Done Raspbian Upgrade"
+# fi
 
 echo "$STATUS Installing pi-timolo Dependencies Wait ..."
 sudo apt-get install -yq python-picamera python3-picamera python-imaging dos2unix python-pyexiv2 libav-tools
