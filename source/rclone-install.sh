@@ -2,7 +2,7 @@
 ver="9.7"
 echo "$0 ver $ver written by Claude Pageau"
 echo "-------------------------------------------------------------------------------"
-echo "Download https://downloads.rclone.org/rclone-v1.38-linux-arm.zip"
+echo "Download https://downloads.rclone.org/rclone-current-linux-arm.zip"
 wget wget -O rclone.zip -q --show-progress https://downloads.rclone.org/rclone-current-linux-arm.zip
 echo "unzip rclone.zip to folder rclone-tmp"
 unzip -o -j -d rclone-tmp rclone.zip
