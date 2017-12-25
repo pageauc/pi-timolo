@@ -59,7 +59,6 @@ rclone sync -v /home/pi/pi-timolo/media/motion gdmedia:media/motion
 
 Note: Instructions were tested with google drive.
 "
-rm rclone-install.sh
 else
   echo "Problem Installing rclone.  Please Investigate"
 fi
