@@ -107,7 +107,7 @@ echo "$STATUS Done plugins Install as Required."
 
 # Install rclone with latest version
 echo "Download https://downloads.rclone.org/rclone-current-linux-arm.zip"
-wget wget -O rclone.zip -q --show-progress https://downloads.rclone.org/rclone-current-linux-arm.zip
+wget -O rclone.zip -q --show-progress https://downloads.rclone.org/rclone-current-linux-arm.zip
 echo "unzip rclone.zip to folder rclone-tmp"
 unzip -o -j -d rclone-tmp rclone.zip
 echo "Install files and man pages"
