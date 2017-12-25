@@ -23,9 +23,11 @@ if [ ! -f /usr/bin/rclone -o ! -z "$1" ]; then
     wget -O rclone-sync.sh https://raw.github.com/pageauc/pi-timolo/master/source/rclone-sync.sh
     chmod +x rclone-sync.sh
 fi
-echo "rclone installed at /usr/bin/rclone"
-echo "-------------------------------------------------------------------------------"
-echo "                       INSTRUCTIONS
+
+if [ -f /usr/bin/rclone ]; then
+  echo "$STATUS rclone is installed at /usr/bin/rclone"
+  rclone -V
+  echo "                       INSTRUCTIONS
 1 You will be required to have a login account on the remote service
   Open putty SSH login session to RPI and execute command below
 
@@ -54,9 +56,11 @@ To upgrade
 
   ./rclone-install.sh upgrade
 
-Note: Instructions were tested with google drive.
+Note: Instructions were tested with google drive."
+else
+  echo "$STATUS Problem Installing rclone.  Please Investigate"
+fi
+echo "Bye..."
 
-Bye
-"
 
 
