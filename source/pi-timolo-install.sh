@@ -79,34 +79,7 @@ else
     # wget -O gdrive -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/drive_armv6
 fi
 
-echo "$STATUS Installing plugins Wait ..."
-PLUGINS_DIR='plugins'  # Default folder install location
-pluginFiles=("__init__.py" "dashcam.py" "secfast.py" "secQTL.py" "secstill.py" \
-"secvid.py" "shopcam.py" "slowmo.py" "TLlong.py" "TLshort.py")
-
-mkdir -p $PLUGINS_DIR
-cd $PLUGINS_DIR
-
-for fname in "${pluginFiles[@]}" ; do
-  if [ -f $fname ]; then     # check if local file exists.
-    echo "INFO  - $fname Skip Download Since Local Copy Found"
-  else
-    wget_output=$(wget -O $fname -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/plugins/$fname)
-    if [ $? -ne 0 ]; then
-        wget_output=$(wget -O $fname -q https://raw.github.com/pageauc/pi-timolo/master/source/plugins/$fname)
-        if [ $? -ne 0 ]; then
-            echo "ERROR - $fname wget Download Failed. Possible Cause Internet Problem."
-        else
-            wget -O $fname "https://raw.github.com/pageauc/pi-timolo/master/source/plugins/$fname"
-        fi
-    fi
-  fi
-done
-cd ..
-echo "$STATUS Done plugins Install as Required."
-
 # Install rclone with latest version
-echo "Download https://downloads.rclone.org/rclone-current-linux-arm.zip"
 wget -O rclone.zip -q --show-progress https://downloads.rclone.org/rclone-current-linux-arm.zip
 echo "unzip rclone.zip to folder rclone-tmp"
 unzip -o -j -d rclone-tmp rclone.zip
@@ -123,14 +96,36 @@ echo "Deleting rclone.zip and Folder rclone-tmp"
 rm rclone.zip
 rm -r rclone-tmp
 
+echo "$STATUS Install of plugins Wait ..."
+PLUGINS_DIR='plugins'  # Default folder install location
+pluginFiles=("__init__.py" "dashcam.py" "secfast.py" "secQTL.py" "secstill.py" \
+"secvid.py" "shopcam.py" "slowmo.py" "TLlong.py" "TLshort.py")
+
+# Install plugins
+mkdir -p $PLUGINS_DIR
+cd $PLUGINS_DIR
+for fname in "${pluginFiles[@]}" ; do
+  if [ -f $fname ]; then     # check if local file exists.
+    echo "INFO  - $fname Skip Download Since Local Copy Found"
+  else
+    wget_output=$(wget -O $fname -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/plugins/$fname)
+    if [ $? -ne 0 ]; then
+        wget_output=$(wget -O $fname -q https://raw.github.com/pageauc/pi-timolo/master/source/plugins/$fname)
+        if [ $? -ne 0 ]; then
+            echo "ERROR - $fname wget Download Failed. Possible Cause Internet Problem."
+        else
+            wget -O $fname "https://raw.github.com/pageauc/pi-timolo/master/source/plugins/$fname"
+        fi
+    fi
+  fi
+done
+cd ..
+echo "$STATUS Done plugins as Required."
 echo "-------------------------------------------------------------"
 echo "$STATUS Make Required Files Executable"
-echo ""
 chmod +x *py
 chmod -x config*py
 chmod +x *sh
-
-echo "Done Permissions"
 echo "-------------------------------------------------------------"
 
 # check if system was updated today
