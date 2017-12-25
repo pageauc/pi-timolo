@@ -1,6 +1,6 @@
 #!/bin/bash
 
-ver="9.8"
+ver="9.81"
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 cd $DIR
@@ -325,7 +325,8 @@ function do_sync_menu ()
   "b RUN" "Run Selected Rclone sh Script" \
   "c CONFIG" "Run rclone config See GitHub Wiki for Details" \
   "d LIST" "Names of Configured Remote Storage Services" \
-  "e ABOUT" "Rclone Remote Storage Sync" \
+  "e HELP" "Rclone Man Pages" \
+  "f ABOUT" "Rclone Remote Storage Sync" \
   "q BACK" "to Main Menu" 3>&1 1>&2 2>&3 )
 
   RET=$?
@@ -348,7 +349,9 @@ function do_sync_menu ()
             do_anykey
             clear
             do_sync_menu ;;
-      e\ *) do_sync_about
+      e\ *) man rclone
+            do_sync_menu ;;
+      f\ *) do_sync_about
             do_sync_menu ;;
       q\ *) clear
             do_main_menu ;;
