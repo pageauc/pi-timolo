@@ -1,6 +1,6 @@
 #!/bin/bash
 # Convenient pi-timolo-install.sh script written by Claude Pageau 1-Jul-2016
-ver="9.73"
+ver="9.74"
 TIMOLO_DIR='pi-timolo'  # Default folder install location
 
 cd ~
@@ -24,8 +24,8 @@ INSTALL_PATH=$( pwd )
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 echo "
 -------------------------------------------------------------
-      pi-timolo $0 ver $ver
-    pi-timolo Pi, Timelapse, Motion, Low Light
+      pi-timolo Pi, Timelapse, Motion, Low Light
+  pi-timolo-install.sh $ver  written by Claude Pageau
 -------------------------------------------------------------
 $STATUS from https://github.com/pageauc/pi-timolo
 "
