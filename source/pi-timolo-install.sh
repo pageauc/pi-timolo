@@ -1,6 +1,6 @@
 #!/bin/bash
 # Convenient pi-timolo-install.sh script written by Claude Pageau 1-Jul-2016
-ver="9.75"
+ver="9.76"
 TIMOLO_DIR='pi-timolo'  # Default folder install location
 
 cd ~
@@ -122,7 +122,6 @@ cd ..
 echo "Deleting rclone.zip and Folder rclone-tmp"
 rm rclone.zip
 rm -r rclone-tmp
-wget -O rclone-sync.sh https://raw.github.com/pageauc/pi-timolo/master/source/rclone-sync.sh
 
 echo "-------------------------------------------------------------"
 echo "$STATUS Make Required Files Executable"
@@ -196,10 +195,11 @@ fi
 
 echo "
 -----------------------------------------------
-$STATUS pi-timolo Complete
+$STATUS Complete
 -----------------------------------------------
 Minimal Instructions:
-1 - Reboot RPI if there are significant Raspbian system updates.
+1 - It is suggested you run sudo apt-get update and sudo apt-get upgrade
+    Reboot RPI if there are significant Raspbian system updates.
 2 - If config.py already exists then latest file is config.py.new
 3 - To Test Run pi-timolo execute the following commands in RPI SSH
     or terminal session. Default is Motion Track On and TimeLapse On
