@@ -22,12 +22,13 @@ INSTALL_PATH=$( pwd )
 
 # Remember where this script was launched from
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-echo "-------------------------------------------------------------"
-echo "      pi-timolo Install.sh script ver $ver"
-echo "Install or Upgrade pi-timolo Pi, Timelapse, Motion, Low Light"
-echo "-------------------------------------------------------------"
-echo "$STATUS pi-timolo from github repo"
-echo ""
+echo "
+-------------------------------------------------------------
+      pi-timolo $0 ver $ver
+    pi-timolo Pi, Timelapse, Motion, Low Light
+-------------------------------------------------------------
+$STATUS from https://github.com/pageauc/pi-timolo
+"
 
 if [ -e convid.conf.1 ]; then
   rm convid.conf.1
