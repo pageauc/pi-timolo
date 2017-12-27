@@ -1,6 +1,6 @@
 #!/bin/bash
 
-ver="9.81"
+ver="9.82"
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 cd $DIR
@@ -15,10 +15,10 @@ filename_utils_temp="$filename_utils_conf_temp"
 function do_anykey ()
 {
    echo ""
-   echo "######################################"
-   echo "#          Review Output             #"
-   echo "######################################"
-   read -p "  Press Enter to Return to Main Menu"
+   echo "#######################################"
+   echo "#           Review Output             #"
+   echo "#######################################"
+ read -p "Press Enter to Return to Previous Menu"
 }
 
 #------------------------------------------------------------------------------
@@ -127,7 +127,7 @@ function do_makevideo_menu ()
             do_anykey
             do_makevideo_menu ;;
       q\ *) do_main_menu ;;
-      *) whiptail --msgbox "Programmer error: unrecognized option" 10 65 1 ;;
+      *) whiptail --msgbox "Programmer error: unrecognised option" 10 65 1 ;;
     esac || whiptail --msgbox "There was an error running selection $SELECTION" 10 65 1
   fi
 }
@@ -191,7 +191,7 @@ function do_convid_menu ()
             do_anykey
             do_convid_menu ;;
       q\ *) do_main_menu ;;
-      *) whiptail --msgbox "Programmer error: unrecognized option" 20 60 1 ;;
+      *) whiptail --msgbox "Programmer error: unrecognised option" 20 60 1 ;;
     esac || whiptail --msgbox "There was an error running selection $SELECTION" 20 60 1
   fi
 }
@@ -461,9 +461,58 @@ function do_settings_menu ()
             rm -f $filename_temp
             rm -f $filename_conf
             do_main_menu ;;
-      *) whiptail --msgbox "Programmer error: unrecognized option" 20 60 1 ;;
+      *) whiptail --msgbox "Programmer error: unrecognised option" 20 60 1 ;;
     esac || whiptail --msgbox "There was an error running selection $SELECTION" 20 60 1
   fi
+}
+
+#------------------------------------------------------------------------------
+function do_watch_menu ()
+{
+  SET_SEL=$( whiptail --title "watch-app.sh Menu" --menu "Arrow/Enter Selects or Tab Key" 0 0 0 --ok-button Select --cancel-button Back \
+  "a EDIT" "Edit watch.sh using nano" \
+  "b RUN" "Test Run watch-app.sh" \
+  "c CRON" "Edit crontab" \
+  "d ABOUT" "About watch-app.sh Remote Configure" \
+  "q BACK" "to Main Menu" 3>&1 1>&2 2>&3 )
+
+  RET=$?
+  if [ $RET -eq 1 ]; then
+    clear
+    do_main_menu
+  elif [ $RET -eq 0 ]; then
+    case "$SET_SEL" in
+      a\ *) nano watch-app.sh
+            do_watch_menu ;;
+      b\ *) ./watch-app.sh
+            do_anykey
+            do_watch_menu ;;
+      c\ *) sudo crontab -e
+            do_watch_menu ;;
+      d\ *) do_watch_about
+            do_watch_menu ;;
+      q\ *) clear
+            do_main_menu ;;
+      *) whiptail --msgbox "Programmer error: unrecognised option" 20 60 1 ;;
+    esac || whiptail --msgbox "There was an error running selection $SELECTION" 20 60 1
+  fi
+}
+
+#------------------------------------------------------------------------------
+function do_watch_about ()
+{
+  whiptail --title "About watch-app.sh" --msgbox "\
+watch-app.sh allows monitoring of pi-timolo-py and restarting
+if application is down or optionally rebooting. It will also
+allow changing specified configuration and program files
+from a remote storage drive and getting feedback on the
+results on the remote machine.
+
+for more details see GitHub Wiki
+
+\
+" 0 0 0
+
 }
 
 #------------------------------------------------------------------------------
@@ -514,7 +563,7 @@ function do_plugins_menu ()
             do_plugins_menu ;;
       q\ *) clear
             do_main_menu ;;
-      *) whiptail --msgbox "Programmer error: unrecognized option" 20 60 1 ;;
+      *) whiptail --msgbox "Programmer error: unrecognised option" 20 60 1 ;;
     esac || whiptail --msgbox "There was an error running selection $SELECTION" 20 60 1
   fi
 }
@@ -531,27 +580,17 @@ function do_upgrade()
 #------------------------------------------------------------------------------
 function do_about()
 {
-  whiptail --title "About" --msgbox " \
+  whiptail --title "About menubox.sh" --msgbox " \
    pi-timolo - Pi-Timelapse, Motion, Lowlight
-          written by Claude Pageau
+        written by Claude Pageau
 
-   Manage pi-timolo operation, config and utilities
-    This script can run via interactive menu or
+ Manage pi-timolo operation, configuration
+ and utilities using this whiptail menu system.
 
-                menubox syntax
-         if no parameter then run menu
+ for Detailed Instructions on how to use
+ the pi-timolo program and utilities See GitHub Wiki
 
-menu      - Runs an interactive menu
-upgrade   - Perform Upgrade keep previous config files
-timolo    - Toggle Start/Stop pi-timolo.py background
-webserver - Toggle Start/Stop webserver.py background
-join      - join multiple mp4 videos into larger videos
-convert   - convert h264 files to MP4 format
-timelapse - Make video from source folder jpg images
-sync      - perform gdrive sync
-settings  - Edit various program settings
-about     - About this program
-help      - Display help
+     https://github.com/pageauc/pi-timolo/wiki
 
 \
 " 35 70 35
@@ -570,9 +609,10 @@ function do_main_menu ()
   "e CREATE" "MP4 Timelapse Video from jpg Images" \
   "f CONVERT" "Video from h264 to MP4 or Join multiple MP4 Videos" \
   "g SYNC" "Manage Rclone Remote Storage Sync" \
-  "h UPGRADE" "Program Files from GitHub.com" \
-  "i ABOUT" "Information About this Program" \
-  "j STATUS" "CPU $temp   Select to Refresh" \
+  "h REMOTE" "Manage pi-timolo using watch-app.sh" \
+  "i UPGRADE" "Program Files from GitHub.com" \
+  "j ABOUT" "menubox.sh" \
+  "k STATUS" "CPU $temp   Select to Refresh" \
   "q QUIT" "Exit This Menu Program"  3>&1 1>&2 2>&3)
 
   RET=$?
@@ -587,12 +627,13 @@ function do_main_menu ()
       e\ *) do_makevideo_menu ;;
       f\ *) do_convid_menu ;;
       g\ *) do_sync_menu ;;
-      h\ *) do_upgrade ;;
-      i\ *) do_about ;;
-      j\ *) do_main_menu ;;
+      h\ *) do_watch_menu ;;
+      i\ *) do_upgrade ;;
+      j\ *) do_about ;;
+      k\ *) do_main_menu ;;
       q\ *) clear
             exit 0 ;;
-         *) whiptail --msgbox "Programmer error: unrecognized option" 20 60 1 ;;
+         *) whiptail --msgbox "Programmer error: unrecognised option" 20 60 1 ;;
     esac || whiptail --msgbox "There was an error running selection $SELECTION" 20 60 1
   fi
 }
@@ -600,47 +641,5 @@ function do_main_menu ()
 #------------------------------------------------------------------------------
 #                                Main Script
 #------------------------------------------------------------------------------
-if [ $# -eq 0 ] ; then
-    while true; do
-       do_main_menu
-    done
-else
-    # convert to upper case
-    parm=$(echo $1 | awk '{print toupper($0)}')
 
-    case "$parm" in
-        HELP)
-            do_about
-            ;;
-        ABOUT)
-            do_about
-            ;;
-        MENU)
-            do_main_menu
-            ;;
-        UPGRADE)
-            do_upgrade
-            ;;
-        TIMOLO)
-            do_pi_timolo
-            ;;
-        WEBSERVER)
-            do_webserver
-            ;;
-        SYNC)
-            do_sync
-            ;;
-        TIMELAPSE)
-            do_makevideo
-            ;;
-        JOIN)
-            do_join_video
-            ;;
-        CONVERT)
-            do_convert_video
-            ;;
-        SETTINGS)
-            do_settings_menu
-            ;;
-    esac
-fi
+do_main_menu
