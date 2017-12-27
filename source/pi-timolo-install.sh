@@ -36,6 +36,9 @@ if $is_upgrade ; then
 "sync.sh" "webserver.py" "webserver.sh" \
 "convid.sh" "makevideo.sh" "mvleavelast.sh" "rclone-sync.sh" \
 "rclone-recent.sh" "rclone-motion.sh" "rclone-cleanup.sh")
+if [ -f "sync.sh" ] ; then
+    cp sync.sh sync.sh.old
+fi
 
 else   # New Install
   timoloFiles=("config.py" "menubox.sh" "pi-timolo.py" "pi-timolo.sh" \
@@ -59,7 +62,7 @@ done
 wget -O config.py.new -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/config.py
 if [ $? -ne 0 ] ;  then
     wget -O config.py.new https://raw.github.com/pageauc/pi-timolo/master/source/config.py
-    wget -O watch-app-new.sh https://raw.github.com/pageauc/pi-timolo/master/source/watch-app.sh   
+    wget -O watch-app-new.sh https://raw.github.com/pageauc/pi-timolo/master/source/watch-app.sh
     wget -O convid.conf.new https://raw.github.com/pageauc/pi-timolo/master/source/convid.conf
     wget -O makevideo.conf.new https://raw.github.com/pageauc/pi-timolo/master/source/makevideo.conf
     wget -O Readme.md -q https://raw.github.com/pageauc/pi-timolo/master/Readme.md
