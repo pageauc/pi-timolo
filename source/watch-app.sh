@@ -1,5 +1,5 @@
 #!/bin/bash
-ver="9.78"
+ver="9.79"
 progName=$(basename -- "$0")
 echo "$progName $ver  written by Claude Pageau"
 
@@ -202,6 +202,19 @@ else
         do_watch_reboot
     else
        echo "WARN  - Watch Reboot is Off per watch_reboot_on=$watch_reboot_on"
+    fi
+    
+    if [ -f "watch-app-new.sh" ] ; then
+        echo "------------------------------------------
+WARN  - Found Newer Version of watch-app.sh per watch-app-new.sh
+        To Implement New Version
+        1  nano watch-app-new.sh
+        2  Edit settings to transfer any customization from existing watch-app.sh
+        3  cp watch-app.sh watch-app-old.sh
+           or
+           rm watch-app.sh           
+        4  mv watch-app-new.sh watch-app.sh
+        5  Test changes"
     fi
 fi
 echo "------------------------------------------

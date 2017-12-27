@@ -1,6 +1,6 @@
 #!/bin/bash
 # Convenient pi-timolo-install.sh script written by Claude Pageau 1-Jul-2016
-ver="9.77"
+ver="9.79"
 TIMOLO_DIR='pi-timolo'  # Default folder install location
 
 cd ~
@@ -33,11 +33,11 @@ $STATUS from https://github.com/pageauc/pi-timolo
 # check if this is an upgrade and bypass update of configuration files
 if $is_upgrade ; then
   timoloFiles=("menubox.sh" "pi-timolo.py" "pi-timolo.sh"  \
-"sync.sh" "webserver.py" "webserver.sh" "watch-app.sh" \
+"sync.sh" "webserver.py" "webserver.sh" \
 "convid.sh" "makevideo.sh" "mvleavelast.sh" "rclone-sync.sh" \
 "rclone-recent.sh" "rclone-motion.sh" "rclone-cleanup.sh")
 
-else
+else   # New Install
   timoloFiles=("config.py" "menubox.sh" "pi-timolo.py" "pi-timolo.sh" \
 "sync.sh" "webserver.py" "webserver.sh" "watch-app.sh" \
 "convid.sh" "convid.conf" "makevideo.sh" "makevideo.conf" "mvleavelast.sh" \
@@ -59,6 +59,7 @@ done
 wget -O config.py.new -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/config.py
 if [ $? -ne 0 ] ;  then
     wget -O config.py.new https://raw.github.com/pageauc/pi-timolo/master/source/config.py
+    wget -O watch-app-new.sh https://raw.github.com/pageauc/pi-timolo/master/source/watch-app.sh   
     wget -O convid.conf.new https://raw.github.com/pageauc/pi-timolo/master/source/convid.conf
     wget -O makevideo.conf.new https://raw.github.com/pageauc/pi-timolo/master/source/makevideo.conf
     wget -O Readme.md -q https://raw.github.com/pageauc/pi-timolo/master/Readme.md
@@ -66,6 +67,7 @@ if [ $? -ne 0 ] ;  then
     wget -O rclone-sync-new.sh https://raw.github.com/pageauc/pi-timolo/master/source/rclone-sync.sh
     # wget -O gdrive https://raw.github.com/pageauc/pi-timolo/master/source/drive_armv6
 else
+    wget -O watch-app-new.sh -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/watch-app.sh
     wget -O convid.conf.new -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/convid.conf
     wget -O makevideo.conf.new -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/makevideo.conf
     wget -O Readme.md -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/Readme.md
