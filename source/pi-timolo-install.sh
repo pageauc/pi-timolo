@@ -161,7 +161,8 @@ fi
 sync_files=("gdrive" "install.sh" "makemovie.sh" "makedailymovie.sh" \
 "config.conf.orig" "config.conf.prev" \
 "convid.conf.orig" "convid.conf.prev" "convid.conf.1" \
-"makevideo.conf.orig" "makevideo.conf.prev" "makevideo.conf.1" )
+"makevideo.conf.orig" "makevideo.conf.prev" "makevideo.conf.1" \
+"sync.sh")
 
 for fname in "${sync_files[@]}" ; do
     if [ -f $fname ] ; then

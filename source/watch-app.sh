@@ -1,9 +1,8 @@
 #!/bin/bash
-ver="9.77"
+ver="9.78"
 progName=$(basename -- "$0")
 echo "$progName $ver  written by Claude Pageau"
 
-#
 # ----------------- User Customize Variables Below  --------------
 
 watch_config_on=false    # true=Remotely Manage Files from Remote Storage  false=off
@@ -12,9 +11,9 @@ watch_reboot_on=false    # true= Reboot RPI If watch_app_fname Down false=0ff
 
 watch_app_fname="pi-timolo.py"  # Filename of Program to Monitor for Run Status
 
-rclone_name="gdmedia"       # Name you gave remote storage service
+rclone_name="gdmedia"           # Name you gave remote storage service
 
-sync_dir="mycam-conf-sync"  # Name of folder to manage when watch_config_on=true
+sync_dir="mycam-conf-sync"      # Name of folder to manage when watch_config_on=true
 
 # List of files to monitor for updates
 sync_files=("config.py" "pi-timolo.py" "convid.conf" "makevideo.conf" "watch-app-err.log")
@@ -71,9 +70,13 @@ function do_remote_config ()
         echo "do_remote_config - Create New Dir $sync_dir"
         mkdir $sync_dir
         for fname in "${sync_files[@]}" ; do
-            echo "do_remote_config - Copy $fname to $sync_dir"
-            cp $fname $sync_dir/$fname.orig
-            cp $fname $sync_dir/$fname.done
+            if [ -f $fname ] ; then
+                echo "do_remote_config - Copy $fname to $sync_dir"
+                cp $fname $sync_dir/$fname.orig
+                cp $fname $sync_dir/$fname.done
+            else
+                echo "do_remote_config - $fname File Not Found"
+            fi
         done
         echo "do_remote_config - rclone sync -v $sync_dir $rclone_name:$sync_dir"
         /usr/bin/rclone sync -v $sync_dir $rclone_name:$sync_dir  # sync to remote storage drive
@@ -112,7 +115,7 @@ function do_remote_config ()
                 for fname in "${sync_files[@]}" ; do
                     if [ -f $sync_dir/$fname ] ; then
                         echo "do_remote_config - Undo Update Copy $fname to $sync_dir/$fname.err"
-                        cp $fname $sync_dir/$fname.err
+                        cp $fname $sync_dir/$fname.bad
                         cp $sync_dir/$fname.prev $fname
                         rm $sync_dir/$fname
                     fi
@@ -178,26 +181,27 @@ else
     if $watch_app_on ; then # Restart app if not running
         do_watch_app
     else
-        echo "WARN  - Watch App is Off per watch_app_on"
+        echo "WARN  - Watch App is Off per watch_app_on=$watch_app_on"
     fi
 
     if $watch_config_on ; then  # Check if remote configuration feature is on
         if [ -f /usr/bin/rclone ]; then
-            echo "INFO  - List Remote Names"
+            echo "List Remote Names"
+            echo "-----------------"
             /usr/bin/rclone listremotes
-            echo "INFO  - End List"
+            echo "-----------------"
             do_remote_config
         else
             echo "ERROR - /usr/bin/rclone File Not Found. Please Investigate."
         fi
     else
-        echo "WARN  - Remote Configuration is Off per watch_config_on"
+        echo "WARN  - Remote Configuration is Off per watch_config_on=$watch_config_on"
     fi
 
     if $watch_reboot_on ; then # check if watch app feature is on
         do_watch_reboot
     else
-       echo "WARN  - Watch Reboot is Off per watch_reboot_on"
+       echo "WARN  - Watch Reboot is Off per watch_reboot_on=$watch_reboot_on"
     fi
 fi
 echo "------------------------------------------
