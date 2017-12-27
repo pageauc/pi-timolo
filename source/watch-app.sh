@@ -27,9 +27,9 @@ for fname in "${sync_files[@]}" ; do
 done
 echo "--------------- SETTINGS -----------------
 
-watch_config_on  : $watch_config_on   true=on false=off
-watch_app_on     : $watch_app_on   true=on false=off
-watch_reboot_on  : $watch_reboot_on   true=on false=off
+watch_config_on  : $watch_config_on       # manage config true=on false=off
+watch_app_on     : $watch_app_on       # restart true=on false=off
+watch_reboot_on  : $watch_reboot_on       # reboot true=on false=off
 watch_app_fname  : $watch_app_fname
 
 rclone_name      : $rclone_name  # Name you gave remote storage service
@@ -138,7 +138,7 @@ function do_remote_config ()
                 do_watch_restart
             fi
         else
-            echo "do_remote_config - No File Changes Found ..."
+            echo "do_remote_config - No File Changes Found in $sync_dir"
         fi
     fi
 }
