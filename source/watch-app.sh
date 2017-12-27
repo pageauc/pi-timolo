@@ -13,7 +13,7 @@ watch_app_fname="pi-timolo.py"  # Filename of Program to Monitor for Run Status
 
 rclone_name="gdmedia"           # Name you gave remote storage service
 
-sync_dir="mycam-conf-sync"      # Name of folder to manage when watch_config_on=true
+sync_dir="mycam-config-sync"      # Name of folder to manage when watch_config_on=true
 
 # List of files to monitor for updates
 sync_files=("config.py" "pi-timolo.py" "convid.conf" "makevideo.conf" "watch-app-err.log")
