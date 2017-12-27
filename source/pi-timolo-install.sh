@@ -1,6 +1,6 @@
 #!/bin/bash
 # Convenient pi-timolo-install.sh script written by Claude Pageau 1-Jul-2016
-ver="9.76"
+ver="9.77"
 TIMOLO_DIR='pi-timolo'  # Default folder install location
 
 cd ~
@@ -30,21 +30,16 @@ echo "
 $STATUS from https://github.com/pageauc/pi-timolo
 "
 
-if [ -e convid.conf.1 ]; then
-  rm convid.conf.1
-  rm makevideo.conf.1
-fi
-
 # check if this is an upgrade and bypass update of configuration files
-if [ "$is_upgrade" = true ]; then
+if $is_upgrade ; then
   timoloFiles=("menubox.sh" "pi-timolo.py" "pi-timolo.sh"  \
-"sync.sh" "webserver.py" "webserver.sh"  \
+"sync.sh" "webserver.py" "webserver.sh" "watch-app.sh" \
 "convid.sh" "makevideo.sh" "mvleavelast.sh" "rclone-sync.sh" \
 "rclone-recent.sh" "rclone-motion.sh" "rclone-cleanup.sh")
 
 else
   timoloFiles=("config.py" "menubox.sh" "pi-timolo.py" "pi-timolo.sh" \
- "sync.sh" "webserver.py" "webserver.sh" \
+"sync.sh" "webserver.py" "webserver.sh" "watch-app.sh" \
 "convid.sh" "convid.conf" "makevideo.sh" "makevideo.conf" "mvleavelast.sh" \
 "rclone-recent.sh" "rclone-motion.sh" "rclone-cleanup.sh")
 fi
@@ -162,24 +157,18 @@ if [ "$DIR" != "$INSTALL_PATH" ]; then
   fi
 fi
 
-if [ -f gdrive ]; then
-   rm gdrive
-fi
+# cleanup old files from previous versions of install
+sync_files=("gdrive" "install.sh" "makemovie.sh" "makedailymovie.sh" \
+"config.conf.orig" "config.conf.prev" \
+"convid.conf.orig" "convid.conf.prev" "convid.conf.1" \
+"makevideo.conf.orig" "makevideo.conf.prev" "makevideo.conf.1" )
 
-if [ -f 'install.sh' ]; then
-  echo "$STATUS Delete Old install.sh"
-  rm install.sh
-fi
-
-if [ -f 'makemovie.sh' ]; then
-  echo "$STATUS Delete Old makemovie.sh"
-  rm makemovie.sh
-fi
-
-if [ -f 'makedailymovie.sh' ]; then
-  echo "$STATUS Delete Old makedailymovie.sh"
-  rm makedailymovie.sh
-fi
+for fname in "${sync_files[@]}" ; do
+    if [ -f $fname ] ; then
+        echo "Delete $fname"
+        rm $fname
+    fi
+done
 
 if [ -f /usr/bin/rclone ]; then
   echo "$STATUS rclone is installed at /usr/bin/rclone"
