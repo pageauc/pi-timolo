@@ -3,10 +3,12 @@ ver="9.79"
 progName=$(basename -- "$0")
 echo "$progName $ver  written by Claude Pageau"
 
-# ----------------- User Customize Variables Below  --------------
+#==================================
+#   watch-app.sh User Settings
+#==================================
 
-watch_config_on=false    # true=Remotely Manage Files from Remote Storage  false=off
-watch_app_on=false       # true=Monitor watch_app_fname and attempt restart false=off
+watch_config_on=false    # true= Remotely Manage Files from Remote Storage  false=off
+watch_app_on=false       # true= Monitor watch_app_fname and attempt restart false=off
 watch_reboot_on=false    # true= Reboot RPI If watch_app_fname Down false=0ff
 
 watch_app_fname="pi-timolo.py"  # Filename of Program to Monitor for Run Status
@@ -15,16 +17,17 @@ rclone_name="gdmedia"           # Name you gave remote storage service
 
 sync_dir="mycam-config-sync"      # Name of folder to manage when watch_config_on=true
 
-# List of files to monitor for updates
+# List of file names to monitor for updates
 sync_files=("config.py" "pi-timolo.py" "convid.conf" "makevideo.conf" "watch-app-err.log")
 
-# -------------- End User Variable Edits -------------------------
+#====== End User Setting Edits ======
 
-# Display Users Settings
+
 fList=""
 for fname in "${sync_files[@]}" ; do
     fList=$fList' '$fname
 done
+# Display watch-app Settings
 echo "--------------- SETTINGS -----------------
 
 watch_config_on  : $watch_config_on       # manage config true=on false=off
@@ -203,7 +206,7 @@ else
     else
        echo "WARN  - Watch Reboot is Off per watch_reboot_on=$watch_reboot_on"
     fi
-    
+
     if [ -f "watch-app-new.sh" ] ; then
         echo "------------------------------------------
 WARN  - Found Newer Version of watch-app.sh per watch-app-new.sh
@@ -212,7 +215,7 @@ WARN  - Found Newer Version of watch-app.sh per watch-app-new.sh
         2  Edit settings to transfer any customization from existing watch-app.sh
         3  cp watch-app.sh watch-app-old.sh
            or
-           rm watch-app.sh           
+           rm watch-app.sh
         4  mv watch-app-new.sh watch-app.sh
         5  Test changes"
     fi
