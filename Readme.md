@@ -45,11 +45,10 @@ to admin settings and stop start pi-timolo and webserver as background tasks. Re
 optional plugin feature that allows overlaying config.py settings with custom settings for
 specific tasks.  
 
-* ***New Release 9.x*** Added Features
-For [plugins Setup and Operation](https://github.com/pageauc/pi-timolo/wiki/How-to-Use-Plugins}
-For [Rclone Setup and Media Sync](https://github.com/pageauc/pi-timolo/wiki/How-to-Setup-rclone)
-For [watch-app.sh Remote config Management](https://github.com/pageauc/pi-timolo/wiki/How-to-Setup-config.py-Remote-Configuration)
-For [python3 Support Details](https://github.com/pageauc/pi-timolo/wiki/Prerequisites#python-3-support)
+* ***New Release 9.x*** See GitHub wiki details for [plugins Setup and Operation](https://github.com/pageauc/pi-timolo/wiki/How-to-Use-Plugins)
+,[Rclone Setup and Media Sync](https://github.com/pageauc/pi-timolo/wiki/How-to-Setup-rclone)
+, [watch-app.sh Remote config Management](https://github.com/pageauc/pi-timolo/wiki/How-to-Setup-config.py-Remote-Configuration)
+and [python3 Support Details](https://github.com/pageauc/pi-timolo/wiki/Prerequisites#python-3-support)
         
 For more Details see [Github Wiki](https://github.com/pageauc/pi-timolo/wiki)   
 
