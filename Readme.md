@@ -44,21 +44,14 @@ h264 to mp4 format, a simple minumum or no setup web server to view images or vi
 to admin settings and stop start pi-timolo and webserver as background tasks. Recently added
 optional plugin feature that allows overlaying config.py settings with custom settings for
 specific tasks.  
-        
-see Github Wiki for More Details https://github.com/pageauc/pi-timolo/wiki    
 
-### Recent Release History
-* Release 5.0 Added optional video stream thread, improved day/night transitions with no greenish images + Misc updates
-* Release 6.0 Added optional DateTime Named subfolders, recent files option and Disk Space Management + Misc updates 
-* Release 6.7 Added videoRepeat option to take continuous video clips by filename datetime or seq num and exit by
-specified time or number of videos or run continuous and manage by freedisk space. This is similar to a dash cam. Requires the updated config.py.   
-* Release 7.x Added openCV motion Tracking to track objects above a min size for a designated pixel track trigger length.
-There is also a new motionTrackQuickPic feature that saves a stream image rather than switching to normal pi-camera non streaming mode.
-RPI Forum Post details here https://www.raspberrypi.org/forums/viewtopic.php?p=1183663#p1183663   
-* ***New Release 9.x*** Added Optional plugin Feature, made python3 compatible, Added rclone install and wiki
-For plugins details see https://github.com/pageauc/pi-timolo/wiki/How-to-Use-Plugins
-For rclone details see https://github.com/pageauc/pi-timolo/wiki/How-to-Setup-rclone
-For python3 Support Details see https://github.com/pageauc/pi-timolo/wiki/Prerequisites#python-3-support
+* ***New Release 9.x*** Added Features
+For [plugins Setup and Operation](https://github.com/pageauc/pi-timolo/wiki/How-to-Use-Plugins}
+For [Rclone Setup and Media Sync](https://github.com/pageauc/pi-timolo/wiki/How-to-Setup-rclone)
+For [watch-app.sh Remote config Management](https://github.com/pageauc/pi-timolo/wiki/How-to-Setup-config.py-Remote-Configuration)
+For [python3 Support Details](https://github.com/pageauc/pi-timolo/wiki/Prerequisites#python-3-support)
+        
+For more Details see [Github Wiki](https://github.com/pageauc/pi-timolo/wiki)   
 
 **See Minimal Upgrade Below** if you have a recent pi-timolo version installed
 
