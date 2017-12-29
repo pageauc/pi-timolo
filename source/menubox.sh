@@ -574,6 +574,7 @@ function do_upgrade()
   if (whiptail --title "GitHub Upgrade pi-timolo" --yesno "Upgrade pi-timolo files from GitHub. Config files will not be changed" 8 65 --yes-button "upgrade" --no-button "Cancel" ) then
     curl -L https://raw.github.com/pageauc/pi-timolo/master/source/pi-timolo-install.sh | bash
     do_anykey
+    ./menubox.sh
   fi
 }
 
@@ -594,6 +595,7 @@ function do_about()
 
 \
 " 35 70 35
+
 }
 
 #------------------------------------------------------------------------------
