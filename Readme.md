@@ -2,11 +2,13 @@
 ### Raspberry (Pi)camera, (Ti)melapse, (Mo)tion, (Lo)wlight
 ### For Details See [Wiki Instructions](https://github.com/pageauc/pi-timolo/wiki) and [YouTube Videos](https://www.youtube.com/playlist?list=PLLXJw_uJtQLa11A4qjVpn2D2T0pgfaSG0)
 
-* ***NOTICE*** gdrive is no longer installed with pi-timolo-install.sh, I have been testing
-rclone and it is now the default. See [Wiki - How to Setup Rclone](https://github.com/pageauc/pi-timolo/wiki/How-to-Setup-rclone).
-If a ***/usr/local/bin/gdrive*** File Exists, It Will Remain. These files are still available on this GitHub Repo.   
-
-### Quick Install
+* ***Release 9.x*** New Features have been Added. See Wiki Details below    
+ [plugins Setup and Operation](https://github.com/pageauc/pi-timolo/wiki/How-to-Use-Plugins)   
+ [Rclone Setup and Media Sync](https://github.com/pageauc/pi-timolo/wiki/How-to-Setup-rclone) (Replaces gdrive) 
+ [watch-app.sh Remote Configuration Management](https://github.com/pageauc/pi-timolo/wiki/How-to-Setup-config.py-Remote-Configuration)   
+ [python3 Support Details](https://github.com/pageauc/pi-timolo/wiki/Prerequisites#python-3-support)
+ 
+### Quick Install or Upgrade
 **IMPORTANT** - It is suggested you do a Raspbian ***sudo apt-get update*** and ***sudo apt-get upgrade***
 before curl install, since it is **No longer** performed by the pi-timolo-install.sh script
 
@@ -17,6 +19,10 @@ Step 2 On RPI putty SSH or terminal session right click, select paste then Enter
 
 The command above will download and Run the GitHub pi-timolo-install.sh script. 
 An upgrade will not overwrite configuration files.   
+
+* ***NOTICE*** gdrive is no longer installed with pi-timolo-install.sh, I have been testing
+rclone and it is now the default. See [Wiki - How to Setup Rclone](https://github.com/pageauc/pi-timolo/wiki/How-to-Setup-rclone).
+If a ***/usr/local/bin/gdrive*** File Exists, It Will Remain. These files are still available on this GitHub Repo.   
 
 ### Test Install
 To Test Run default config.py - motion track(HD image) plus timelapse(5 min interval). 
@@ -44,13 +50,7 @@ h264 to mp4 format, a simple minumum or no setup web server to view images or vi
 to admin settings and stop start pi-timolo and webserver as background tasks. Recently added
 optional plugin feature that allows overlaying config.py settings with custom settings for
 specific tasks.  
-
-* ***Release 9.x*** New Features have been Added. See Wiki Details below    
- [plugins Setup and Operation](https://github.com/pageauc/pi-timolo/wiki/How-to-Use-Plugins)   
- [Rclone Setup and Media Sync](https://github.com/pageauc/pi-timolo/wiki/How-to-Setup-rclone) (Replaces gdrive) 
- [watch-app.sh Remote Configuration Management](https://github.com/pageauc/pi-timolo/wiki/How-to-Setup-config.py-Remote-Configuration)   
- [python3 Support Details](https://github.com/pageauc/pi-timolo/wiki/Prerequisites#python-3-support)
-        
+       
 For more Details see [Github Wiki](https://github.com/pageauc/pi-timolo/wiki)   
 
 **See Minimal Upgrade Below** if you have a recent pi-timolo version installed
@@ -68,7 +68,7 @@ from a logged in ssh or terminal session execute the following commands.
     
 Edit config.py to transfer any customized settings from config.py.old  
     
-### Manual Install   
+### Manual Install or Upgrade  
 From logged in RPI SSH session or console terminal perform the following. You can review
 the pi-timolo-install.sh script code before executing.
 
