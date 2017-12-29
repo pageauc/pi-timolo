@@ -470,7 +470,7 @@ function do_settings_menu ()
 function do_watch_menu ()
 {
   SET_SEL=$( whiptail --title "watch-app.sh Menu" --menu "Arrow/Enter Selects or Tab Key" 0 0 0 --ok-button Select --cancel-button Back \
-  "a EDIT" "Edit watch.sh using nano" \
+  "a EDIT" "Edit watch-app.sh using nano" \
   "b RUN" "Test Run watch-app.sh" \
   "c CRON" "Edit crontab" \
   "d ABOUT" "About watch-app.sh Remote Configure" \
