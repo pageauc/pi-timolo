@@ -631,7 +631,8 @@ function do_main_menu ()
       g\ *) do_sync_menu ;;
       h\ *) do_watch_menu ;;
       i\ *) do_upgrade ;;
-      j\ *) do_about ;;
+      j\ *) do_about
+            do_main_menu ;;
       k\ *) do_main_menu ;;
       q\ *) clear
             exit 0 ;;
