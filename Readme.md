@@ -4,11 +4,11 @@
 
 * ***NOTICE*** gdrive is no longer installed with pi-timolo-install.sh, I have been testing
 rclone and it is now the default. See [Wiki - How to Setup Rclone](https://github.com/pageauc/pi-timolo/wiki/How-to-Setup-rclone).
-If ***/usr/local/bin/gdrive*** Exists, It Will Remain.   
+If a ***/usr/local/bin/gdrive*** File Exists, It Will Remain. These files are still available on this GitHub Repo.   
 
 ### Quick Install
-**IMPORTANT** - A raspbian apt-get update and upgrade will be performed as part of install
-so it may take some time if these are not up-to-date.      
+**IMPORTANT** - It is suggested you do a Raspbian ***sudo apt-get update*** and ***sudo apt-get upgrade***
+before curl install, since it is **No longer** performed by the pi-timolo-install.sh script
 
 Step 1 Highlight curl command in code box below using mouse left button. Right click mouse in highlighted area and Copy.     
 Step 2 On RPI putty SSH or terminal session right click, select paste then Enter to download and run script.     
@@ -45,11 +45,11 @@ to admin settings and stop start pi-timolo and webserver as background tasks. Re
 optional plugin feature that allows overlaying config.py settings with custom settings for
 specific tasks.  
 
-* ***Release 9.x*** For New Features [Wiki](https://github.com/pageauc/pi-timolo/wiki) Details see 
- [plugins Setup and Operation](https://github.com/pageauc/pi-timolo/wiki/How-to-Use-Plugins)
-, [Rclone Setup and Media Sync](https://github.com/pageauc/pi-timolo/wiki/How-to-Setup-rclone)
-, [watch-app.sh Remote config Management](https://github.com/pageauc/pi-timolo/wiki/How-to-Setup-config.py-Remote-Configuration)
- and [python3 Support Details](https://github.com/pageauc/pi-timolo/wiki/Prerequisites#python-3-support)
+* ***Release 9.x*** New Features have been Added. See Wiki Details below    
+ [plugins Setup and Operation](https://github.com/pageauc/pi-timolo/wiki/How-to-Use-Plugins)   
+ [Rclone Setup and Media Sync](https://github.com/pageauc/pi-timolo/wiki/How-to-Setup-rclone) (Replaces gdrive) 
+ [watch-app.sh Remote Configuration Management](https://github.com/pageauc/pi-timolo/wiki/How-to-Setup-config.py-Remote-Configuration)   
+ [python3 Support Details](https://github.com/pageauc/pi-timolo/wiki/Prerequisites#python-3-support)
         
 For more Details see [Github Wiki](https://github.com/pageauc/pi-timolo/wiki)   
 
