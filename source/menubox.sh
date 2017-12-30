@@ -530,6 +530,7 @@ function do_plugins_menu ()
   "i dashcam" "nano plugins/dashcam.py" \
   "j slowmo" "nano plugins/slowmo.py" \
   "k SELECT" "plugin File to nano Edit" \
+  "l UPGRADE" "Missing plugins From GitHub" \
   "q BACK" "to Main Menu" 3>&1 1>&2 2>&3 )
 
   RET=$?
@@ -560,6 +561,10 @@ function do_plugins_menu ()
       j\ *) nano plugins/slowmo.py
             do_plugins_menu ;;
       k\ *) do_plugins_edit
+            do_plugins_menu ;;
+      l\ *) clear
+            curl -L https://raw.github.com/pageauc/pi-timolo/master/source/plugins-install.sh | bash
+            do_anykey
             do_plugins_menu ;;
       q\ *) clear
             do_main_menu ;;
