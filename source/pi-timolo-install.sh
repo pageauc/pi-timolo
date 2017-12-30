@@ -1,6 +1,6 @@
 #!/bin/bash
 # Convenient pi-timolo-install.sh script written by Claude Pageau 1-Jul-2016
-ver="9.79"
+ver="9.80"
 TIMOLO_DIR='pi-timolo'  # Default folder install location
 
 cd ~
@@ -35,7 +35,7 @@ if $is_upgrade ; then
   timoloFiles=("menubox.sh" "pi-timolo.py" "pi-timolo.sh"  \
 "sync.sh" "webserver.py" "webserver.sh" \
 "convid.sh" "makevideo.sh" "mvleavelast.sh" "rclone-sync.sh" \
-"rclone-recent.sh" "rclone-motion.sh" "rclone-cleanup.sh")
+"rclone-recent.sh" "rclone-motion.sh" "rclone-cleanup.sh" "remote-run.sh")
 if [ -f "sync.sh" ] ; then
     cp sync.sh sync.sh.old
 fi
@@ -44,7 +44,7 @@ else   # New Install
   timoloFiles=("config.py" "menubox.sh" "pi-timolo.py" "pi-timolo.sh" \
 "sync.sh" "webserver.py" "webserver.sh" "watch-app.sh" \
 "convid.sh" "convid.conf" "makevideo.sh" "makevideo.conf" "mvleavelast.sh" \
-"rclone-recent.sh" "rclone-motion.sh" "rclone-cleanup.sh")
+"rclone-recent.sh" "rclone-motion.sh" "rclone-cleanup.sh" "remote-run.sh")
 fi
 
 for fname in "${timoloFiles[@]}" ; do
