@@ -97,7 +97,7 @@ $now $sync_dir/$fname.log History File Initialized." > $sync_dir/$fname.log
                     cp $fname $sync_dir/$fname.orig
                     cp $fname $sync_dir/$fname.done
                 else
-                    echo "$now ERROR : $fname File Not Found"
+                    echo "$now WARN : $fname File Not Found"
                 fi
             fi
         done
@@ -109,7 +109,7 @@ $now $sync_dir/$fname.log History File Initialized." > $sync_dir/$fname.log
         fi
     else
         now=$(/bin/date +%Y-%m-%d-%H:%M:%S)
-        echo "$now INFO  : Found Dir $sync_dir"
+        echo "$now INFO  : Found Local Dir $sync_dir"
         # Update local sync_dir from remote
         echo "$now INFO  : rclone sync -v $rclone_name:$sync_dir $sync_dir"
         /usr/bin/rclone sync -v $rclone_name:$sync_dir $sync_dir  # sync remote with local sync dir
