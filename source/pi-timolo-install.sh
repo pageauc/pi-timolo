@@ -50,7 +50,7 @@ fi
 for fname in "${timoloFiles[@]}" ; do
     wget_output=$(wget -O $fname -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/$fname)
     if [ $? -ne 0 ]; then
-        wget_output=$(wget -O $fname -q https://raw.github.com/pageauc/pi-timolo/master/source/plugins/$fname)
+        wget_output=$(wget -O $fname -q https://raw.github.com/pageauc/pi-timolo/master/source/$fname)
         if [ $? -ne 0 ]; then
             echo "ERROR - $fname wget Download Failed. Possible Cause Internet Problem."
         else
