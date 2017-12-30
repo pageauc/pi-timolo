@@ -19,10 +19,14 @@ sync_dir="mycam-config-sync"      # Name of folder to manage when watch_config_o
 
 # List of file names to monitor for updates
 sync_files=("config.py" "pi-timolo.py" "convid.conf" "makevideo.conf" "watch-app-err.log" \
-"reboot.force")
+"reboot.force" "remote-run.sh")
+
+# Note: It is not recommended to set reboot.force and remote-run.sh at same time
 
 #====== End User Setting Edits ======
 
+PROG_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )" # folder location of this script
+cd $PROG_DIR
 
 fList=""
 for fname in "${sync_files[@]}" ; do
@@ -49,9 +53,10 @@ cd $progDir
 # ------------------------------------------------------
 function do_watch_restart ()
 {
+    now=$(/bin/date +%Y-%m-%d-%H:%M:%S)
     if ! [ -z "$( pgrep -f $watch_app_fname )" ]; then
         progPID=$( pgrep -f "$watch_app_fname" )
-        echo "do_watch_restart - Stop $watch_app_fname PID $progPID"
+        echo "$now INFO  : Stop $watch_app_fname PID $progPID"
         sudo kill $progPID >/dev/null 2>&1
         sleep 1
     fi
@@ -60,126 +65,163 @@ function do_watch_restart ()
     sleep 1
     if [ -z "$(pgrep -f $watch_app_fname)" ] ; then
         # pi-timolo did not start
-        echo "do_watch_restart - Restart Failed $watch_app_fname"
+        echo "$now INFO  : Restart Failed $watch_app_fname"
     else
         progPID=$( pgrep -f $watch_app_fname )
-        echo "do_watch_restart - Restart OK $watch_app_fname PID $progPID"
+        echo "$now INFO  : Restart OK $watch_app_fname PID $progPID"
     fi
 }
 
 # ------------------------------------------------------
 function do_remote_config ()
 {
+    found_update=false
+    reboot_on=false
+    now=$(/bin/date +%Y-%m-%d-%H:%M:%S)
     if [ ! -d $sync_dir ] ; then  # If local sync dir does not exist then create one
-        echo "do_remote_config - Create New Dir $sync_dir"
+        echo "$now INFO  : Create New Dir $sync_dir"
         mkdir $sync_dir
         for fname in "${sync_files[@]}" ; do
-            if [ -f $fname ] ; then
-                echo "do_remote_config - Copy $fname to $sync_dir"
-                cp $fname $sync_dir/$fname.orig
-                cp $fname $sync_dir/$fname.done
-            else
-                if [[ "$fname" == "reboot.force" ]]; then
-                    # initialize reboot.force.done file
-                    now=$(/bin/date +%Y-%m-%d-%H:%M:%S)
-                    echo "Found $fname in sync_files. Creating $sync_dir/$fname.log Entry"
-                    echo "$progName  written by Claude Pageau
+            if [[ "$fname" == "reboot.force" ]]; then
+                # initialize reboot.force.done file
+                echo "$now INFO  : Creating $sync_dir/$fname.log Entry"
+                echo "$progName  written by Claude Pageau
 =========================================================
   To Force RPI Reboot. Rename this File to reboot.force
   On the remote storage name $rclone_name:
 ================ Reboot History =========================
 $now $sync_dir/$fname.log History File Initialized." > $sync_dir/$fname.log
+            else
+                if [ -f $fname ] ; then
+                    echo "$now INFO  : Copy $fname to $sync_dir"
+                    cp $fname $sync_dir/$fname.orig
+                    cp $fname $sync_dir/$fname.done
                 else
-                    echo "do_remote_config - $fname File Not Found"
+                    echo "$now ERROR : $fname File Not Found"
                 fi
             fi
         done
+        # sync new sync_dir files to remote storage
         /usr/bin/rclone sync -v $sync_dir $rclone_name:$sync_dir  # sync to remote storage drive
         if [ ! $? -eq 0 ]; then
             /usr/bin/rclone sync -v --log-file watch-app-err.log $sync_dir $rclone_name:$sync_dir
-            echo "EPROR - do_remote_config - Problem with rclone.  Check rclone_name $rclone_name"
+            echo "$now EPROR - Problem with rclone. Check rclone_name $rclone_name"
         fi
     else
-        echo "do_remote_config - rclone sync -v $rclone_name:$sync_dir $sync_dir"
+        now=$(/bin/date +%Y-%m-%d-%H:%M:%S)
+        echo "$now INFO  : Found Dir $sync_dir"
+        # Update local sync_dir from remote
+        echo "$now INFO  : rclone sync -v $rclone_name:$sync_dir $sync_dir"
         /usr/bin/rclone sync -v $rclone_name:$sync_dir $sync_dir  # sync remote with local sync dir
         if [ ! $? -eq 0 ]; then  # Try to fix problem if local dir or some other error occurred
-            echo "do_remote_config - rclone sync -v $sync_dir $rclone_name:$sync_dir"
+            now=$(/bin/date +%Y-%m-%d-%H:%M:%S)
+            echo "$now INFO  : rclone sync -v $sync_dir $rclone_name:$sync_dir"
             /usr/bin/rclone sync $sync_dir $rclone_name:$sync_dir  # sync to remote storage drive
             /usr/bin/rclone sync -v $rclone_name:$sync_dir $sync_dir  # sync remote with local sync dir
             if [ ! $? -eq 0 ]; then  # Create an error log of problem until next update cycle works.
+                now=$(/bin/date +%Y-%m-%d-%H:%M:%S)
                 /usr/bin/rclone sync -v --log-file watch-app-err.log $rclone_name:$sync_dir $sync_dir
-                echo "do_remote_config - Problem with rclone. Check rclone_name $rclone_name"
+                echo "$now ERROR : Problem with rclone. Check rclone_name $rclone_name"
             fi
         fi
-        found_update=false
-        reboot_on=false
+
+        # Process sync_files list to see if anything is on list
         for fname in "${sync_files[@]}" ; do     # check if new config files are present
-            if [ -f $sync_dir/$fname ] ; then
-                found_update=true
-                if [ -f $sync_dir/reboot.force ] ; then
-                    now=$(/bin/date +%Y-%m-%d-%H:%M:%S)
-                    echo "$now Found $fname. Reboot Scheduled." >> $sync_dir/$fname
+            now=$(/bin/date +%Y-%m-%d-%H:%M:%S)
+            if [[ "${fname}" == "reboot.force" ]]; then
+                if [[ -f $sync_dir/$fname ]] ; then
+                    found_update=true
                     reboot_on=true
-                else
-                    echo "do_remote_config - Found Update for File $fname"
-                    cp $fname $sync_dir/$fname.prev  # save copy with .prev extension
-                    echo "do_remote_config - Copy $sync_dir/$fname to $fname"
-                    cp $sync_dir/$fname $fname       # update working file
+                    echo "$now INFO  : Found $fname. Reboot Scheduled."
+                    echo "$now INFO  : Found $fname. Reboot Scheduled." >> $sync_dir/$fname
+                    cp $sync_dir/$fname $sync_dir/$fname.log
+                    rm $sync_dir/$fname
                 fi
+            elif [[ "${fname}" == "remote-run.sh" ]]; then
+                echo "$now INFO  : Found $fname entry in sync_files"
+                if [ -f $sync_dir/$fname ] ; then
+                    echo "$now INFO  : Found $sync_dir/$fname"
+                    if [ -f $fname ] ; then
+                        echo "$now INFO  : Check if $fname Already Running"
+                        found_update=true
+                        if [ -z "$( pgrep -f $fname )" ] ; then
+                            echo "$now INFO  : $fname is Not Running"
+                        else
+                            progPID=$( pgrep -f "$fname" )
+                            echo "$now WARN  : Stop $fname PID $progPID"
+                            echo "$now WARN  : Stop $fname PID $progPID" >> $sync_dir/$fname.log
+                            sudo kill $progPID >/dev/null 2>&1
+                        fi
+                        cp $fname $sync_dir/$fname.prev
+                        cp $sync_dir/$fname $fname       # update working file
+                        cp $fname $sync_dir/$fname.done
+                        rm $sync_dir/$fname
+                        echo "$now INFO  : Run $fname as Background Task"
+                        echo "$now INFO  : Run $fname as Background Task" >> $sync_dir/$fname.log
+                        ./$fname >> $sync_dir/$fname.log &
+                    else
+                        echo "$now WARN  : Run Failed. $fname File Not Found."
+                        echo "$now WARN  : Run Failed. $fname File Not Found."  >> $sync_dir/$fname.log
+                    fi
+                else
+                    echo "$now WARN  : $sync_dir/$fname File Not Found."
+                    echo "$now WARN  : $sync_dir/$fname File Not Found."  >> $sync_dir/$fname.log
+                fi
+            elif [[ "${fname}" == "watch-app-err.log" ]]; then
+                if [ -f $fname ] ; then
+                    echo "$now INFO  : Found $fname"
+                    found_update=true
+                    cp $fname $sync_dir/
+                    rm $fname
+                fi
+            elif [ -f $sync_dir/$fname ] ; then
+                found_update=true
+                change_files+=("$fname")
+                echo "$now INFO  : Found Update for File $fname"
+                cp $fname $sync_dir/$fname.prev  # save copy with .prev extension
+                echo "$now INFO  : Copy $sync_dir/$fname to $fname"
+                cp $sync_dir/$fname $fname       # update working file
             fi
         done
 
-        if [ -f "watch-app-err.log" ]; then
-            cp watch-app-err.log $sync_dir
-        fi
-
+        # echo "$now INFO  : Changed Files ${change_files[*]}"
         if $found_update ; then
+            echo "$now INFO  : Found Changes.  Restarting $watch_app_fname"
             do_watch_restart
-            if [ -z "$(pgrep -f $watch_app_fname)" ] ; then  # is pi-timolo.py running
-                for fname in "${sync_files[@]}" ; do
+            if [ -z "$(pgrep -f $watch_app_fname)" ] ; then
+                # Roll back changes since pi-timolo did not start
+                for fname in "${$change_files[@]}" ; do
                     if [ -f $sync_dir/$fname ] ; then
-                        if [[ ! "$fname" == "reboot.force" ]] ; then
-                            cp $sync_dir/$fname $sync_dir/$fname.log
-                            rm $sync_dir/$fname
-                        else
-                            echo "do_remote_config - Undo Update Copy $fname to $sync_dir/$fname.err"
-                            cp $fname $sync_dir/$fname.bad
-                            cp $sync_dir/$fname.prev $fname
-                            rm $sync_dir/$fname
-                        fi
+                        echo "$now WARN  : Undo Update Copy $fname to $sync_dir/$fname.err"
+                        cp $fname $sync_dir/$fname.bad
+                        cp $sync_dir/$fname.prev $fname
+                        rm $sync_dir/$fname
                     fi
                 done
-                do_watch_restart
-                echo "rclone sync -v $sync_dir $rclone_name:$sync_dir"
-                /usr/bin/rclone sync -v $sync_dir $rclone_name:$sync_dir
-            else
-                # pi-timolo Started OK so restore prev config.py
-                for fname in "${sync_files[@]}" ; do
-                    if [ -f $sync_dir/$fname ] ; then
-                        if [[ "$fname" == "reboot.force" ]] ; then
-                            cp $sync_dir/$fname $sync_dir/$fname.log
-                            rm $sync_dir/$fname
-                        else
-                            echo "do_remote_config - Done Update Copy $fname to $sync_dir/$fname.done"
-                            cp $fname $sync_dir/$fname.done
-                            rm $sync_dir/$fname
-                        fi
-                    fi
-                done
-                echo "do_remote_sync - Confirm Update"
-                echo "rclone sync -v $sync_dir $rclone_name:$sync_dir"
-                /usr/bin/rclone sync -v $sync_dir $rclone_name:$sync_dir
+                change_files=()
                 do_watch_restart
             fi
+            for fname in "${change_files[@]}" ; do
+                now=$(/bin/date +%Y-%m-%d-%H:%M:%S)
+                if [ -f $sync_dir/$fname ] ; then
+                    echo "$now INFO  : Confirm Update Copy $fname to $sync_dir/$fname.done"
+                    cp $fname $sync_dir/$fname.done
+                    rm $sync_dir/$fname
+                fi
+            done
+            # update remote storage with status
+            echo "$now INFO  : rclone sync -v $sync_dir $rclone_name:$sync_dir"
+            /usr/bin/rclone sync -v $sync_dir $rclone_name:$sync_dir
         else
-            echo "do_remote_config - No File Changes Found in $sync_dir"
+            echo "$now INFO  : No File Changes Found in $sync_dir"
         fi
 
         if $reboot_on ; then   # Reboot after all the other updates done
-            echo "Found File reboot.force in $sync_dir - Reboot in 15 seconds Waiting ...."
-            echo "                     ctrl-c to Abort Reboot."
+            echo "Found File reboot.force in $sync_dir"
+            echo "     Reboot in 15 seconds Waiting ...."
+            echo "        ctrl-c to Abort Reboot."
             sleep 10
-            echo "do_watch_reboot - Rebooting in 5 seconds"
+            echo "       Rebooting in 5 seconds"
             sleep 5
             sudo reboot
         fi
@@ -193,7 +235,7 @@ function do_watch_app()
         do_watch_restart
     else
         progPID=$( pgrep -f $watch_app_fname )
-        echo "$watch_app_fname is Running PID $progPID"
+        echo "$now INFO  : $watch_app_fname is Running PID $progPID"
     fi
 }
 
@@ -202,35 +244,37 @@ function do_watch_reboot ()
 {
     if [ -z "$(pgrep -f $watch_app_fname)" ] ; then
         if $watch_reboot_on ; then
-            echo "do_watch_reboot - $watch_app_fname is NOT Running so reboot"
-            echo "do_watch_reboot - Reboot in 15 seconds Waiting ...."
+            now=$(/bin/date +%Y-%m-%d-%H:%M:%S)
+            echo "$now INFO  : $watch_app_fname is NOT Running so reboot"
+            echo "$now INFO  : Reboot in 15 seconds Waiting ...."
             echo "                     ctrl-c to Abort Reboot."
             sleep 10
-            echo "do_watch_reboot - Rebooting in 5 seconds"
+            echo "$now INFO :          Rebooting in 5 seconds"
             sleep 5
             sudo reboot
         fi
     else
         APP_PID=$(pgrep -f $watch_app_fname)
-        echo "do_watch_reboot - $watch_app_fname is Running PID $APP_PID"
+        echo "$now INFO  : $watch_app_fname is Running PID $APP_PID"
     fi
 }
 
 # ------------------------------------------------------
 # Main script processing
+now=$(/bin/date +%Y-%m-%d-%H:%M:%S)
 if pidof -o %PPID -x "$progName"; then
-    echo "WARN  - $progName Already Running. Only One Allowed."
+    echo "$now WARN  : $progName Already Running. Only One Allowed."
 else
     reboot_on=false  # If a reboot file is found in $sync_dir then set to true
     if $watch_app_on ; then # Restart app if not running
-        echo "INFO  - Watch App is On per watch_app_on=$watch_app_on"
+        echo "$now INFO  : Watch App is On per watch_app_on=$watch_app_on"
         do_watch_app
     else
-        echo "WARN  - Watch App is Off per watch_app_on=$watch_app_on"
+        echo "$now WARN  : Watch App is Off per watch_app_on=$watch_app_on"
     fi
 
     if $watch_config_on ; then  # Check if remote configuration feature is on
-        echo "INFO  - Remote Configuration is On per watch_config_on=$watch_config_on"
+        echo "$now INFO  : Remote Configuration is On per watch_config_on=$watch_config_on"
         if [ -f /usr/bin/rclone ]; then
             echo " List Remote Names"
             echo "==================="
@@ -238,30 +282,29 @@ else
             echo "==================="
             do_remote_config
         else
-            echo "ERROR - /usr/bin/rclone File Not Found. Please Investigate."
+            echo "$now ERROR : /usr/bin/rclone File Not Found. Please Investigate."
         fi
     else
-        echo "WARN  - Remote Configuration is Off per watch_config_on=$watch_config_on"
+        echo "$now WARN  : Remote Configuration is Off per watch_config_on=$watch_config_on"
     fi
 
     if $watch_reboot_on ; then # check if watch app feature is on
-        echo "INFO  - Watch Reboot is On per watch_reboot_on=$watch_reboot_on"
+        echo "$now INFO  : Watch Reboot is On per watch_reboot_on=$watch_reboot_on"
         do_watch_reboot
     else
-       echo "WARN  - Watch Reboot is Off per watch_reboot_on=$watch_reboot_on"
+       echo "$now WARN  : Watch Reboot is Off per watch_reboot_on=$watch_reboot_on"
     fi
 
     if [ -f "watch-app-new.sh" ] ; then
+        echo "$now WARN  : Found Newer Version of watch-app.sh"
         echo "------------------------------------------
-WARN  - Found Newer Version of watch-app.sh per watch-app-new.sh
-        To Implement This New Version
+        Check If You Already Have New Version. To Upgrade if Required.
         1  nano watch-app-new.sh
         2  Edit settings to transfer any customization from existing watch-app.sh
         3  cp watch-app.sh watch-app-old.sh
-           or
-           rm watch-app.sh
-        4  mv watch-app-new.sh watch-app.sh
-        5  Test changes"
+        4  rm watch-app.sh
+        5  mv watch-app-new.sh watch-app.sh
+        6  Test changes"
     fi
 fi
 echo "------------------------------------------
