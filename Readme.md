@@ -38,7 +38,8 @@ To Test Run default config.py - motion track(HD image) plus timelapse(5 min inte
     cd ~/pi-timolo
     ./pi-timolo.py
 
-### For Detailed Instructions See [pi-timolo Wiki](https://github.com/pageauc/pi-timolo/wiki)
+### For More Details see [Basic Trouble Shooting](https://github.com/pageauc/pi-timolo/wiki/Basic-Trouble-Shooting)Detailed
+or [pi-timolo Wiki](https://github.com/pageauc/pi-timolo/wiki)
 
 ## Description
 pi-timolo is a python 2/3 picamara module application for a Raspberry PI computer (RPI).
