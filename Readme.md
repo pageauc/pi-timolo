@@ -7,8 +7,15 @@
  [Rclone Setup and Media Sync](https://github.com/pageauc/pi-timolo/wiki/How-to-Setup-rclone) (Replaces gdrive)    
  [watch-app.sh Remote Configuration Management](https://github.com/pageauc/pi-timolo/wiki/How-to-Setup-config.py-Remote-Configuration)   
  [python3 Support Details](https://github.com/pageauc/pi-timolo/wiki/Prerequisites#python-3-support)   
+
+## Requirements
+Requires a [***Raspberry Pi computer***](https://www.raspberrypi.org/documentation/setup/) and a 
+[***RPI camera module installed***](https://www.raspberrypi.org/documentation/usage/camera/).
+Make sure hardware is tested and works. Most [RPI models](https://www.raspberrypi.org/products/) will work OK. 
+A quad core RPI will greatly improve performance due to threading. A recent version of 
+[Raspbian operating system](https://www.raspberrypi.org/downloads/raspbian/) is Recommended.
  
-### Quick Install or Upgrade
+## Quick Install or Upgrade
 **IMPORTANT** - It is suggested you do a Raspbian ***sudo apt-get update*** and ***sudo apt-get upgrade***
 before curl install, since it is **No longer** performed by the pi-timolo-install.sh script
 
@@ -25,7 +32,7 @@ rclone and it is now the default. Some rclone- samples are included. Make a copy
 your own needs.  See [Wiki - How to Setup Rclone](https://github.com/pageauc/pi-timolo/wiki/How-to-Setup-rclone).
 Note: If a ***/usr/local/bin/gdrive*** File Exists, It Will Remain. Older files are still available on this GitHub Repo.   
 
-### Test Install
+## Test Install
 To Test Run default config.py - motion track(HD image) plus timelapse(5 min interval). 
  
     cd ~/pi-timolo
@@ -33,7 +40,7 @@ To Test Run default config.py - motion track(HD image) plus timelapse(5 min inte
 
 ### For Detailed Instructions See [pi-timolo Wiki](https://github.com/pageauc/pi-timolo/wiki)
 
-### Description
+## Description
 pi-timolo is a python 2/3 picamara module application for a Raspberry PI computer (RPI).
 A RPI camera module must be attached. pi-timolo can take timelapse and motion detection
 images/videos, separately or together. 
@@ -56,7 +63,7 @@ For more Details see [Github Wiki](https://github.com/pageauc/pi-timolo/wiki)
 
 **See Minimal Upgrade Below** if you have a recent pi-timolo version installed
 
-### Minimal Upgrade
+## Minimal Upgrade
 If you are just interested in a minimal upgrade (must have pi-timolo previously installed)
 from a logged in ssh or terminal session execute the following commands.  
 
@@ -69,16 +76,17 @@ from a logged in ssh or terminal session execute the following commands.
     
 Edit config.py to transfer any customized settings from config.py.old  
     
-### Manual Install or Upgrade  
+## Manual Install or Upgrade  
 From logged in RPI SSH session or console terminal perform the following. You can review
 the pi-timolo-install.sh script code before executing.
 
     cd ~
     wget https://raw.github.com/pageauc/pi-timolo/master/source/pi-timolo-install.sh
+    more pi-timolo-install.sh    # Review code if required
     chmod +x pi-timolo-install.sh
     ./pi-timolo-install.sh
     
-### Menubox
+## Menubox
 pi-timolo has a whiptail administration menu system. The menu's allow
 start/stop of pi-timolo.py and/or webserver.py as background tasks, as well as
 editing configuration files, making timelapse videos from jpg images, converting or joining mp4 files Etc.    
@@ -90,7 +98,7 @@ To run menubox.sh from ssh console or terminal session execute commands below.
 
 ![menubox main menu](menubox.png)
  
-### Webserver
+## Webserver
 I have also written a standalone LAN based webserver.py to allow easy access to pi-timolo image and video files
 on the Raspberry from another LAN computer web browser.  There is no setup required but the display
 settings can be customized via variables in the config.py file or via menubox admin menuing.   
@@ -101,7 +109,7 @@ To run from ssh console or terminal session.
 
 ![webserver browser screen shot](webserver.png)
  
-### Reference Links  
+## Reference Links  
 Detailed pi-timolo Wiki https://github.com/pageauc/pi-timolo/wiki  
 YouTube Videos https://www.youtube.com/playlist?list=PLLXJw_uJtQLa11A4qjVpn2D2T0pgfaSG0
  
