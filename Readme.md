@@ -41,9 +41,9 @@ To Test Run default config.py - motion track(HD image) plus timelapse(5 min inte
 ### For More Details see [Basic Trouble Shooting](https://github.com/pageauc/pi-timolo/wiki/Basic-Trouble-Shooting) or [pi-timolo Wiki](https://github.com/pageauc/pi-timolo/wiki)
 
 ## Description
-The application is primarily designed for ***headless operation*** and includes rclone that
-can securely synchronize files with a users remote storage service of choice. This works well for remote security and monitoring
-cameras. Camera config.py and conf settings can be easily administered remotely from a designated sync directory using watch-app.sh
+PI-TIMOLO is primarily designed for ***headless operation*** and includes rclone that
+can securely synchronize specified media files with a users remote storage service of choice. This works well for remote security and monitoring
+cameras. Camera config.py and conf settings can be easily administered remotely from a designated sync directory using ***watch-app.sh***
 script using a crontab entry to periodically check for updates between the pi-timolo camera and a users remote storage rclone service name. 
 
 pi-timolo is a python 2/3 compatible and can take timelapse and motion detection images/videos, separately or together. Will take
@@ -51,8 +51,8 @@ long exposure Night (lowlight) images for Time Lapse and/or Motion. Has smooth t
 setting, so a real time clock is not required. Customization settings are saved in a config.py and conf files and optional special
 purpose plugin config files. Optional plugin feature allows overlaying config.py settings with custom settings for specific tasks.  
 
-Includes makevideo.sh to create timelapse or motion lapse videos from images, convid.sh to convert/combine 
-h264 to mp4 format, a simple minumum or no setup web server to view images or videos and menubox.sh 
+Includes ***makevideo.sh*** to create timelapse or motion lapse videos from images, ***convid.sh*** to convert/combine 
+h264 to mp4 format, a simple minumum or no setup web server to view images or videos and ***menubox.sh*** 
 to admin settings and stop start pi-timolo and webserver as background tasks. 
        
 For more Details see [Github Wiki](https://github.com/pageauc/pi-timolo/wiki)   
