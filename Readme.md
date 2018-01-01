@@ -46,12 +46,10 @@ can securely synchronize files with a users remote storage service of choice. Th
 cameras. Camera config.py and conf settings can be easily administered remotely from a designated sync directory using watch-app.sh
 script using a crontab entry to periodically check for updates between the pi-timolo camera and a users remote storage rclone service name. 
 
-pi-timolo is a python 2/3 compatible and is designed to use a picamara module connected to a Raspberry PI computer (RPI).
-A RPI camera module must be attached. pi-timolo can take timelapse and motion detection images/videos, separately or together. 
-
-Takes Long exposure Night (lowlight) images for Time Lapse and/or Motion. Has smooth twilight transitions based on a threshold light
+pi-timolo is a python 2/3 compatible and can take timelapse and motion detection images/videos, separately or together. Will take
+long exposure Night (lowlight) images for Time Lapse and/or Motion. Has smooth twilight transitions based on a threshold light
 setting, so a real time clock is not required. Customization settings are saved in a config.py and conf files and optional special
-purpose plugin config files. Rhe optional plugin feature allows overlaying config.py settings with custom settings for specific tasks.  
+purpose plugin config files. Optional plugin feature allows overlaying config.py settings with custom settings for specific tasks.  
 
 Includes makevideo.sh to create timelapse or motion lapse videos from images, convid.sh to convert/combine 
 h264 to mp4 format, a simple minumum or no setup web server to view images or videos and menubox.sh 
