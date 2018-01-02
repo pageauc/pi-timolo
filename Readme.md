@@ -24,11 +24,11 @@ before curl install, since it is **No longer** performed by the pi-timolo-instal
 
     curl -L https://raw.github.com/pageauc/pi-timolo/master/source/pi-timolo-install.sh | bash
 
-The command above will download and Run the GitHub pi-timolo-install.sh script. 
+The command above will download and Run the GitHub ***pi-timolo-install.sh*** script. 
 An upgrade will not overwrite configuration files.   
 
 * ***NOTICE*** gdrive is no longer installed with pi-timolo-install.sh, I have been testing
-rclone and it is now the default. Some rclone- samples are included. Make a copy of one, rename and edit for
+rclone and it is Now the Default. Some ***rclone-*** samples are included. Make a copy of one, rename and edit for
 your own needs.  See [Wiki - How to Setup Rclone](https://github.com/pageauc/pi-timolo/wiki/How-to-Setup-rclone).
 Note: If a ***/usr/local/bin/gdrive*** File Exists, It Will Remain. Older files are still available on this GitHub Repo.   
 
@@ -48,7 +48,7 @@ script using a crontab entry to periodically check for updates between the pi-ti
 
 pi-timolo is a python 2/3 compatible and can take timelapse and motion detection images/videos, separately or together. Will take
 long exposure Night (lowlight) images for Time Lapse and/or Motion. Has smooth twilight transitions based on a threshold light
-setting, so a real time clock is not required. Customization settings are saved in a config.py and conf files and optional special
+setting, so a real time clock is not required. Customization settings are saved in a ***config.py*** and conf files and optional special
 purpose plugin config files. Optional plugin feature allows overlaying config.py settings with custom settings for specific tasks.  
 
 Includes ***makevideo.sh*** to create timelapse or motion lapse videos from images, ***convid.sh*** to convert/combine 
