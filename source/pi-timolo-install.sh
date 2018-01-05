@@ -1,8 +1,11 @@
 #!/bin/bash
 # Convenient pi-timolo-install.sh script written by Claude Pageau 1-Jul-2016
-ver="9.91"
+ver="9.92"
 progName=$(basename -- "$0")
 TIMOLO_DIR='pi-timolo'  # Default folder install location
+
+# Make sure ver below matches latest rclone ver on https://downloads.rclone.org/rclone-current-linux-arm.zip
+rclone_cur_ver="rclone v1.39"
 
 cd ~
 is_upgrade=false
@@ -76,40 +79,24 @@ else
     # wget -O gdrive -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/drive_armv6
 fi
 
-# Install rclone with latest version
-wget -O rclone.zip -q --show-progress https://downloads.rclone.org/rclone-current-linux-arm.zip
-echo "INFO  : unzip rclone.zip to folder rclone-tmp"
-unzip -o -j -d rclone-tmp rclone.zip
-echo "INFO  : Install files and man pages"
-cd rclone-tmp
-sudo cp rclone /usr/bin/
-sudo chown root:root /usr/bin/rclone
-sudo chmod 755 /usr/bin/rclone
-sudo mkdir -p /usr/local/share/man/man1
-sudo cp rclone.1 /usr/local/share/man/man1/
-sudo mandb
-cd ..
-echo "INFO  : Deleting rclone.zip and Folder rclone-tmp"
-rm rclone.zip
-rm -r rclone-tmp
-
-echo "INFO  : $STATUS Install of plugins Wait ..."
+# Install plugins if not already installed.  You must delete a plugin file to force reinstall.
+echo "INFO  : $STATUS Check/Install pi-timolo/plugins    Wait ..."
 PLUGINS_DIR='plugins'  # Default folder install location
+# List of plugin Files to Check
 pluginFiles=("__init__.py" "dashcam.py" "secfast.py" "secQTL.py" "secstill.py" \
 "secvid.py" "strmvid.py" "shopcam.py" "slowmo.py" "TLlong.py" "TLshort.py")
 
-# Install plugins
 mkdir -p $PLUGINS_DIR
 cd $PLUGINS_DIR
 for fname in "${pluginFiles[@]}" ; do
   if [ -f $fname ]; then     # check if local file exists.
-    echo "INFO  : $fname Skip Download Since Local Copy Found"
+    echo "INFO  : $fname plugin Found.  Skip Download ..."
   else
     wget_output=$(wget -O $fname -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/plugins/$fname)
     if [ $? -ne 0 ]; then
         wget_output=$(wget -O $fname -q https://raw.github.com/pageauc/pi-timolo/master/source/plugins/$fname)
         if [ $? -ne 0 ]; then
-            echo "ERROR - $fname wget Download Failed. Possible Cause Internet Problem."
+            echo "ERROR : $fname wget Download Failed. Possible Cause Internet Problem."
         else
             wget -O $fname "https://raw.github.com/pageauc/pi-timolo/master/source/plugins/$fname"
         fi
@@ -117,13 +104,36 @@ for fname in "${pluginFiles[@]}" ; do
   fi
 done
 cd ..
-echo "INFO  : $STATUS Done plugins as Required."
-echo "-------------------------------------------------------------"
-echo "INFO  : $STATUS Make Required Files Executable"
-chmod +x *py
-chmod -x config*py
-chmod +x *sh
-echo "-------------------------------------------------------------"
+
+rclone_install=true
+if [ -f /usr/bin/rclone ]; then
+    /usr/bin/rclone version
+    rclone_ins_ver=$( /usr/bin/rclone version | grep rclone )
+    if [ "$rclone_ins_ver" == "$rclone_cur_ver" ]; then
+        rclone_install=false
+    fi
+fi
+
+if "$rclone_install" = true ; then
+    # Install rclone with latest version
+    echo "INFO  : Install Latest Rclone from https://downloads.rclone.org/rclone-current-linux-arm.zip"
+    wget -O rclone.zip -q --show-progress https://downloads.rclone.org/rclone-current-linux-arm.zip
+    echo "INFO  : unzip rclone.zip to folder rclone-tmp"
+    unzip -o -j -d rclone-tmp rclone.zip
+    echo "INFO  : Install files and man pages"
+    cd rclone-tmp
+    sudo cp rclone /usr/bin/
+    sudo chown root:root /usr/bin/rclone
+    sudo chmod 755 /usr/bin/rclone
+    sudo mkdir -p /usr/local/share/man/man1
+    sudo cp rclone.1 /usr/local/share/man/man1/
+    sudo mandb
+    cd ..
+    echo "INFO  : Deleting rclone.zip and Folder rclone-tmp"
+    rm rclone.zip
+    rm -r rclone-tmp
+    echo "INFO  : /usr/bin/rclone Install Complete"
+fi
 
 # check if system was updated today
 # NOW="$( date +%d-%m-%y )"
@@ -149,6 +159,9 @@ sudo apt-get install -yq fonts-freefont-ttf # Required for Jessie Lite Only
 sudo apt-get install -yq python-opencv
 dos2unix *sh
 dos2unix *py
+chmod +x *py
+chmod -x config*py
+chmod +x *sh
 echo "INFO  : $STATUS Done Dependencies Install"
 
 # Check if pi-timolo-install.sh was launched from pi-timolo folder
@@ -173,10 +186,10 @@ for fname in "${sync_files[@]}" ; do
 done
 
 if [ -f /usr/bin/rclone ]; then
-  echo "INFO  : $STATUS rclone is installed at /usr/bin/rclone"
-  rclone -V
+    echo "INFO  : $STATUS rclone is installed at /usr/bin/rclone"
+    rclone version
 else
-  echo "ERROR : $STATUS Problem Installing rclone.  Please Investigate"
+    echo "ERROR : $STATUS Problem Installing rclone.  Please Investigate"
 fi
 
 echo "
