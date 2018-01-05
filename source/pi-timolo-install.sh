@@ -35,7 +35,7 @@ if $is_upgrade ; then
   timoloFiles=("menubox.sh" "pi-timolo.py" "pi-timolo.sh"  \
 "sync.sh" "webserver.py" "webserver.sh" \
 "convid.sh" "makevideo.sh" "mvleavelast.sh" "rclone-sync.sh" \
-"rclone-recent.sh" "rclone-motion.sh" "rclone-videos.sh" "rclone-cleanup.sh" "remote-run.sh")
+"rclone-recent.sh" "rclone-motion.sh" "rclone-cleanup.sh" "remote-run.sh")
 
 if [ -f "sync.sh" ] ; then
     cp sync.sh sync.sh.old
@@ -45,7 +45,7 @@ else   # New Install
   timoloFiles=("config.py" "menubox.sh" "pi-timolo.py" "pi-timolo.sh" \
 "sync.sh" "webserver.py" "webserver.sh" "watch-app.sh" \
 "convid.sh" "makevideo.sh" "video.conf" "mvleavelast.sh" \
-"rclone-recent.sh" "rclone-motion.sh" "rclone-cleanup.sh" "remote-run.sh")
+"rclone-recent.sh" "rclone-motion.sh" "rclone-videos.sh" "rclone-cleanup.sh" "remote-run.sh")
 fi
 
 for fname in "${timoloFiles[@]}" ; do
