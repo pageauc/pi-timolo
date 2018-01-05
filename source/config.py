@@ -16,7 +16,7 @@ configName  = "config.py"
 
 pluginEnable = False       # default= False True reads customized settings from a custom.py file
 pluginName = "shopcam"     # Specify filename in plugins subfolder without .py extension per below
-                           # TLlong, TLshort, secfast, secstill, secvid, secQTL, shopcam, dashcam, slowmo
+                           # TLlong, TLshort, secfast, secstill, strmvid, secvid, secQTL, shopcam, dashcam, slowmo
 
 verbose = True             # default= True Sends logging Info to Console. False if running script as daeman
 logDataToFile = False      # default= False True logs diagnostic data to a disk file for review
