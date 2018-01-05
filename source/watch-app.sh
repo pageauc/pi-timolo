@@ -1,6 +1,8 @@
 #!/bin/bash
-ver="9.80"
+ver="5.00"
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"  # get cur dir of this script
 progName=$(basename -- "$0")
+cd $DIR
 echo "$progName $ver  written by Claude Pageau"
 
 #==================================
@@ -18,15 +20,12 @@ rclone_name="gdmedia"           # Name you gave remote storage service
 sync_dir="mycam-config-sync"      # Name of folder to manage when watch_config_on=true
 
 # List of file names to monitor for updates
-sync_files=("config.py" "pi-timolo.py" "convid.conf" "makevideo.conf" "watch-app-err.log" \
-"reboot.force" "remote-run.sh")
+sync_files=("config.py" "pi-timolo.py" "video.conf" \
+"watch-app-err.log" "reboot.force" "remote-run.sh")
 
 # Note: It is not recommended to set reboot.force and remote-run.sh at same time
 
 #====== End User Setting Edits ======
-
-PROG_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )" # folder location of this script
-cd $PROG_DIR
 
 fList=""
 for fname in "${sync_files[@]}" ; do

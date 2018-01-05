@@ -39,7 +39,7 @@ motionNumMax  = 0              # default= 0 (0=Continuous) os specify Max number
 # -----------------
 motionSubDirMaxHours = 0       # 0=off or specify Max Hrs to create new sub-folder if HrsMax exceeded
 motionSubDirMaxFiles = 1000    # 0=off or specify Max Files to create new sub-folder if FilesMax exceeded
-motionRecentMax = 100          # 0=off  Maintain specified number of most recent files in motionRecentDir
+motionRecentMax = 40           # 0=off  Maintain specified number of most recent files in motionRecentDir
 motionRecentDir = "media/recent/secstill"  # default= "media/recent/secstill"  Location of motionRecent files
 
 # Manage Disk Space Settings

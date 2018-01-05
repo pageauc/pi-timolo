@@ -1,12 +1,15 @@
 #!/bin/bash
 # Convenient pi-timolo-install.sh script written by Claude Pageau 1-Jul-2016
-ver="9.0"
+ver="5.00"
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+cd $DIR
 echo "$0 $ver  written by Claude Pageau"
+
+# List of valid plugins to Check/Download
 PLUGINS_DIR='plugins'  # Default folder install location
 pluginFiles=("__init__.py" "dashcam.py" "secfast.py" "secQTL.py" "secstill.py" \
 "secvid.py" "shopcam.py" "slowmo.py" "TLlong.py" "TLshort.py")
 
-cd ~/pi-timolo
 mkdir -p $PLUGINS_DIR
 cd $PLUGINS_DIR
 INSTALL_PATH=$( pwd )
@@ -29,7 +32,7 @@ for fname in "${pluginFiles[@]}" ; do
 done
 
 echo "
-How to Implement pi-timolo plugins
+      How to Implement pi-timolo plugins
 -----------------------------------------------------------
 Plugins configure pi-timolo for special tasks by overlaying
 the plugin variables over the current config.py settings.

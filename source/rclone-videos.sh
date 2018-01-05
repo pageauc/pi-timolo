@@ -9,8 +9,8 @@ echo "INFO  : $progName $ver  written by Claude Pageau"
 # ---------------------------------------
 rcloneName="gdmedia"
 syncRoot="/home/pi/pi-timolo"
-localSyncDir="media/motion"
-remoteSyncDir="mycam/motion"
+localSyncDir="media/videos"
+remoteSyncDir="mycam/videos"
 # ---------------------------------------
 
 # Display Users Settings
@@ -59,7 +59,7 @@ else
         fi
     else
         echo "ERROR : /usr/bin/rclone Not Installed."
-        echo "         You Must Install and Configure rclone"
+        echo "        You Must Install and Configure rclone"
     fi
 fi
 echo "---------------------------------------------------"

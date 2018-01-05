@@ -1,6 +1,10 @@
 #!/bin/bash
+ver="5.00"
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"  # get cur dir of this script
 progName=$(basename -- "$0")
-echo "$progName ver 9.61  written by Claude Pageau"
+cd $DIR
+
+echo "$progName $ver  written by Claude Pageau"
 
 # Customize rclone sync variables Below
 # ---------------------------------------
@@ -12,18 +16,19 @@ echo "
 ---------- SETTINGS -------------
 rcloneName   : $rcloneName
 ---------------------------------"
+
 if pidof -o %PPID -x "$progName"; then
-    echo "WARN  - $progName Already Running. Only One Allowed."
+    echo "WARN  : $progName Already Running. Only One Allowed."
 else
     if [ -f /usr/bin/rclone ]; then
-        echo "rclone is installed at /usr/bin/rclone"
+        echo "INFO  : rclone is installed at /usr/bin/rclone"
         rclone -V
-        echo "/usr/bin/rclone cleanup -v $rcloneName:"
-        echo "One Moment Please ..."
+        echo "INFO  : /usr/bin/rclone cleanup -v $rcloneName:"
+        echo "        One Moment Please ..."
         /usr/bin/rclone cleanup -v $rcloneName:
         echo "Done Cleanup of $rcloneName:"
     else
-        echo "WARN  - /usr/bin/rclone Not Installed."
+        echo "WARN  : /usr/bin/rclone Not Installed."
     fi
 fi
 echo "$progName Bye ..."

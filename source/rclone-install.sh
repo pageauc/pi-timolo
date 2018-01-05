@@ -1,19 +1,22 @@
 #!/bin/bash
-ver="9.7"
-echo "rclone-install.sh ver $ver written by Claude Pageau"
+ver="5.00"
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"  # get cur dir of this script
+progName=$(basename -- "$0")
+cd $DIR
+echo "INFO  : $progName $ver  written by Claude Pageau"
 echo "-------------------------------------------------------------------------------"
 if [ -f /usr/bin/rclone ]; then
-    echo "Rclone Reinstall/Upgrade"
+    echo "INFO  : Rclone Reinstall/Upgrade"
     /usr/bin/rclone -V
 else
-    echo "Rclone New Install"
+    echo "INFO  : Rclone New Install"
 fi
 
-echo "Download https://downloads.rclone.org/rclone-current-linux-arm.zip"
+echo "INFO  : Download https://downloads.rclone.org/rclone-current-linux-arm.zip"
 wget wget -O rclone.zip -q --show-progress https://downloads.rclone.org/rclone-current-linux-arm.zip
-echo "unzip rclone.zip to folder rclone-tmp"
+echo "INFO  : unzip rclone.zip to folder rclone-tmp"
 unzip -o -j -d rclone-tmp rclone.zip
-echo "Install files and man pages"
+echo "INFO  : Install files and man pages"
 cd rclone-tmp
 sudo cp rclone /usr/bin/
 sudo chown root:root /usr/bin/rclone
@@ -22,14 +25,14 @@ sudo mkdir -p /usr/local/share/man/man1
 sudo cp rclone.1 /usr/local/share/man/man1/
 sudo mandb
 cd ..
-echo "Deleting rclone.zip and Folder rclone-tmp"
+echo "INFO  : Deleting rclone.zip and Folder rclone-tmp"
 rm rclone.zip
 rm -r rclone-tmp
 wget -O rclone-sync.sh https://raw.github.com/pageauc/pi-timolo/master/source/rclone-sync.sh
 chmod +x rclone-sync.sh
 
 if [ -f /usr/bin/rclone ]; then
-  echo "rclone is installed at /usr/bin/rclone"
+  echo "INFO  : rclone is installed at /usr/bin/rclone"
   rclone -V
   echo "                       INSTRUCTIONS
 1 You will be required to have a login account on the remote service
@@ -60,7 +63,7 @@ rclone sync -v /home/pi/pi-timolo/media/motion gdmedia:media/motion
 Note: Instructions were tested with google drive.
 "
 else
-  echo "Problem Installing rclone.  Please Investigate"
+  echo "ERROR : Problem Installing rclone.  Please Investigate"
 fi
 echo "Bye..."
 

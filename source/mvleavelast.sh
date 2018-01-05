@@ -1,4 +1,9 @@
 #!/bin/sh
+ver="5.00"
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"  # get cur dir of this script
+progName=$(basename -- "$0")
+cd $DIR
+echo "$progName $ver  written by Claude Pageau"
 
 # movefiles.sh - written by Claude Pageau based on script by zengargoyle
 # This script will move files from the local SD card images

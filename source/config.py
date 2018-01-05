@@ -17,7 +17,7 @@ configName  = "config.py"
 pluginEnable = False       # default= False True reads customized settings from a custom.py file
 pluginName = "shopcam"     # Specify filename in plugins subfolder without .py extension per below
                            # TLlong, TLshort, secfast, secstill, secvid, secQTL, shopcam, dashcam, slowmo
-                           
+
 verbose = True             # default= True Sends logging Info to Console. False if running script as daeman
 logDataToFile = False      # default= False True logs diagnostic data to a disk file for review
 debug = False              # default= False True = debug mode returns pixel average data for tuning
@@ -25,8 +25,8 @@ debug = False              # default= False True = debug mode returns pixel aver
 # Image Settings
 # --------------
 imageNamePrefix = 'cam1-'  # default= 'cam1-' for all image file names. Eg garage-
-imageWidth = 1024          # default= 1024 Full Size Image Width in px
-imageHeight = 768          # default= 768  Full Size Image Height in px
+imageWidth = 1280          # default= 1024 Full Size Image Width in px
+imageHeight = 720          # default= 768  Full Size Image Height in px
 imageFormat = ".jpg"       # default = ".jpg"  image Formats .jpeg .png .gif .bmp
 imageJpegQuality = 10      # default = 20  Valid jpg encoder quality values 1(high) - 40(low)
 imageVFlip = False         # default= False True Flips image Vertically
@@ -72,8 +72,8 @@ motionDir = "media/motion"  # default= "media/motion"  Folder Path for Motion De
 motionPrefix = "mo-"        # default= "mo-" Prefix for all Motion Detect images
 motionCamSleep = 0.7        # default= 0.7 Sec of day sleep so camera can measure AWB before taking photo
 motionVideoOn = False       # default= False  True=Take a video clip rather than image
-motionVideoFPS = 30         # default= 30  If image size reduced to 640x480 then slow motion is possible at 90 fps
-motionVideoTimer = 10       # default= 10 seconds of video clip to take if Motion Detected
+motionVideoFPS = 15         # default= 15  If image size reduced to 640x480 then slow motion is possible at 90 fps
+motionVideoTimer = 30       # default= 30 seconds of video clip to take if Motion Detected
 motionQuickTLOn = False     # default= False  True=Take a quick time lapse sequence rather than a single image (overrides motionVideoOn)
 motionQuickTLTimer = 10     # default= 10 Duration in seconds of quick time lapse sequence after initial motion detected
 motionQuickTLInterval = 0   # default= 0 seconds between each Quick time lapse image. 0 is fast as possible
@@ -84,7 +84,7 @@ motionNumStart = 1000       # default= 1000 Start 0f motion number sequence
 motionNumMax  = 500         # default= 0 Max number of motion images desired. 0=Continuous
 motionSubDirMaxHours = 0    # 0=off or specify Max Hrs to create new sub-folder if HrsMax exceeded
 motionSubDirMaxFiles = 0    # 0=off or specify Max Files to create new sub-folder if FilesMax exceeded
-motionRecentMax = 10        # 0=off  Maintain specified number of most recent files in motionRecentDir
+motionRecentMax = 40        # 0=off  Maintain specified number of most recent files in motionRecentDir
 motionRecentDir = "media/recent/motion"  # default= "media/recent/motion"  Location of motionRecent files
 motionDotsOn = False        # default= True Displays motion loop progress dots if verbose=True False=Non
 motionDotsMax = 100         # default= 100 Number of motion dots before starting new line if motionDotsOn=True
@@ -107,7 +107,7 @@ timelapseExitSec = 0        # default= 0 seconds Surpress Timelapse after specif
 timelapseMaxFiles = 0       # 0=off or specify MaxFiles to maintain then oldest are deleted  default=0 (off)
 timelapseSubDirMaxHours = 0 # 0=off or specify MaxHours - Creates New dated sub-folder if MaxHours exceeded
 timelapseSubDirMaxFiles = 0 # 0=off or specify MaxFiles - Creates New dated sub-folder if MaxFiles exceeded
-timelapseRecentMax = 10     # 0=off or specify number of most recent files to save in timelapseRecentDir
+timelapseRecentMax = 40     # 0=off or specify number of most recent files to save in timelapseRecentDir
 timelapseRecentDir = "media/recent/timelapse"  # default= "media/recent/timelapse"  location of timelapseRecent files
 
 # Video Repeat Mode (suppresses Timelapse and Motion Settings)
