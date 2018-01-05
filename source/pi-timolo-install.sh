@@ -1,6 +1,6 @@
 #!/bin/bash
 # Convenient pi-timolo-install.sh script written by Claude Pageau 1-Jul-2016
-ver="9.92"
+ver="9.93"
 progName=$(basename -- "$0")
 TIMOLO_DIR='pi-timolo'  # Default folder install location
 
@@ -67,8 +67,8 @@ if [ $? -ne 0 ] ;  then
     wget -O Readme.md -q https://raw.github.com/pageauc/pi-timolo/master/Readme.md
     wget -O media/webserver.txt https://raw.github.com/pageauc/pi-timolo/master/source/webserver.txt
     wget -O rclone-sync-new.sh https://raw.github.com/pageauc/pi-timolo/master/source/rclone-sync.sh
-    wget -O rclone-videos-new.sh https://raw.github.com/pageauc/pi-timolo/master/source/rclone-videos.sh
-    # wget -O gdrive https://raw.github.com/pageauc/pi-timolo/master/source/drive_armv6
+    wget -O rclone-videos-new.sh https://raw.github.com/pageauc/pi-timolo/master/source/rclone-videos.sh  
+  # wget -O gdrive https://raw.github.com/pageauc/pi-timolo/master/source/drive_armv6
 else
     wget -O watch-app-new.sh -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/watch-app.sh
     wget -O video.conf.new -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/video.conf
@@ -76,7 +76,15 @@ else
     wget -O media/webserver.txt -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/webserver.txt
     wget -O rclone-sync-new.sh -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/rclone-sync.sh
     wget -O rclone-videos-new.sh -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/rclone-videos.sh
-    # wget -O gdrive -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/drive_armv6
+  # wget -O gdrive -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/drive_armv6
+fi
+
+if [ ! -f video.conf ] ; then
+    cp video.conf.new video.conf
+fi
+
+if [ ! -f config.py ] ; then
+    cp config.py.new config.py
 fi
 
 # Install plugins if not already installed.  You must delete a plugin file to force reinstall.
