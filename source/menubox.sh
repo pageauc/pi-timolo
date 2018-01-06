@@ -1,6 +1,6 @@
 #!/bin/bash
 
-ver="9.82"
+ver="9.90"
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 cd $DIR
@@ -98,10 +98,10 @@ function do_makevideo ()
 #------------------------------------------------------------------------------
 function do_makevideo_config ()
 {
-  if [ -e $DIR/makevideo.conf ] ; then
-     /bin/nano $DIR/makevideo.conf
+  if [ -f $DIR/video.conf ] ; then
+     /bin/nano $DIR/video.conf
   else
-     whiptail --msgbox "ERROR - $DIR/makevideo.conf File Not Found. Please Investigate." 20 60 1
+     whiptail --msgbox "ERROR - $DIR/video.conf File Not Found. Please Investigate." 20 60 1
   fi
 }
 
@@ -110,8 +110,8 @@ function do_makevideo_menu ()
 {
   SELECTION=$(whiptail --title "makevideo.sh Menu" --menu "Arrow/Enter to Run or Tab Key" 20 67 7 --cancel-button Back --ok-button Select \
   "a RUN" "makevideo.sh - motion or timelapse jpg's to mp4 video" \
-  "b EDIT" "nano makevideo.conf video settings" \
-  "c VIEW" "makevideo.conf file" \
+  "b EDIT" "nano video.conf video settings" \
+  "c VIEW" "video.conf file" \
   "q BACK" "to Main Menu"  3>&1 1>&2 2>&3)
 
   RET=$?
@@ -123,7 +123,7 @@ function do_makevideo_menu ()
       b\ *) do_makevideo_config
             do_makevideo_menu ;;
       c\ *) clear
-            cat $DIR/makevideo.conf
+            cat $DIR/video.conf
             do_anykey
             do_makevideo_menu ;;
       q\ *) do_main_menu ;;
@@ -157,12 +157,12 @@ function do_convert_video ()
 }
 
 #------------------------------------------------------------------------------
-function do_video_config ()
+function do_convid_config ()
 {
-    if [ -e $DIR/convid.conf ] ; then
-        /bin/nano $DIR/convid.conf
+    if [ -f $DIR/video.conf ] ; then
+        /bin/nano $DIR/video.conf
     else
-        whiptail --msgbox "ERROR - $DIR/convid.conf File Not Found. Please Investigate." 20 65 1
+        whiptail --msgbox "ERROR - $DIR/video.conf File Not Found. Please Investigate." 20 65 1
     fi
 }
 
@@ -173,8 +173,8 @@ function do_convid_menu ()
   VID_SEL=$( whiptail --title "convid.sh Menu" --menu "Arrow/Enter to Run or Tab Key" 0 0 0 --cancel-button Back --ok-button Select \
   "a JOIN" "JOIN multiple motion MP4 videos into larger videos" \
   "b CONVERT" "motion h264 files to MP4 videos" \
-  "c EDIT" "nano convid.conf settings" \
-  "d VIEW" "convid.conf settings." \
+  "c EDIT" "nano video.conf settings" \
+  "d VIEW" "video.conf settings." \
   "q BACK" "to Main Menu" 3>&1 1>&2 2>&3 )
 
   RET=$?
@@ -184,10 +184,10 @@ function do_convid_menu ()
     case "$VID_SEL" in
       a\ *) do_join_video ;;
       b\ *) do_convert_video ;;
-      c\ *) do_video_config
+      c\ *) do_convid_config
             do_convid_menu ;;
       d\ *) clear
-            cat $DIR/convid.conf
+            cat $DIR/video.conf
             do_anykey
             do_convid_menu ;;
       q\ *) do_main_menu ;;
@@ -427,10 +427,8 @@ function do_settings_menu ()
   SET_SEL=$( whiptail --title "Settings Menu" --menu "Arrow/Enter Selects or Tab Key" 0 0 0 --ok-button Select --cancel-button Back \
   "a EDIT" "nano config.py for pi-timolo & webserver" \
   "b VIEW" "config.py for pi-timolo & webserver" \
-  "c EDIT" "nano makevideo.conf" \
-  "d VIEW" "makevideo.conf" \
-  "e EDIT" "nano convid.conf" \
-  "f VIEW" "convid.conf" \
+  "c EDIT" "nano video.conf for makevideo.sh & convid.sh" \
+  "d VIEW" "video.conf for makevideo.sh & convid.sh" \
   "q BACK" "to Main Menu" 3>&1 1>&2 2>&3 )
 
   RET=$?
@@ -446,15 +444,10 @@ function do_settings_menu ()
       b\ *) more -d config.py
             do_anykey
             do_settings_menu ;;
-      c\ *) do_makevideo_config ;;
-      d\ *) clear
-            cat $DIR/makevideo.conf
-            do_anykey
+      c\ *) do_makevideo_config
             do_settings_menu ;;
-      e\ *) do_video_config
-            do_settings_menu;;
-      f\ *) clear
-            cat $DIR/convid.conf
+      d\ *) clear
+            cat $DIR/video.conf
             do_anykey
             do_settings_menu ;;
       q\ *) clear
