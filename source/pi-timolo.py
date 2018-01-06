@@ -41,7 +41,9 @@ else:
 # Check for config.py variable file to import and error out if not found.
 configFilePath = os.path.join(baseDir, "config.py")
 if not os.path.exists(configFilePath):
-    print("ERROR - Cannot Import Configuration Variables. Missing Configuration File %s" % ( configFilePath ))
+    print("ERROR - %s File Not Found. Cannot Import Configuration Variables." % ( configFilePath ))
+    print("        Run Console Command Below to Download File from GitHub Repo")
+    print("        wget -O config.py https://raw.github.com/pageauc/pi-timolo/master/source/config.py")
     quit()
 else:
     # Read Configuration variables from config.py file

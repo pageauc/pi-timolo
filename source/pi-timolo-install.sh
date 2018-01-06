@@ -1,6 +1,6 @@
 #!/bin/bash
 # Convenient pi-timolo-install.sh script written by Claude Pageau 1-Jul-2016
-ver="9.93"
+ver="9.94"
 progName=$(basename -- "$0")
 TIMOLO_DIR='pi-timolo'  # Default folder install location
 
@@ -85,6 +85,10 @@ fi
 
 if [ ! -f config.py ] ; then
     cp config.py.new config.py
+fi
+
+if [ ! -f watch-app.sh ] ; then
+    cp watch-app-new.sh watch-app.sh
 fi
 
 # Install plugins if not already installed.  You must delete a plugin file to force reinstall.
@@ -184,7 +188,7 @@ fi
 sync_files=("gdrive" "install.sh" "makemovie.sh" "makedailymovie.sh" \
 "convid.conf" "convid.conf.orig" "convid.conf.prev" "convid.conf.1" "convid.conf.new" \
 "makevideo.conf" "makevideo.conf.orig" "makevideo.conf.prev" "makevideo.conf.1" \
-"makevideo.conf.new" "sync.sh")
+"makevideo.conf.new" "sync.sh" "pi-timolo-install.sh")
 
 for fname in "${sync_files[@]}" ; do
     if [ -f $fname ] ; then
