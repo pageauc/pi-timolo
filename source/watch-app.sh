@@ -96,7 +96,7 @@ $now $sync_dir/$fname.log History File Initialized." > $sync_dir/$fname.log
                     cp $fname $sync_dir/$fname.orig
                     cp $fname $sync_dir/$fname.done
                 else
-                    echo "$now WARN : $fname File Not Found"
+                    echo "$now WARN  : $fname File Not Found"
                 fi
             fi
         done
