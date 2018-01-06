@@ -513,17 +513,18 @@ function do_plugins_menu ()
 {
   SET_SEL=$( whiptail --title "Edit Plugins Menu" --menu "Arrow/Enter Selects or Tab Key" 0 0 0 --ok-button Select --cancel-button Back \
   "a config" "nano config.py - plugin vars override" \
-  "b secfast" "nano plugins/secfast.py" \
-  "c secstill" "nano plugins/secstill.py" \
-  "d secvid" "nano plugins/secvid.py" \
-  "e secQTL" "nano plugins/secQTL.py" \
-  "f TLlong" "nano plugins/TLlong.py" \
-  "g TLshort" "nano plugins/TLshort.py" \
-  "h shopcam" "nano plugins/shopcam.py" \
-  "i dashcam" "nano plugins/dashcam.py" \
-  "j slowmo" "nano plugins/slowmo.py" \
-  "k SELECT" "plugin File to nano Edit" \
-  "l UPGRADE" "Missing plugins From GitHub" \
+  "b SELECT" "plugin File to nano Edit" \
+  "c secfast" "nano plugins/secfast.py" \
+  "d secstill" "nano plugins/secstill.py" \
+  "e secvid" "nano plugins/secvid.py" \
+  "f secQTL" "nano plugins/secQTL.py" \
+  "g TLlong" "nano plugins/TLlong.py" \
+  "h TLshort" "nano plugins/TLshort.py" \
+  "i shopcam" "nano plugins/shopcam.py" \
+  "j dashcam" "nano plugins/dashcam.py" \
+  "k slowmo" "nano plugins/slowmo.py" \
+  "l strmvid" "nano plugins/strmvid.py" \
+  "m UPGRADE" "Missing plugins From GitHub" \
   "q BACK" "to Main Menu" 3>&1 1>&2 2>&3 )
 
   RET=$?
@@ -535,27 +536,29 @@ function do_plugins_menu ()
             rm -f $filename_conf
             do_nano_main
             do_plugins_menu ;;
-      b\ *) nano plugins/secfast.py
+      b\ *) do_plugins_edit
             do_plugins_menu ;;
-      c\ *) nano plugins/secstill.py
+      c\ *) nano plugins/secfast.py
             do_plugins_menu ;;
-      d\ *) nano plugins/secvid.py
+      d\ *) nano plugins/secstill.py
             do_plugins_menu ;;
-      e\ *) nano plugins/secQTL.py
+      e\ *) nano plugins/secvid.py
             do_plugins_menu ;;
-      f\ *) nano plugins/TLlong.py
+      f\ *) nano plugins/secQTL.py
+            do_plugins_menu ;;
+      g\ *) nano plugins/TLlong.py
             do_plugins_menu;;
-      g\ *) nano plugins/TLshort.py
+      h\ *) nano plugins/TLshort.py
             do_plugins_menu ;;
-      h\ *) nano plugins/shopcam.py
+      i\ *) nano plugins/shopcam.py
             do_plugins_menu ;;
-      i\ *) nano plugins/dashcam.py
+      j\ *) nano plugins/dashcam.py
             do_plugins_menu ;;
-      j\ *) nano plugins/slowmo.py
+      k\ *) nano plugins/slowmo.py
             do_plugins_menu ;;
-      k\ *) do_plugins_edit
+      l\ *) nano plugins/strmvid.py
             do_plugins_menu ;;
-      l\ *) clear
+      m\ *) clear
             curl -L https://raw.github.com/pageauc/pi-timolo/master/source/plugins-install.sh | bash
             do_anykey
             do_plugins_menu ;;
