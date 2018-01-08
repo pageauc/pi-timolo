@@ -1,7 +1,7 @@
 #!/bin/bash
-ver="5.00" 
-DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )" 
-# get cur dir of this script progName=$(basename -- "$0") 
+ver="5.00"
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+# get cur dir of this script progName=$(basename -- "$0")
 cd $DIR
 echo "$progName $ver  written by Claude Pageau"
 echo "INFO  : Install Dependencies"
@@ -9,7 +9,6 @@ sudo apt-get install -y git
 sudo apt-get install -y python-all-dev libexiv2-dev libboost-python-dev
 sudo apt-get install -y g++
 echo "INFO  : Done Dependencies ..."
-echo "INFO  : git clone https://github.com/mcmclx/py3exiv2.git"
 if [ -d py3exiv2 ]; then
     echo "WARN  : py3exiv2 Folder Already Exists"
 else
@@ -35,5 +34,5 @@ echo "INFO  : python3 pyexiv2 Support Added.
 ctrl-d to exit python 3
 
 Bye ...
-" 
+"
 
