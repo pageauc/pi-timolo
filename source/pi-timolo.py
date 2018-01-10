@@ -4,8 +4,8 @@
 # written by Claude Pageau Jul-2017 (release 7.x)
 # This release uses OpenCV to do Motion Tracking.  It requires updated config.py
 
-progVer = "ver 9.1"
-__version__ = "9.1"   # May test for version number at a future time
+progVer = "ver 9.2"
+__version__ = "9.2"   # May test for version number at a future time
 
 import datetime
 import logging
@@ -1144,6 +1144,7 @@ def timolo():
 
     dotCount = showDots(motionDotsMax)  # reset motion dots
     # Start main program loop here.  Use Ctl-C to exit if run from terminal session.
+    takeTimeLapse = True
     while True:
         motionFound = False
         forceMotion = False
@@ -1168,7 +1169,8 @@ def timolo():
         rightNow = datetime.datetime.now()   # refresh rightNow time
         if not timeToSleep(daymode):  # Don't take images if noNightShots or noDayShots settings are valid
             if timelapseOn:
-                takeTimeLapse = checkForTimelapse(timelapseStart)
+                if not takeTimeLapse:
+                    takeTimeLapse = checkForTimelapse(timelapseStart)
                 if takeTimeLapse and timelapseExitSec > 0:
                     timelapseStart = datetime.datetime.now()  # Reset timelapse timer
                     if ( datetime.datetime.now() - timelapseExitStart ).total_seconds() > timelapseExitSec:
@@ -1180,11 +1182,12 @@ def timolo():
                     timelapseStart = datetime.datetime.now()  # Reset timelapse timer
                     if timelapseNumMax > 0 and timelapseNumCount >= (timelapseNumStart + timelapseNumMax):
                         print("")
-                        logging.info("timelapseNumRecycle=%s and Counter=%i Exceeded: Surpressing Further Timelapse Images"
+                        logging.info("timelapseNumRecycle=%s and Counter=%i Exceeded: Suppressing Further Timelapse Images"
                               % ( timelapseNumRecycle, timelapseNumStart + timelapseNumMax  ))
                         logging.info("To Reset: Delete File %s and Restart pi-timolo.py" % timelapseNumPath )
                         takeTimeLapse = False  # Suppress further timelapse images
                 if takeTimeLapse:
+                    takeTimeLapse = False
                     if motionDotsOn and motionTrackOn:
                         dotCount = showDots(motionDotsMax + 2)  # reset motion dots
                     else:
