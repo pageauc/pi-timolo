@@ -4,8 +4,8 @@
 # written by Claude Pageau Jul-2017 (release 7.x)
 # This release uses OpenCV to do Motion Tracking.  It requires updated config.py
 
-progVer = "ver 9.2"
-__version__ = "9.2"   # May test for version number at a future time
+progVer = "ver 10.0"   # Requires Latest 10.x release of config.py
+__version__ = "10.0"   # May test for version number at a future time
 
 import datetime
 import logging
@@ -25,7 +25,7 @@ print("-------------------------------------------------------------------------
 print("%s %s  written by Claude Pageau" %( progName, progVer ))
 print("INFO  - Initializing ....")
 
-# Check that pi camaera module is installed and enabled
+# Check that pi camera module is installed and enabled
 camResult = subprocess.check_output("vcgencmd get_camera", shell=True)
 camResult = camResult.decode("utf-8")
 camResult = camResult.replace("\n", "")
@@ -170,6 +170,7 @@ from PIL import Image
 from PIL import ImageFont
 from PIL import ImageDraw
 from fractions import Fraction
+from dateutil.parser import parse
 
 #==================================
 #      System Variables
@@ -334,6 +335,7 @@ def displayInfo(motioncount, timelapsecount):
             print("   Stream .... size=%ix%i  framerate=%i fps  motionStreamStopSec=%.2f  QuickPic=%s" %
                                   ( CAMERA_WIDTH, CAMERA_HEIGHT, motionTrackFrameRate, motionStreamStopSec, motionTrackQuickPic ))
             print("   Img Path .. motionPath=%s  motionCamSleep=%.2f sec" % (motionPath, motionCamSleep))
+            print("   Sched ..... motionStartAt %s blank=Off or Set Valid Date and/or Time to Start Sequence" % motionStartAt)
             print("   Force ..... forceTimer=%i min (If No Motion)"  % (motionForce/60))
             if motionNumOn:
                 print("   Num Seq ... motionNumOn=%s  numRecycle=%s  numStart=%i   numMax=%i  current=%s"
@@ -364,6 +366,7 @@ def displayInfo(motioncount, timelapsecount):
                         % (timelapseOn, timelapsePrefix, timelapseTimer, timelapseExitSec))
             print("               timelapseMaxFiles=%i" % ( timelapseMaxFiles ))
             print("   Img Path .. timelapsePath=%s  timelapseCamSleep=%.2f sec" % (timelapsePath, timelapseCamSleep))
+            print("   Sched ..... timelapseStartAt %s blank=Off or Set Valid Date and/or Time to Start Sequence" % timelapseStartAt)
             if timelapseNumOn:
                 print("   Num Seq ... On=%s  numRecycle=%s  numStart=%i   numMax=%i  current=%s"
                           % (timelapseNumOn, timelapseNumRecycle, timelapseNumStart, timelapseNumMax, timelapsecount))
@@ -1033,6 +1036,44 @@ def timeToSleep(currentDayMode):
     return sleepMode
 
 #-----------------------------------------------------------------------------------------------
+def getSchedStart(dateToCheck):
+    # This function will try to extract a valid date/time from a date time formatted string variable
+    # If date/time is past then try to extract time and schedule for current date at extracted time
+    #
+    goodDateTime = datetime.datetime.now()
+    if len(dateToCheck) > 1:   # Check if timelapseStartAt is set
+        try:
+            goodDateTime = parse(dateToCheck)  # parse and convert string to date/time or return error
+        except:
+            if ":" in dateToCheck :  # Is there a colon indicating possible time format exists
+                timeTry = dateToCheck[dateToCheck.find(":") -2:]  # Try to extract time only from string
+                try:
+                    goodDateTime = parse(timeTry)  # See if a valid time is found (returns with current day)
+                except:
+                    print("ERROR : Bad Date and/or Time Format %s" % dateToCheck )
+                    print('        Use a Valid Date and/or Time Format Eg. "DD-MMM-YYYY HH:MM:SS"')
+                    goodDateTime = datetime.datetime.now()
+                    print("WARN  : Resetting date/time to Now: %s" % goodDateTime)
+                    pass
+            pass
+
+        if goodDateTime < datetime.datetime.now():     # Check if date/time is past
+            if ":" in dateToCheck :  # Check if there is a time component
+                timeTry = dateToCheck[dateToCheck.find(":") -2:]  # Extract possible time component
+                try:
+                    goodDateTime = parse(timeTry)   # parse for valid time (returns current day with parsed time)
+                except:
+                    pass   # Do Nothing
+    return goodDateTime
+
+#-----------------------------------------------------------------------------------------------
+def checkSchedStart(schedDate):
+    startStatus = False
+    if schedDate < datetime.datetime.now():
+        startStatus = True  # sched date/time has passed so start sequence
+    return startStatus
+
+#-----------------------------------------------------------------------------------------------
 def checkForTimelapse (timelapseStart):
     # Check if timelapse timer has expired
     rightNow = datetime.datetime.now()
@@ -1145,6 +1186,15 @@ def timolo():
     dotCount = showDots(motionDotsMax)  # reset motion dots
     # Start main program loop here.  Use Ctl-C to exit if run from terminal session.
     takeTimeLapse = True
+    beginTimelapse = False
+    startTL = getSchedStart(timelapseStartAt)
+    startMO = getSchedStart(motionStartAt)
+    if motionTrackOn and not checkSchedStart(startMO):
+        logging.info('Motion Track: motionStartAt = "%s"' %  motionStartAt )
+        logging.info("Motion Track: Sched Start Set For %s  Please Wait ..." % startMO )
+    if timelapseOn and not checkSchedStart(startTL):
+        logging.info('Timelapse   : timelapseStartAt = "%s"' %  timelapseStartAt )
+        logging.info("Timelapee   : Sched Start Set For %s  Please Wait ..." % startTL )
     while True:
         motionFound = False
         forceMotion = False
@@ -1168,9 +1218,7 @@ def timolo():
                 image2 = getStreamImage(daymode)  # This gets the second stream of motion analysis
         rightNow = datetime.datetime.now()   # refresh rightNow time
         if not timeToSleep(daymode):  # Don't take images if noNightShots or noDayShots settings are valid
-            if timelapseOn:
-                if not takeTimeLapse:
-                    takeTimeLapse = checkForTimelapse(timelapseStart)
+            if timelapseOn and checkSchedStart(startTL):  # Check for a scheduled date/time to start timelapse
                 if takeTimeLapse and timelapseExitSec > 0:
                     timelapseStart = datetime.datetime.now()  # Reset timelapse timer
                     if ( datetime.datetime.now() - timelapseExitStart ).total_seconds() > timelapseExitSec:
@@ -1228,7 +1276,7 @@ def timolo():
                         time.sleep(2)
                     tlPath = subDirChecks( timelapseSubDirMaxHours, timelapseSubDirMaxFiles, timelapseDir, timelapsePrefix)
 
-            if motionTrackOn:
+            if motionTrackOn and checkSchedStart(startMO):
                 # IMPORTANT - Night motion tracking may not work very well due to long exposure times and low light
                 image2 = vs.read()
                 grayimage2 = cv2.cvtColor(image2, cv2.COLOR_BGR2GRAY)
@@ -1381,11 +1429,19 @@ def videoRepeat():
     print("   Info ..... Size=%ix%i  videoPrefix=%s  videoDuration=%i seconds  videoFPS=%i" %
                        ( imageWidth, imageHeight, videoPrefix, videoDuration, videoFPS ))
     print("   Vid Path . videoPath=%s" % videoPath)
+    print("   Sched .... videoStartAt=%s blank=Off or Set Valid Date and/or Time to Start Sequence" % videoStartAt)
     print("   Timer .... videoTimer=%i minutes  0=Continuous" % ( videoTimer ))
     print("   Num Seq .. videoNumOn=%s  videoNumRecycle=%s  videoNumStart=%i  videoNumMax=%i 0=Continuous" %
                          ( videoNumOn, videoNumRecycle, videoNumStart, videoNumMax ))
     print("------------------------------------------------------------------------------------------")
     print("WARNING: videoRepeatOn=%s Suppresses TimeLapse and Motion Settings." % videoRepeatOn)
+
+    startVideoRepeat = getSchedStart(videoStartAt)
+    if not checkSchedStart(startVideoRepeat):
+        logging.info('Video Repeat: videoStartAt = "%s" ' %  videoStartAt )
+        logging.info("Video Repeat: Sched Start Set For %s  Please Wait ..." % startVideoRepeat )
+        while not checkSchedStart(startVideoRepeat):
+            pass
 
     videoStartTime = datetime.datetime.now()
     lastSpaceCheck = datetime.datetime.now()

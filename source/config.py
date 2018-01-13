@@ -3,7 +3,7 @@
 # Updated - 06-Jul-2017 IMPORTANT - Required for pi-timolo.py ver 7.0 or Greater
 # Done by - Claude Pageau
 
-configTitle = "pi-timolo ver 9.x Default Settings"
+configTitle = "pi-timolo ver 10.x Default Settings"
 configName  = "config.py"
 
 #======================================
@@ -70,7 +70,7 @@ motionTrackQPBigger = 1.5   # default= 1.5 multiply size of QuickPic saved image
 # ---------------
 motionDir = "media/motion"  # default= "media/motion"  Folder Path for Motion Detect Image Storage
 motionPrefix = "mo-"        # default= "mo-" Prefix for all Motion Detect images
-motionCamSleep = 0.7        # default= 0.7 Sec of day sleep so camera can measure AWB before taking photo
+motionStartAt = ""          # default= "" Off or Specify date/time to Start Sequence Eg "01-jan-20018 08:00:00" or "20:00:00"
 motionVideoOn = False       # default= False  True=Take a video clip rather than image
 motionVideoFPS = 15         # default= 15  If image size reduced to 640x480 then slow motion is possible at 90 fps
 motionVideoTimer = 30       # default= 30 seconds of video clip to take if Motion Detected
@@ -88,6 +88,7 @@ motionRecentMax = 40        # 0=off  Maintain specified number of most recent fi
 motionRecentDir = "media/recent/motion"  # default= "media/recent/motion"  Location of motionRecent files
 motionDotsOn = False        # default= True Displays motion loop progress dots if verbose=True False=Non
 motionDotsMax = 100         # default= 100 Number of motion dots before starting new line if motionDotsOn=True
+motionCamSleep = 0.7        # default= 0.7 Sec of day sleep so camera can measure AWB before taking photo
 createLockFile = False      # default= False True=Create pi-timolo.sync file whenever images saved.
                             # Lock File is used to indicate motion images have been added
                             # so sync.sh can sync in background via sudo crontab -e
@@ -97,8 +98,9 @@ createLockFile = False      # default= False True=Create pi-timolo.sync file whe
 timelapseOn = True          # default= False True=Turn timelapse On, False=Off
 timelapseDir = "media/timelapse" # default= "media/timelapse"  Storage Folder Path for Time Lapse Image Storage
 timelapsePrefix = "tl-"     # default= "tl-" Prefix for All timelapse images with this prefix
-timelapseCamSleep = 4.0     # default= 4.0 seconds day sleep so camera can measure AWB before taking photo
+timelapseStartAt = ""       # default= "" Off or Specify date/time to Start Sequence Eg "01-jan-20018 08:00:00" or "20:00:00"
 timelapseTimer = 300        # default= 300 (5 min) Seconds between timelapse images
+timelapseCamSleep = 4.0     # default= 4.0 seconds day sleep so camera can measure AWB before taking photo
 timelapseNumOn = True       # default= True filenames Sequenced by Number False=filenames by date/time
 timelapseNumRecycle = True  # default= True Restart Numbering at NumStart  False= Surpress Timelapse at NumMax
 timelapseNumStart = 1000    # default= 1000 Start of timelapse number sequence
@@ -115,6 +117,7 @@ timelapseRecentDir = "media/recent/timelapse"  # default= "media/recent/timelaps
 videoRepeatOn = False       # Turn on Video Repeat Mode IMPORTANT Overrides timelapse and motion
 videoPath = "media/videos"  # default= media/videos Storage folder path for videos
 videoPrefix = "vid-"        # prefix for video filenames
+videoStartAt = ""           # default= "" Off or Specify date/time to Start Sequence eg "01-jan-20018 08:00:00" or "20:00:00" 
 videoDuration = 120         # default= 120 seconds for each video recording
 videoTimer = 60             # default= 60 minutes  Run Recording Session then Exit  0=Continuous
 videoFPS = 30               # default= 30 fps.  Note slow motion can be achieved at 640x480 image resolution at 90 fps

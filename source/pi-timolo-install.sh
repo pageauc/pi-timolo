@@ -1,6 +1,6 @@
 #!/bin/bash
 # Convenient pi-timolo-install.sh script written by Claude Pageau 1-Jul-2016
-ver="9.94"
+ver="10.0"
 progName=$(basename -- "$0")
 TIMOLO_DIR='pi-timolo'  # Default folder install location
 
@@ -32,7 +32,6 @@ INFO  : $progName $ver  written by Claude Pageau
         $STATUS from https://github.com/pageauc/pi-timolo
 -------------------------------------------------------------
 "
-
 # check if this is an upgrade and bypass update of configuration files
 if $is_upgrade ; then
   timoloFiles=("menubox.sh" "pi-timolo.py" "pi-timolo.sh"  \
@@ -147,22 +146,6 @@ if "$rclone_install" = true ; then
     echo "INFO  : /usr/bin/rclone Install Complete"
 fi
 
-# check if system was updated today
-# NOW="$( date +%d-%m-%y )"
-# LAST="$( date -r /var/lib/dpkg/info +%d-%m-%y )"
-# if [ "$NOW" == "$LAST" ] ; then
-#  echo "Raspbian System is Up To Date"
-# else
-#  echo "Performing Raspbian System Update"
-#  echo "  This Will Take Some Time ...."
-#  sudo apt-get -y update
-#  echo "Done Rasbian Update"
-#  echo "Performing Raspbian System Upgrade"
-#  echo "  This Will Take Some Time ...."
-#  sudo apt-get -y upgrade
-#  echo "Done Raspbian Upgrade"
-# fi
-
 echo "INFO  : $STATUS Installing pi-timolo Dependencies Wait ..."
 sudo apt-get install -yq python-picamera python3-picamera python-imaging dos2unix python-pyexiv2 libav-tools
 sudo apt-get install -yq python-scipy  # New Dependency for enhanced motion detection
@@ -221,8 +204,20 @@ Minimal Instructions:
 4 - To manage pi-timolo, Run menubox.sh Execute commands below
 
     cd ~/pi-timolo
-    ./menubox.sh
+    ./menubox.sh"
+if $is_upgrade ; then
+  echo "
+IMPORTANT: pi-timolo.py ver 10.x Adds q Sched Start Feature and 
+           Requires latest config.py per commands below
 
+    cd ~/pi-timolo
+    cp config.py config.py.bak
+    cp config.py.new config.py
+    nano config.py    
+    
+Use nano to Restore Custom Settings from config.py.bak then ctrl-x y to Save and Exit
+For Details See https://github.com/pageauc/pi-timolo/wiki/How-to-Schedule-Motion,-Timelapse-or-VideoRepeat"
+echo " 
 For Detailed Instructions See Wiki https://github.com/pageauc/pi-timolo/wiki
 
 Good Luck Claude ...
