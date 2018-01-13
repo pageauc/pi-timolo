@@ -25,7 +25,7 @@ if pidof -o %PPID -x "$progName"; then
     echo "WARN  : $progName Already Running. Only One Allowed."
 else
     if [ -f /usr/bin/rclone ]; then
-        rclone -V   # Display rclone version
+        rclone version   # Display rclone version
         if [ ! -d "$localSyncDir" ] ; then
            echo "---------------------------------------------------"
            echo "ERROR : localSyncDir=$localSyncDir Does Not Exist."

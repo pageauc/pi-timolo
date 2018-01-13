@@ -22,7 +22,7 @@ if pidof -o %PPID -x "$progName"; then
 else
     if [ -f /usr/bin/rclone ]; then
         echo "INFO  : rclone is installed at /usr/bin/rclone"
-        rclone -V
+        rclone version   # display rclone version
         echo "INFO  : /usr/bin/rclone cleanup -v $rcloneName:"
         echo "        One Moment Please ..."
         /usr/bin/rclone cleanup -v $rcloneName:
