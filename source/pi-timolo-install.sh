@@ -147,6 +147,8 @@ if "$rclone_install" = true ; then
 fi
 
 echo "INFO  : $STATUS Installing pi-timolo Dependencies Wait ..."
+sudo apt-get install python-pip
+sudo pip install python-dateutil
 sudo apt-get install -yq python-picamera python3-picamera python-imaging dos2unix python-pyexiv2 libav-tools
 sudo apt-get install -yq python-scipy  # New Dependency for enhanced motion detection
 sudo apt-get install -yq gpac   # required for MP4Box video converter
