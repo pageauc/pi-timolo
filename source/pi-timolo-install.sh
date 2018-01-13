@@ -189,7 +189,7 @@ fi
 
 echo "
 -----------------------------------------------
-INFO  : $STATUS Complete
+INFO  : $STATUS Complete ver 10.x
 -----------------------------------------------
 Minimal Instructions:
 1 - It is suggested you run sudo apt-get update and sudo apt-get upgrade
@@ -207,7 +207,7 @@ Minimal Instructions:
     ./menubox.sh"
 if $is_upgrade ; then
   echo "
-IMPORTANT: pi-timolo.py ver 10.x Adds q Sched Start Feature and 
+IMPORTANT: pi-timolo.py ver 10.x Adds a Sched StartAt Feature and 
            Requires latest config.py per commands below
 
     cd ~/pi-timolo
@@ -216,10 +216,12 @@ IMPORTANT: pi-timolo.py ver 10.x Adds q Sched Start Feature and
     nano config.py    
     
 Use nano to Restore Custom Settings from config.py.bak then ctrl-x y to Save and Exit
-For Details See https://github.com/pageauc/pi-timolo/wiki/How-to-Schedule-Motion,-Timelapse-or-VideoRepeat"
+For Details See Wiki at
+https://github.com/pageauc/pi-timolo/wiki/How-to-Schedule-Motion,-Timelapse-or-VideoRepeat"
 fi
+
 echo " 
-For Detailed Instructions See Wiki https://github.com/pageauc/pi-timolo/wiki
+For Full Instructions See Wiki at https://github.com/pageauc/pi-timolo/wiki
 
 Good Luck Claude ...
 Bye"
