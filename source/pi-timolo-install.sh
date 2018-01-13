@@ -217,6 +217,7 @@ IMPORTANT: pi-timolo.py ver 10.x Adds q Sched Start Feature and
     
 Use nano to Restore Custom Settings from config.py.bak then ctrl-x y to Save and Exit
 For Details See https://github.com/pageauc/pi-timolo/wiki/How-to-Schedule-Motion,-Timelapse-or-VideoRepeat"
+fi
 echo " 
 For Detailed Instructions See Wiki https://github.com/pageauc/pi-timolo/wiki
 
