@@ -4,8 +4,8 @@
 # written by Claude Pageau Jul-2017 (release 7.x)
 # This release uses OpenCV to do Motion Tracking.  It requires updated config.py
 
-progVer = "ver 10.0"   # Requires Latest 10.x release of config.py
-__version__ = "10.0"   # May test for version number at a future time
+progVer = "ver 10.1"   # Requires Latest 10.x release of config.py
+__version__ = "10.1"   # May test for version number at a future time
 
 import datetime
 import logging
@@ -1195,7 +1195,7 @@ def timolo():
     if timelapseOn and not checkSchedStart(startTL):
         logging.info('Timelapse   : timelapseStartAt = "%s"' %  timelapseStartAt )
         logging.info("Timelapee   : Sched Start Set For %s  Please Wait ..." % startTL )
-    while True:
+    while True:  
         motionFound = False
         forceMotion = False
         if spaceTimerHrs > 0:  # if required check free disk space and delete older files (jpg)
@@ -1235,7 +1235,6 @@ def timolo():
                         logging.info("To Reset: Delete File %s and Restart pi-timolo.py" % timelapseNumPath )
                         takeTimeLapse = False  # Suppress further timelapse images
                 if takeTimeLapse:
-                    takeTimeLapse = False
                     if motionDotsOn and motionTrackOn:
                         dotCount = showDots(motionDotsMax + 2)  # reset motion dots
                     else:
