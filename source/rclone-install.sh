@@ -1,5 +1,5 @@
 #!/bin/bash
-ver="5.00"
+ver="10.00"
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"  # get cur dir of this script
 progName=$(basename -- "$0")
 cd $DIR
@@ -28,8 +28,8 @@ cd ..
 echo "INFO  : Deleting rclone.zip and Folder rclone-tmp"
 rm rclone.zip
 rm -r rclone-tmp
-wget -O rclone-sync.sh https://raw.github.com/pageauc/pi-timolo/master/source/rclone-sync.sh
-chmod +x rclone-sync.sh
+wget -O rclone-test.sh https://raw.github.com/pageauc/pi-timolo/master/source/rclone-samples/rclone-master.sh
+chmod +x rclone-test.sh
 
 if [ -f /usr/bin/rclone ]; then
   echo "INFO  : rclone is installed at /usr/bin/rclone"
@@ -56,7 +56,7 @@ if [ -f /usr/bin/rclone ]; then
   rclone listremotes
   rclone ls gdmedia:/
 
-Example sync command will make source identical to destination.
+Example sync command will make remote destination identical to local source.
 
 rclone sync -v /home/pi/pi-timolo/media/motion gdmedia:media/motion
 

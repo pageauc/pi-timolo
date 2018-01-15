@@ -1,6 +1,6 @@
 #!/bin/bash
 # Convenient pi-timolo-install.sh script written by Claude Pageau 1-Jul-2016
-ver="10.0"
+ver="10.1"
 progName=$(basename -- "$0")
 TIMOLO_DIR='pi-timolo'  # Default folder install location
 
@@ -36,14 +36,12 @@ INFO  : $progName $ver  written by Claude Pageau
 if $is_upgrade ; then
   timoloFiles=("menubox.sh" "pi-timolo.py" "pi-timolo.sh"  \
  "webserver.py" "webserver.sh" \
-"convid.sh" "makevideo.sh" "mvleavelast.sh" "rclone-sync.sh" \
-"rclone-recent.sh" "rclone-motion.sh" "rclone-cleanup.sh" "remote-run.sh")
+"convid.sh" "makevideo.sh" "mvleavelast.sh" "remote-run.sh")
 
 else   # New Install
   timoloFiles=("config.py" "menubox.sh" "pi-timolo.py" "pi-timolo.sh" \
 "webserver.py" "webserver.sh" "watch-app.sh" \
-"convid.sh" "makevideo.sh" "video.conf" "mvleavelast.sh" \
-"rclone-recent.sh" "rclone-motion.sh" "rclone-videos.sh" "rclone-cleanup.sh" "remote-run.sh")
+"convid.sh" "makevideo.sh" "video.conf" "mvleavelast.sh" "remote-run.sh")
 fi
 
 for fname in "${timoloFiles[@]}" ; do
@@ -65,17 +63,13 @@ if [ $? -ne 0 ] ;  then
     wget -O video.conf.new https://raw.github.com/pageauc/pi-timolo/master/source/video.conf
     wget -O Readme.md -q https://raw.github.com/pageauc/pi-timolo/master/Readme.md
     wget -O media/webserver.txt https://raw.github.com/pageauc/pi-timolo/master/source/webserver.txt
-    wget -O rclone-sync-new.sh https://raw.github.com/pageauc/pi-timolo/master/source/rclone-sync.sh
-    wget -O rclone-videos-new.sh https://raw.github.com/pageauc/pi-timolo/master/source/rclone-videos.sh  
-  # wget -O gdrive https://raw.github.com/pageauc/pi-timolo/master/source/drive_armv6
+    wget -O rclone-test.sh https://raw.github.com/pageauc/pi-timolo/master/source/rclone-samples/rclone-master.sh
 else
     wget -O watch-app-new.sh -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/watch-app.sh
     wget -O video.conf.new -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/video.conf
     wget -O Readme.md -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/Readme.md
     wget -O media/webserver.txt -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/webserver.txt
-    wget -O rclone-sync-new.sh -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/rclone-sync.sh
-    wget -O rclone-videos-new.sh -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/rclone-videos.sh
-  # wget -O gdrive -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/drive_armv6
+    wget -O rclone-test.sh -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/rclone-samples/rclone-master.sh
 fi
 
 if [ ! -f video.conf ] ; then
@@ -113,6 +107,28 @@ for fname in "${pluginFiles[@]}" ; do
         fi
     fi
   fi
+done
+cd ..
+
+# Install rclone samples
+echo "INFO  : $STATUS Check/Install pi-timolo/rclone-samples    Wait ..."
+RCLONE_DIR='rclone-samples'  # Default folder install location
+# List of plugin Files to Check
+rcloneFiles=("Readme.md" "rclone-master.sh" "rclone-mo-copy-videos.sh" "rclone-mo-sync.sh" "rclone-mo-sync-lockfile.sh" \ 
+"rclone-mo-sync-recent.sh" "rclone-tl-copy.sh" "rclone-tl-sync-recent.sh" "rclone-cleanup.sh")
+
+mkdir -p $RCLONE_DIR
+cd $RCLONE_DIR
+for fname in "${rcloneFiles[@]}" ; do
+    wget_output=$(wget -O $fname -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/rclone-samples/$fname)
+    if [ $? -ne 0 ]; then
+        wget_output=$(wget -O $fname -q https://raw.github.com/pageauc/pi-timolo/master/source/rclone-samples/$fname)
+        if [ $? -ne 0 ]; then
+            echo "ERROR : $fname wget Download Failed. Possible Cause Internet Problem."
+        else
+            wget -O $fname "https://raw.github.com/pageauc/pi-timolo/master/source/rclone-samples/$fname"
+        fi
+    fi
 done
 cd ..
 
@@ -159,6 +175,8 @@ dos2unix *py
 chmod +x *py
 chmod -x config*py
 chmod +x *sh
+chmod +x rclone-samples/*sh
+
 echo "INFO  : $STATUS Done Dependencies Install"
 
 # Check if pi-timolo-install.sh was launched from pi-timolo folder
@@ -170,15 +188,15 @@ if [ "$DIR" != "$INSTALL_PATH" ]; then
 fi
 
 # cleanup old files from previous versions of install
-sync_files=("gdrive" "install.sh" "makemovie.sh" "makedailymovie.sh" \
+cleanup_files=("gdrive" "install.sh" "makemovie.sh" "makedailymovie.sh" \
 "convid.conf" "convid.conf.orig" "convid.conf.prev" "convid.conf.1" "convid.conf.new" \
 "makevideo.conf" "makevideo.conf.orig" "makevideo.conf.prev" "makevideo.conf.1" \
-"makevideo.conf.new" "sync.sh" "pi-timolo-install.sh")
+"makevideo.conf.new" "sync.sh" "pi-timolo-install.sh" "rclone-sync-new.sh" "rclone-videos-new.sh")
 
-for fname in "${sync_files[@]}" ; do
+for fname in "${cleanup_files[@]}" ; do
     if [ -f $fname ] ; then
         echo "INFO  : Delete $fname"
-        rm $fname
+        rm -f $fname
     fi
 done
 
