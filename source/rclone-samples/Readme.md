@@ -1,5 +1,6 @@
-## About rclone-samples
+# PI-TIMOLO rclone-samples
 
+## Introduction
 This is a collection of sample rclone scripts.  The logic is
 identical but variables are different. For details see Wiki
 [How to Setup rclone](https://github.com/pageauc/pi-timolo/wiki/How-to-Setup-rclone#sample-rclone-scripts) 
@@ -7,7 +8,7 @@ identical but variables are different. For details see Wiki
 ## How to Implement
 You can review samples and copy a script to a unique name or edit one of the samples
 Change required variables per comments. You should test script before putting
-in production as a crontab entry.
+into production as a crontab entry.
 
     cd ~/pi-timolo.py
     cp rclone-samples/rclone-master.sh ./rclone-test.sh
