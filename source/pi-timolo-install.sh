@@ -114,8 +114,8 @@ cd ..
 echo "INFO  : $STATUS Check/Install pi-timolo/rclone-samples    Wait ..."
 RCLONE_DIR='rclone-samples'  # Default folder install location
 # List of plugin Files to Check
-rcloneFiles=("Readme.md" "rclone-master.sh" "rclone-mo-copy-videos.sh" "rclone-mo-sync.sh" "rclone-mo-sync-lockfile.sh" \ 
-"rclone-mo-sync-recent.sh" "rclone-tl-copy.sh" "rclone-tl-sync-recent.sh" "rclone-cleanup.sh")
+rcloneFiles=("Readme.md" "rclone-master.sh" "rclone-mo-copy-videos.sh" "rclone-mo-sync.sh" \
+"rclone-mo-sync-lockfile.sh" "rclone-mo-sync-recent.sh" "rclone-tl-copy.sh" "rclone-tl-sync-recent.sh" "rclone-cleanup.sh")
 
 mkdir -p $RCLONE_DIR
 cd $RCLONE_DIR
@@ -227,20 +227,20 @@ Minimal Instructions:
     ./menubox.sh"
 if $is_upgrade ; then
   echo "
-IMPORTANT: pi-timolo.py ver 10.x Adds a Sched StartAt Feature and 
+IMPORTANT: pi-timolo.py ver 10.x Adds a Sched StartAt Feature and
            Requires latest config.py per commands below
 
     cd ~/pi-timolo
     cp config.py config.py.bak
     cp config.py.new config.py
-    nano config.py    
-    
+    nano config.py
+
 Use nano to Restore Custom Settings from config.py.bak then ctrl-x y to Save and Exit
 For Details See Wiki at
 https://github.com/pageauc/pi-timolo/wiki/How-to-Schedule-Motion,-Timelapse-or-VideoRepeat"
 fi
 
-echo " 
+echo "
 For Full Instructions See Wiki at https://github.com/pageauc/pi-timolo/wiki
 
 Good Luck Claude ...
