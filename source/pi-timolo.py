@@ -4,8 +4,8 @@
 # written by Claude Pageau Jul-2017 (release 7.x)
 # This release uses OpenCV to do Motion Tracking.  It requires updated config.py
 
-progVer = "ver 10.1"   # Requires Latest 10.x release of config.py
-__version__ = "10.1"   # May test for version number at a future time
+progVer = "ver 10.2"   # Requires Latest 10.x release of config.py
+__version__ = "10.2"   # May test for version number at a future time
 
 import datetime
 import logging
@@ -1185,8 +1185,7 @@ def timolo():
 
     dotCount = showDots(motionDotsMax)  # reset motion dots
     # Start main program loop here.  Use Ctl-C to exit if run from terminal session.
-    takeTimeLapse = True
-    beginTimelapse = False
+
     startTL = getSchedStart(timelapseStartAt)
     startMO = getSchedStart(motionStartAt)
     if motionTrackOn and not checkSchedStart(startMO):
@@ -1195,7 +1194,9 @@ def timolo():
     if timelapseOn and not checkSchedStart(startTL):
         logging.info('Timelapse   : timelapseStartAt = "%s"' %  timelapseStartAt )
         logging.info("Timelapee   : Sched Start Set For %s  Please Wait ..." % startTL )
-    while True:  
+    takeTimeLapse = True
+    firstTimeLapse = True
+    while True:
         motionFound = False
         forceMotion = False
         if spaceTimerHrs > 0:  # if required check free disk space and delete older files (jpg)
@@ -1219,6 +1220,10 @@ def timolo():
         rightNow = datetime.datetime.now()   # refresh rightNow time
         if not timeToSleep(daymode):  # Don't take images if noNightShots or noDayShots settings are valid
             if timelapseOn and checkSchedStart(startTL):  # Check for a scheduled date/time to start timelapse
+                if firstTimeLapse:
+                    firstTimeLapse = False
+                else:
+                    takeTimeLapse = checkForTimelapse(timelapseStart)
                 if takeTimeLapse and timelapseExitSec > 0:
                     timelapseStart = datetime.datetime.now()  # Reset timelapse timer
                     if ( datetime.datetime.now() - timelapseExitStart ).total_seconds() > timelapseExitSec:
@@ -1274,7 +1279,6 @@ def timolo():
                         vs.camera.vflip = imageVFlip
                         time.sleep(2)
                     tlPath = subDirChecks( timelapseSubDirMaxHours, timelapseSubDirMaxFiles, timelapseDir, timelapsePrefix)
-
             if motionTrackOn and checkSchedStart(startMO):
                 # IMPORTANT - Night motion tracking may not work very well due to long exposure times and low light
                 image2 = vs.read()
