@@ -1,5 +1,5 @@
 #!/bin/bash
-ver="10.00"
+ver="10.1"
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"  # get cur dir of this script
 progName=$(basename -- "$0")
 cd $DIR
@@ -28,6 +28,28 @@ cd ..
 echo "INFO  : Deleting rclone.zip and Folder rclone-tmp"
 rm rclone.zip
 rm -r rclone-tmp
+
+# Install rclone samples
+echo "INFO  : $STATUS Check/Install pi-timolo/rclone-samples    Wait ..."
+RCLONE_DIR='rclone-samples'  # Default folder install location
+# List of plugin Files to Check
+rcloneFiles=("Readme.md" "rclone-master.sh" "rclone-mo-copy-videos.sh" "rclone-mo-sync.sh" \
+"rclone-mo-sync-lockfile.sh" "rclone-mo-sync-recent.sh" "rclone-tl-copy.sh" "rclone-tl-sync-recent.sh" "rclone-cleanup.sh")
+
+mkdir -p $RCLONE_DIR
+cd $RCLONE_DIR
+for fname in "${rcloneFiles[@]}" ; do
+    wget_output=$(wget -O $fname -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/rclone-samples/$fname)
+    if [ $? -ne 0 ]; then
+        wget_output=$(wget -O $fname -q https://raw.github.com/pageauc/pi-timolo/master/source/rclone-samples/$fname)
+        if [ $? -ne 0 ]; then
+            echo "ERROR : $fname wget Download Failed. Possible Cause Internet Problem."
+        else
+            wget -O $fname "https://raw.github.com/pageauc/pi-timolo/master/source/rclone-samples/$fname"
+        fi
+    fi
+done
+cd ..
 wget -O rclone-test.sh https://raw.github.com/pageauc/pi-timolo/master/source/rclone-samples/rclone-master.sh
 chmod +x rclone-test.sh
 
