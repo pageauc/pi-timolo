@@ -1,6 +1,6 @@
 #!/bin/bash
 
-ver="9.90"
+ver="10.00"
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 cd $DIR
@@ -309,8 +309,12 @@ function do_sync_run ()
         if [ "$selection" == "" ]; then
             echo "User Pressed Esc with No File Selection"
         else
+            if [ ! -x "$filepath/$filename" ]; then
+                chmod +x $filepath/$filename
+            fi
             $filepath/$filename
             do_anykey
+            clear
         fi
     else
         echo "User Pressed Cancel. with No File Selected"
@@ -320,7 +324,7 @@ function do_sync_run ()
 #------------------------------------------------------------------------------
 function do_sync_menu ()
 {
-  SET_SEL=$( whiptail --title "Sync Menu" --menu "Arrow/Enter Selects or Tab Key" 0 0 0 --ok-button Select --cancel-button Back \
+  SET_SEL=$( whiptail --title "Rclone Menu" --menu "Arrow/Enter Selects or Tab Key" 0 0 0 --ok-button Select --cancel-button Back \
   "a EDIT" "Select rclone- sh File to Edit with nano" \
   "b RUN" "Run Selected Rclone sh Script" \
   "c CONFIG" "Run rclone config See GitHub Wiki for Details" \
@@ -611,7 +615,7 @@ function do_main_menu ()
   "d PLUGINS" "Edit Plugin Files" \
   "e CREATE" "MP4 Timelapse Video from jpg Images" \
   "f CONVERT" "Video from h264 to MP4 or Join multiple MP4 Videos" \
-  "g SYNC" "Manage Rclone Remote Storage Sync" \
+  "g RCLONE" "Manage File Transfers to Remote Storage" \
   "h REMOTE" "Manage pi-timolo using watch-app.sh" \
   "i UPGRADE" "Program Files from GitHub.com" \
   "j ABOUT" "menubox.sh" \
