@@ -70,9 +70,11 @@ else
                 echo "        Review rclone %rcloneParam Output for Possible Cause."
             else
                 echo "INFO  : rclone $rcloneParam Successful ..."
-                if [ -f /home/pi/pi-timolo/pi-timolo.sync ] ; then
-                    echo "INFO  : Delete File /home/pi/pi-timolo/pi-timolo.sync"
-                    rm -f /home/pi/pi-timolo/pi-timolo.sync
+                if $lockFileCheck ; then
+                    if [ -f /home/pi/pi-timolo/pi-timolo.sync ] ; then
+                        echo "INFO  : Delete File /home/pi/pi-timolo/pi-timolo.sync"
+                        rm -f /home/pi/pi-timolo/pi-timolo.sync
+                    fi
                 fi
             fi
         else
