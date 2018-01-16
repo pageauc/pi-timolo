@@ -37,6 +37,8 @@ rcloneParam   : $rcloneParam   (Options are sync, copy or move)
 
 ---------------------------------"
 
+lockFilePath="/home/pi/pi-timolo/pi-timolo.sync"
+
 cd $syncRoot   # Change to local rclone root folder
 if pidof -o %PPID -x "$progName"; then
     echo "WARN  - $progName Already Running. Only One Allowed."
@@ -52,11 +54,11 @@ else
         /usr/bin/rclone listremotes | grep "$rcloneName"  # Check if remote storage name exists
         if [ $? == 0 ]; then    # Check if listremotes found anything
             if $lockFileCheck ; then
-                if [ -f /home/pi/pi-timolo/pi-timolo.sync ] ; then  # Check if sync lock file exists
-                    echo "INFO  : Found Lock File /home/pi/pi-timolo/pi-timolo.sync"
+                if [ -f "$lockFilePath" ] ; then  # Check if sync lock file exists
+                    echo "INFO  : Found Lock File $lockFilePath"
                     echo "        rclone $rcloneParam is Required."
                 else
-                    echo "INFO  : Lock File Not Found: /home/pi/pi-timolo/pi-timolo.sync"
+                    echo "INFO  : Lock File Not Found: $lockFilePath"
                     echo "        rclone $rcloneParam is Not Required."
                     echo "Exiting $progName ver $ver"
                     exit 0
@@ -72,9 +74,9 @@ else
             else
                 echo "INFO  : rclone $rcloneParam Successful ..."
                 if $lockFileCheck ; then
-                    if [ -f /home/pi/pi-timolo/pi-timolo.sync ] ; then
-                        echo "INFO  : Delete File /home/pi/pi-timolo/pi-timolo.sync"
-                        rm -f /home/pi/pi-timolo/pi-timolo.sync
+                    if [ -f "$lockFilePath" ] ; then
+                        echo "INFO  : Delete File $lockFilePath"
+                        rm -f $lockFilePath
                     fi
                 fi
             fi
