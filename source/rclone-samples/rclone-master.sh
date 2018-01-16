@@ -14,7 +14,7 @@ echo "$progName $ver  written by Claude Pageau"
 # ---------------------------------------
 
 lockFileCheck=false       # true= Checks for pi-timolo.sync file. false = No Check (case sensitive)
-rcloneName="pi-timolo"     # Name of Remote Storage Service
+rcloneName="gdmedia"     # Name of Remote Storage Service
 syncRoot="/home/pi/pi-timolo"       # Root Folder to Start
 localDir="media/rclone-samples"     # Source Folder on Local
 remoteDir="mycam/rclone-samples"    # Destination Folder on Remote
