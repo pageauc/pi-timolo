@@ -14,9 +14,11 @@ If a folder has an index.html it will take over
 the browser tab.
 
 If a folder is selected on the right pane listing
-the folder contents will appear in a existing browser tab.
+the folder contents will appear in the existing browser tab.
 Select <=BACK link to navigate back through folder structure.   
 NOTE: BACK link will not display in web root folder.
+Use browser refresh to update web page and display most
+recent data.
 
 This browser can only access local raspberry pi
 files. It cannot access internet web pages.
