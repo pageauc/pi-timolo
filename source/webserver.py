@@ -3,7 +3,7 @@ import cgi, os, socket, SocketServer, sys, time, urllib
 from SimpleHTTPServer import SimpleHTTPRequestHandler
 from StringIO import StringIO
 
-version = "ver 10.0 written by Claude Pageau"
+version = "ver 10.1 written by Claude Pageau"
 
 # SimpleHTTPServer python program to allow selection of images from right panel and display in an iframe left panel
 # Use for local network use only since this is not guaranteed to be a secure web server.
@@ -118,9 +118,9 @@ class DirectoryHandler(SimpleHTTPRequestHandler):
         f.write('<ul name="menu" id="menu" style="list-style-type:none; padding-left: 4px">')
         # Create the formatted list of right panel hyperlinks to files in the specified directory
 
-        if not self.path is "/": 
+        if not self.path is "/":   # Display folder Back arrow navigation if not in web root
             f.write('<li><a href="%s" >%s</a></li>\n'
-                      % ( urllib.quote(".."), cgi.escape("<=BACK")))               
+                      % ( urllib.quote(".."), cgi.escape("< BACK")))
         display_entries = 0
         for name in list:
             display_entries += 1
