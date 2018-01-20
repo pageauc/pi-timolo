@@ -22,6 +22,7 @@ then these settings will override the config.py settings.
 imageNamePrefix = 'HD-'        # default= 'HD-' for all image file names. Eg garage-
 motionPrefix = "mo-"           # default= "mo-" Prefix for all Motion Detect images
 motionDir = "media/secstill"   # default= "media/secstill"  Folder Path for Motion Detect Image Storage
+motionStartAt = ""             # default= "" Off or Specify date/time to Start Sequence Eg "01-jan-20018 08:00:00" or "20:00:00"
 
 imageWidth = 1920              # default= 1920 Full Size Image Width in px
 imageHeight = 1080             # default= 1080  Full Size Image Height in px

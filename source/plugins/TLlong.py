@@ -35,7 +35,8 @@ showDateOnImage = False       # default= True False=Do Not display date/time tex
 # Time Lapse Settings
 # -------------------
 timelapseDir = "media/TLlong" # default= "media/timelapse"  Storage Folder Path for Time Lapse Image Storage
-timelapsePrefix = "tl-"     # default= "long-" Prefix for All timelapse images with this prefix
+timelapsePrefix = "tl-"       # default= "long-" Prefix for All timelapse images with this prefix
+timelapseStartAt = ""         # default= "" Off or Specify date/time to Start Sequence Eg "01-jan-20018 08:00:00" or "20:00:00"
 timelapseTimer = 180          # default= 180 (3 min) Seconds between timelapse images
 timelapseNumOn = True         # default= True filenames Sequenced by Number False=filenames by date/time
 timelapseNumRecycle = False   # default= True Restart Numbering at NumStart  False= Surpress Timelapse at NumMax

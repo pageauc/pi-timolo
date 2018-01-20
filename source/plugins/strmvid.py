@@ -28,6 +28,7 @@ then these settings will override the config.py settings.
 imageNamePrefix = 'strmvid-'   # default= 'strmvid-' for all image file names. Eg garage-
 motionPrefix = "mo-"           # default= "mo-" Prefix for all Motion Detect images
 motionDir = "media/motion"     # default= "media/motion"  Folder Path for Motion Detect Image Storage
+motionStartAt = ""          # default= "" Off or Specify date/time to Start Sequence Eg "01-jan-20018 08:00:00" or "20:00:00"
 
 imageWidth = 640               # default= 1280 Full Size Image Width in px
 imageHeight = 480              # default= 720  Full Size Image Height in px

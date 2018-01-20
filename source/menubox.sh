@@ -367,7 +367,7 @@ function do_sync_menu ()
 function do_sync_about
 {
   whiptail --title "About Sync" --msgbox "\
-Rclone is now the default pi-timolo remote storage sync utility.
+Rclone is the default pi-timolo remote storage sync utility.
 You Must Configure a Remote Storage Service before using.
 gdrive is no longer installed but will remain if already installed.
 
