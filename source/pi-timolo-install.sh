@@ -170,8 +170,7 @@ sudo apt-get install -yq python-scipy  # New Dependency for enhanced motion dete
 sudo apt-get install -yq gpac   # required for MP4Box video converter
 sudo apt-get install -yq fonts-freefont-ttf # Required for Jessie Lite Only
 sudo apt-get install -yq python-opencv
-dos2unix *sh
-dos2unix *py
+dos2unix -q *
 chmod +x *py
 chmod -x config*py
 chmod +x *sh
