@@ -28,9 +28,9 @@ imageNamePrefix = 'cam1-'  # default= 'cam1-' for all image file names. Eg garag
 imageWidth = 1280          # default= 1024 Full Size Image Width in px
 imageHeight = 720          # default= 768  Full Size Image Height in px
 imageFormat = ".jpg"       # default = ".jpg"  image Formats .jpeg .png .gif .bmp
-imageJpegQuality = 10      # default = 20  Valid jpg encoder quality values 1(high) - 40(low)
-imageVFlip = False         # default= False True Flips image Vertically
-imageHFlip = False         # default= False True Flips image Horizontally
+imageJpegQuality = 95      # default = 95  jpg Encoder Quality Values 1(low)-100(high min compression) 0=85 
+imageVFlip = True          # default= False True Flips image Vertically
+imageHFlip = True          # default= False True Flips image Horizontally
 imageRotation = 0          # Default= 0  Rotate image. Valid values: 0, 90, 180, 270
 noNightShots = False       # default= False True=No Night Images (Motion or Timelapse)
 noDayShots = False         # default= False True=No Day Images (Motion or Timelapse)

@@ -205,6 +205,12 @@ MIN_AREA = motionTrackMinArea    # OpenCV Contour sq px area must be greater tha
 BLUR_SIZE = 10              # OpenCV setting for Gaussian difference image blur
 THRESHOLD_SENSITIVITY = 20  # OpenCV setting for difference image threshold
 
+# Fix range Errors  Use zero to set default quality to 85
+if imageJpegQuality < 1:
+    imageJpegQuality = 85
+elif imageJpegQuality > 100:
+    imageJpegQuality = 100
+
 #-----------------------------------------------------------------------------------------------
 class PiVideoStream:
     def __init__(self, resolution=(CAMERA_WIDTH, CAMERA_HEIGHT), framerate=CAMERA_FRAMERATE, rotation=0, hflip=False, vflip=False):
@@ -314,7 +320,7 @@ def displayInfo(motioncount, timelapsecount):
         print("")
         print("Image Info ... Size=%ix%i  Prefix=%s  VFlip=%s  HFlip=%s  Rotation=%i  Preview=%s"
               % (imageWidth, imageHeight, imageNamePrefix, imageVFlip, imageHFlip, imageRotation, imagePreview))
-        print("               JpegQuality=%i 1=highest 40=lowest" % ( imageJpegQuality ))
+        print("               JpegQuality=%i where 1=Low 100=High(Min Compression) 0=85" % ( imageJpegQuality ))
         print("   Low Light.. nightTwilightThreshold=%i  nightDarkThreshold=%i  nightBlackThreshold=%i"
                            % ( nightTwilightThreshold, nightDarkThreshold, nightBlackThreshold ))
         print("               nightMaxShutSec=%.2f  nightMaxISO=%i  nightDarkAdjust=%.2f  nightSleepSec=%i"
