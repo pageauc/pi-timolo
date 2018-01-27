@@ -4,8 +4,8 @@
 # written by Claude Pageau Jul-2017 (release 7.x)
 # This release uses OpenCV to do Motion Tracking.  It requires updated config.py
 
-progVer = "ver 10.2"   # Requires Latest 10.x release of config.py
-__version__ = "10.2"   # May test for version number at a future time
+progVer = "ver 10.3"   # Requires Latest 10.x release of config.py
+__version__ = "10.3"   # May test for version number at a future time
 
 import datetime
 import logging
@@ -34,7 +34,7 @@ if (camResult.find("0")) >= 0:   # Was a 0 found in vcgencmd output
     print("        if supported=0 Enable Camera using command sudo raspi-config")
     print("        if detected=0 Check Pi Camera Module is Installed Correctly")
     print("INFO  - Exiting %s Due to Error" % progName)
-    quit()
+    sys.exit(1)
 else:
     print("INFO  - Pi Camera Module is Enabled and Connected %s" % camResult )
 
@@ -44,7 +44,7 @@ if not os.path.exists(configFilePath):
     print("ERROR - %s File Not Found. Cannot Import Configuration Variables." % ( configFilePath ))
     print("        Run Console Command Below to Download File from GitHub Repo")
     print("        wget -O config.py https://raw.github.com/pageauc/pi-timolo/master/source/config.py")
-    quit()
+    sys.exit(1)
 else:
     # Read Configuration variables from config.py file
     print("INFO  - Import Configuration Variables from File %s" % ( configFilePath ))
@@ -61,7 +61,7 @@ if pluginEnable:     # Check and verify plugin and load variable overlay
         print("        Suggest you Rerun github curl install script to install plugins")
         print("        https://github.com/pageauc/pi-timolo/wiki/How-to-Install-or-Upgrade#quick-install")
         print("INFO  - Exiting %s Due to Error" % progName)
-        quit()
+        sys.exit(1)
 
     elif not os.path.exists(pluginPath):
         print("ERROR - File Not Found pluginName %s" % pluginPath )
@@ -79,7 +79,7 @@ if pluginEnable:     # Check and verify plugin and load variable overlay
         print("INFO  - or Rerun github curl install command.  See github wiki")
         print("        https://github.com/pageauc/pi-timolo/wiki/How-to-Install-or-Upgrade#quick-install")
         print("INFO  - Exiting %s Due to Error" % progName)
-        quit()
+        sys.exit(1)
     else:
         pluginCurrent = os.path.join(pluginDir, "current.py")
         try:    # Copy image file to recent folder
@@ -89,7 +89,7 @@ if pluginEnable:     # Check and verify plugin and load variable overlay
             print('ERROR - Copy Failed from %s to %s - %s' % ( pluginPath, pluginCurrent, err))
             Pring("        Check permissions, disk space, Etc.")
             print("INFO  - Exiting %s Due to Error" % progName)
-            quit()
+            sys.exit(1)
         print("INFO  - Import Plugin %s" % pluginPath)
         sys.path.insert(0,pluginDir)    # add plugin directory to program PATH
         from plugins.current import *
@@ -129,29 +129,27 @@ try:
     import cv2
 except:
     if (sys.version_info > (2, 9)):
-        print("ERROR - python3 Failed to import cv2 opencv ver 3.x")
-        print("        Try installing opencv for python3")
-        print("        see https://github.com/pageauc/opencv3-setup")
+        logging.error("python3 Failed to import cv2 opencv ver 3.x")
+        logging.error("Try installing opencv for python3")
+        logging.error("See https://github.com/pageauc/opencv3-setup")
     else:
-        print("ERROR - python2 Failed to import cv2")
-        print("        Try reinstalling per command")
-        print("        sudo apt-get install python-opencv")
-    print("INFO  - Exiting %s Due to Error" % progName)
-    quit()
+        logging.error("python2 Failed to import cv2")
+        logging.error("Try reinstalling per command")
+        logging.error("sudo apt-get install python-opencv")
+    logging.error("Exiting %s Due to Error" % progName)
+    sys.exit(1)
 
 try:
     from picamera import PiCamera
 except:
-    print("ERROR - Problem importing picamera module")
-    print("        Try command below to import module")
-    print("")
+    logging.error("Problem importing picamera module")
+    logging.error("Try command below to import module")
     if (sys.version_info > (2, 9)):
-        print("        sudo apt-get install python3-picamera")
+        logging.error("sudo apt-get install python3-picamera")
     else:
-        print("        sudo apt-get install python-picamera")
-    print("")
-    print("INFO  - Exiting %s Due to Error" % progName)
-    quit()
+        logging.error("sudo apt-get install python-picamera")
+    logging.error("Exiting %s Due to Error" % progName)
+    sys.exit(1)
 
 from picamera.array import PiRGBArray
 import picamera.array
@@ -218,9 +216,9 @@ class PiVideoStream:
         try:
            self.camera = PiCamera()
         except:
-           print("ERROR - PiCamera Already in Use by Another Process")
-           print("INFO  - Exiting %s Due to Error" % progName)
-           quit()
+           logging.error("PiCamera Already in Use by Another Process")
+           logging.error("Exiting %s Due to Error" % progName)
+           exit(1)
         self.camera.resolution = resolution
         self.camera.framerate = framerate
         self.camera.hflip = hflip
@@ -308,7 +306,7 @@ def showDots(dotcnt):
 #-----------------------------------------------------------------------------------------------
 def checkConfig():
     if not motionTrackOn and not timelapseOn:
-        logging.warning("Both Motion and Timelapse are turned OFF - motionTrackOn=%s timelapseOn=%s", motionTrackOn, timelapseOn)
+        sys.stdout.write("Both Motion and Timelapse are turned OFF - motionTrackOn=%s timelapseOn=%s", motionTrackOn, timelapseOn)
         sys.exit(2)
 
 #-----------------------------------------------------------------------------------------------
@@ -499,42 +497,42 @@ def checkMediaPaths():
             try:
                 os.makedirs(motionPath)
             except OSError as err:
-                print("ERROR - Could Not Create %s - %s" % (motionPath, err))
-                quit()
+                logging.error("Could Not Create %s - %s" % (motionPath, err))
+                sys.exit(1)
             if os.path.exists(motionNumPath):
-                logging.info("INFO  - Delete Motion dat File %s", motionNumPath)
+                logging.info("Delete Motion dat File %s", motionNumPath)
                 os.remove(motionNumPath)
 
     if timelapseOn:
         if not os.path.isdir(timelapsePath):
-            logging.info("INFO  - Create TimeLapse Image Folder %s", timelapsePath)
+            logging.info("Create TimeLapse Image Folder %s", timelapsePath)
             try:
                 os.makedirs(timelapsePath)
             except OSError as err:
-                print("ERROR - Could Not Create %s - %s" % ( motionPath, err ))
-                quit()
+                logging.error("Could Not Create %s - %s" % ( motionPath, err ))
+                sys.exit(1)
             if os.path.exists(timelapseNumPath):
-               print("INFO  - Delete TimeLapse dat file %s" % timelapseNumPath)
+               logging.info("Delete TimeLapse dat file %s" % timelapseNumPath)
                os.remove(timelapseNumPath)
 
     # Check for Recent Image Folders and create if they do not already exist.
     if motionRecentMax > 0:
         if not os.path.isdir(motionRecentDir):
-            logging.info("INFO  - Create Motion Recent Folder %s", motionRecentDir)
+            logging.info("Create Motion Recent Folder %s", motionRecentDir)
             try:
                 os.makedirs(motionRecentDir)
             except OSError as err:
-                print('ERROR - Failed to Create %s - %s' % ( motionRecentDir, err ))
-                quit()
+                logging.error('Failed to Create %s - %s' % ( motionRecentDir, err ))
+                sys.exit(1)
 
     if timelapseRecentMax > 0:
         if not os.path.isdir(timelapseRecentDir):
-            print("INFO  - Create TimeLapse Recent Folder %s" % timelapseRecentDir)
+            logging.info("Create TimeLapse Recent Folder %s" % timelapseRecentDir)
             try:
                 os.makedirs(timelapseRecentDir)
             except OSError as err:
-                print('ERROR - Failed to Create %s - %s' % ( timelapseRecentDir, err ))
-                quit()
+                logging.error('Failed to Create %s - %s' % ( timelapseRecentDir, err ))
+                sys.exit(1)
 
 #-----------------------------------------------------------------------------------------------
 def deleteOldFiles(maxFiles, dirPath, prefix):
@@ -1056,10 +1054,10 @@ def getSchedStart(dateToCheck):
                 try:
                     goodDateTime = parse(timeTry)  # See if a valid time is found (returns with current day)
                 except:
-                    print("ERROR : Bad Date and/or Time Format %s" % dateToCheck )
-                    print('        Use a Valid Date and/or Time Format Eg. "DD-MMM-YYYY HH:MM:SS"')
+                    logging.error("Bad Date and/or Time Format %s" % dateToCheck )
+                    logging.error('Use a Valid Date and/or Time Format Eg. "DD-MMM-YYYY HH:MM:SS"')
                     goodDateTime = datetime.datetime.now()
-                    print("WARN  : Resetting date/time to Now: %s" % goodDateTime)
+                    logging.warn("Resetting date/time to Now: %s" % goodDateTime)
                     pass
             pass
 
@@ -1096,7 +1094,7 @@ def dataLogger():
     # Replace main() with this function to log day/night pixAve to a file.
     # Note variable logDataToFile must be set to True in config.py
     # You may want to delete pi-timolo.log to clear old data.
-    print("dataLogger - One Moment Please ....")
+    logging.info("dataLogger - One Moment Please ....")
     while True:
         dayStream = getStreamImage(True)
         dayPixAverage = getStreamPixAve(dayStream)
@@ -1153,7 +1151,7 @@ def timolo():
         vs.camera.rotation = imageRotation
         vs.camera.hflip = imageHFlip
         vs.camera.vflip = imageVFlip
-        time.sleep(3)
+        time.sleep(1)
         image1 = vs.read()
         image2 = vs.read()
         grayimage1 = cv2.cvtColor(image1, cv2.COLOR_BGR2GRAY)
@@ -1179,7 +1177,6 @@ def timolo():
     checkMotionTimer = timelapseStart
 
     if logDataToFile:
-        print("")
         print("logDataToFile=%s Logging to Console Disabled." % ( logDataToFile))
         print("Sending Console Messages to %s" % (logFilePath))
         print("Entering Loop for %s%s" % (mostr, tlstr))
@@ -1233,14 +1230,12 @@ def timolo():
                 if takeTimeLapse and timelapseExitSec > 0:
                     timelapseStart = datetime.datetime.now()  # Reset timelapse timer
                     if ( datetime.datetime.now() - timelapseExitStart ).total_seconds() > timelapseExitSec:
-                        print("")
                         logging.info("timelapseExitSec=%i Exceeded: Suppressing Further Timelapse Images" % ( timelapseExitSec ))
                         logging.info("To Reset: Restart pi-timolo.py to restart timelapseExitSec Timer.")
                         takeTimeLapse = False  # Suppress further timelapse images
                 if (takeTimeLapse and timelapseNumOn and (not timelapseNumRecycle)):
                     timelapseStart = datetime.datetime.now()  # Reset timelapse timer
                     if timelapseNumMax > 0 and timelapseNumCount >= (timelapseNumStart + timelapseNumMax):
-                        print("")
                         logging.info("timelapseNumRecycle=%s and Counter=%i Exceeded: Suppressing Further Timelapse Images"
                               % ( timelapseNumRecycle, timelapseNumStart + timelapseNumMax  ))
                         logging.info("To Reset: Delete File %s and Restart pi-timolo.py" % timelapseNumPath )
@@ -1283,7 +1278,7 @@ def timolo():
                         vs.camera.rotation = imageRotation
                         vs.camera.hflip = imageHFlip
                         vs.camera.vflip = imageVFlip
-                        time.sleep(2)
+                        time.sleep(1)
                     tlPath = subDirChecks( timelapseSubDirMaxHours, timelapseSubDirMaxFiles, timelapseDir, timelapsePrefix)
             if motionTrackOn and checkSchedStart(startMO):
                 # IMPORTANT - Night motion tracking may not work very well due to long exposure times and low light
@@ -1406,7 +1401,7 @@ def timolo():
                             vs.camera.rotation = imageRotation
                             vs.camera.hflip = imageHFlip
                             vs.camera.vflip = imageVFlip
-                            time.sleep(2)
+                            time.sleep(1)
                             image1 = vs.read()
                             image2 = image1
                             grayimage1 = cv2.cvtColor(image1, cv2.COLOR_BGR2GRAY)
@@ -1488,7 +1483,7 @@ def videoRepeat():
         if videoTimer > 0:
             if timeUsed > videoTimer * 60:
                 keepRecording = False
-                logging.info("Exit since videoTimer=%i minutes Exceeded", videoTimer)
+                logging.warn("Exit: Since videoTimer=%i minutes Exceeded", videoTimer)
             else:
                 logging.info("Remaining Time %.1f of %i minutes", timeRemaining, videoTimer)
         else:
@@ -1498,19 +1493,19 @@ def videoRepeat():
 #-----------------------------------------------------------------------------------------------
 if __name__ == '__main__':
     # Test if the pi camera is already in use
-    print("INFO  - Testing if Pi Camera is in Use")
+    logging.info("Testing if Pi Camera is in Use")
     ts = PiVideoStream().start()
-    time.sleep(3)
-    ts.stop()
     time.sleep(1)
-    print("INFO  - Pi Camera is Available.")
+    ts.stop()
+    time.sleep(motionStreamStopSec)
+    logging.info("Pi Camera is Available.")
     if pluginEnable:
-        print("INFO  - Start pi-timolo per %s and plugins/%s.py Settings" % (configFilePath, pluginName))
+        logging.info("Start pi-timolo per %s and plugins/%s.py Settings" % (configFilePath, pluginName))
     else:
-        print("INFO  - Start pi-timolo per %s Settings" % configFilePath)
+        logging.info("Starttime.sleep(motionStreamStopSec) pi-timolo per %s Settings" % configFilePath)
 
     if not verbose:
-        print("INFO  - Note: Logging Disabled per Variable verbose=False")
+        print("NOTICE: Logging Disabled per Variable verbose=False")
 
     try:
         if debug:
@@ -1519,15 +1514,12 @@ if __name__ == '__main__':
             videoRepeat()
         else:
             timolo()
-
     except KeyboardInterrupt:
-        print("")
-        print("+++++++++++++++++++++++++++++++++++")
-        print("User Pressed Keyboard ctrl-c")
-        print("%s %s - Exiting" % (progName, progVer))
-        print("+++++++++++++++++++++++++++++++++++")
-        print("")
+        logging.info("____________________________")
+        logging.info("User Pressed Keyboard ctrl-c")
+        logging.info("Exiting %s %s" % (progName, progVer))
         pass
+
     try:
         if pluginEnable:
             if os.path.exists(pluginCurrent):
@@ -1536,7 +1528,6 @@ if __name__ == '__main__':
             if os.path.exists(pluginCurrentpyc):
                 os.remove(pluginCurrentpyc)
     except OSError as err:
-        print("ERROR - Failed Removal of %s - %s" % ( pluginCurrentpyc, err ))
-        print("INFO  - Exiting %s Due to Error" % progName)
-    quit(0)
+        logging.warn("Failed To Remove File %s - %s" % ( pluginCurrentpyc, err ))
+    sys.exit(0)
 
