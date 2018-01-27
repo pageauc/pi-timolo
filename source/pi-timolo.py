@@ -1502,7 +1502,7 @@ if __name__ == '__main__':
     if pluginEnable:
         logging.info("Start pi-timolo per %s and plugins/%s.py Settings" % (configFilePath, pluginName))
     else:
-        logging.info("Starttime.sleep(motionStreamStopSec) pi-timolo per %s Settings" % configFilePath)
+        logging.info("Start pi-timolo per %s Settings" % configFilePath)
 
     if not verbose:
         print("NOTICE: Logging Disabled per Variable verbose=False")
