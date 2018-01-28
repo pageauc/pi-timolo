@@ -4,8 +4,8 @@
 # written by Claude Pageau Jul-2017 (release 7.x)
 # This release uses OpenCV to do Motion Tracking.  It requires updated config.py
 
-progVer = "ver 10.31"   # Requires Latest 10.x release of config.py
-__version__ = "10.31"   # May test for version number at a future time
+progVer = "ver 10.4"   # Requires Latest 10.x release of config.py
+__version__ = "10.4"   # May test for version number at a future time
 
 import datetime
 import logging
@@ -734,8 +734,12 @@ def postImageProcessing(numberon, counterstart, countermax, counter, recycle, co
             dateTimeText = ("%04d%02d%02d_%02d:%02d:%02d"
                          % (rightNow.year, rightNow.month, rightNow.day, rightNow.hour, rightNow.minute, rightNow.second))
             if numberon:
-                counterStr = "%i    "  % ( counter )
-                imageText =  counterStr + dateTimeText
+                if recycle:
+                    counterStr = "%i  "  % ( counter )
+                    imageText =  counterStr + dateTimeText
+                else:
+                    counterStr = "%i/%i "  % ( counter, counterstart + countermax )
+                    imageText =  counterStr + dateTimeText
             else:
                 imageText = dateTimeText
             # Now put the imageText on the current image
@@ -753,7 +757,6 @@ def postImageProcessing(numberon, counterstart, countermax, counter, recycle, co
                     counter = counterstart + countermax + 1
                     errorText=("Exceeded Image Count numberMax=%i for %s \n" % ( countermax, filename ))
                     logging.warn(errorText)
-                    sys.stdout.write(errorText)
         # write next image counter number to dat file
         writeCount = str(counter)
         if not os.path.exists(counterpath):
@@ -1205,11 +1208,34 @@ def timolo():
     if timelapseOn and not checkSchedStart(startTL):
         logging.info('Timelapse   : timelapseStartAt = "%s"' %  timelapseStartAt )
         logging.info("Timelapee   : Sched Start Set For %s  Please Wait ..." % startTL )
+
     takeTimeLapse = True
+    stopTimeLapse = False
+    takeMotion = True
+    stopMotion = False
     firstTimeLapse = True
     while True:
         motionFound = False
         forceMotion = False
+        if (motionTrackOn and (not motionNumRecycle)
+            and (motionNumCount > motionNumStart + motionNumMax)
+            and (not stopMotion)):
+            logging.warning("motionNumRecycle=%s and motionNumCount %i Exceeds %i"
+                        % ( motionNumRecycle, motionNumCount, motionNumStart + motionNumMax ))
+            logging.warn("Suppressing Further Motion Tracking")
+            logging.warn("To Reset: Change %s Settings or Archive Images" % ( configName ) )
+            logging.warn("Then Delete %s and Restart %s \n" % ( motionNumPath, progName))
+            takeMotion = False
+            stopMotion = True
+
+        if (stopTimeLapse and stopMotion):
+            logging.warn("NOTICE: Both Motion and Timelapse Disabled")
+            logging.warn("per Num Recycle=False and Max Counter Reached or timelapseExitSec Settings")
+            logging.warn("Change %s Settings or Archive/Save Media Then" %( configName ))
+            logging.warn("Delete appropriate .dat File(s) to Reset Counter(s)")
+            logging.warn("Exiting %s %s \n" % (progName, progVer))
+            sys.exit(1)
+
         if spaceTimerHrs > 0:  # if required check free disk space and delete older files (jpg)
             lastSpaceCheck = freeDiskSpaceCheck(lastSpaceCheck)
 
@@ -1233,22 +1259,28 @@ def timolo():
             if timelapseOn and checkSchedStart(startTL):  # Check for a scheduled date/time to start timelapse
                 if firstTimeLapse:
                     firstTimeLapse = False
+                    takeTimeLapse = True
                 else:
                     takeTimeLapse = checkForTimelapse(timelapseStart)
-                if takeTimeLapse and timelapseExitSec > 0:
-                    timelapseStart = datetime.datetime.now()  # Reset timelapse timer
+
+                if (not stopTimeLapse) and takeTimeLapse and timelapseExitSec > 0:
                     if ( datetime.datetime.now() - timelapseExitStart ).total_seconds() > timelapseExitSec:
-                        logging.info("timelapseExitSec=%i Exceeded: Suppressing Further Timelapse Images" % ( timelapseExitSec ))
-                        logging.info("To Reset: Restart pi-timolo.py to restart timelapseExitSec Timer.")
+                        logging.info("timelapseExitSec=%i Exceeded." % ( timelapseExitSec ))
+                        logging.info("Suppressing Further Timelapse Images")
+                        logging.info("To RESET: Restart %progName to Restart timelapseExitSec Timer. \n" % progName)
                         takeTimeLapse = False  # Suppress further timelapse images
-                if (takeTimeLapse and timelapseNumOn and (not timelapseNumRecycle)):
-                    timelapseStart = datetime.datetime.now()  # Reset timelapse timer
-                    if timelapseNumMax > 0 and timelapseNumCount >= (timelapseNumStart + timelapseNumMax):
-                        logging.info("timelapseNumRecycle=%s and Counter=%i Exceeded: Suppressing Further Timelapse Images"
-                              % ( timelapseNumRecycle, timelapseNumStart + timelapseNumMax  ))
-                        logging.info("To Reset: Delete File %s and Restart pi-timolo.py" % timelapseNumPath )
+                        stopTimeLapse = True
+                if ( (not stopTimeLapse) and timelapseNumOn and (not timelapseNumRecycle)):
+                    if timelapseNumMax > 0 and timelapseNumCount > (timelapseNumStart + timelapseNumMax):
+                        logging.warn("timelapseNumRecycle=%s and Counter=%i Exceeds %i"
+                                  % ( timelapseNumRecycle, timelapseNumCount, timelapseNumStart + timelapseNumMax  ))
+                        logging.warn("Suppressing Further Timelapse Images")
+                        logging.warn("To RESET: Change %s Settings or Archive Images" % ( configName ) )
+                        logging.warn("Then Delete %s and Restart %s \n" % ( timelapseNumPath, progName))
                         takeTimeLapse = False  # Suppress further timelapse images
-                if takeTimeLapse:
+                        stopTimeLapse = True
+
+                if takeTimeLapse and (not stopTimeLapse):
                     if motionDotsOn and motionTrackOn:
                         dotCount = showDots(motionDotsMax + 2)  # reset motion dots
                     else:
@@ -1288,7 +1320,7 @@ def timolo():
                         vs.camera.vflip = imageVFlip
                         time.sleep(1)
                     tlPath = subDirChecks( timelapseSubDirMaxHours, timelapseSubDirMaxFiles, timelapseDir, timelapsePrefix)
-            if motionTrackOn and checkSchedStart(startMO):
+            if motionTrackOn and checkSchedStart(startMO) and takeMotion and (not stopMotion):
                 # IMPORTANT - Night motion tracking may not work very well due to long exposure times and low light
                 image2 = vs.read()
                 grayimage2 = cv2.cvtColor(image2, cv2.COLOR_BGR2GRAY)
