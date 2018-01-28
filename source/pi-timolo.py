@@ -4,8 +4,8 @@
 # written by Claude Pageau Jul-2017 (release 7.x)
 # This release uses OpenCV to do Motion Tracking.  It requires updated config.py
 
-progVer = "ver 10.41"   # Requires Latest 10.x release of config.py
-__version__ = "10.41"   # May test for version number at a future time
+progVer = "ver 10.42"   # Requires Latest 10.x release of config.py
+__version__ = "10.42"   # May test for version number at a future time
 
 import datetime
 import logging
@@ -1134,7 +1134,12 @@ def timolo():
     stopTimeLapse = False
     takeMotion = True
     stopMotion = False
-    firstTimeLapse = True 
+    firstTimeLapse = True
+    timelapseStart = datetime.datetime.now()
+    timelapseExitStart = timelapseStart
+    checkMotionTimer = timelapseStart
+    startTL = getSchedStart(timelapseStartAt)
+    startMO = getSchedStart(motionStartAt)
 
     if spaceTimerHrs > 0:
         lastSpaceCheck = datetime.datetime.now()
@@ -1159,7 +1164,6 @@ def timolo():
         if motionNumOn:
             motionNumCount = getCurrentCount(motionNumPath, motionNumStart)
             moCnt = str(motionNumCount)
-
         trackLen = 0.0
         trackTimeout = time.time()
         trackTimer = TRACK_TIMEOUT
@@ -1183,43 +1187,31 @@ def timolo():
         logging.warn("Motion Tracking is Suppressed per motionTrackOn=%s" % ( motionTrackOn ))
         stopMotion = True
 
-    logging.info("daymode=%s  motionDotsOn=%s " % ( daymode, motionDotsOn ))
-
     if timelapseOn and motionTrackOn:
         tlstr = " and " + tlstr
-
-    if videoRepeatOn:
-        mostr = "Video Repeat"
-        tlstr = ""
     displayInfo(moCnt, tlCnt)  # Display config.py settings
 
-    timelapseStart = datetime.datetime.now()
-    timelapseExitStart = timelapseStart
-    checkMotionTimer = timelapseStart
-
     if logDataToFile:
-        print("logDataToFile=%s Logging to Console Disabled." % ( logDataToFile))
-        print("Sending Console Messages to %s" % (logFilePath))
-        print("Entering Loop for %s%s" % (mostr, tlstr))
+        logging.info("logDataToFile=%s Logging to Console Disabled." % ( logDataToFile))
+        logging.info("Sending Console Messages to %s" % (logFilePath))
+        logging.info("Entering Loop for %s%s" % (mostr, tlstr))
     else:
         if pluginEnable:
             logging.info("plugin %s - Start %s%s Loop ..." % ( pluginName, mostr, tlstr))
         else:
             logging.info("Start %s%s Loop ... ctrl-c Exits" % (mostr, tlstr))
 
-    dotCount = showDots(motionDotsMax)  # reset motion dots
-    # Start main program loop here.  Use Ctl-C to exit if run from terminal session.
-
-    startTL = getSchedStart(timelapseStartAt)
-    startMO = getSchedStart(motionStartAt)
     if motionTrackOn and not checkSchedStart(startMO):
         logging.info('Motion Track: motionStartAt = "%s"' %  motionStartAt )
         logging.info("Motion Track: Sched Start Set For %s  Please Wait ..." % startMO )
+
     if timelapseOn and not checkSchedStart(startTL):
         logging.info('Timelapse   : timelapseStartAt = "%s"' %  timelapseStartAt )
         logging.info("Timelapee   : Sched Start Set For %s  Please Wait ..." % startTL )
 
-    while True:
+    logging.info("daymode=%s  motionDotsOn=%s " % ( daymode, motionDotsOn ))
+    dotCount = showDots(motionDotsMax)  # reset motion dots
+    while True:  # Start main program loop here. Use Ctrl-C to exit if run from terminal session.
         motionFound = False
         forceMotion = False
         if (motionTrackOn and (not motionNumRecycle)
