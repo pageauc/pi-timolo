@@ -4,8 +4,8 @@
 # written by Claude Pageau Jul-2017 (release 7.x)
 # This release uses OpenCV to do Motion Tracking.  It requires updated config.py
 
-progVer = "ver 10.4"   # Requires Latest 10.x release of config.py
-__version__ = "10.4"   # May test for version number at a future time
+progVer = "ver 10.41"   # Requires Latest 10.x release of config.py
+__version__ = "10.41"   # May test for version number at a future time
 
 import datetime
 import logging
@@ -1130,6 +1130,11 @@ def timolo():
     daymode = False       # Used to keep track of night and day based on dayPixAve
     forceMotion = False   # Used for forcing a motion image if no motion for motionForce time exceeded
     motionFound = False
+    takeTimeLapse = True
+    stopTimeLapse = False
+    takeMotion = True
+    stopMotion = False
+    firstTimeLapse = True 
 
     if spaceTimerHrs > 0:
         lastSpaceCheck = datetime.datetime.now()
@@ -1142,6 +1147,9 @@ def timolo():
         if timelapseNumOn:
             timelapseNumCount = getCurrentCount(timelapseNumPath, timelapseNumStart)
             tlCnt = str(timelapseNumCount)
+    else:
+        logging.warn("Timelapse is Suppressed per timelapseOn=%s" % ( timelapseOn ))
+        stopTimeLapse = True
 
     if motionTrackOn:
         mostr = "Motion Tracking"
@@ -1172,6 +1180,8 @@ def timolo():
         image1 = getStreamImage(True).astype(float)  #All functions should still work with float instead of int - just takes more memory
         image2 = getStreamImage(daymode)  # initialise image2 to use in main loop
         daymode = checkIfDay(daymode, image1)
+        logging.warn("Motion Tracking is Suppressed per motionTrackOn=%s" % ( motionTrackOn ))
+        stopMotion = True
 
     logging.info("daymode=%s  motionDotsOn=%s " % ( daymode, motionDotsOn ))
 
@@ -1209,11 +1219,6 @@ def timolo():
         logging.info('Timelapse   : timelapseStartAt = "%s"' %  timelapseStartAt )
         logging.info("Timelapee   : Sched Start Set For %s  Please Wait ..." % startTL )
 
-    takeTimeLapse = True
-    stopTimeLapse = False
-    takeMotion = True
-    stopMotion = False
-    firstTimeLapse = True
     while True:
         motionFound = False
         forceMotion = False
