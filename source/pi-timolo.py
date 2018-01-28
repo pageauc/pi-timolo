@@ -4,8 +4,8 @@
 # written by Claude Pageau Jul-2017 (release 7.x)
 # This release uses OpenCV to do Motion Tracking.  It requires updated config.py
 
-progVer = "ver 10.42"   # Requires Latest 10.x release of config.py
-__version__ = "10.42"   # May test for version number at a future time
+progVer = "ver 10.43"   # Requires Latest 10.x release of config.py
+__version__ = "10.43"   # May test for version number at a future time
 
 import datetime
 import logging
@@ -195,7 +195,7 @@ bigImageWidth = int(CAMERA_WIDTH * bigImage)
 bigImageHeight = int(CAMERA_HEIGHT * bigImage)
 CAMERA_FRAMERATE = motionTrackFrameRate  # camera framerate
 TRACK_TRIG_LEN = motionTrackTrigLen  # Length of track to trigger speed photo
-TRACK_TRIG_LEN_MIN = int(motionTrackTrigLen / 4)
+TRACK_TRIG_LEN_MIN = int(motionTrackTrigLen / 5)
 TRACK_TRIG_LEN_MAX = int(CAMERA_HEIGHT / 2)  # Set max over triglen allowed half cam height
 TRACK_TIMEOUT = motionTrackTimeOut   # Timeout seconds Stops motion tracking when no activity
 MIN_AREA = motionTrackMinArea    # OpenCV Contour sq px area must be greater than this.
@@ -1335,24 +1335,24 @@ def timolo():
                     if trackLen > TRACK_TRIG_LEN_MIN:  # wait until track well started
                         trackTimeout = time.time()  # Reset tracking timer object moved
                         if motionTrackInfo:
-                            logging.info("Track Start(%i,%i)  Now(%i,%i) trackLen=%.2f px",
-                               startPos[0], startPos[1], movePoint2[0], movePoint2[1], trackLen)
+                            logging.info("Track Progress From(%i,%i) To(%i,%i) trackLen=%i/%i px",
+                               startPos[0], startPos[1], movePoint2[0], movePoint2[1], trackLen, TRACK_TRIG_LEN)
 
                     # Track length triggered
                     if trackLen > TRACK_TRIG_LEN:
                         if trackLen > TRACK_TRIG_LEN_MAX:  # reduce chance of two objects at different postions
                             motionFound = False
                             if motionTrackInfo:
-                                logging.info("TrackLen %.2f px Exceeded %i px Max Trig Len Allowed.",
+                                logging.info("TrackLen %if px Exceeded %i px Max Trig Len Allowed.",
                                                    trackLen, TRACK_TRIG_LEN_MAX)
                         else:
                             motionFound = True
                             if pluginEnable:
-                                logging.info("%s Motion Triggered Start(%i,%i)  End(%i,%i) trackLen=%.2f px", pluginName,
-                                startPos[0], startPos[1], movePoint2[0], movePoint2[1], trackLen)
+                                logging.info("%s Motion Triggered Start(%i,%i)  End(%i,%i) trackLen=%.i/%i px", 
+                                pluginName, startPos[0], startPos[1], movePoint2[0], movePoint2[1], trackLen, TRACK_TRIG_LEN )
                             else:
-                                logging.info("Motion Triggered Start(%i,%i)  End(%i,%i) trackLen=%.2f px",
-                                startPos[0], startPos[1], movePoint2[0], movePoint2[1], trackLen)
+                                logging.info("Motion Triggered Start(%i,%i)  End(%i,%i) trackLen=%i/%i px",
+                                startPos[0], startPos[1], movePoint2[0], movePoint2[1], trackLen, TRACK_TRIG_LEN)
                         image1 = vs.read()
                         image2 = image1
                         grayimage1 = cv2.cvtColor(image1, cv2.COLOR_BGR2GRAY)
@@ -1368,7 +1368,7 @@ def timolo():
                     grayimage1 = cv2.cvtColor(image1, cv2.COLOR_BGR2GRAY)
                     grayimage2 = grayimage1
                     if motionTrackInfo:
-                        logging.info("Track Timer %i sec Exceeded.  Reset Track", trackTimer)
+                        logging.info("Track Timer %.2f sec Exceeded.  Reset Track", trackTimer)
                     startTrack = False
                     startPos = []
                     trackLen = 0.0
