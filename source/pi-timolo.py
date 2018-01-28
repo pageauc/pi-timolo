@@ -4,8 +4,8 @@
 # written by Claude Pageau Jul-2017 (release 7.x)
 # This release uses OpenCV to do Motion Tracking.  It requires updated config.py
 
-progVer = "ver 10.3"   # Requires Latest 10.x release of config.py
-__version__ = "10.3"   # May test for version number at a future time
+progVer = "ver 10.31"   # Requires Latest 10.x release of config.py
+__version__ = "10.31"   # May test for version number at a future time
 
 import datetime
 import logging
@@ -33,7 +33,7 @@ if (camResult.find("0")) >= 0:   # Was a 0 found in vcgencmd output
     print("ERROR - Pi Camera Module Not Found %s" % camResult)
     print("        if supported=0 Enable Camera using command sudo raspi-config")
     print("        if detected=0 Check Pi Camera Module is Installed Correctly")
-    print("INFO  - Exiting %s Due to Error" % progName)
+    print("        Exiting %s Due to Error" % progName)
     sys.exit(1)
 else:
     print("INFO  - Pi Camera Module is Enabled and Connected %s" % camResult )
@@ -60,7 +60,7 @@ if pluginEnable:     # Check and verify plugin and load variable overlay
         print("ERROR - plugin Directory Not Found at %s" % pluginDir )
         print("        Suggest you Rerun github curl install script to install plugins")
         print("        https://github.com/pageauc/pi-timolo/wiki/How-to-Install-or-Upgrade#quick-install")
-        print("INFO  - Exiting %s Due to Error" % progName)
+        print("        Exiting %s Due to Error" % progName)
         sys.exit(1)
 
     elif not os.path.exists(pluginPath):
@@ -76,9 +76,9 @@ if pluginEnable:     # Check and verify plugin and load variable overlay
                 print("        %s"  % plugin)
         print("        ------- End of List -------")
         print("        Note: pluginName Should Not have .py Ending.")
-        print("INFO  - or Rerun github curl install command.  See github wiki")
+        print("        or Rerun github curl install command.  See github wiki")
         print("        https://github.com/pageauc/pi-timolo/wiki/How-to-Install-or-Upgrade#quick-install")
-        print("INFO  - Exiting %s Due to Error" % progName)
+        print("        Exiting %s Due to Error" % progName)
         sys.exit(1)
     else:
         pluginCurrent = os.path.join(pluginDir, "current.py")
@@ -88,7 +88,7 @@ if pluginEnable:     # Check and verify plugin and load variable overlay
         except OSError as err:
             print('ERROR - Copy Failed from %s to %s - %s' % ( pluginPath, pluginCurrent, err))
             Pring("        Check permissions, disk space, Etc.")
-            print("INFO  - Exiting %s Due to Error" % progName)
+            print("        Exiting %s Due to Error" % progName)
             sys.exit(1)
         print("INFO  - Import Plugin %s" % pluginPath)
         sys.path.insert(0,pluginDir)    # add plugin directory to program PATH
@@ -101,7 +101,7 @@ if pluginEnable:     # Check and verify plugin and load variable overlay
                 os.remove(pluginCurrentpyc)
         except OSError as err:
             print("ERROR - Failed Removal of %s - %s" % ( pluginCurrentpyc, err ))
-            print("INFO  - Exiting %s Due to Error" % progName)
+            print("        Exiting %s Due to Error" % progName)
 
 else:
     print("INFO  - No Plugins Enabled per pluginEnable=%s" % pluginEnable)
@@ -306,15 +306,23 @@ def showDots(dotcnt):
 #-----------------------------------------------------------------------------------------------
 def checkConfig():
     if not motionTrackOn and not timelapseOn:
-        sys.stdout.write("Both Motion and Timelapse are turned OFF - motionTrackOn=%s timelapseOn=%s", motionTrackOn, timelapseOn)
-        sys.exit(2)
+        errorText=("Both Motion and Timelapse are turned OFF - motionTrackOn=%s timelapseOn=%s \n" %( motionTrackOn, timelapseOn ))
+        if verbose:
+            logging.error(errorText)
+        else:
+            sys.stdout.write(errorText)
+        sys.exit(1)
 
 #-----------------------------------------------------------------------------------------------
 def displayInfo(motioncount, timelapsecount):
     if verbose:
         print("-------------------------------------- Settings ----------------------------------------------")
         print("Config File .. configName=%s  configTitle=%s" % (configName, configTitle))
-        print("     Plugin .. pluginEnable=%s  pluginName=%s (Overlays config.py Settings)" % (pluginEnable, pluginName))
+        if pluginEnable:
+            print("     Plugin .. pluginEnable=%s  pluginName=%s (Overlays %s Variable Settings)"
+                                     % (pluginEnable, pluginName, configName))
+        else:
+            print("     Plugin .. pluginEnable=%s  Disabled (Using Only %s Settings)" % (pluginEnable, configName))
         print("")
         print("Image Info ... Size=%ix%i  Prefix=%s  VFlip=%s  HFlip=%s  Rotation=%i  Preview=%s"
               % (imageWidth, imageHeight, imageNamePrefix, imageVFlip, imageHFlip, imageRotation, imagePreview))
@@ -341,6 +349,7 @@ def displayInfo(motioncount, timelapsecount):
             print("   Img Path .. motionPath=%s  motionCamSleep=%.2f sec" % (motionPath, motionCamSleep))
             print("   Sched ..... motionStartAt %s blank=Off or Set Valid Date and/or Time to Start Sequence" % motionStartAt)
             print("   Force ..... forceTimer=%i min (If No Motion)"  % (motionForce/60))
+            print("   Lockfile .. On=%s  Path=%s  NOTE: Syncs for motion images only." % (createLockFile, lockFilePath))
             if motionNumOn:
                 print("   Num Seq ... motionNumOn=%s  numRecycle=%s  numStart=%i   numMax=%i  current=%s"
                                    % (motionNumOn, motionNumRecycle, motionNumStart, motionNumMax, motioncount))
@@ -362,6 +371,7 @@ def displayInfo(motioncount, timelapsecount):
                                 ( motionSubDirMaxHours, motionSubDirMaxFiles ))
             print("   Recent .... motionRecentMax=%i (0=off)  motionRecentDir=%s" %
                                 ( motionRecentMax, motionRecentDir ))
+
         else:
             print("Motion ....... motionTrackOn=%s  Motion Tracking is Disabled)" % (motionTrackOn))
         print("")
@@ -381,9 +391,6 @@ def displayInfo(motioncount, timelapsecount):
                                 ( timelapseSubDirMaxHours, timelapseSubDirMaxFiles ))
             print("   Recent .... timelapseRecentMax=%i (0=off)  timelapseRecentDir=%s" %
                                 ( timelapseRecentMax, timelapseRecentDir ))
-            if createLockFile:
-                print("")
-                print("gdrive Sync .. On=%s  Path=%s  Note: syncs for motion images only." % (createLockFile, lockFilePath))
         else:
             print("Time Lapse ... timelapseOn=%s  Timelapse is Disabled" % (timelapseOn))
         print("")
@@ -493,7 +500,7 @@ def checkMediaPaths():
     # Checks for image folders and creates them if they do not already exist.
     if motionTrackOn:
         if not os.path.isdir(motionPath):
-            logging.info("INFO  - Create Motion Media Folder %s", motionPath)
+            logging.info("Create Motion Media Folder %s", motionPath)
             try:
                 os.makedirs(motionPath)
             except OSError as err:
@@ -591,7 +598,7 @@ def freeSpaceUpTo(spaceFreeMB, mediaDir, extension=imageFormat):
                 os.remove(filePath)
             except OSError as err:
                 logging.error('Del Failed %s', filePath)
-                logging.error('Error: %s', err)
+                logging.error('Error is %s', err)
             else:
                 delcnt += 1
                 logging.info('Del %s', filePath)
@@ -654,7 +661,7 @@ def getCurrentCount(numberpath, numberstart):
                 numbercounter = int(writeCount)+1
             except ValueError:
                 numbercounter = numberstart
-            logging.error("Invalid Data in %s Reset Counter to %s", numberpath, numbercounter)
+            logging.warn("Found Invalid Data in %s Resetting Counter to %s", numberpath, numbercounter)
 
         f = open(numberpath, 'w+')
         f.write(str(numbercounter))
@@ -743,9 +750,10 @@ def postImageProcessing(numberon, counterstart, countermax, counter, recycle, co
                 if recycle:
                     counter = counterstart
                 else:
-                    logging.info("Exceeded Image Count numberMax=%i" % ( countermax ))
-                    logging.info("Exiting %s" % progName)
-                    sys.exit(2)
+                    counter = counterstart + countermax + 1
+                    errorText=("Exceeded Image Count numberMax=%i for %s \n" % ( countermax, filename ))
+                    logging.warn(errorText)
+                    sys.stdout.write(errorText)
         # write next image counter number to dat file
         writeCount = str(counter)
         if not os.path.exists(counterpath):
@@ -916,7 +924,7 @@ def takeVideo(filename, duration, fps=30):
             proc = subprocess.Popen(convid, shell=True, stdin=None, stdout=None,
                                                         stderr=None, close_fds=True)
         except IOError:
-            logging.error("subprocess %s failed" %s ( convid ))
+            logging.error("Sub Process %s Failed" %s ( convid ))
         createSyncLockFile(filename)
 
 #-----------------------------------------------------------------------------------------------
@@ -925,7 +933,7 @@ def createSyncLockFile(imagefilename):
     if createLockFile:
         if not os.path.exists(lockFilePath):
             open(lockFilePath, 'w').close()
-            logging.info("Create gdrive sync.sh Lock File %s", lockFilePath)
+            logging.info("Create Lock File %s", lockFilePath)
         rightNow = datetime.datetime.now()
         now = ("%04d%02d%02d-%02d%02d%02d"
             % ( rightNow.year, rightNow.month, rightNow.day, rightNow.hour, rightNow.minute, rightNow.second ))
@@ -1184,7 +1192,7 @@ def timolo():
         if pluginEnable:
             logging.info("plugin %s - Start %s%s Loop ..." % ( pluginName, mostr, tlstr))
         else:
-            logging.info("Start %s%s Loop ..." % (mostr, tlstr))
+            logging.info("Start %s%s Loop ... ctrl-c Exits" % (mostr, tlstr))
 
     dotCount = showDots(motionDotsMax)  # reset motion dots
     # Start main program loop here.  Use Ctl-C to exit if run from terminal session.
@@ -1483,7 +1491,9 @@ def videoRepeat():
         if videoTimer > 0:
             if timeUsed > videoTimer * 60:
                 keepRecording = False
-                logging.warn("Exit: Since videoTimer=%i minutes Exceeded", videoTimer)
+                errorText=("Stop Recording Since videoTimer=%i minutes Exceeded \n", videoTimer)
+                logging.warn(errorText)
+                sys.stdout.write(errorText)
             else:
                 logging.info("Remaining Time %.1f of %i minutes", timeRemaining, videoTimer)
         else:
@@ -1505,7 +1515,7 @@ if __name__ == '__main__':
         logging.info("Start pi-timolo per %s Settings" % configFilePath)
 
     if not verbose:
-        print("NOTICE: Logging Disabled per Variable verbose=False")
+        print("NOTICE: Logging Disabled per Variable verbose=False  ctrl-c Exits")
 
     try:
         if debug:
@@ -1515,9 +1525,13 @@ if __name__ == '__main__':
         else:
             timolo()
     except KeyboardInterrupt:
-        logging.info("____________________________")
-        logging.info("User Pressed Keyboard ctrl-c")
-        logging.info("Exiting %s %s" % (progName, progVer))
+        print("")
+        if verbose:
+            logging.info("User Pressed Keyboard ctrl-c")
+            logging.info("Exiting %s %s" % (progName, progVer))
+        else:
+            sys.stdout.write("User Pressed Keyboard ctrl-c \n")
+            sys.stdout.write("Exiting %s %s \n" % (progName, progVer))
         pass
 
     try:
@@ -1529,5 +1543,5 @@ if __name__ == '__main__':
                 os.remove(pluginCurrentpyc)
     except OSError as err:
         logging.warn("Failed To Remove File %s - %s" % ( pluginCurrentpyc, err ))
-    sys.exit(0)
+    sys.exit(1)
 
