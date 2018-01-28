@@ -4,8 +4,8 @@
 # written by Claude Pageau Jul-2017 (release 7.x)
 # This release uses OpenCV to do Motion Tracking.  It requires updated config.py
 
-progVer = "ver 10.43"   # Requires Latest 10.x release of config.py
-__version__ = "10.43"   # May test for version number at a future time
+progVer = "ver 10.44"   # Requires Latest 10.x release of config.py
+__version__ = "10.44"   # May test for version number at a future time
 
 import datetime
 import logging
@@ -195,8 +195,8 @@ bigImageWidth = int(CAMERA_WIDTH * bigImage)
 bigImageHeight = int(CAMERA_HEIGHT * bigImage)
 CAMERA_FRAMERATE = motionTrackFrameRate  # camera framerate
 TRACK_TRIG_LEN = motionTrackTrigLen  # Length of track to trigger speed photo
-TRACK_TRIG_LEN_MIN = int(motionTrackTrigLen / 5)
-TRACK_TRIG_LEN_MAX = int(CAMERA_HEIGHT / 2)  # Set max over triglen allowed half cam height
+TRACK_TRIG_LEN_MIN = int(motionTrackTrigLen / 6)  # Don't track progress until this Len reached.
+TRACK_TRIG_LEN_MAX = int(CAMERA_HEIGHT / 2)  # Set max overshoot triglen allowed half cam height
 TRACK_TIMEOUT = motionTrackTimeOut   # Timeout seconds Stops motion tracking when no activity
 MIN_AREA = motionTrackMinArea    # OpenCV Contour sq px area must be greater than this.
 
