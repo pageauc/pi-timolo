@@ -1285,7 +1285,7 @@ def timolo():
                     if pluginEnable:
                         if timelapseExitSec > 0:
                             exitSecProgress = ( datetime.datetime.now() - timelapseExitStart ).total_seconds()
-                            logging.info("%s Sched TimeLapse  daymode=%s  Timer=%i sec  ExitSec=%i/%i CountDown",
+                            logging.info("%s Sched TimeLapse  daymode=%s  Timer=%i sec  ExitSec=%i/%i Status",
                                             pluginName, daymode, timelapseTimer, exitSecProgress, timelapseExitSec)
                         else:
                             logging.info("%s Sched TimeLapse  daymode=%s  Timer=%i sec  ExitSec=%i 0=Continuous",
@@ -1293,7 +1293,7 @@ def timolo():
                     else:
                         if timelapseExitSec > 0:
                             exitSecProgress = ( datetime.datetime.now() - timelapseExitStart ).total_seconds()
-                            logging.info("Sched TimeLapse  daymode=%s  Timer=%i sec  ExitSec=%i/%i CountDown",
+                            logging.info("Sched TimeLapse  daymode=%s  Timer=%i sec  ExitSec=%i/%i Status",
                                                        daymode, timelapseTimer, exitSecProgress, timelapseExitSec)
                         else:
                             logging.info("Sched TimeLapse  daymode=%s  Timer=%i sec  ExitSec=%i 0=Continuous",
