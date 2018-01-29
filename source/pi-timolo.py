@@ -4,8 +4,8 @@
 # written by Claude Pageau Jul-2017 (release 7.x)
 # This release uses OpenCV to do Motion Tracking.  It requires updated config.py
 
-progVer = "ver 10.45"   # Requires Latest 10.x release of config.py
-__version__ = "10.45"   # May test for version number at a future time
+progVer = "ver 10.46"   # Requires Latest 10.x release of config.py
+__version__ = "10.46"   # May test for version number at a future time
 
 import datetime
 import logging
@@ -1283,11 +1283,22 @@ def timolo():
                     else:
                         print("")
                     if pluginEnable:
-                        logging.info("%s Sched TimeLapse  daymode=%s  Timer=%i sec  ExitSec=%i",
-                                                   pluginName, daymode, timelapseTimer, timelapseExitSec)
+                        if timelapseExitSec > 0:
+                            exitSecProgress = ( datetime.datetime.now() - timelapseExitStart ).total_seconds()
+                            logging.info("%s Sched TimeLapse  daymode=%s  Timer=%i sec  ExitSec=%i/%i CountDown",
+                                            pluginName, daymode, timelapseTimer, exitSecProgress, timelapseExitSec)
+                        else:
+                            logging.info("%s Sched TimeLapse  daymode=%s  Timer=%i sec  ExitSec=%i 0=Continuous",
+                                                  pluginName, daymode, timelapseTimer, timelapseExitSec)
                     else:
-                        logging.info("Sched TimeLapse  daymode=%s  Timer=%i sec ExitSec=%i",
-                                                                   daymode, timelapseTimer, timelapseExitSec)
+                        if timelapseExitSec > 0:
+                            exitSecProgress = ( datetime.datetime.now() - timelapseExitStart ).total_seconds()
+                            logging.info("Sched TimeLapse  daymode=%s  Timer=%i sec  ExitSec=%i/%i CountDown",
+                                                       daymode, timelapseTimer, exitSecProgress, timelapseExitSec)
+                        else:
+                            logging.info("Sched TimeLapse  daymode=%s  Timer=%i sec  ExitSec=%i 0=Continuous",
+                                                           daymode, timelapseTimer, timelapseExitSec)
+
                     imagePrefix = timelapsePrefix + imageNamePrefix
                     filename = getImageName(tlPath, imagePrefix, timelapseNumOn, timelapseNumCount)
                     if motionTrackOn:
