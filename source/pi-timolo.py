@@ -4,8 +4,8 @@
 # written by Claude Pageau Jul-2017 (release 7.x)
 # This release uses OpenCV to do Motion Tracking.  It requires updated config.py
 
-progVer = "ver 10.44"   # Requires Latest 10.x release of config.py
-__version__ = "10.44"   # May test for version number at a future time
+progVer = "ver 10.45"   # Requires Latest 10.x release of config.py
+__version__ = "10.45"   # May test for version number at a future time
 
 import datetime
 import logging
@@ -1247,8 +1247,8 @@ def timolo():
         else:
             if daymode != checkIfDay(daymode, image2):  # if daymode has changed, reset background, to avoid false motion trigger
                 daymode = not daymode
-                image2 = getStreamImage(daymode)  #get new stream
-                image1 = image2.astype(float)      #reset background
+                image2 = getStreamImage(daymode)  # get new stream
+                image1 = image2.astype(float)     # reset background
             else:
                 image2 = getStreamImage(daymode)  # This gets the second stream of motion analysis
         rightNow = datetime.datetime.now()   # refresh rightNow time
@@ -1264,7 +1264,7 @@ def timolo():
                     if ( datetime.datetime.now() - timelapseExitStart ).total_seconds() > timelapseExitSec:
                         logging.info("timelapseExitSec=%i Exceeded." % ( timelapseExitSec ))
                         logging.info("Suppressing Further Timelapse Images")
-                        logging.info("To RESET: Restart %progName to Restart timelapseExitSec Timer. \n" % progName)
+                        logging.info("To RESET: Restart %s to Restart timelapseExitSec Timer. \n" % progName)
                         takeTimeLapse = False  # Suppress further timelapse images
                         stopTimeLapse = True
                 if ( (not stopTimeLapse) and timelapseNumOn and (not timelapseNumRecycle)):
@@ -1283,11 +1283,11 @@ def timolo():
                     else:
                         print("")
                     if pluginEnable:
-                        logging.info("%s Sched TimeLapse  daymode=%s  Timer=%i sec",
-                                                              pluginName, daymode, timelapseTimer)
+                        logging.info("%s Sched TimeLapse  daymode=%s  Timer=%i sec  ExitSec=%i",
+                                                   pluginName, daymode, timelapseTimer, timelapseExitSec)
                     else:
-                        logging.info("Sched TimeLapse  daymode=%s  Timer=%i sec",
-                                                                   daymode, timelapseTimer)
+                        logging.info("Sched TimeLapse  daymode=%s  Timer=%i sec ExitSec=%i",
+                                                                   daymode, timelapseTimer, timelapseExitSec)
                     imagePrefix = timelapsePrefix + imageNamePrefix
                     filename = getImageName(tlPath, imagePrefix, timelapseNumOn, timelapseNumCount)
                     if motionTrackOn:
@@ -1348,7 +1348,7 @@ def timolo():
                         else:
                             motionFound = True
                             if pluginEnable:
-                                logging.info("%s Motion Triggered Start(%i,%i)  End(%i,%i) trackLen=%.i/%i px", 
+                                logging.info("%s Motion Triggered Start(%i,%i)  End(%i,%i) trackLen=%.i/%i px",
                                 pluginName, startPos[0], startPos[1], movePoint2[0], movePoint2[1], trackLen, TRACK_TRIG_LEN )
                             else:
                                 logging.info("Motion Triggered Start(%i,%i)  End(%i,%i) trackLen=%i/%i px",
