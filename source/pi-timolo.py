@@ -1181,7 +1181,7 @@ def timolo():
             timelapseNumCount = getCurrentCount(timelapseNumPath, timelapseNumStart)
             tlCnt = str(timelapseNumCount)
     else:
-        logging.warn("Timelapse is Suppressed per timelapseOn=%s" % (timelapseOn))
+        logging.warn("Timelapse is Suppressed per timelapseOn=%s", timelapseOn)
         stopTimeLapse = True
 
     if motionTrackOn:
@@ -1212,7 +1212,7 @@ def timolo():
         image1 = getStreamImage(True).astype(float)  #All functions should still work with float instead of int - just takes more memory
         image2 = getStreamImage(daymode)  # initialise image2 to use in main loop
         daymode = checkIfDay(daymode, image1)
-        logging.warn("Motion Tracking is Suppressed per motionTrackOn=%s" % (motionTrackOn))
+        logging.warn("Motion Tracking is Suppressed per motionTrackOn=%s", motionTrackOn)
         stopMotion = True
 
     if timelapseOn and motionTrackOn:
@@ -1220,24 +1220,24 @@ def timolo():
     displayInfo(moCnt, tlCnt)  # Display config.py settings
 
     if logDataToFile:
-        logging.info("logDataToFile=%s Logging to Console Disabled." % (logDataToFile))
-        logging.info("Sending Console Messages to %s" % (logFilePath))
-        logging.info("Entering Loop for %s%s" % (mostr, tlstr))
+        logging.info("logDataToFile=%s Logging to Console Disabled.", logDataToFile)
+        logging.info("Sending Console Messages to %s", logFilePath)
+        logging.info("Entering Loop for %s%s", mostr, tlstr)
     else:
         if pluginEnable:
-            logging.info("plugin %s - Start %s%s Loop ..." % (pluginName, mostr, tlstr))
+            logging.info("plugin %s - Start %s%s Loop ...", pluginName, mostr, tlstr)
         else:
-            logging.info("Start %s%s Loop ... ctrl-c Exits" % (mostr, tlstr))
+            logging.info("Start %s%s Loop ... ctrl-c Exits", mostr, tlstr)
 
     if motionTrackOn and not checkSchedStart(startMO):
-        logging.info('Motion Track: motionStartAt = "%s"' %  motionStartAt)
-        logging.info("Motion Track: Sched Start Set For %s  Please Wait ..." % startMO)
+        logging.info('Motion Track: motionStartAt = "%s"', motionStartAt)
+        logging.info("Motion Track: Sched Start Set For %s  Please Wait ...", startMO)
 
     if timelapseOn and not checkSchedStart(startTL):
-        logging.info('Timelapse   : timelapseStartAt = "%s"' % timelapseStartAt)
-        logging.info("Timelapee   : Sched Start Set For %s  Please Wait ..." % startTL)
+        logging.info('Timelapse   : timelapseStartAt = "%s"', timelapseStartAt)
+        logging.info("Timelapee   : Sched Start Set For %s  Please Wait ...", startTL)
 
-    logging.info("daymode=%s  motionDotsOn=%s " % (daymode, motionDotsOn))
+    logging.info("daymode=%s  motionDotsOn=%s ", daymode, motionDotsOn)
     dotCount = showDots(motionDotsMax)  # reset motion dots
     while True:  # Start main program loop here. Use Ctrl-C to exit if run from terminal session.
         motionFound = False
@@ -1245,20 +1245,20 @@ def timolo():
         if (motionTrackOn and (not motionNumRecycle)
                 and (motionNumCount > motionNumStart + motionNumMax)
                 and (not stopMotion)):
-            logging.warning("motionNumRecycle=%s and motionNumCount %i Exceeds %i"
-                            % (motionNumRecycle, motionNumCount, motionNumStart + motionNumMax))
+            logging.warning("motionNumRecycle=%s and motionNumCount %i Exceeds %i",
+                            motionNumRecycle, motionNumCount, motionNumStart + motionNumMax)
             logging.warn("Suppressing Further Motion Tracking")
-            logging.warn("To Reset: Change %s Settings or Archive Images" % (configName))
-            logging.warn("Then Delete %s and Restart %s \n" % (motionNumPath, progName))
+            logging.warn("To Reset: Change %s Settings or Archive Images", configName)
+            logging.warn("Then Delete %s and Restart %s \n", motionNumPath, progName)
             takeMotion = False
             stopMotion = True
 
         if (stopTimeLapse and stopMotion):
             logging.warn("NOTICE: Both Motion and Timelapse Disabled")
             logging.warn("per Num Recycle=False and Max Counter Reached or timelapseExitSec Settings")
-            logging.warn("Change %s Settings or Archive/Save Media Then" %(configName))
+            logging.warn("Change %s Settings or Archive/Save Media Then", configName)
             logging.warn("Delete appropriate .dat File(s) to Reset Counter(s)")
-            logging.warn("Exiting %s %s \n" % (progName, progVer))
+            logging.warn("Exiting %s %s \n", progName, progVer)
             sys.exit(1)
 
         if spaceTimerHrs > 0:  # if required check free disk space and delete older files (jpg)
@@ -1290,9 +1290,9 @@ def timolo():
 
                 if (not stopTimeLapse) and takeTimeLapse and timelapseExitSec > 0:
                     if (datetime.datetime.now() - timelapseExitStart).total_seconds() > timelapseExitSec:
-                        logging.info("timelapseExitSec=%i Exceeded." % (timelapseExitSec))
+                        logging.info("timelapseExitSec=%i Exceeded.", timelapseExitSec)
                         logging.info("Suppressing Further Timelapse Images")
-                        logging.info("To RESET: Restart %s to Restart timelapseExitSec Timer. \n" % progName)
+                        logging.info("To RESET: Restart %s to Restart timelapseExitSec Timer. \n", progName)
                         takeTimeLapse = False  # Suppress further timelapse images
                         stopTimeLapse = True
                 if ((not stopTimeLapse) and timelapseNumOn and (not timelapseNumRecycle)):
@@ -1524,8 +1524,8 @@ def videoRepeat():
 
     startVideoRepeat = getSchedStart(videoStartAt)
     if not checkSchedStart(startVideoRepeat):
-        logging.info('Video Repeat: videoStartAt = "%s" ' %  videoStartAt)
-        logging.info("Video Repeat: Sched Start Set For %s  Please Wait ..." % startVideoRepeat)
+        logging.info('Video Repeat: videoStartAt = "%s" ', videoStartAt)
+        logging.info("Video Repeat: Sched Start Set For %s  Please Wait ...", startVideoRepeat)
         while not checkSchedStart(startVideoRepeat):
             pass
 
@@ -1556,10 +1556,10 @@ def videoRepeat():
                         keepRecording = False
                         logging.info("Exit since videoNumRecycle=%s and videoNumMax=%i Exceeded  %i Videos Recorded",
                                      videoNumRecycle, videoNumMax, videoCount)
-                logging.info("Recorded %i of %i Videos" % (videoCount, videoNumMax))
+                logging.info("Recorded %i of %i Videos", videoCount, videoNumMax)
             else:
-                logging.info("Recorded %i Videos  videoNumMax=%i 0=Continuous"
-                             % (videoCount, videoNumMax))
+                logging.info("Recorded %i Videos  videoNumMax=%i 0=Continuous",
+                             videoCount, videoNumMax)
         else:
             logging.info("Progress: %i Videos Recorded in Folder %s", videoCount, videoPath)
 
@@ -1585,9 +1585,9 @@ if __name__ == '__main__':
     time.sleep(motionStreamStopSec)
     logging.info("Pi Camera is Available.")
     if pluginEnable:
-        logging.info("Start pi-timolo per %s and plugins/%s.py Settings" % (configFilePath, pluginName))
+        logging.info("Start pi-timolo per %s and plugins/%s.py Settings", configFilePath, pluginName)
     else:
-        logging.info("Start pi-timolo per %s Settings" % configFilePath)
+        logging.info("Start pi-timolo per %s Settings", configFilePath)
 
     if not verbose:
         print("NOTICE: Logging Disabled per Variable verbose=False  ctrl-c Exits")
@@ -1603,7 +1603,7 @@ if __name__ == '__main__':
         print("")
         if verbose:
             logging.info("User Pressed Keyboard ctrl-c")
-            logging.info("Exiting %s %s" % (progName, progVer))
+            logging.info("Exiting %s %s", progName, progVer)
         else:
             sys.stdout.write("User Pressed Keyboard ctrl-c \n")
             sys.stdout.write("Exiting %s %s \n" % (progName, progVer))
@@ -1617,5 +1617,5 @@ if __name__ == '__main__':
             if os.path.exists(pluginCurrentpyc):
                 os.remove(pluginCurrentpyc)
     except OSError as err:
-        logging.warn("Failed To Remove File %s - %s" % (pluginCurrentpyc, err))
+        logging.warn("Failed To Remove File %s - %s", pluginCurrentpyc, err)
     sys.exit(1)
