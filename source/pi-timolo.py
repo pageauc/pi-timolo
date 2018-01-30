@@ -925,7 +925,7 @@ def takeVideo(filename, duration, fps=30):
             proc = subprocess.Popen(convid, shell=True, stdin=None, stdout=None,
                                                         stderr=None, close_fds=True)
         except IOError:
-            logging.error("Sub Process %s Failed" %s ( convid ))
+            logging.error("Sub Process %s Failed" % ( convid ))
         createSyncLockFile(filename)
 
 #-----------------------------------------------------------------------------------------------
@@ -959,7 +959,6 @@ def trackPoint(grayimage1, grayimage2):
         contours, hierarchy = cv2.findContours( thresholdimage, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE )
 
     if contours:
-        movement = False
         for c in contours:
             cArea = cv2.contourArea(c)
             if cArea > biggestArea:
