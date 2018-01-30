@@ -62,7 +62,6 @@ if pluginEnable:     # Check and verify plugin and load variable overlay
         print("        https://github.com/pageauc/pi-timolo/wiki/How-to-Install-or-Upgrade#quick-install")
         print("        Exiting %s Due to Error" % progName)
         sys.exit(1)
-
     elif not os.path.exists(pluginPath):
         print("ERROR - File Not Found pluginName %s" % pluginPath )
         print("        Check Spelling of pluginName Value in %s" % configFilePath)
@@ -87,7 +86,7 @@ if pluginEnable:     # Check and verify plugin and load variable overlay
             shutil.copy(pluginPath, pluginCurrent)
         except OSError as err:
             print('ERROR - Copy Failed from %s to %s - %s' % ( pluginPath, pluginCurrent, err))
-            Pring("        Check permissions, disk space, Etc.")
+            print("        Check permissions, disk space, Etc.")
             print("        Exiting %s Due to Error" % progName)
             sys.exit(1)
         print("INFO  - Import Plugin %s" % pluginPath)
@@ -102,11 +101,10 @@ if pluginEnable:     # Check and verify plugin and load variable overlay
         except OSError as err:
             print("ERROR - Failed Removal of %s - %s" % ( pluginCurrentpyc, err ))
             print("        Exiting %s Due to Error" % progName)
-
 else:
-    print("INFO  - No Plugins Enabled per pluginEnable=%s" % pluginEnable)
+    print("INFO  - No Plugin Enabled per pluginEnable=%s" % pluginEnable)
 
-# Setup Logging now that variables are imported from config.py
+# Setup Logging now that variables are imported from config.py/plugin
 if logDataToFile:
     print("INFO  - Sending Logging Data to %s  (Console Messages Disabled)" %( logFilePath ))
     logging.basicConfig(level=logging.DEBUG,
