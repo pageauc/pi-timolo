@@ -263,11 +263,14 @@ class PiVideoStream:
 
 #-----------------------------------------------------------------------------------------------
 def userMotionCodeHere():
-    # Users can put code here that needs to be run prior to taking motion capture images
-    # Eg Notify or activate something.
-
-    # User code goes here
-
+    """
+    Users can put code here that needs to be run 
+    prior to taking motion capture images
+    Eg Notify or activate something.
+    """
+    # Insert User code Below
+    
+    
     return
 
 #-----------------------------------------------------------------------------------------------
@@ -279,6 +282,7 @@ def shut2Sec(shutspeed):
 
 #-----------------------------------------------------------------------------------------------
 def showTime():
+    """ Show current date time in text format """
     rightNow = datetime.datetime.now()
     currentTime = ("%04d-%02d-%02d %02d:%02d:%02d" % (rightNow.year, rightNow.month, rightNow.day,
                                                       rightNow.hour, rightNow.minute, rightNow.second))
@@ -286,6 +290,11 @@ def showTime():
 
 #-----------------------------------------------------------------------------------------------
 def showDots(dotcnt):
+    """
+    If motionShowDots=True then display a progress
+    dot for each cycle.  If motionTrackOn then this would
+    normally be too fast and should be turned off
+    """
     if motionDotsOn:
         if motionTrackOn and verbose:
             dotcnt += 1
@@ -623,6 +632,9 @@ def freeSpaceUpTo(spaceFreeMB, mediaDir, extension=imageFormat):
 
 #-----------------------------------------------------------------------------------------------
 def freeDiskSpaceCheck(lastSpaceCheck):
+    """ Perform Disk space checking and Clean up 
+        if enabled and return datetime done 
+        to reset ready for next sched date/time"""
     if spaceTimerHrs > 0:   # Check if disk free space timer hours is enabled
         # See if it is time to do disk clean-up check
         if (datetime.datetime.now() - lastSpaceCheck).total_seconds() > spaceTimerHrs * 3600:
@@ -638,7 +650,8 @@ def freeDiskSpaceCheck(lastSpaceCheck):
 
 #-----------------------------------------------------------------------------------------------
 def getCurrentCount(numberpath, numberstart):
-    """ Create a .dat file to store currentCount or read file if it already Exists"""
+    """ Create a .dat file to store currentCount 
+        or read file if it already Exists"""
     if not os.path.exists(numberpath):
         # Create numberPath file if it does not exist
         logging.info("Creating New File %s numberstart= %s", numberpath, numberstart)
@@ -671,7 +684,6 @@ def getCurrentCount(numberpath, numberstart):
             except ValueError:
                 numbercounter = numberstart
             logging.warn("Found Invalid Data in %s Resetting Counter to %s", numberpath, numbercounter)
-
         f = open(numberpath, 'w+')
         f.write(str(numbercounter))
         f.close()
@@ -806,6 +818,7 @@ def getImageName(path, prefix, numberon, counter):
 
 #-----------------------------------------------------------------------------------------------
 def takeTrackQuickPic(image, filename):
+    """ Enlarge and Save stream image if motionTrackQuickPic=True"""
     big_image = cv2.resize(image, (bigImageWidth, bigImageHeight))
     cv2.imwrite(filename, big_image)
     logging.info("Saved %ix%i Image to %s", bigImageWidth, bigImageHeight, filename)
@@ -963,6 +976,9 @@ def createSyncLockFile(imagefilename):
 
 #-----------------------------------------------------------------------------------------------
 def trackPoint(grayimage1, grayimage2):
+    """ Process two cropped grayscale images.
+        check for motion and return center point
+        of motion for largest contour."""
     movementCenterPoint = []   # initialize list of movementCenterPoints
     biggestArea = MIN_AREA
     # Get differences between the two greyed images
@@ -1053,6 +1069,12 @@ def checkIfDayStream(currentDayMode, image):
 
 #-----------------------------------------------------------------------------------------------
 def timeToSleep(currentDayMode):
+    """
+    Based on weather it is day or night (exclude twilight)
+    return sleepMode boolean based on variable
+    settings for noNightShots or noDayShots config.py variables 
+    Note if both are enabled then no shots will be taken.
+    """
     if noNightShots:
         if currentDayMode:
             sleepMode = False
@@ -1106,6 +1128,12 @@ def getSchedStart(dateToCheck):
 
 #-----------------------------------------------------------------------------------------------
 def checkSchedStart(schedDate):
+    """
+    Based on schedule date setting see if current
+    datetime is past and return boolean
+    to indicate processing can start for
+    timelapse or motiontracking
+    """
     startStatus = False
     if schedDate < datetime.datetime.now():
         startStatus = True  # sched date/time has passed so start sequence
@@ -1507,6 +1535,12 @@ def timolo():
 
 #-----------------------------------------------------------------------------------------------
 def videoRepeat():
+    """
+    This is a special dash cam video mode 
+    that overrides both timelapse and motion tracking settings
+    It has it's own set of settings to manage start, video duration,
+    number recycle mode, Etc.
+    """
     if not os.path.isdir(videoPath):     # Check if folder exist and create if required
         logging.info("Create videoRepeat Folder %s", videoPath)
         os.makedirs(videoPath)
@@ -1577,6 +1611,7 @@ def videoRepeat():
 
 #-----------------------------------------------------------------------------------------------
 if __name__ == '__main__':
+    """ Initialization prior to launching appropriate pi-timolo options """
     # Test if the pi camera is already in use
     logging.info("Testing if Pi Camera is in Use")
     ts = PiVideoStream().start()
