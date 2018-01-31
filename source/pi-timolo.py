@@ -867,14 +867,13 @@ def takeNightImage(filename, pixelAve):
         camera.vflip = imageVFlip
         camera.hflip = imageHFlip
         camera.rotation = imageRotation # valid values 0, 90, 180, 270
-        time.sleep(1.5)  # Wait for camera to warm up to reduce green tint images
 
         if pixelAve >= nightDarkThreshold:  # Twilight so use variable framerate_range
             logging.info("%ix%i  TwilightThresh=%i/%i  MaxISO=%i  nightSleepSec=%i",
                          imageWidth, imageHeight, pixelAve, nightTwilightThreshold,
                          nightMaxISO, nightSleepSec)
             camera.framerate_range = (Fraction(1, 6), Fraction(30, 1))
-            time.sleep(2) # Give camera time to measure AWB
+            time.sleep(4) # Give camera time to measure AWB
             camera.iso = nightMaxISO
         else:
             camera.framerate = Fraction(1, 6) # Set the framerate to a fixed value
