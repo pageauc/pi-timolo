@@ -4,8 +4,8 @@ pi-timolo - Raspberry Pi Long Duration Timelapse, Motion Tracking, with Low Ligh
 written by Claude Pageau Jul-2017 (release 7.x)
 This release uses OpenCV to do Motion Tracking.  It requires updated config.py
 """
-progVer = "ver 10.47"   # Requires Latest 10.x release of config.py
-__version__ = "10.47"   # May test for version number at a future time
+progVer = "ver 10.50"   # Requires Latest 10.x release of config.py
+__version__ = "10.50"   # May test for version number at a future time
 
 import datetime
 import logging
@@ -180,7 +180,7 @@ testHeight = 80            # height of rgb image stream used for timelapse day/n
 daymode = False            # default should always be False.
 motionPath = os.path.join(baseDir, motionDir)  # Store Motion images
 motionNumPath = os.path.join(baseDir, motionPrefix + baseFileName + ".dat")  # dat file to save currentCount
-motionStreamStopSec = 0.5  # default= 0.5 seconds  Time to close stream thread
+motionStreamStopSec = 1.0  # default= 0.5 seconds  Time to close stream thread
 timelapsePath = os.path.join(baseDir, timelapseDir)  # Store Time Lapse images
 timelapseNumPath = os.path.join(baseDir, timelapsePrefix + baseFileName + ".dat")  # dat file to save currentCount
 lockFilePath = os.path.join(baseDir, baseFileName + ".sync")
@@ -200,6 +200,8 @@ MIN_AREA = motionTrackMinArea    # OpenCV Contour sq px area must be greater tha
 
 BLUR_SIZE = 10              # OpenCV setting for Gaussian difference image blur
 THRESHOLD_SENSITIVITY = 20  # OpenCV setting for difference image threshold
+if debug:
+    verbose = True
 
 # Fix range Errors  Use zero to set default quality to 85
 if imageJpegQuality < 1:
@@ -264,13 +266,13 @@ class PiVideoStream:
 #-----------------------------------------------------------------------------------------------
 def userMotionCodeHere():
     """
-    Users can put code here that needs to be run 
+    Users can put code here that needs to be run
     prior to taking motion capture images
     Eg Notify or activate something.
     """
     # Insert User code Below
-    
-    
+
+
     return
 
 #-----------------------------------------------------------------------------------------------
@@ -632,8 +634,8 @@ def freeSpaceUpTo(spaceFreeMB, mediaDir, extension=imageFormat):
 
 #-----------------------------------------------------------------------------------------------
 def freeDiskSpaceCheck(lastSpaceCheck):
-    """ Perform Disk space checking and Clean up 
-        if enabled and return datetime done 
+    """ Perform Disk space checking and Clean up
+        if enabled and return datetime done
         to reset ready for next sched date/time"""
     if spaceTimerHrs > 0:   # Check if disk free space timer hours is enabled
         # See if it is time to do disk clean-up check
@@ -650,7 +652,7 @@ def freeDiskSpaceCheck(lastSpaceCheck):
 
 #-----------------------------------------------------------------------------------------------
 def getCurrentCount(numberpath, numberstart):
-    """ Create a .dat file to store currentCount 
+    """ Create a .dat file to store currentCount
         or read file if it already Exists"""
     if not os.path.exists(numberpath):
         # Create numberPath file if it does not exist
@@ -743,7 +745,7 @@ def writeTextToImage(imagename, datetoprint, daymode):
         logging.warn("Image EXIF Data Not Transferred.")
         pass
 
-    logging.info("%s" % imagename)
+    logging.info("Saved %s" % imagename)
 
 #-----------------------------------------------------------------------------------------------
 def postImageProcessing(numberon, counterstart, countermax, counter, recycle, counterpath, filename, daymode):
@@ -858,40 +860,38 @@ def getShut(pxAve):
     return int(shut)
 
 #-----------------------------------------------------------------------------------------------
-def takeNightImage(filename):
+def takeNightImage(filename, pixelAve):
     """ Take low light Twilight or Night image """
-    dayStream = getStreamImage(True)  # Get a day image stream to calc pixAve below
     with picamera.PiCamera() as camera:
-        time.sleep(1.5)  # Wait for camera to warm up to reduce green tint images
         camera.resolution = (imageWidth, imageHeight)
         camera.vflip = imageVFlip
         camera.hflip = imageHFlip
         camera.rotation = imageRotation # valid values 0, 90, 180, 270
-        dayPixAve = getStreamPixAve(dayStream)
-        # Format common settings string
-        settings = ("camSleepSec=%i MaxISO=%i Size=%ix%i"
-                    % (nightSleepSec, nightMaxISO, imageWidth, imageHeight))
+        time.sleep(1.5)  # Wait for camera to warm up to reduce green tint images
 
-        if dayPixAve >= nightDarkThreshold:  # Twilight so use variable framerate_range
-            logging.info("TwilightThresh=%i/%i shutSec=range %s"
-                         % (dayPixAve, nightTwilightThreshold, settings))
+        if pixelAve >= nightDarkThreshold:  # Twilight so use variable framerate_range
+            logging.info("%ix%i  TwilightThresh=%i/%i  MaxISO=%i  nightSleepSec=%i",
+                         imageWidth, imageHeight, pixelAve, nightTwilightThreshold,
+                         nightMaxISO, nightSleepSec)
             camera.framerate_range = (Fraction(1, 6), Fraction(30, 1))
             time.sleep(2) # Give camera time to measure AWB
             camera.iso = nightMaxISO
         else:
             camera.framerate = Fraction(1, 6) # Set the framerate to a fixed value
             time.sleep(1)  # short wait to allow framerate to settle
-            if dayPixAve <= nightBlackThreshold:  # Black (Very Low Light) so Use Max Settings
+            if pixelAve <= nightBlackThreshold:  # Black (Very Low Light) so Use Max Settings
                 camShut = nightMaxShut
-                logging.info("BlackThresh=%i/%i shutSec=%s %s"
-                             % (dayPixAve, nightBlackThreshold, shut2Sec(camShut), settings))
+                logging.info("%ix%i  BlackThresh=%i/%i shutSec=%s  MaxISO=%i  nightSleepSec=%i",
+                             imageWidth, imageHeight, pixelAve, nightBlackThreshold,
+                             shut2Sec(camShut), nightMaxISO, nightSleepSec)
             else:
                 # Dark so calculate camShut exposure time based on dayPixAve light curve + brightness
-                camShut = getShut(dayPixAve)
+                camShut = getShut(pixelAve)
                 if camShut > nightMaxShut:
                     camShut = nightMaxShut
-                logging.info("DarkThresh=%i/%i shutSec=%s %s"
-                             % (dayPixAve, nightDarkThreshold, shut2Sec(camShut), settings))
+                logging.info("%ix%i  DarkThresh=%i/%i  shutSec=%s  MaxISO=%i  nightSleepSec=%i",
+                             imageWidth, imageHeight, pixelAve, nightDarkThreshold,
+                             shut2Sec(camShut), nightMaxISO, nightSleepSec)
             camera.shutter_speed = camShut  # Set the shutter for long exposure
             camera.iso = nightMaxISO   # Set the ISO to a fixed value for long exposure
             time.sleep(nightSleepSec)  # Give camera a long time to calc Night Settings
@@ -1012,47 +1012,11 @@ def trackDistance(mPoint1, mPoint2):
     return trackLen
 
 #-----------------------------------------------------------------------------------------------
-def getStreamImage(isDay):
-    """ Capture an image stream to memory based on daymode """
-    with picamera.PiCamera() as camera:
-        camera.resolution = (testWidth, testHeight)
-        with picamera.array.PiRGBArray(camera) as stream:
-            if isDay:
-                camera.exposure_mode = 'auto'
-                camera.awb_mode = 'auto'
-                time.sleep(motionCamSleep)   # sleep so camera can get AWB
-            else:
-                # use variable framerate_range for Low Light motion image stream
-                camera.framerate_range = (Fraction(1, 6), Fraction(30, 1))
-                time.sleep(2) # Give camera time to measure AWB
-                camera.iso = nightMaxISO
-            camera.capture(stream, format='rgb', use_video_port=useVideoPort)
-            camera.close()
-            return stream.array
-
-#-----------------------------------------------------------------------------------------------
 def getStreamPixAve(streamData):
     """ Calculate the average pixel values for the specified stream
         used for determining day/night or twilight conditions """
     pixAverage = int(np.average(streamData[..., 1]))
     return pixAverage
-
-#-----------------------------------------------------------------------------------------------
-def checkIfDay(currentDayMode, image):
-    """ Try to determine if it is day, night or twilight. """
-    dayPixAverage = 0
-    if currentDayMode:
-        dayPixAverage = getStreamPixAve(image)
-    else:
-        dayStream = getStreamImage(True)
-        dayPixAverage = getStreamPixAve(dayStream)
-
-    if dayPixAverage > nightTwilightThreshold:
-        currentDayMode = True
-    else:
-        currentDayMode = False
-#   logging.info("daymode=%s dayPixAverage=%i" % (currentDayMode, dayPixAverage))
-    return currentDayMode
 
 #-----------------------------------------------------------------------------------------------
 def checkIfDayStream(currentDayMode, image):
@@ -1072,7 +1036,7 @@ def timeToSleep(currentDayMode):
     """
     Based on weather it is day or night (exclude twilight)
     return sleepMode boolean based on variable
-    settings for noNightShots or noDayShots config.py variables 
+    settings for noNightShots or noDayShots config.py variables
     Note if both are enabled then no shots will be taken.
     """
     if noNightShots:
@@ -1152,24 +1116,6 @@ def checkForTimelapse(timelapseStart):
     return timelapseFound
 
 #-----------------------------------------------------------------------------------------------
-def dataLogger():
-    """
-    Replace main() with this function to log day/night pixAve to a file.
-    Note variable logDataToFile must be set to True in config.py
-    You may want to delete pi-timolo.log to clear old data.
-    """
-    logging.info("dataLogger - One Moment Please ....")
-    while True:
-        dayStream = getStreamImage(True)
-        dayPixAverage = getStreamPixAve(dayStream)
-        nightStream = getStreamImage(False)
-        nightPixAverage = getStreamPixAve(nightStream)
-        logging.info("nightPixAverage=%i dayPixAverage=%i nightTwilightThreshold=%i nightDarkThreshold=%i "
-                     % (nightPixAverage, dayPixAverage, nightTwilightThreshold, nightDarkThreshold))
-        time.sleep(1)
-    return
-
-#-----------------------------------------------------------------------------------------------
 def timolo():
     """
     Main motion and or motion tracking
@@ -1196,6 +1142,7 @@ def timolo():
     checkMotionTimer = timelapseStart
     startTL = getSchedStart(timelapseStartAt)
     startMO = getSchedStart(motionStartAt)
+    trackLen = 0.0
 
     if spaceTimerHrs > 0:
         lastSpaceCheck = datetime.datetime.now()
@@ -1212,6 +1159,13 @@ def timolo():
         logging.warn("Timelapse is Suppressed per timelapseOn=%s", timelapseOn)
         stopTimeLapse = True
 
+    logging.info("Start PiVideoStream ....")
+    vs = PiVideoStream().start()
+    vs.camera.rotation = imageRotation
+    vs.camera.hflip = imageHFlip
+    vs.camera.vflip = imageVFlip
+    time.sleep(1)
+
     if motionTrackOn:
         mostr = "Motion Tracking"
         # Check if motion subDirs reqd and create one if required if non exists
@@ -1220,28 +1174,22 @@ def timolo():
         if motionNumOn:
             motionNumCount = getCurrentCount(motionNumPath, motionNumStart)
             moCnt = str(motionNumCount)
-        trackLen = 0.0
+
         trackTimeout = time.time()
         trackTimer = TRACK_TIMEOUT
         startPos = []
         startTrack = False
-        logging.info("Start PiVideoStream ....")
-        vs = PiVideoStream().start()
-        vs.camera.rotation = imageRotation
-        vs.camera.hflip = imageHFlip
-        vs.camera.vflip = imageVFlip
-        time.sleep(1)
         image1 = vs.read()
         image2 = vs.read()
         grayimage1 = cv2.cvtColor(image1, cv2.COLOR_BGR2GRAY)
         logging.info("Motion Tracking is On")
-        daymode = checkIfDayStream(daymode, image2)
     else:
-        image1 = getStreamImage(True).astype(float)  #All functions should still work with float instead of int - just takes more memory
-        image2 = getStreamImage(daymode)  # initialise image2 to use in main loop
-        daymode = checkIfDay(daymode, image1)
+        vs.camera.framerate = 5
+        image2 = vs.read()      # use video stream to check for daymode
         logging.warn("Motion Tracking is Suppressed per motionTrackOn=%s", motionTrackOn)
         stopMotion = True
+    daymode = checkIfDayStream(daymode, image2)
+    pixAve = getStreamPixAve(image2)
 
     if timelapseOn and motionTrackOn:
         tlstr = " and " + tlstr
@@ -1301,12 +1249,11 @@ def timolo():
             else:
                 image2 = vs.read()
         else:
-            if daymode != checkIfDay(daymode, image2):  # if daymode has changed, reset background, to avoid false motion trigger
+            image2 = vs.read()
+            if daymode != checkIfDayStream(daymode, image2):  # if daymode has changed, reset background, to avoid false motion trigger
                 daymode = not daymode
-                image2 = getStreamImage(daymode)  # get new stream
-                image1 = image2.astype(float)     # reset background
-            else:
-                image2 = getStreamImage(daymode)  # This gets the second stream of motion analysis
+        if not daymode:
+            pixAve = getStreamPixAve(image2)
         rightNow = datetime.datetime.now()   # refresh rightNow time
         if not timeToSleep(daymode):  # Don't take images if noNightShots or noDayShots settings are valid
             if timelapseOn and checkSchedStart(startTL):  # Check for a scheduled date/time to start timelapse
@@ -1357,15 +1304,14 @@ def timolo():
 
                     imagePrefix = timelapsePrefix + imageNamePrefix
                     filename = getImageName(tlPath, imagePrefix, timelapseNumOn, timelapseNumCount)
-                    if motionTrackOn:
-                        logging.info("Stop PiVideoStream ...")
-                        vs.stop()
-                        time.sleep(motionStreamStopSec)
+                    logging.info("Stop PiVideoStream ...")
+                    vs.stop()
+                    time.sleep(motionStreamStopSec)
                     timelapseStart = datetime.datetime.now()  # reset time lapse timer
                     if daymode:
                         takeDayImage(filename, timelapseCamSleep)
                     else:
-                        takeNightImage(filename)
+                        takeNightImage(filename, pixAve)
                     timelapseNumCount = postImageProcessing(timelapseNumOn, timelapseNumStart, timelapseNumMax,
                                                             timelapseNumCount, timelapseNumRecycle,
                                                             timelapseNumPath, filename, daymode)
@@ -1376,13 +1322,13 @@ def timolo():
                         deleteOldFiles(timelapseMaxFiles, timelapseDir, imagePrefix)
 
                     dotCount = showDots(motionDotsMax)
-                    if motionTrackOn:
-                        logging.info("Restart PiVideoStream ....")
-                        vs = PiVideoStream().start()
-                        vs.camera.rotation = imageRotation
-                        vs.camera.hflip = imageHFlip
-                        vs.camera.vflip = imageVFlip
-                        time.sleep(1)
+                    logging.info("Restart PiVideoStream ....")
+                    vs = PiVideoStream().start()
+                    vs.camera.rotation = imageRotation
+                    vs.camera.hflip = imageHFlip
+                    vs.camera.vflip = imageVFlip
+                    vs.camera.framerate = 5   # Set slow fps since only checking for daymode
+                    time.sleep(1)
                     tlPath = subDirChecks(timelapseSubDirMaxHours, timelapseSubDirMaxFiles, timelapseDir, timelapsePrefix)
             if motionTrackOn and checkSchedStart(startMO) and takeMotion and (not stopMotion):
                 # IMPORTANT - Night motion tracking may not work very well due to long exposure times and low light
@@ -1497,7 +1443,7 @@ def timolo():
                                 if daymode:
                                     takeDayImage(filename, motionCamSleep)
                                 else:
-                                    takeNightImage(filename)
+                                    takeNightImage(filename, pixAve)
                             motionNumCount = postImageProcessing(motionNumOn, motionNumStart, motionNumMax,
                                                                  motionNumCount, motionNumRecycle, motionNumPath,
                                                                  filename, daymode)
@@ -1536,7 +1482,7 @@ def timolo():
 #-----------------------------------------------------------------------------------------------
 def videoRepeat():
     """
-    This is a special dash cam video mode 
+    This is a special dash cam video mode
     that overrides both timelapse and motion tracking settings
     It has it's own set of settings to manage start, video duration,
     number recycle mode, Etc.
@@ -1628,9 +1574,7 @@ if __name__ == '__main__':
         print("NOTICE: Logging Disabled per Variable verbose=False  ctrl-c Exits")
 
     try:
-        if debug:
-            dataLogger()
-        elif videoRepeatOn:
+        if videoRepeatOn:
             videoRepeat()
         else:
             timolo()
