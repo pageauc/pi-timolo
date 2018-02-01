@@ -4,8 +4,8 @@ pi-timolo - Raspberry Pi Long Duration Timelapse, Motion Tracking, with Low Ligh
 written by Claude Pageau Jul-2017 (release 7.x)
 This release uses OpenCV to do Motion Tracking.  It requires updated config.py
 """
-progVer = "ver 10.51"   # Requires Latest 10.x release of config.py
-__version__ = "10.51"   # May test for version number at a future time
+progVer = "ver 10.6"   # Requires Latest 10.x release of config.py
+__version__ = "10.6"   # May test for version number at a future time
 
 import datetime
 import logging
@@ -866,33 +866,36 @@ def takeNightImage(filename, pixelAve):
         camera.vflip = imageVFlip
         camera.hflip = imageHFlip
         camera.rotation = imageRotation # valid values 0, 90, 180, 270
+        time.sleep(1)
 
-        if pixelAve >= nightDarkThreshold:  # Twilight so use variable framerate_range
-            logging.info("%ix%i  TwilightThresh=%i/%i  MaxISO=%i",
+        if pixelAve >= nightDarkThreshold:  # Twilight Threshold variable framerate_range
+            camera.framerate_range = (Fraction(1, 6), Fraction(30, 1))
+            time.sleep(1)
+            camera.iso = nightMaxISO
+            logging.info("%ix%i  TwilightThresh=%i/%i  MaxISO=%i uses framerate_range",
                          imageWidth, imageHeight, pixelAve, nightTwilightThreshold,
                          nightMaxISO)
-            camera.framerate_range = (Fraction(1, 6), Fraction(30, 1))
-            time.sleep(3) # Give camera time to measure AWB
-            camera.iso = nightMaxISO
+            time.sleep(4)
         else:
             camera.framerate = Fraction(1, 6) # Set the framerate to a fixed value
-            time.sleep(1)  # short wait to allow framerate to settle
-            if pixelAve <= nightBlackThreshold:  # Black (Very Low Light) so Use Max Settings
-                camShut = nightMaxShut
+            time.sleep(1)
+            camera.iso = nightMaxISO
+            camera.sensor_mode = 3
+            if pixelAve <= nightBlackThreshold:  # Black Threshold (very dark)
+                camera.shutter_speed = nightMaxShut
                 logging.info("%ix%i  BlackThresh=%i/%i shutSec=%s  MaxISO=%i  nightSleepSec=%i",
                              imageWidth, imageHeight, pixelAve, nightBlackThreshold,
-                             shut2Sec(camShut), nightMaxISO, nightSleepSec)
-            else:
-                # Dark so calculate camShut exposure time based on dayPixAve light curve + brightness
+                             shut2Sec(nightMaxShut), nightMaxISO, nightSleepSec)
+            else: # Dark Threshold (Between Twilight and Black)
                 camShut = getShut(pixelAve)
                 if camShut > nightMaxShut:
                     camShut = nightMaxShut
-                logging.info("%ix%i  DarkThresh=%i/%i  shutSec=%s",
+                camera.shutter_speed = camShut  # Set the shutter for long exposure
+                logging.info("%ix%i  DarkThresh=%i/%i  shutSec=%s  MaxISO=%i  nightSleepSec=%i ",
                              imageWidth, imageHeight, pixelAve, nightDarkThreshold,
-                             shut2Sec(camShut))
-            camera.shutter_speed = camShut  # Set the shutter for long exposure
-            camera.iso = nightMaxISO   # Set the ISO to a fixed value for long exposure
-            time.sleep(nightSleepSec)  # Give camera a long time to calc Night Settings
+                             shut2Sec(camShut), nightMaxISO, nightSleepSec)
+            time.sleep(nightSleepSec)
+
         if imageFormat == ".jpg":
             camera.capture(filename, format='jpeg', quality=imageJpegQuality)
         else:
@@ -1249,8 +1252,7 @@ def timolo():
             image2 = vs.read()
             if daymode != checkIfDayStream(daymode, image2):  # if daymode has changed, reset background, to avoid false motion trigger
                 daymode = not daymode
-        if not daymode:
-            pixAve = getStreamPixAve(image2)
+        pixAve = getStreamPixAve(image2)
         rightNow = datetime.datetime.now()   # refresh rightNow time
         if not timeToSleep(daymode):  # Don't take images if noNightShots or noDayShots settings are valid
             if timelapseOn and checkSchedStart(startTL):  # Check for a scheduled date/time to start timelapse
