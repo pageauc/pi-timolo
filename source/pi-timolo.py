@@ -4,8 +4,8 @@ pi-timolo - Raspberry Pi Long Duration Timelapse, Motion Tracking, with Low Ligh
 written by Claude Pageau Jul-2017 (release 7.x)
 This release uses OpenCV to do Motion Tracking.  It requires updated config.py
 """
-progVer = "ver 10.50"   # Requires Latest 10.x release of config.py
-__version__ = "10.50"   # May test for version number at a future time
+progVer = "ver 10.51"   # Requires Latest 10.x release of config.py
+__version__ = "10.51"   # May test for version number at a future time
 
 import datetime
 import logging
@@ -180,7 +180,7 @@ testHeight = 80            # height of rgb image stream used for timelapse day/n
 daymode = False            # default should always be False.
 motionPath = os.path.join(baseDir, motionDir)  # Store Motion images
 motionNumPath = os.path.join(baseDir, motionPrefix + baseFileName + ".dat")  # dat file to save currentCount
-motionStreamStopSec = 1.0  # default= 0.5 seconds  Time to close stream thread
+motionStreamStopSec = .5  # default= 0.5 seconds  Time to close stream thread
 timelapsePath = os.path.join(baseDir, timelapseDir)  # Store Time Lapse images
 timelapseNumPath = os.path.join(baseDir, timelapsePrefix + baseFileName + ".dat")  # dat file to save currentCount
 lockFilePath = os.path.join(baseDir, baseFileName + ".sync")
@@ -830,7 +830,6 @@ def takeDayImage(filename, cam_sleep_time):
     """ Take a Day image using exp=auto and awb=auto """
     with picamera.PiCamera() as camera:
         camera.resolution = (imageWidth, imageHeight)
-        camera.framerate = 80
         camera.vflip = imageVFlip
         camera.hflip = imageHFlip
         camera.rotation = imageRotation # Valid values 0, 90, 180, 270
@@ -869,11 +868,11 @@ def takeNightImage(filename, pixelAve):
         camera.rotation = imageRotation # valid values 0, 90, 180, 270
 
         if pixelAve >= nightDarkThreshold:  # Twilight so use variable framerate_range
-            logging.info("%ix%i  TwilightThresh=%i/%i  MaxISO=%i  nightSleepSec=%i",
+            logging.info("%ix%i  TwilightThresh=%i/%i  MaxISO=%i",
                          imageWidth, imageHeight, pixelAve, nightTwilightThreshold,
-                         nightMaxISO, nightSleepSec)
+                         nightMaxISO)
             camera.framerate_range = (Fraction(1, 6), Fraction(30, 1))
-            time.sleep(4) # Give camera time to measure AWB
+            time.sleep(3) # Give camera time to measure AWB
             camera.iso = nightMaxISO
         else:
             camera.framerate = Fraction(1, 6) # Set the framerate to a fixed value
@@ -888,9 +887,9 @@ def takeNightImage(filename, pixelAve):
                 camShut = getShut(pixelAve)
                 if camShut > nightMaxShut:
                     camShut = nightMaxShut
-                logging.info("%ix%i  DarkThresh=%i/%i  shutSec=%s  MaxISO=%i  nightSleepSec=%i",
+                logging.info("%ix%i  DarkThresh=%i/%i  shutSec=%s",
                              imageWidth, imageHeight, pixelAve, nightDarkThreshold,
-                             shut2Sec(camShut), nightMaxISO, nightSleepSec)
+                             shut2Sec(camShut))
             camera.shutter_speed = camShut  # Set the shutter for long exposure
             camera.iso = nightMaxISO   # Set the ISO to a fixed value for long exposure
             time.sleep(nightSleepSec)  # Give camera a long time to calc Night Settings
@@ -1183,7 +1182,6 @@ def timolo():
         grayimage1 = cv2.cvtColor(image1, cv2.COLOR_BGR2GRAY)
         logging.info("Motion Tracking is On")
     else:
-        vs.camera.framerate = 5
         image2 = vs.read()      # use video stream to check for daymode
         logging.warn("Motion Tracking is Suppressed per motionTrackOn=%s", motionTrackOn)
         stopMotion = True
@@ -1326,7 +1324,6 @@ def timolo():
                     vs.camera.rotation = imageRotation
                     vs.camera.hflip = imageHFlip
                     vs.camera.vflip = imageVFlip
-                    vs.camera.framerate = 5   # Set slow fps since only checking for daymode
                     time.sleep(1)
                     tlPath = subDirChecks(timelapseSubDirMaxHours, timelapseSubDirMaxFiles, timelapseDir, timelapsePrefix)
             if motionTrackOn and checkSchedStart(startMO) and takeMotion and (not stopMotion):
