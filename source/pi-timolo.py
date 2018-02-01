@@ -4,8 +4,8 @@ pi-timolo - Raspberry Pi Long Duration Timelapse, Motion Tracking, with Low Ligh
 written by Claude Pageau Jul-2017 (release 7.x)
 This release uses OpenCV to do Motion Tracking.  It requires updated config.py
 """
-progVer = "ver 10.6"   # Requires Latest 10.x release of config.py
-__version__ = "10.6"   # May test for version number at a future time
+progVer = "ver 10.61"   # Requires Latest 10.x release of config.py
+__version__ = "10.61"   # May test for version number at a future time
 
 import datetime
 import logging
@@ -880,7 +880,6 @@ def takeNightImage(filename, pixelAve):
             camera.framerate = Fraction(1, 6) # Set the framerate to a fixed value
             time.sleep(1)
             camera.iso = nightMaxISO
-            camera.sensor_mode = 3
             if pixelAve <= nightBlackThreshold:  # Black Threshold (very dark)
                 camera.shutter_speed = nightMaxShut
                 logging.info("%ix%i  BlackThresh=%i/%i shutSec=%s  MaxISO=%i  nightSleepSec=%i",
@@ -895,6 +894,7 @@ def takeNightImage(filename, pixelAve):
                              imageWidth, imageHeight, pixelAve, nightDarkThreshold,
                              shut2Sec(camShut), nightMaxISO, nightSleepSec)
             time.sleep(nightSleepSec)
+            camera.exposure_mode = 'off'
 
         if imageFormat == ".jpg":
             camera.capture(filename, format='jpeg', quality=imageJpegQuality)
