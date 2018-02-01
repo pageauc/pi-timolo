@@ -4,8 +4,8 @@ pi-timolo - Raspberry Pi Long Duration Timelapse, Motion Tracking, with Low Ligh
 written by Claude Pageau Jul-2017 (release 7.x)
 This release uses OpenCV to do Motion Tracking.  It requires updated config.py
 """
-progVer = "ver 10.61"   # Requires Latest 10.x release of config.py
-__version__ = "10.61"   # May test for version number at a future time
+progVer = "ver 10.62"   # Requires Latest 10.x release of config.py
+__version__ = "10.62"   # May test for version number at a future time
 
 import datetime
 import logging
@@ -173,10 +173,10 @@ from dateutil.parser import parse
 # Should Not need to be customized
 #==================================
 SECONDS2MICRO = 1000000    # Used to convert from seconds to microseconds
-nightMaxShut = int(nightMaxShutSec * SECONDS2MICRO)  # default=5 sec IMPORTANT- 6 sec works sometimes but occasionally locks RPI and HARD reboot required to clear
+nightMaxShut = int(nightMaxShutSec * SECONDS2MICRO)
+                           # default=5 sec IMPORTANT- 6 sec works sometimes
+                           # but occasionally locks RPI and HARD reboot required to clear
 darkAdjust = int((SECONDS2MICRO/5.0) * nightDarkAdjust)
-testWidth = 128            # width of rgb image stream used for timelapse day/night changes
-testHeight = 80            # height of rgb image stream used for timelapse day/night changes
 daymode = False            # default should always be False.
 motionPath = os.path.join(baseDir, motionDir)  # Store Motion images
 motionNumPath = os.path.join(baseDir, motionPrefix + baseFileName + ".dat")  # dat file to save currentCount
@@ -211,7 +211,7 @@ elif imageJpegQuality > 100:
 
 #-----------------------------------------------------------------------------------------------
 class PiVideoStream:
-    # Create a video stream and return a frame when update called
+    """ Create a video stream and return a frame when update called"""
     def __init__(self, resolution=(CAMERA_WIDTH, CAMERA_HEIGHT), framerate=CAMERA_FRAMERATE, rotation=0, hflip=False, vflip=False):
         # initialize the camera and stream
         try:
@@ -312,7 +312,7 @@ def showDots(dotcnt):
             else:
                 sys.stdout.write('.')
                 sys.stdout.flush()
-        return dotcnt
+    return dotcnt
 
 #-----------------------------------------------------------------------------------------------
 def checkConfig():
