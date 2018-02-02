@@ -104,7 +104,7 @@ To run from ssh console or terminal session.
     cd ~/pi-timolo
     ./webserver.py
 
-![webserver browser screen shot](webserver.png)
+![webserver browser screen shot](webserver.jpg)
  
 ## Reference Links  
 Detailed pi-timolo Wiki https://github.com/pageauc/pi-timolo/wiki  
