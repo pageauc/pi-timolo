@@ -18,11 +18,11 @@ import glob
 import time
 import math
 from threading import Thread
+from fractions import Fraction
 import numpy as np
 from PIL import Image
 from PIL import ImageFont
 from PIL import ImageDraw
-from fractions import Fraction
 from dateutil.parser import parse
 # For python3 install of pyexiv2 lib See https://github.com/pageauc/pi-timolo/issues/79
 try:  # Bypass pyexiv2 if library Not Found  (Transfers image exif data in writeTextToImage)
@@ -175,10 +175,12 @@ nightMaxShut = int(nightMaxShutSec * SECONDS2MICRO)
 darkAdjust = int((SECONDS2MICRO/5.0) * nightDarkAdjust)
 daymode = False            # default should always be False.
 motionPath = os.path.join(baseDir, motionDir)  # Store Motion images
-motionNumPath = os.path.join(baseDir, motionPrefix + baseFileName + ".dat")  # dat file to save currentCount
+motionNumPath = os.path.join(baseDir, motionPrefix + baseFileName + ".dat")
+ # dat file to save currentCount
 motionStreamStopSec = .5  # default= 0.5 seconds  Time to close stream thread
 timelapsePath = os.path.join(baseDir, timelapseDir)  # Store Time Lapse images
-timelapseNumPath = os.path.join(baseDir, timelapsePrefix + baseFileName + ".dat")  # dat file to save currentCount
+timelapseNumPath = os.path.join(baseDir, timelapsePrefix + baseFileName + ".dat")
+ # dat file to save currentCount
 lockFilePath = os.path.join(baseDir, baseFileName + ".sync")
 
 # Video Stream Settings for motion Tracking using opencv motion tracking
@@ -282,8 +284,9 @@ def shut2Sec(shutspeed):
 def showTime():
     """ Show current date time in text format """
     rightNow = datetime.datetime.now()
-    currentTime = ("%04d-%02d-%02d %02d:%02d:%02d" % (rightNow.year, rightNow.month, rightNow.day,
-                                                      rightNow.hour, rightNow.minute, rightNow.second))
+    currentTime = ("%04d-%02d-%02d %02d:%02d:%02d" % (rightNow.year, rightNow.month,
+                                                      rightNow.day, rightNow.hour,
+                                                      rightNow.minute, rightNow.second))
     return currentTime
 
 #-----------------------------------------------------------------------------------------------
@@ -437,7 +440,8 @@ def subDirCreate(directory, prefix):
     """ Create a subdirectory in directory with unique name based on prefix and date time """
     now = datetime.datetime.now()
     # Specify folder naming
-    subDirName = ('%s%d-%02d-%02d-%02d%02d' % (prefix, now.year, now.month, now.day, now.hour, now.minute))
+    subDirName = ('%s%d-%02d-%02d-%02d%02d' % (prefix, now.year, now.month, now.day,
+                                               now.hour, now.minute))
     subDirPath = os.path.join(directory, subDirName)
     if not os.path.exists(subDirPath):
         try:
@@ -468,8 +472,8 @@ def subDirCheckMaxFiles(directory, filesMax):
 def subDirCheckMaxHrs(directory, hrsMax, prefix):
     """Note to self need to add error checking
        extract the date-time from the directory name """
-    dirName = os.path.split(directory)[1]   # split dir path and keep dirName
-    dirStr = dirName.replace(prefix, '')   # remove prefix from dirName so just date-time left
+    dirName = os.path.split(directory)[1] # split dir path and keep dirName
+    dirStr = dirName.replace(prefix, '')  # remove prefix from dirName so just date-time left
     dirDate = datetime.datetime.strptime(dirStr, "%Y-%m-%d-%H:%M")  # convert string to datetime
     rightNow = datetime.datetime.now()   # get datetime now
     diff = rightNow - dirDate            # get time difference between dates
@@ -681,7 +685,8 @@ def getCurrentCount(numberpath, numberstart):
                 numbercounter = int(writeCount)+1
             except ValueError:
                 numbercounter = numberstart
-            logging.warn("Found Invalid Data in %s Resetting Counter to %s", numberpath, numbercounter)
+            logging.warn("Found Invalid Data in %s Resetting Counter to %s",
+                         numberpath, numbercounter)
         f = open(numberpath, 'w+')
         f.write(str(numbercounter))
         f.close()
@@ -746,7 +751,7 @@ def writeTextToImage(imagename, datetoprint, daymode):
 #-----------------------------------------------------------------------------------------------
 def postImageProcessing(numberon, counterstart, countermax, counter, recycle, counterpath, filename, daymode):
     """ If required process text to display directly on image """
-    if (not motionVideoOn):
+    if not motionVideoOn:
         rightNow = datetime.datetime.now()
         if showDateOnImage:
             dateTimeText = ("%04d%02d%02d_%02d:%02d:%02d" %
@@ -774,7 +779,8 @@ def postImageProcessing(numberon, counterstart, countermax, counter, recycle, co
                     counter = counterstart
                 else:
                     counter = counterstart + countermax + 1
-                    errorText = ("Exceeded Image Count numberMax=%i for %s \n" % (countermax, filename))
+                    errorText = ("Exceeded Image Count numberMax=%i for %s \n" %
+                                 (countermax, filename))
                     logging.warn(errorText)
         # write next image counter number to dat file
         writeCount = str(counter)
@@ -886,7 +892,7 @@ def takeNightImage(filename, pixelAve):
                 if camShut > nightMaxShut:
                     camShut = nightMaxShut
                 camera.shutter_speed = camShut  # Set the shutter for long exposure
-                logging.info("%ix%i  DarkThresh=%i/%i  shutSec=%s  MaxISO=%i  nightSleepSec=%i ",
+                logging.info("%ix%i  DarkThresh=%i/%i  shutSec=%s  MaxISO=%i  nightSleepSec=%i",
                              imageWidth, imageHeight, pixelAve, nightDarkThreshold,
                              shut2Sec(camShut), nightMaxISO, nightSleepSec)
             time.sleep(nightSleepSec)
@@ -917,7 +923,8 @@ def takeQuickTimeLapse(moPath, imagePrefix, motionNumOn, motionNumCount, daymode
             keepTakingImages = False
         else:
             motionNumCount = postImageProcessing(motionNumOn, motionNumStart, motionNumMax,
-                                                 motionNumCount, motionNumRecycle, motionNumPath, filename, daymode)
+                                                 motionNumCount, motionNumRecycle,
+                                                 motionNumPath, filename, daymode)
             filename = getImageName(moPath, imagePrefix, motionNumOn, motionNumCount)
             time.sleep(motionQuickTLInterval)
 
@@ -925,13 +932,15 @@ def takeQuickTimeLapse(moPath, imagePrefix, motionNumOn, motionNumCount, daymode
 def takeVideo(filename, duration, fps=30):
     """ Take a short motion video if required """
     logging.info("File : %s" % (filename))
-    logging.info("Start: Size %ix%i for %i sec at %i fps" % (imageWidth, imageHeight, duration, fps))
+    logging.info("Start: Size %ix%i for %i sec at %i fps" %
+                 (imageWidth, imageHeight, duration, fps))
     if motionVideoOn or videoRepeatOn:
         with picamera.PiCamera() as camera:
             camera.resolution = (imageWidth, imageHeight)
             camera.vflip = imageVFlip
             camera.hflip = imageHFlip
-            camera.rotation = imageRotation # You can also use imageVFlip and imageHFlip variables
+            camera.rotation = imageRotation
+               # You can also use imageVFlip and imageHFlip variables
             camera.framerate = fps
             if showDateOnImage:
                 rightNow = datetime.datetime.now()
@@ -966,7 +975,7 @@ def createSyncLockFile(imagefilename):
         now = ("%04d%02d%02d-%02d%02d%02d" %
                (rightNow.year, rightNow.month, rightNow.day,
                 rightNow.hour, rightNow.minute, rightNow.second))
-        filecontents = now + " createSyncLockFile - "  + imagefilename + " Ready to sync using sudo ./sync.sh command."
+        filecontents = now + " createSyncLockFile - " + imagefilename + " Ready to sync using sudo ./sync.sh command."
         f = open(lockFilePath, 'w+')
         f.write(filecontents)
         f.close()
@@ -983,11 +992,15 @@ def trackPoint(grayimage1, grayimage2):
     # Blur difference image to enhance motion vectors
     differenceimage = cv2.blur(differenceimage, (BLUR_SIZE, BLUR_SIZE))
     # Get threshold of blurred difference image based on THRESHOLD_SENSITIVITY variable
-    retval, thresholdimage = cv2.threshold(differenceimage, THRESHOLD_SENSITIVITY, 255, cv2.THRESH_BINARY)
+    retval, thresholdimage = cv2.threshold(differenceimage, THRESHOLD_SENSITIVITY,
+                                           255, cv2.THRESH_BINARY)
     try:
-        thresholdimage, contours, hierarchy = cv2.findContours(thresholdimage, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+        thresholdimage, contours, hierarchy = cv2.findContours(thresholdimage,
+                                                               cv2.RETR_EXTERNAL,
+                                                               cv2.CHAIN_APPROX_SIMPLE)
     except:
-        contours, hierarchy = cv2.findContours(thresholdimage, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+        contours, hierarchy = cv2.findContours(thresholdimage,
+                                               cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
     if contours:
         for c in contours:
@@ -1025,7 +1038,6 @@ def checkIfDayStream(currentDayMode, image):
         currentDayMode = True
     else:
         currentDayMode = False
-#   logging.info("daymode=%s dayPixAverage=%i" % (currentDayMode, dayPixAverage))
     return currentDayMode
 
 #-----------------------------------------------------------------------------------------------
@@ -1126,8 +1138,8 @@ def timolo():
     mostr = ""  # Used to display if motion is selected
     moCnt = "non"
     tlCnt = "non"
-    daymode = False       # Used to keep track of night and day based on dayPixAve
-    forceMotion = False   # Used for forcing a motion image if no motion for motionForce time exceeded
+    daymode = False       # Keep track of night and day based on dayPixAve
+    forceMotion = False   # Forcing motion if no motion for motionForce time exceeded
     motionFound = False
     takeTimeLapse = True
     stopTimeLapse = False
@@ -1235,7 +1247,8 @@ def timolo():
         if spaceTimerHrs > 0:  # if required check free disk space and delete older files (jpg)
             lastSpaceCheck = freeDiskSpaceCheck(lastSpaceCheck)
 
-        # use image2 to check daymode as image1 may be average that changes slowly, and image1 may not be updated
+        # use image2 to check daymode as image1 may be average
+        # that changes slowly, and image1 may not be updated
         if motionTrackOn:
             if daymode != checkIfDayStream(daymode, image2):
                 daymode = not daymode
@@ -1245,12 +1258,15 @@ def timolo():
                 image2 = vs.read()
         else:
             image2 = vs.read()
-            if daymode != checkIfDayStream(daymode, image2):  # if daymode has changed, reset background, to avoid false motion trigger
+            if daymode != checkIfDayStream(daymode, image2):
+               # if daymode has changed, reset background, to avoid false motion trigger
                 daymode = not daymode
         pixAve = getStreamPixAve(image2)
         rightNow = datetime.datetime.now()   # refresh rightNow time
-        if not timeToSleep(daymode):  # Don't take images if noNightShots or noDayShots settings are valid
-            if timelapseOn and checkSchedStart(startTL):  # Check for a scheduled date/time to start timelapse
+        if not timeToSleep(daymode):
+          # Don't take images if noNightShots or noDayShots settings are valid
+            if timelapseOn and checkSchedStart(startTL):
+               # Check for a scheduled date/time to start timelapse
                 if firstTimeLapse:
                     firstTimeLapse = False
                     takeTimeLapse = True
@@ -1266,8 +1282,9 @@ def timolo():
                         stopTimeLapse = True
                 if ((not stopTimeLapse) and timelapseNumOn and (not timelapseNumRecycle)):
                     if timelapseNumMax > 0 and timelapseNumCount > (timelapseNumStart + timelapseNumMax):
-                        logging.warn("timelapseNumRecycle=%s and Counter=%i Exceeds %i"
-                                     % (timelapseNumRecycle, timelapseNumCount, timelapseNumStart + timelapseNumMax))
+                        logging.warn("timelapseNumRecycle=%s and Counter=%i Exceeds %i" %
+                                     (timelapseNumRecycle, timelapseNumCount,
+                                      timelapseNumStart + timelapseNumMax))
                         logging.warn("Suppressing Further Timelapse Images")
                         logging.warn("To RESET: Change %s Settings or Archive Images" % (configName))
                         logging.warn("Then Delete %s and Restart %s \n" % (timelapseNumPath, progName))
@@ -1283,7 +1300,8 @@ def timolo():
                         if timelapseExitSec > 0:
                             exitSecProgress = (datetime.datetime.now() - timelapseExitStart).total_seconds()
                             logging.info("%s Sched TimeLapse  daymode=%s  Timer=%i sec  ExitSec=%i/%i Status",
-                                         pluginName, daymode, timelapseTimer, exitSecProgress, timelapseExitSec)
+                                         pluginName, daymode, timelapseTimer,
+                                         exitSecProgress, timelapseExitSec)
                         else:
                             logging.info("%s Sched TimeLapse  daymode=%s  Timer=%i sec  ExitSec=%i 0=Continuous",
                                          pluginName, daymode, timelapseTimer, timelapseExitSec)
@@ -1306,9 +1324,10 @@ def timolo():
                         takeDayImage(filename, timelapseCamSleep)
                     else:
                         takeNightImage(filename, pixAve)
-                    timelapseNumCount = postImageProcessing(timelapseNumOn, timelapseNumStart, timelapseNumMax,
-                                                            timelapseNumCount, timelapseNumRecycle,
-                                                            timelapseNumPath, filename, daymode)
+                    timelapseNumCount = postImageProcessing(timelapseNumOn, timelapseNumStart,
+                                                            timelapseNumMax, timelapseNumCount,
+                                                            timelapseNumRecycle, timelapseNumPath,
+                                                            filename, daymode)
                     if timelapseRecentMax > 0:
                         saveRecent(timelapseRecentMax, timelapseRecentDir, filename, imagePrefix)
 
@@ -1324,7 +1343,8 @@ def timolo():
                     time.sleep(1)
                     tlPath = subDirChecks(timelapseSubDirMaxHours, timelapseSubDirMaxFiles, timelapseDir, timelapsePrefix)
             if motionTrackOn and checkSchedStart(startMO) and takeMotion and (not stopMotion):
-                # IMPORTANT - Night motion tracking may not work very well due to long exposure times and low light
+                # IMPORTANT - Night motion tracking may not work very well
+                #             due to long exposure times and low light
                 image2 = vs.read()
                 grayimage2 = cv2.cvtColor(image2, cv2.COLOR_BGR2GRAY)
                 movePoint1 = trackPoint(grayimage1, grayimage2)
@@ -1347,7 +1367,8 @@ def timolo():
 
                     # Track length triggered
                     if trackLen > TRACK_TRIG_LEN:
-                        if trackLen > TRACK_TRIG_LEN_MAX:  # reduce chance of two objects at different postions
+                        if trackLen > TRACK_TRIG_LEN_MAX:
+                           # reduce chance of two objects at different postions
                             motionFound = False
                             if motionTrackInfo:
                                 logging.info("TrackLen %if px Exceeded %i px Max Trig Len Allowed.",
@@ -1399,8 +1420,9 @@ def timolo():
                     if motionTrackQuickPic:  # Do not stop PiVideoStream
                         filename = getImageName(moPath, imagePrefix, motionNumOn, motionNumCount)
                         takeTrackQuickPic(image2, filename)
-                        motionNumCount = postImageProcessing(motionNumOn, motionNumStart, motionNumMax,
-                                                             motionNumCount, motionNumRecycle, motionNumPath,
+                        motionNumCount = postImageProcessing(motionNumOn, motionNumStart,
+                                                             motionNumMax, motionNumCount,
+                                                             motionNumRecycle, motionNumPath,
                                                              filename, daymode)
                     else:
                         if motionTrackOn:
@@ -1437,12 +1459,15 @@ def timolo():
                                     takeDayImage(filename, motionCamSleep)
                                 else:
                                     takeNightImage(filename, pixAve)
-                            motionNumCount = postImageProcessing(motionNumOn, motionNumStart, motionNumMax,
-                                                                 motionNumCount, motionNumRecycle, motionNumPath,
+                            motionNumCount = postImageProcessing(motionNumOn, motionNumStart,
+                                                                 motionNumMax, motionNumCount,
+                                                                 motionNumRecycle, motionNumPath,
                                                                  filename, daymode)
                             if motionRecentMax > 0:
-                                if not motionVideoOn:   # prevent h264 video files from being copied to recent
-                                    saveRecent(motionRecentMax, motionRecentDir, filename, imagePrefix)
+                                if not motionVideoOn:
+                                   # prevent h264 video files from being copied to recent
+                                    saveRecent(motionRecentMax, motionRecentDir,
+                                               filename, imagePrefix)
 
                         if motionTrackOn:
                             logging.info("Restart PiVideoStream ....")
