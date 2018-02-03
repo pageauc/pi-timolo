@@ -4,9 +4,10 @@ pi-timolo - Raspberry Pi Long Duration Timelapse, Motion Tracking, with Low Ligh
 written by Claude Pageau Jul-2017 (release 7.x)
 This release uses OpenCV to do Motion Tracking.  It requires updated config.py
 """
-progVer = "ver 10.62"   # Requires Latest 10.x release of config.py
-__version__ = "10.62"   # May test for version number at a future time
+progVer = "ver 10.63"   # Requires Latest 10.x release of config.py
+__version__ = "10.63"   # May test for version number at a future time
 
+print("Loading ....")
 import datetime
 import logging
 import os
@@ -14,6 +15,20 @@ import sys
 import subprocess
 import shutil
 import glob
+import time
+import math
+from threading import Thread
+import numpy as np
+from PIL import Image
+from PIL import ImageFont
+from PIL import ImageDraw
+from fractions import Fraction
+from dateutil.parser import parse
+# For python3 install of pyexiv2 lib See https://github.com/pageauc/pi-timolo/issues/79
+try:  # Bypass pyexiv2 if library Not Found  (Transfers image exif data in writeTextToImage)
+    import pyexiv2
+except:
+    pass
 
 mypath = os.path.abspath(__file__)  # Find the full path of this python script
 baseDir = os.path.dirname(mypath)   # get the path location only (excluding script name)
@@ -21,108 +36,38 @@ baseFileName = os.path.splitext(os.path.basename(mypath))[0]
 progName = os.path.basename(__file__)
 logFilePath = os.path.join(baseDir, baseFileName + ".log")
 
-print("-----------------------------------------------------------------------")
 print("%s %s  written by Claude Pageau" % (progName, progVer))
-print("INFO  - Initializing ....")
-
-# Check that pi camera module is installed and enabled
-camResult = subprocess.check_output("vcgencmd get_camera", shell=True)
-camResult = camResult.decode("utf-8")
-camResult = camResult.replace("\n", "")
-if (camResult.find("0")) >= 0:   # Was a 0 found in vcgencmd output
-    print("ERROR - Pi Camera Module Not Found %s" % camResult)
-    print("        if supported=0 Enable Camera using command sudo raspi-config")
-    print("        if detected=0 Check Pi Camera Module is Installed Correctly")
-    print("        Exiting %s Due to Error" % progName)
-    sys.exit(1)
-else:
-    print("INFO  - Pi Camera Module is Enabled and Connected %s" % camResult)
 
 # Check for config.py variable file to import and error out if not found.
 configFilePath = os.path.join(baseDir, "config.py")
 if not os.path.exists(configFilePath):
-    print("ERROR - %s File Not Found. Cannot Import Configuration Variables." % (configFilePath))
-    print("        Run Console Command Below to Download File from GitHub Repo")
-    print("        wget -O config.py https://raw.github.com/pageauc/pi-timolo/master/source/config.py")
+    print("%s File Not Found. Cannot Import Configuration Variables." % configFilePath)
+    print("Run Console Command Below to Download File from GitHub Repo")
+    print("wget -O config.py https://raw.github.com/pageauc/pi-timolo/master/source/config.py")
     sys.exit(1)
 else:
     # Read Configuration variables from config.py file
-    print("INFO  - Import Configuration Variables from File %s" % (configFilePath))
+    print("Import Configuration Variables from File %s" % configFilePath)
     from config import *
-
-if pluginEnable:     # Check and verify plugin and load variable overlay
-    pluginDir = os.path.join(baseDir, "plugins")
-    if pluginName.endswith('.py'):      # Check if there is a .py at the end of pluginName variable
-        pluginName = pluginName[:-3]    # Remove .py extensiion
-    pluginPath = os.path.join(pluginDir, pluginName + '.py')
-    print("INFO  - pluginEnabled - loading pluginName %s" % pluginPath)
-    if not os.path.isdir(pluginDir):
-        print("ERROR - plugin Directory Not Found at %s" % pluginDir)
-        print("        Suggest you Rerun github curl install script to install plugins")
-        print("        https://github.com/pageauc/pi-timolo/wiki/How-to-Install-or-Upgrade#quick-install")
-        print("        Exiting %s Due to Error" % progName)
-        sys.exit(1)
-    elif not os.path.exists(pluginPath):
-        print("ERROR - File Not Found pluginName %s" % pluginPath)
-        print("        Check Spelling of pluginName Value in %s" % configFilePath)
-        print("        ------- Valid Names -------")
-        validPlugin = glob.glob(pluginDir + "/*py")
-        validPlugin.sort()
-        for entry in validPlugin:
-            pluginFile = os.path.basename(entry)
-            plugin = pluginFile.rsplit('.', 1)[0]
-            if not ((plugin == "__init__") or (plugin == "current")):
-                print("        %s"  % plugin)
-        print("        ------- End of List -------")
-        print("        Note: pluginName Should Not have .py Ending.")
-        print("        or Rerun github curl install command.  See github wiki")
-        print("        https://github.com/pageauc/pi-timolo/wiki/How-to-Install-or-Upgrade#quick-install")
-        print("        Exiting %s Due to Error" % progName)
-        sys.exit(1)
-    else:
-        pluginCurrent = os.path.join(pluginDir, "current.py")
-        try:    # Copy image file to recent folder
-            print("INFO  - Copy %s to %s" % (pluginPath, pluginCurrent))
-            shutil.copy(pluginPath, pluginCurrent)
-        except OSError as err:
-            print('ERROR - Copy Failed from %s to %s - %s' % (pluginPath, pluginCurrent, err))
-            print("        Check permissions, disk space, Etc.")
-            print("        Exiting %s Due to Error" % progName)
-            sys.exit(1)
-        print("INFO  - Import Plugin %s" % pluginPath)
-        sys.path.insert(0, pluginDir)    # add plugin directory to program PATH
-        from plugins.current import *
-        try:
-            if os.path.exists(pluginCurrent):
-                os.remove(pluginCurrent)
-            pluginCurrentpyc = os.path.join(pluginDir, "current.pyc")
-            if os.path.exists(pluginCurrentpyc):
-                os.remove(pluginCurrentpyc)
-        except OSError as err:
-            print("ERROR - Failed Removal of %s - %s" % (pluginCurrentpyc, err))
-            print("        Exiting %s Due to Error" % progName)
-else:
-    print("INFO  - No Plugin Enabled per pluginEnable=%s" % pluginEnable)
 
 # Setup Logging now that variables are imported from config.py/plugin
 if logDataToFile:
-    print("INFO  - Sending Logging Data to %s  (Console Messages Disabled)" % (logFilePath))
     logging.basicConfig(level=logging.DEBUG,
                         format='%(asctime)s %(levelname)-8s %(funcName)-10s %(message)s',
                         datefmt='%Y-%m-%d %H:%M:%S',
                         filename=logFilePath,
                         filemode='w')
+    logging.info("Sending Logging Data to %s  (Console Messages Disabled)", logFilePath)
 elif verbose:
-    print("INFO  - Logging to Console per Variable verbose=True")
     logging.basicConfig(level=logging.DEBUG,
                         format='%(asctime)s %(levelname)-8s %(funcName)-10s %(message)s',
                         datefmt='%Y-%m-%d %H:%M:%S')
+    logging.info("Logging to Console per Variable verbose=True")
 else:
     logging.basicConfig(level=logging.CRITICAL,
                         format='%(asctime)s %(levelname)-8s %(funcName)-10s %(message)s',
                         datefmt='%Y-%m-%d %H:%M:%S')
 
-print("INFO  - Loading Python Libraries Please Wait ...")  # import remaining python libraries
 try:
     import cv2
 except:
@@ -152,21 +97,72 @@ except:
 from picamera.array import PiRGBArray
 import picamera.array
 
-# For python3 install of pyexiv2 lib See https://github.com/pageauc/pi-timolo/issues/79
-try:  # Bypass pyexiv2 if library Not Found  (Transfers image exif data in writeTextToImage)
-    import pyexiv2
-except:
-    pass
+# Check that pi camera module is installed and enabled
+camResult = subprocess.check_output("vcgencmd get_camera", shell=True)
+camResult = camResult.decode("utf-8")
+camResult = camResult.replace("\n", "")
+if (camResult.find("0")) >= 0:   # Was a 0 found in vcgencmd output
+    logging.error("Pi Camera Module Not Found %s", camResult)
+    logging.error("if supported=0 Enable Camera using command sudo raspi-config")
+    logging.error("if detected=0 Check Pi Camera Module is Installed Correctly")
+    logging.error("Exiting %s Due to Error", progName)
+    sys.exit(1)
+else:
+    logging.info("Pi Camera Module is Enabled and Connected %s", camResult)
 
-import time
-import math
-from threading import Thread
-import numpy as np
-from PIL import Image
-from PIL import ImageFont
-from PIL import ImageDraw
-from fractions import Fraction
-from dateutil.parser import parse
+if pluginEnable:     # Check and verify plugin and load variable overlay
+    pluginDir = os.path.join(baseDir, "plugins")
+    if pluginName.endswith('.py'):      # Check if there is a .py at the end of pluginName variable
+        pluginName = pluginName[:-3]    # Remove .py extensiion
+    pluginPath = os.path.join(pluginDir, pluginName + '.py')
+    logging.error("pluginEnabled - loading pluginName %s", pluginPath)
+    if not os.path.isdir(pluginDir):
+        logging.error("plugin Directory Not Found at %s", pluginDir)
+        logging.error("Suggest you Rerun github curl install script to install plugins")
+        logging.error("https://github.com/pageauc/pi-timolo/wiki/How-to-Install-or-Upgrade#quick-install")
+        logging.error("Exiting %s Due to Error", progName)
+        sys.exit(1)
+    elif not os.path.exists(pluginPath):
+        logging.error("File Not Found pluginName %s" % pluginPath)
+        logging.error("Check Spelling of pluginName Value in %s", configFilePath)
+        logging.error("------- Valid Names -------")
+        validPlugin = glob.glob(pluginDir + "/*py")
+        validPlugin.sort()
+        for entry in validPlugin:
+            pluginFile = os.path.basename(entry)
+            plugin = pluginFile.rsplit('.', 1)[0]
+            if not ((plugin == "__init__") or (plugin == "current")):
+                logging.error("        %s", plugin)
+        logging.error("------- End of List -------")
+        logging.error("Note: pluginName Should Not have .py Ending.")
+        logging.error("or Rerun github curl install command.  See github wiki")
+        logging.error("https://github.com/pageauc/pi-timolo/wiki/How-to-Install-or-Upgrade#quick-install")
+        logging.error("Exiting %s Due to Error", progName)
+        sys.exit(1)
+    else:
+        pluginCurrent = os.path.join(pluginDir, "current.py")
+        try:    # Copy image file to recent folder
+            logging.info("Copy %s to %s", pluginPath, pluginCurrent)
+            shutil.copy(pluginPath, pluginCurrent)
+        except OSError as err:
+            logging.error('Copy Failed from %s to %s - %s', pluginPath, pluginCurrent, err)
+            logging.error("Check permissions, disk space, Etc.")
+            logging.error("Exiting %s Due to Error", progName)
+            sys.exit(1)
+        logging.info("Import Plugin %s", pluginPath)
+        sys.path.insert(0, pluginDir)    # add plugin directory to program PATH
+        from plugins.current import *
+        try:
+            if os.path.exists(pluginCurrent):
+                os.remove(pluginCurrent)
+            pluginCurrentpyc = os.path.join(pluginDir, "current.pyc")
+            if os.path.exists(pluginCurrentpyc):
+                os.remove(pluginCurrentpyc)
+        except OSError as err:
+            logging.error("Failed Removal of %s - %s", pluginCurrentpyc, err)
+            logging.error("Exiting %s Due to Error", progName)
+else:
+    logging.info("No Plugin Enabled per pluginEnable=%s", pluginEnable)
 
 #==================================
 #      System Variables
@@ -1183,7 +1179,6 @@ def timolo():
         image1 = vs.read()
         image2 = vs.read()
         grayimage1 = cv2.cvtColor(image1, cv2.COLOR_BGR2GRAY)
-        logging.info("Motion Tracking is On")
     else:
         image2 = vs.read()      # use video stream to check for daymode
         logging.warn("Motion Tracking is Suppressed per motionTrackOn=%s", motionTrackOn)
@@ -1215,7 +1210,7 @@ def timolo():
 
     logging.info("daymode=%s  motionDotsOn=%s ", daymode, motionDotsOn)
     dotCount = showDots(motionDotsMax)  # reset motion dots
-    while True:  # Start main program loop here. Use Ctrl-C to exit if run from terminal session.
+    while True:  # Start main program Loop.
         motionFound = False
         forceMotion = False
         if (motionTrackOn and (not motionNumRecycle)
