@@ -123,7 +123,7 @@ if pluginEnable:     # Check and verify plugin and load variable overlay
         logging.error("Exiting %s Due to Error", progName)
         sys.exit(1)
     elif not os.path.exists(pluginPath):
-        logging.error("File Not Found pluginName %s" % pluginPath)
+        logging.error("File Not Found pluginName %s", pluginPath)
         logging.error("Check Spelling of pluginName Value in %s", configFilePath)
         logging.error("------- Valid Names -------")
         validPlugin = glob.glob(pluginDir + "/*py")
@@ -216,7 +216,7 @@ class PiVideoStream:
             self.camera = PiCamera()
         except:
             logging.error("PiCamera Already in Use by Another Process")
-            logging.error("Exiting %s Due to Error" % progName)
+            logging.error("Exiting %s Due to Error", progName)
             exit(1)
         self.camera.resolution = resolution
         self.camera.framerate = framerate
@@ -463,7 +463,7 @@ def subDirCheckMaxFiles(directory, filesMax):
     if count > filesMax:
         makeNewDir = True
         dotCount = showDots(motionDotsMax + 2)
-        logging.info('Total Files in %s Exceeds %i ' % (directory, filesMax))
+        logging.info('Total Files in %s Exceeds %i ', (directory, filesMax))
     else:
         makeNewDir = False
     return makeNewDir
@@ -482,7 +482,7 @@ def subDirCheckMaxHrs(directory, hrsMax, prefix):
     if dirAgeHours > hrsMax:   # See if hours are exceeded
         makeNewDir = True
         dotCount = showDots(motionDotsMax + 2)
-        logging.info('MaxHrs %i Exceeds %i for %s' % (dirAgeHours, hrsMax, directory))
+        logging.info('MaxHrs %i Exceeds %i for %s', (dirAgeHours, hrsMax, directory))
     else:
         makeNewDir = False
     return makeNewDir
@@ -496,7 +496,7 @@ def subDirChecks(maxHours, maxFiles, directory, prefix):
     else:
         subDirPath = subDirLatest(directory)
         if subDirPath == directory:   # No subDir Found
-            logging.info('No sub folders Found in %s' % directory)
+            logging.info('No sub folders Found in %s', directory)
             subDirPath = subDirCreate(directory, prefix)
         elif (maxHours > 0 and maxFiles < 1):   # Check MaxHours Folder Age Only
             if subDirCheckMaxHrs(subDirPath, maxHours, prefix):
@@ -746,7 +746,7 @@ def writeTextToImage(imagename, datetoprint, daymode):
         logging.warn("Image EXIF Data Not Transferred.")
         pass
 
-    logging.info("Saved %s" % imagename)
+    logging.info("Saved %s", imagename)
 
 #-----------------------------------------------------------------------------------------------
 def postImageProcessing(numberon, counterstart, countermax, counter, recycle, counterpath, filename, daymode):
