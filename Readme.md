@@ -98,8 +98,9 @@ To run menubox.sh from ssh console or terminal session execute commands below.
 ## Webserver
 I have also written a standalone LAN based webserver.py to allow easy access to pi-timolo image and video files
 on the Raspberry from another LAN computer web browser.  There is no setup required but the display
-settings can be customized via variables in the config.py file or via menubox admin menuing.   
-To run from ssh console or terminal session.
+settings can be customized via variables in the config.py file or via menubox admin menuing.     
+***NOTE:***webserver.py is normally run in background using menubox.sh, webserver.sh or from /etc/rc.local 
+To Test Run from ssh console or terminal session. 
     
     cd ~/pi-timolo
     ./webserver.py
