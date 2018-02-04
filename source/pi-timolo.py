@@ -961,7 +961,7 @@ def takeVideo(filename, duration, fps=30):
             proc = subprocess.Popen(convid, shell=True, stdin=None, stdout=None,
                                     stderr=None, close_fds=True)
         except IOError:
-            logging.error("Sub Process %s Failed" % (convid))
+            logging.error("Sub Process %s Failed", convid)
         createSyncLockFile(filename)
 
 #-----------------------------------------------------------------------------------------------
