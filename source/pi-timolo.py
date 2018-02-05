@@ -4,8 +4,8 @@ pi-timolo - Raspberry Pi Long Duration Timelapse, Motion Tracking, with Low Ligh
 written by Claude Pageau Jul-2017 (release 7.x)
 This release uses OpenCV to do Motion Tracking.  It requires updated config.py
 """
-progVer = "ver 10.63"   # Requires Latest 10.x release of config.py
-__version__ = "10.63"   # May test for version number at a future time
+progVer = "ver 10.64"   # Requires Latest 10.x release of config.py
+__version__ = "10.64"   # May test for version number at a future time
 
 print("Loading ....")
 import datetime
@@ -231,14 +231,14 @@ class PiVideoStream:
         self.stopped = False
 
     def start(self):
-        # start the thread to read frames from the video stream
+        """ start the thread to read frames from the video stream"""
         t = Thread(target=self.update, args=())
         t.daemon = True
         t.start()
         return self
 
     def update(self):
-        # keep looping infinitely until the thread is stopped
+        """ keep looping infinitely until the thread is stopped"""
         for f in self.stream:
             # grab the frame from the stream and clear the stream in
             # preparation for the next frame
@@ -254,11 +254,11 @@ class PiVideoStream:
                 return
 
     def read(self):
-        # return the frame most recently read
+        """ return the frame most recently read """
         return self.frame
 
     def stop(self):
-        # indicate that the thread should be stopped
+        """ indicate that the thread should be stopped """
         self.stopped = True
 
 #-----------------------------------------------------------------------------------------------
@@ -462,8 +462,7 @@ def subDirCheckMaxFiles(directory, filesMax):
     count = len(fileList)
     if count > filesMax:
         makeNewDir = True
-        dotCount = showDots(motionDotsMax + 2)
-        logging.info('Total Files in %s Exceeds %i ', (directory, filesMax))
+        logging.info('Total Files in %s Exceeds %i', directory, filesMax)
     else:
         makeNewDir = False
     return makeNewDir
@@ -481,8 +480,7 @@ def subDirCheckMaxHrs(directory, hrsMax, prefix):
     dirAgeHours = days * 24 + seconds // 3600  # convert to hours
     if dirAgeHours > hrsMax:   # See if hours are exceeded
         makeNewDir = True
-        dotCount = showDots(motionDotsMax + 2)
-        logging.info('MaxHrs %i Exceeds %i for %s', (dirAgeHours, hrsMax, directory))
+        logging.info('MaxHrs %i Exceeds %i for %s', dirAgeHours, hrsMax, directory)
     else:
         makeNewDir = False
     return makeNewDir
@@ -584,7 +582,7 @@ def saveRecent(recentMax, recentDir, filename, prefix):
     try:    # Copy image file to recent folder
         shutil.copy(filename, recentDir)
     except OSError as err:
-        logging.error('Copy from %s to %s - %s', filename, oldestFile, err)
+        logging.error('Copy from %s to %s - %s', filename, recentDir, err)
 
 #-----------------------------------------------------------------------------------------------
 def filesToDelete(mediaDirPath, extension=imageFormat):
@@ -596,13 +594,13 @@ def filesToDelete(mediaDirPath, extension=imageFormat):
         key=lambda fn: os.stat(fn).st_mtime, reverse=True)
 
 #-----------------------------------------------------------------------------------------------
-def freeSpaceUpTo(spaceFreeMB, mediaDir, extension=imageFormat):
+def freeSpaceUpTo(freeMB, mediaDir, extension=imageFormat):
     """ Walks mediaDir and deletes oldest files until spaceFreeMB is achieved
         Use with Caution"""
     mediaDirPath = os.path.abspath(mediaDir)
     if os.path.isdir(mediaDirPath):
         MB2Bytes = 1048576  # Conversion from MB to Bytes
-        targetFreeBytes = spaceFreeMB * MB2Bytes
+        targetFreeBytes = freeMB * MB2Bytes
         fileList = filesToDelete(mediaDir, extension)
         totFiles = len(fileList)
         delcnt = 0
@@ -697,7 +695,7 @@ def getCurrentCount(numberpath, numberstart):
     return numbercounter
 
 #-----------------------------------------------------------------------------------------------
-def writeTextToImage(imagename, datetoprint, daymode):
+def writeTextToImage(imagename, datetoprint, currentDayMode):
     """ function to write date/time stamp directly on top or bottom of images."""
     if showTextWhite:
         FOREGROUND = (255, 255, 255)  # rgb settings for white text foreground
@@ -705,7 +703,7 @@ def writeTextToImage(imagename, datetoprint, daymode):
     else:
         FOREGROUND = (0, 0, 0)  # rgb settings for black text foreground
         textColour = "Black"
-        if showTextWhiteNight and (not daymode):
+        if showTextWhiteNight and (not currentDayMode):
             FOREGROUND = (255, 255, 255)  # rgb settings for black text foreground
             textColour = "White"
 
@@ -846,10 +844,10 @@ def takeDayImage(filename, cam_sleep_time):
         else:
             camera.capture(filename)
         camera.close()
-    logging.info("camSleepSec=%.2f exp=auto awb=auto Size=%ix%i "
-                 % (cam_sleep_time, imageWidth, imageHeight))
+    logging.info("camSleepSec=%.2f exp=auto awb=auto Size=%ix%i ",
+                 cam_sleep_time, imageWidth, imageHeight)
     if not showDateOnImage:   # showDateOnImage displays FilePath so avoid showing twice
-        logging.info("FilePath  %s" % (filename))
+        logging.info("FilePath  %s", filename)
 
 #-----------------------------------------------------------------------------------------------
 def getShut(pxAve):
@@ -904,17 +902,17 @@ def takeNightImage(filename, pixelAve):
             camera.capture(filename)
         camera.close()
     if not showDateOnImage:  # showDateOnImage displays FilePath so avoid showing twice
-        logging.info("FilePath %s" % filename)
+        logging.info("FilePath %s", filename)
 
 #-----------------------------------------------------------------------------------------------
-def takeQuickTimeLapse(moPath, imagePrefix, motionNumOn, motionNumCount, daymode, motionNumPath):
+def takeQuickTimeLapse(moPath, imagePrefix, NumOn, motionNumCount, currentDayMode, NumPath):
     """ Take a quick timelapse sequence using yield if motion triggered """
-    logging.info("motion Quick Time Lapse for %i sec every %i sec"
-                 % (motionQuickTLTimer, motionQuickTLInterval))
+    logging.info("motion Quick Time Lapse for %i sec every %i sec",
+                 motionQuickTLTimer, motionQuickTLInterval)
 
     checkTimeLapseTimer = datetime.datetime.now()
     keepTakingImages = True
-    filename = getImageName(moPath, imagePrefix, motionNumOn, motionNumCount)
+    filename = getImageName(moPath, imagePrefix, NumOn, motionNumCount)
     while keepTakingImages:
         yield filename
         rightNow = datetime.datetime.now()
@@ -922,18 +920,18 @@ def takeQuickTimeLapse(moPath, imagePrefix, motionNumOn, motionNumCount, daymode
         if timelapseDiff > motionQuickTLTimer:
             keepTakingImages = False
         else:
-            motionNumCount = postImageProcessing(motionNumOn, motionNumStart, motionNumMax,
+            motionNumCount = postImageProcessing(NumOn, motionNumStart, motionNumMax,
                                                  motionNumCount, motionNumRecycle,
-                                                 motionNumPath, filename, daymode)
-            filename = getImageName(moPath, imagePrefix, motionNumOn, motionNumCount)
+                                                 NumPath, filename, currentDayMode)
+            filename = getImageName(moPath, imagePrefix, NumOn, motionNumCount)
             time.sleep(motionQuickTLInterval)
 
 #-----------------------------------------------------------------------------------------------
 def takeVideo(filename, duration, fps=30):
     """ Take a short motion video if required """
     logging.info("File : %s" % (filename))
-    logging.info("Start: Size %ix%i for %i sec at %i fps" %
-                 (imageWidth, imageHeight, duration, fps))
+    logging.info("Start: Size %ix%i for %i sec at %i fps",
+                 imageWidth, imageHeight, duration, fps)
     if motionVideoOn or videoRepeatOn:
         with picamera.PiCamera() as camera:
             camera.resolution = (imageWidth, imageHeight)
@@ -1282,12 +1280,14 @@ def timolo():
                         stopTimeLapse = True
                 if ((not stopTimeLapse) and timelapseNumOn and (not timelapseNumRecycle)):
                     if timelapseNumMax > 0 and timelapseNumCount > (timelapseNumStart + timelapseNumMax):
-                        logging.warn("timelapseNumRecycle=%s and Counter=%i Exceeds %i" %
-                                     (timelapseNumRecycle, timelapseNumCount,
-                                      timelapseNumStart + timelapseNumMax))
+                        logging.warn("timelapseNumRecycle=%s and Counter=%i Exceeds %i",
+                                     timelapseNumRecycle, timelapseNumCount,
+                                     timelapseNumStart + timelapseNumMax)
                         logging.warn("Suppressing Further Timelapse Images")
-                        logging.warn("To RESET: Change %s Settings or Archive Images" % (configName))
-                        logging.warn("Then Delete %s and Restart %s \n" % (timelapseNumPath, progName))
+                        logging.warn("To RESET: Change %s Settings or Archive Images",
+                                     configName)
+                        logging.warn("Then Delete %s and Restart %s \n",
+                                     timelapseNumPath, progName)
                         takeTimeLapse = False  # Suppress further timelapse images
                         stopTimeLapse = True
 
@@ -1604,7 +1604,6 @@ if __name__ == '__main__':
         else:
             sys.stdout.write("User Pressed Keyboard ctrl-c \n")
             sys.stdout.write("Exiting %s %s \n" % (progName, progVer))
-        pass
 
     try:
         if pluginEnable:
