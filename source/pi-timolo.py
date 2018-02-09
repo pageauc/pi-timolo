@@ -4,8 +4,8 @@ pi-timolo - Raspberry Pi Long Duration Timelapse, Motion Tracking, with Low Ligh
 written by Claude Pageau Jul-2017 (release 7.x)
 This release uses OpenCV to do Motion Tracking.  It requires updated config.py
 """
-progVer = "ver 10.65"   # Requires Latest 10.x release of config.py
-__version__ = "10.65"   # May test for version number at a future time
+progVer = "ver 10.66"   # Requires Latest 10.x release of config.py
+__version__ = "10.66"   # May test for version number at a future time
 
 print("Loading ....")
 import datetime
@@ -211,7 +211,8 @@ elif imageJpegQuality > 100:
 #-----------------------------------------------------------------------------------------------
 class PiVideoStream:
     """ Create a picamera in memory video stream and return a frame when update called"""
-    def __init__(self, resolution=(CAMERA_WIDTH, CAMERA_HEIGHT), framerate=CAMERA_FRAMERATE, rotation=0, hflip=False, vflip=False):
+    def __init__(self, resolution=(CAMERA_WIDTH, CAMERA_HEIGHT), framerate=CAMERA_FRAMERATE,
+                 rotation=0, hflip=False, vflip=False):
         # initialize the camera and stream
         try:
             self.camera = PiCamera()
@@ -225,7 +226,8 @@ class PiVideoStream:
         self.camera.vflip = vflip
         self.camera.rotation = rotation
         self.rawCapture = PiRGBArray(self.camera, size=resolution)
-        self.stream = self.camera.capture_continuous(self.rawCapture, format="bgr", use_video_port=True)
+        self.stream = self.camera.capture_continuous(self.rawCapture, format="bgr",
+                                                     use_video_port=True)
         # initialize the frame and the variable used to indicate
         # if the thread should be stopped
         self.frame = None
@@ -329,66 +331,90 @@ def checkConfig():
 def displayInfo(motioncount, timelapsecount):
     """ Display variable settings with plugin overlays if reqd """
     if verbose:
-        print("-------------------------------------- Settings ----------------------------------------------")
-        print("Config File .. configName=%s  configTitle=%s" % (configName, configTitle))
+        print("--------------------------------- Settings --------------------------------------")
+        print("Config File .. configName=%s  configTitle=%s"
+              % (configName, configTitle))
+
         if pluginEnable:
-            print("     Plugin .. pluginEnable=%s  pluginName=%s (Overlays %s Variable Settings)"
+            print("     Plugin .. pluginEnable=%s  pluginName=%s"
+                  " (Overlays %s Variable Settings)"
                   % (pluginEnable, pluginName, configName))
         else:
-            print("     Plugin .. pluginEnable=%s  Disabled (Using Only %s Settings)" % (pluginEnable, configName))
+            print("     Plugin .. pluginEnable=%s  Disabled (Using Only %s Settings)"
+                  % (pluginEnable, configName))
         print("")
-        print("Image Info ... Size=%ix%i  Prefix=%s  VFlip=%s  HFlip=%s  Rotation=%i  Preview=%s"
-              % (imageWidth, imageHeight, imageNamePrefix, imageVFlip, imageHFlip, imageRotation, imagePreview))
-        print("               JpegQuality=%i where 1=Low 100=High(Min Compression) 0=85" % (imageJpegQuality))
-        print("   Low Light.. nightTwilightThreshold=%i  nightDarkThreshold=%i  nightBlackThreshold=%i"
+        print("Image Info ... Size=%ix%i  Prefix=%s"
+              "  VFlip=%s  HFlip=%s  Rotation=%i  Preview=%s"
+              % (imageWidth, imageHeight, imageNamePrefix,
+                 imageVFlip, imageHFlip, imageRotation, imagePreview))
+        print("               JpegQuality=%i where 1=Low 100=High(Min Compression) 0=85"
+              % (imageJpegQuality))
+        print("   Low Light.. nightTwilightThreshold=%i"
+              "  nightDarkThreshold=%i  nightBlackThreshold=%i"
               % (nightTwilightThreshold, nightDarkThreshold, nightBlackThreshold))
-        print("               nightMaxShutSec=%.2f  nightMaxISO=%i  nightDarkAdjust=%.2f  nightSleepSec=%i"
+        print("               nightMaxShutSec=%.2f  nightMaxISO=%i"
+              "  nightDarkAdjust=%.2f  nightSleepSec=%i"
               % (nightMaxShutSec, nightMaxISO, nightDarkAdjust, nightSleepSec))
         print("   No Shots .. noNightShots=%s   noDayShots=%s" % (noNightShots, noDayShots))
+
         if showDateOnImage:
-            print("   Img Text .. On=%s  Bottom=%s (False=Top)  WhiteText=%s (False=Black)  showTextWhiteNight=%s"
-                  % (showDateOnImage, showTextBottom, showTextWhite, showTextWhiteNight))
-            print("               showTextFontSize=%i px height" % (showTextFontSize))
+            print("   Img Text .. On=%s  Bottom=%s (False=Top)  WhiteText=%s (False=Black)"
+                  % (showDateOnImage, showTextBottom, showTextWhite))
+            print("               showTextWhiteNight=%s  showTextFontSize=%i px height"
+                  % (showTextWhiteNight, showTextFontSize))
         else:
-            print("    No Text .. showDateOnImage=%s  Text on Image is Disabled"  % (showDateOnImage))
+            print("    No Text .. showDateOnImage=%s  Text on Image is Disabled"
+                  % (showDateOnImage))
         print("")
 
         if motionTrackOn:
-            print("Motion Track.. On=%s  Prefix=%s  MinArea=%i sqpx  TrigLen=%i-%i px  TimeOut=%i sec"
+            print("Motion Track.. On=%s  Prefix=%s  MinArea=%i sqpx"
+                  "  TrigLen=%i-%i px  TimeOut=%i sec"
                   % (motionTrackOn, motionPrefix, motionTrackMinArea,
-                   motionTrackTrigLen, TRACK_TRIG_LEN_MAX, motionTrackTimeOut))
+                     motionTrackTrigLen, TRACK_TRIG_LEN_MAX, motionTrackTimeOut))
             print("               motionTrackInfo=%s   motionDotsOn=%s"
                   % (motionTrackInfo, motionDotsOn))
-            print("   Stream .... size=%ix%i  framerate=%i fps  motionStreamStopSec=%.2f  QuickPic=%s"
+            print("   Stream .... size=%ix%i  framerate=%i fps"
+                  "  motionStreamStopSec=%.2f  QuickPic=%s"
                   % (CAMERA_WIDTH, CAMERA_HEIGHT, motionTrackFrameRate,
                      motionStreamStopSec, motionTrackQuickPic))
             print("   Img Path .. motionPath=%s  motionCamSleep=%.2f sec"
                   % (motionPath, motionCamSleep))
-            print("   Sched ..... motionStartAt %s blank=Off or Set Valid Date and/or Time to Start Sequence"
+            print("   Sched ..... motionStartAt %s blank=Off or"
+                  " Set Valid Date and/or Time to Start Sequence"
                   % motionStartAt)
             print("   Force ..... forceTimer=%i min (If No Motion)"
                   % (motionForce/60))
-            print("   Lockfile .. On=%s  Path=%s  NOTE: Syncs for motion images only."
+            print("   Lockfile .. On=%s  Path=%s  NOTE: For Motion Images Only."
                   % (createLockFile, lockFilePath))
+
             if motionNumOn:
-                print("   Num Seq ... motionNumOn=%s  numRecycle=%s  numStart=%i   numMax=%i  current=%s"
-                      % (motionNumOn, motionNumRecycle, motionNumStart, motionNumMax, motioncount))
+                print("   Num Seq ... motionNumOn=%s  numRecycle=%s"
+                      "  numStart=%i   numMax=%i  current=%s"
+                      % (motionNumOn, motionNumRecycle, motionNumStart,
+                         motionNumMax, motioncount))
                 print("   Num Path .. motionNumPath=%s " % (motionNumPath))
             else:
-                print("   Date-Time.. motionNumOn=%s  Image Numbering is Disabled" % (motionNumOn))
+                print("   Date-Time.. motionNumOn=%s  Image Numbering is Disabled"
+                      % (motionNumOn))
+
             if motionQuickTLOn:
-                print("   Quick TL .. motionQuickTLOn=%s   motionQuickTLTimer=%i sec  motionQuickTLInterval=%i sec (0=fastest)"
+                print("   Quick TL .. motionQuickTLOn=%s   motionQuickTLTimer=%i"
+                      " sec  motionQuickTLInterval=%i sec (0=fastest)"
                       % (motionQuickTLOn, motionQuickTLTimer, motionQuickTLInterval))
             else:
                 print("   Quick TL .. motionQuickTLOn=%s  Quick Time Lapse Disabled"
                       % motionQuickTLOn)
+
             if motionVideoOn:
-                print("   Video ..... motionVideoOn=%s   motionVideoTimer=%i sec  motionVideoFPS=%i (superseded by QuickTL)"
+                print("   Video ..... motionVideoOn=%s   motionVideoTimer=%i"
+                      " sec  motionVideoFPS=%i (superseded by QuickTL)"
                       % (motionVideoOn, motionVideoTimer, motionVideoFPS))
             else:
                 print("   Video ..... motionVideoOn=%s  Motion Video is Disabled"
                       % motionVideoOn)
-            print("   Sub-Dir ... motionSubDirMaxHours=%i (0-off)  motionSubDirMaxFiles=%i (0=off)"
+            print("   Sub-Dir ... motionSubDirMaxHours=%i (0-off)"
+                  "  motionSubDirMaxFiles=%i (0=off)"
                   % (motionSubDirMaxHours, motionSubDirMaxFiles))
             print("   Recent .... motionRecentMax=%i (0=off)  motionRecentDir=%s"
                   % (motionRecentMax, motionRecentDir))
@@ -398,12 +424,14 @@ def displayInfo(motioncount, timelapsecount):
         print("")
 
         if timelapseOn:
-            print("Time Lapse ... On=%s  Prefix=%s   Timer=%i sec   timelapseExitSec=%i (0=Continuous)"
+            print("Time Lapse ... On=%s  Prefix=%s   Timer=%i sec"
+                  "   timelapseExitSec=%i (0=Continuous)"
                   % (timelapseOn, timelapsePrefix, timelapseTimer, timelapseExitSec))
             print("               timelapseMaxFiles=%i" % (timelapseMaxFiles))
             print("   Img Path .. timelapsePath=%s  timelapseCamSleep=%.2f sec"
                   % (timelapsePath, timelapseCamSleep))
-            print("   Sched ..... timelapseStartAt %s blank=Off or Set Valid Date and/or Time to Start Sequence"
+            print("   Sched ..... timelapseStartAt %s blank=Off or"
+                  " Set Valid Date and/or Time to Start Sequence"
                   % timelapseStartAt)
             if timelapseNumOn:
                 print("   Num Seq ... On=%s  numRecycle=%s  numStart=%i   numMax=%i  current=%s"
@@ -412,7 +440,8 @@ def displayInfo(motioncount, timelapsecount):
                 print("   Num Path .. numPath=%s" % (timelapseNumPath))
             else:
                 print("   Date-Time.. motionNumOn=%s  Numbering Disabled" % timelapseNumOn)
-            print("   Sub-Dir ... timelapseSubDirMaxHours=%i (0=off)  timelapseSubDirMaxFiles=%i (0=off)"
+            print("   Sub-Dir ... timelapseSubDirMaxHours=%i (0=off)"
+                  "  timelapseSubDirMaxFiles=%i (0=off)"
                   % (timelapseSubDirMaxHours, timelapseSubDirMaxFiles))
             print("   Recent .... timelapseRecentMax=%i (0=off)  timelapseRecentDir=%s"
                   % (timelapseRecentMax, timelapseRecentDir))
@@ -421,21 +450,26 @@ def displayInfo(motioncount, timelapsecount):
         print("")
 
         if spaceTimerHrs > 0:   # Check if disk mgmnt is enabled
-            print("Disk Space  .. Enabled - Manage Target Free Disk Space. Delete Oldest %s Files if Required"
+            print("Disk Space  .. Enabled - Manage Target Free Disk Space."
+                  " Delete Oldest %s Files if Required"
                   % (spaceFileExt))
-            print("               Check Every spaceTimerHrs=%i (0=off)  Target spaceFreeMB=%i (min=100 MB)  spaceFileExt=%s" %
-                  (spaceTimerHrs, spaceFreeMB, spaceFileExt))
+            print("               Check Every spaceTimerHrs=%i (0=off)"
+                  "  Target spaceFreeMB=%i (min=100 MB)  spaceFileExt=%s"
+                  % (spaceTimerHrs, spaceFreeMB, spaceFileExt))
             print("               Delete Oldest spaceFileExt=%s  spaceMediaDir=%s"
                   % (spaceFileExt, spaceMediaDir))
         else:
-            print("Disk Space  .. spaceTimerHrs=%i (Disabled) - Manage Target Free Disk Space. Delete Oldest %s Files"
+            print("Disk Space  .. spaceTimerHrs=%i "
+                  "(Disabled) - Manage Target Free Disk Space. Delete Oldest %s Files"
                   % (spaceTimerHrs, spaceFileExt))
-            print("            .. Check Every spaceTimerHrs=%i (0=Off)  Target spaceFreeMB=%i (min=100 MB)"
+            print("            .. Check Every spaceTimerHrs=%i (0=Off)"
+                  "  Target spaceFreeMB=%i (min=100 MB)"
                   % (spaceTimerHrs, spaceFreeMB))
         print("")
         print("Logging ...... verbose=%s (True=Enabled False=Disabled)" % verbose)
-        print("   Log Path .. logDataToFile=%s  logFilePath=%s" % (logDataToFile, logFilePath))
-        print("------------------------------------ Log Activity --------------------------------------------")
+        print("   Log Path .. logDataToFile=%s  logFilePath=%s"
+              % (logDataToFile, logFilePath))
+        print("------------------------------- Log Activity ------------------------------------")
     checkConfig()
 
 #-----------------------------------------------------------------------------------------------
@@ -760,7 +794,8 @@ def writeTextToImage(imagename, datetoprint, currentDayMode):
     logging.info("Saved %s", imagename)
 
 #-----------------------------------------------------------------------------------------------
-def postImageProcessing(numberon, counterstart, countermax, counter, recycle, counterpath, filename, daymode):
+def postImageProcessing(numberon, counterstart, countermax, counter,
+                        recycle, counterpath, filename, daymode):
     """ If required process text to display directly on image """
     if not motionVideoOn:
         rightNow = datetime.datetime.now()
@@ -1311,20 +1346,28 @@ def timolo():
                         print("")
                     if pluginEnable:
                         if timelapseExitSec > 0:
-                            exitSecProgress = (datetime.datetime.now() - timelapseExitStart).total_seconds()
-                            logging.info("%s Sched TimeLapse  daymode=%s  Timer=%i sec  ExitSec=%i/%i Status",
+                            exitSecProgress = (datetime.datetime.now() -
+                                               timelapseExitStart).total_seconds()
+                            logging.info("%s Sched TimeLapse  daymode=%s  Timer=%i sec"
+                                         "  ExitSec=%i/%i Status",
                                          pluginName, daymode, timelapseTimer,
                                          exitSecProgress, timelapseExitSec)
                         else:
-                            logging.info("%s Sched TimeLapse  daymode=%s  Timer=%i sec  ExitSec=%i 0=Continuous",
-                                         pluginName, daymode, timelapseTimer, timelapseExitSec)
+                            logging.info("%s Sched TimeLapse  daymode=%s"
+                                         "  Timer=%i sec  ExitSec=%i 0=Continuous",
+                                         pluginName, daymode,
+                                         timelapseTimer, timelapseExitSec)
                     else:
                         if timelapseExitSec > 0:
-                            exitSecProgress = (datetime.datetime.now() - timelapseExitStart).total_seconds()
-                            logging.info("Sched TimeLapse  daymode=%s  Timer=%i sec  ExitSec=%i/%i Status",
-                                         daymode, timelapseTimer, exitSecProgress, timelapseExitSec)
+                            exitSecProgress = (datetime.datetime.now() -
+                                               timelapseExitStart).total_seconds()
+                            logging.info("Sched TimeLapse  daymode=%s  Timer=%i sec"
+                                         "  ExitSec=%i/%i Status",
+                                         daymode, timelapseTimer,
+                                         exitSecProgress, timelapseExitSec)
                         else:
-                            logging.info("Sched TimeLapse  daymode=%s  Timer=%i sec  ExitSec=%i 0=Continuous",
+                            logging.info("Sched TimeLapse  daymode=%s  Timer=%i sec"
+                                         "  ExitSec=%i 0=Continuous",
                                          daymode, timelapseTimer, timelapseExitSec)
 
                     imagePrefix = timelapsePrefix + imageNamePrefix
@@ -1354,7 +1397,8 @@ def timolo():
                     vs.camera.hflip = imageHFlip
                     vs.camera.vflip = imageVFlip
                     time.sleep(1)
-                    tlPath = subDirChecks(timelapseSubDirMaxHours, timelapseSubDirMaxFiles, timelapseDir, timelapsePrefix)
+                    tlPath = subDirChecks(timelapseSubDirMaxHours, timelapseSubDirMaxFiles,
+                                          timelapseDir, timelapsePrefix)
             if motionTrackOn and checkSchedStart(startMO) and takeMotion and (not stopMotion):
                 # IMPORTANT - Night motion tracking may not work very well
                 #             due to long exposure times and low light
@@ -1389,13 +1433,17 @@ def timolo():
                         else:
                             motionFound = True
                             if pluginEnable:
-                                logging.info("%s Motion Triggered Start(%i,%i)  End(%i,%i) trackLen=%.i/%i px",
+                                logging.info("%s Motion Triggered Start(%i,%i)"
+                                             "  End(%i,%i) trackLen=%.i/%i px",
                                              pluginName, startPos[0], startPos[1],
-                                             movePoint2[0], movePoint2[1], trackLen, TRACK_TRIG_LEN)
+                                             movePoint2[0], movePoint2[1],
+                                             trackLen, TRACK_TRIG_LEN)
                             else:
-                                logging.info("Motion Triggered Start(%i,%i)  End(%i,%i) trackLen=%i/%i px",
+                                logging.info("Motion Triggered Start(%i,%i)"
+                                             "  End(%i,%i) trackLen=%i/%i px",
                                              startPos[0], startPos[1],
-                                             movePoint2[0], movePoint2[1], trackLen, TRACK_TRIG_LEN)
+                                             movePoint2[0], movePoint2[1],
+                                             trackLen, TRACK_TRIG_LEN)
                         image1 = vs.read()
                         image2 = image1
                         grayimage1 = cv2.cvtColor(image1, cv2.COLOR_BGR2GRAY)
@@ -1424,7 +1472,8 @@ def timolo():
                     grayimage1 = cv2.cvtColor(image1, cv2.COLOR_BGR2GRAY)
                     grayimage2 = grayimage1
                     dotCount = showDots(motionDotsMax + 2)      # New Line
-                    logging.info("No Motion Detected for %s minutes. Taking Forced Motion Image.", (motionForce / 60))
+                    logging.info("No Motion Detected for %s minutes. Taking Forced Motion Image.",
+                                 (motionForce / 60))
                     checkMotionTimer = rightNow
                     forceMotion = True
 
@@ -1446,7 +1495,8 @@ def timolo():
                         if forceMotion:
                             forceMotion = False
 
-                        # check if motion Quick Time Lapse option is On.  This option supersedes motionVideoOn
+                        # check if motion Quick Time Lapse option is On.
+                        # This option supersedes motionVideoOn
                         if motionQuickTLOn and daymode:
                             filename = getImageName(moPath, imagePrefix, motionNumOn, motionNumCount)
                             with picamera.PiCamera() as camera:
@@ -1464,10 +1514,12 @@ def timolo():
                                 motionNumCount = getCurrentCount(motionNumPath, motionNumStart)
                         else:
                             if motionVideoOn:
-                                filename = getVideoName(motionPath, imagePrefix, motionNumOn, motionNumCount)
+                                filename = getVideoName(motionPath, imagePrefix,
+                                                        motionNumOn, motionNumCount)
                                 takeVideo(filename, motionVideoTimer, motionVideoFPS)
                             else:
-                                filename = getImageName(moPath, imagePrefix, motionNumOn, motionNumCount)
+                                filename = getImageName(moPath, imagePrefix,
+                                                        motionNumOn, motionNumCount)
                                 if daymode:
                                     takeDayImage(filename, motionCamSleep)
                                 else:
@@ -1499,12 +1551,14 @@ def timolo():
                             startTrack = False
                             forceMotion = False
 
-                    moPath = subDirChecks(motionSubDirMaxHours, motionSubDirMaxFiles, motionDir, motionPrefix)
+                    moPath = subDirChecks(motionSubDirMaxHours, motionSubDirMaxFiles,
+                                          motionDir, motionPrefix)
 
                     if motionFound:
-                        # =========================================================================
-                        # Put your user code in userMotionCodeHere() function at top of this script
-                        # =========================================================================
+                        # ===========================================
+                        # Put your user code in userMotionCodeHere()
+                        # function at top of this script
+                        # ===========================================
                         userMotionCodeHere()
                         dotCount = showDots(motionDotsMax)
                 else:
@@ -1521,7 +1575,7 @@ def videoRepeat():
     if not os.path.isdir(videoPath):     # Check if folder exist and create if required
         logging.info("Create videoRepeat Folder %s", videoPath)
         os.makedirs(videoPath)
-    print("------------------------------------------------------------------------------------------")
+    print("-------------------------------------------------------------------------------------")
     print("VideoRepeat . videoRepeatOn=%s" % videoRepeatOn)
     print("   Info ..... Size=%ix%i  videoPrefix=%s  videoDuration=%i seconds  videoFPS=%i"
           % (imageWidth, imageHeight, videoPrefix, videoDuration, videoFPS))
@@ -1529,9 +1583,10 @@ def videoRepeat():
     print("   Sched .... videoStartAt=%s blank=Off or Set Valid Date and/or Time to Start Sequence"
           % videoStartAt)
     print("   Timer .... videoTimer=%i minutes  0=Continuous" % (videoTimer))
-    print("   Num Seq .. videoNumOn=%s  videoNumRecycle=%s  videoNumStart=%i  videoNumMax=%i 0=Continuous"
+    print("   Num Seq .. videoNumOn=%s  videoNumRecycle=%s  videoNumStart=%i"
+          "  videoNumMax=%i 0=Continuous"
           % (videoNumOn, videoNumRecycle, videoNumStart, videoNumMax))
-    print("------------------------------------------------------------------------------------------")
+    print("-------------------------------------------------------------------------------------")
     print("WARNING: videoRepeatOn=%s Suppresses TimeLapse and Motion Settings." % videoRepeatOn)
 
     startVideoRepeat = getSchedStart(videoStartAt)
@@ -1562,11 +1617,13 @@ def videoRepeat():
                 if videoNumCounter - videoNumStart > videoNumMax:
                     if videoNumRecycle:
                         videoNumCounter = videoNumStart
-                        logging.info("Restart Numbering: videoNumRecycle=%s and videoNumMax=%i Exceeded",
+                        logging.info("Restart Numbering: videoNumRecycle=%s "
+                                     "and videoNumMax=%i Exceeded",
                                      videoNumRecycle, videoNumMax)
                     else:
                         keepRecording = False
-                        logging.info("Exit since videoNumRecycle=%s and videoNumMax=%i Exceeded  %i Videos Recorded",
+                        logging.info("Exit since videoNumRecycle=%s "
+                                     "and videoNumMax=%i Exceeded  %i Videos Recorded",
                                      videoNumRecycle, videoNumMax, videoCount)
                 logging.info("Recorded %i of %i Videos", videoCount, videoNumMax)
             else:
@@ -1578,7 +1635,8 @@ def videoRepeat():
         if videoTimer > 0:
             if timeUsed > videoTimer * 60:
                 keepRecording = False
-                errorText = ("Stop Recording Since videoTimer=%i minutes Exceeded \n", videoTimer)
+                errorText = ("Stop Recording Since videoTimer=%i minutes Exceeded \n",
+                             videoTimer)
                 logging.warn(errorText)
                 sys.stdout.write(errorText)
             else:
