@@ -367,7 +367,7 @@ def displayInfo(motioncount, timelapsecount):
             print("   Sched ..... motionStartAt %s blank=Off or Set Valid Date and/or Time to Start Sequence"
                   % motionStartAt)
             print("   Force ..... forceTimer=%i min (If No Motion)"
-                  % motionForce/60)
+                  % (motionForce/60))
             print("   Lockfile .. On=%s  Path=%s  NOTE: Syncs for motion images only."
                   % (createLockFile, lockFilePath))
             if motionNumOn:
