@@ -355,8 +355,8 @@ def displayInfo(motioncount, timelapsecount):
 
         if motionTrackOn:
             print("Motion Track.. On=%s  Prefix=%s  MinArea=%i sqpx  TrigLen=%i-%i px  TimeOut=%i sec"
-                  (motionTrackOn, motionPrefix, motionTrackMinArea,
-                   % motionTrackTrigLen, TRACK_TRIG_LEN_MAX, motionTrackTimeOut))
+                  % (motionTrackOn, motionPrefix, motionTrackMinArea,
+                   motionTrackTrigLen, TRACK_TRIG_LEN_MAX, motionTrackTimeOut))
             print("               motionTrackInfo=%s   motionDotsOn=%s"
                   % (motionTrackInfo, motionDotsOn))
             print("   Stream .... size=%ix%i  framerate=%i fps  motionStreamStopSec=%.2f  QuickPic=%s"
