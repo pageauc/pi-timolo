@@ -1020,20 +1020,23 @@ def trackPoint(grayimage1, grayimage2):
     retval, thresholdimage = cv2.threshold(differenceimage, THRESHOLD_SENSITIVITY,
                                            255, cv2.THRESH_BINARY)
     try:
+        # opencv2 syntax default
+        contours, hierarchy = cv2.findContours(thresholdimage,
+                                               cv2.RETR_EXTERNAL,
+                                               cv2.CHAIN_APPROX_SIMPLE)
+    except ValueError:
+        # opencv 3 syntax
         thresholdimage, contours, hierarchy = cv2.findContours(thresholdimage,
                                                                cv2.RETR_EXTERNAL,
                                                                cv2.CHAIN_APPROX_SIMPLE)
-    except ValueError:
-        contours, hierarchy = cv2.findContours(thresholdimage,
-                                               cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
     if contours:
         for c in contours:
             cArea = cv2.contourArea(c)
             if cArea > biggestArea:
                 biggestArea = cArea
                 (x, y, w, h) = cv2.boundingRect(c)
-                cx = int(x + w/2)   # x centerpoint of contour
-                cy = int(y + h/2)   # y centerpoint of contour
+                cx = int(x + w/2)   # x center point of contour
+                cy = int(y + h/2)   # y center point of contour
                 movementCenterPoint = [cx, cy]
     return movementCenterPoint
 
