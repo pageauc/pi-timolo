@@ -4,8 +4,8 @@ pi-timolo - Raspberry Pi Long Duration Timelapse, Motion Tracking, with Low Ligh
 written by Claude Pageau Jul-2017 (release 7.x)
 This release uses OpenCV to do Motion Tracking.  It requires updated config.py
 """
-progVer = "ver 10.67"   # Requires Latest 10.x release of config.py
-__version__ = "10.67"   # May test for version number at a future time
+progVer = "ver 10.7"   # Requires Latest 10.x release of config.py
+__version__ = "10.7"   # May test for version number at a future time
 
 print("Loading ....")
 import datetime
@@ -29,7 +29,7 @@ try:
     # For python3 install of pyexiv2 lib See https://github.com/pageauc/pi-timolo/issues/79
     # Bypass pyexiv2 if library Not Found  (Transfers image exif data in writeTextToImage)
     import pyexiv2
-except:
+except ImportError:
     pass
 mypath = os.path.abspath(__file__)  # Find the full path of this python script
 baseDir = os.path.dirname(mypath)   # get the path location only (excluding script name)
@@ -69,7 +69,7 @@ else:
                         datefmt='%Y-%m-%d %H:%M:%S')
 try:
     import cv2
-except:
+except ImportError:
     if sys.version_info > (2, 9):
         logging.error("python3 Failed to import cv2 opencv ver 3.x")
         logging.error("Try installing opencv for python3")
@@ -82,7 +82,7 @@ except:
     sys.exit(1)
 try:
     from picamera import PiCamera
-except:
+except ImportError:
     logging.error("Problem importing picamera module")
     logging.error("Try command below to import module")
     if sys.version_info > (2, 9):
@@ -1023,7 +1023,7 @@ def trackPoint(grayimage1, grayimage2):
         thresholdimage, contours, hierarchy = cv2.findContours(thresholdimage,
                                                                cv2.RETR_EXTERNAL,
                                                                cv2.CHAIN_APPROX_SIMPLE)
-    except:
+    except ValueError:
         contours, hierarchy = cv2.findContours(thresholdimage,
                                                cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
     if contours:
