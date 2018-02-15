@@ -4,8 +4,8 @@ pi-timolo - Raspberry Pi Long Duration Timelapse, Motion Tracking, with Low Ligh
 written by Claude Pageau Jul-2017 (release 7.x)
 This release uses OpenCV to do Motion Tracking.  It requires updated config.py
 """
-progVer = "ver 10.7"   # Requires Latest 10.x release of config.py
-__version__ = "10.7"   # May test for version number at a future time
+progVer = "ver 10.8"   # Requires Latest 10.x release of config.py
+__version__ = "10.8"   # May test for version number at a future time
 
 print("Loading ....")
 import datetime
@@ -240,7 +240,7 @@ class PiVideoStream:
             self.frame = f.array
             self.rawCapture.truncate(0)
             # if the thread indicator variable is set, stop the thread
-            # and resource camera resources
+            # and release camera resources
             if self.stopped:
                 self.stream.close()
                 self.rawCapture.close()
@@ -955,7 +955,7 @@ def takeQuickTimeLapse(moPath, imagePrefix, NumOn, motionNumCount, currentDayMod
 #-----------------------------------------------------------------------------------------------
 def takeVideo(filename, duration, fps=30):
     """ Take a short motion video if required """
-    logging.info("File : %s" % (filename))
+    logging.info("File : %s", filename)
     logging.info("Start: Size %ix%i for %i sec at %i fps",
                  imageWidth, imageHeight, duration, fps)
     if motionVideoOn or videoRepeatOn:
@@ -1109,10 +1109,10 @@ def getSchedStart(dateToCheck):
                     goodDateTime = parse(timeTry)  # See if a valid time is found
                                                    # returns with current day
                 except:
-                    logging.error("Bad Date and/or Time Format %s" % dateToCheck)
+                    logging.error("Bad Date and/or Time Format %s", dateToCheck)
                     logging.error('Use a Valid Date and/or Time Format Eg "DD-MMM-YYYY HH:MM:SS"')
                     goodDateTime = datetime.datetime.now()
-                    logging.warn("Resetting date/time to Now: %s" % goodDateTime)
+                    logging.warn("Resetting date/time to Now: %s", goodDateTime)
 
         if goodDateTime < datetime.datetime.now():     # Check if date/time is past
             if ":" in dateToCheck:  # Check if there is a time component
@@ -1253,7 +1253,7 @@ def timolo():
             logging.warn("Then Delete %s and Restart %s \n", motionNumPath, progName)
             takeMotion = False
             stopMotion = True
-        if (stopTimeLapse and stopMotion):
+        if stopTimeLapse and stopMotion:
             logging.warn("NOTICE: Both Motion and Timelapse Disabled")
             logging.warn("per Num Recycle=False and Max Counter Reached or timelapseExitSec Settings")
             logging.warn("Change %s Settings or Archive/Save Media Then", configName)
@@ -1281,21 +1281,26 @@ def timolo():
         rightNow = datetime.datetime.now()   # refresh rightNow time
         if not timeToSleep(daymode):
           # Don't take images if noNightShots or noDayShots settings are valid
-            if timelapseOn and checkSchedStart(startTL):
+            if (timelapseOn and
+                checkSchedStart(startTL)):
                # Check for a scheduled date/time to start timelapse
                 if firstTimeLapse:
                     firstTimeLapse = False
                     takeTimeLapse = True
                 else:
                     takeTimeLapse = checkForTimelapse(timelapseStart)
-                if (not stopTimeLapse) and takeTimeLapse and timelapseExitSec > 0:
+                if ((not stopTimeLapse) and
+                    takeTimeLapse and
+                    timelapseExitSec > 0):
                     if (datetime.datetime.now() - timelapseExitStart).total_seconds() > timelapseExitSec:
                         logging.info("timelapseExitSec=%i Exceeded.", timelapseExitSec)
                         logging.info("Suppressing Further Timelapse Images")
                         logging.info("To RESET: Restart %s to Restart timelapseExitSec Timer. \n", progName)
                         takeTimeLapse = False  # Suppress further timelapse images
                         stopTimeLapse = True
-                if ((not stopTimeLapse) and timelapseNumOn and (not timelapseNumRecycle)):
+                if ((not stopTimeLapse) and 
+                     timelapseNumOn and
+                     (not timelapseNumRecycle)):
                     if timelapseNumMax > 0 and timelapseNumCount > (timelapseNumStart + timelapseNumMax):
                         logging.warn("timelapseNumRecycle=%s and Counter=%i Exceeds %i",
                                      timelapseNumRecycle, timelapseNumCount,
