@@ -1,6 +1,6 @@
 #!/bin/bash
 # Convenient pi-timolo-install.sh script written by Claude Pageau 1-Jul-2016
-ver="10.1"
+ver="10.2"
 progName=$(basename -- "$0")
 TIMOLO_DIR='pi-timolo'  # Default folder install location
 
@@ -165,7 +165,13 @@ fi
 echo "INFO  : $STATUS Installing pi-timolo Dependencies Wait ..."
 sudo apt-get install python-pip
 sudo pip install python-dateutil
-sudo apt-get install -yq python-picamera python3-picamera python-imaging dos2unix python-pyexiv2 libav-tools
+sudo apt-get install -yq python-picamera
+sudo apt-get install -yq python3-picamera
+sudo apt-get install -yq python-imaging
+sudo apt-get install -yq dos2unix
+sudo apt-get install -yq python-pyexiv2
+sudo apt-get install -yq libav-tools
+sudo apt-get install -yq pandoc
 sudo apt-get install -yq python-scipy  # New Dependency for enhanced motion detection
 sudo apt-get install -yq gpac   # required for MP4Box video converter
 sudo apt-get install -yq fonts-freefont-ttf # Required for Jessie Lite Only
