@@ -638,7 +638,8 @@ function do_main_menu ()
       h\ *) do_watch_menu ;;
       i\ *) do_upgrade ;;
       j\ *) pandoc -f markdown -t plain  Readme.md | more
-            do_anykey;;
+            do_anykey 
+            do_main_menu ;;
       k\ *) do_about
             do_main_menu ;;
       l\ *) do_main_menu ;;
