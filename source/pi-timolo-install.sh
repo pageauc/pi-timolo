@@ -162,7 +162,7 @@ if "$rclone_install" = true ; then
     echo "INFO  : /usr/bin/rclone Install Complete"
 fi
 
-echo "INFO  : $STATUS Installing pi-timolo Dependencies Wait ..."
+echo "INFO  : $STATUS Install pi-timolo Dependencies Wait ..."
 sudo apt-get install python-pip
 sudo pip install python-dateutil
 sudo apt-get install -yq python-picamera
@@ -171,11 +171,11 @@ sudo apt-get install -yq python-imaging
 sudo apt-get install -yq dos2unix
 sudo apt-get install -yq python-pyexiv2
 sudo apt-get install -yq libav-tools
-sudo apt-get install -yq pandoc
-sudo apt-get install -yq python-scipy  # New Dependency for enhanced motion detection
+sudo apt-get install -yq pandoc # convert markdown to plain text for Readme.md
 sudo apt-get install -yq gpac   # required for MP4Box video converter
 sudo apt-get install -yq fonts-freefont-ttf # Required for Jessie Lite Only
 sudo apt-get install -yq python-opencv
+
 dos2unix -q *
 chmod +x *py
 chmod -x config*py

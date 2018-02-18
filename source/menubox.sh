@@ -618,9 +618,9 @@ function do_main_menu ()
   "g RCLONE" "Manage File Transfers to Remote Storage" \
   "h REMOTE" "Manage pi-timolo using watch-app.sh" \
   "i UPGRADE" "Program Files from GitHub.com" \
-  "j HELP" "View Readme.md" \
-  "k ABOUT" "menubox.sh" \
-  "l STATUS" "CPU $temp   Select to Refresh" \
+  "j STATUS" "CPU $temp   Select to Refresh" \
+  "k HELP" "View Readme.md" \
+  "l ABOUT" "menubox.sh" \
   "q QUIT" "Exit This Menu Program"  3>&1 1>&2 2>&3)
 
   RET=$?
@@ -636,13 +636,15 @@ function do_main_menu ()
       f\ *) do_convid_menu ;;
       g\ *) do_sync_menu ;;
       h\ *) do_watch_menu ;;
-      i\ *) do_upgrade ;;
-      j\ *) pandoc -f markdown -t plain  Readme.md | more
-            do_anykey 
+      i\ *) clear
+            do_upgrade ;;
+      j\ *) clear
             do_main_menu ;;
-      k\ *) do_about
+      k\ *) pandoc -f markdown -t plain  Readme.md | more
+            do_anykey
             do_main_menu ;;
-      l\ *) do_main_menu ;;
+      l\ *) do_about
+            do_main_menu ;;
       q\ *) clear
             exit 0 ;;
          *) whiptail --msgbox "Programmer error: unrecognised option" 20 60 1 ;;
