@@ -4,8 +4,8 @@ pi-timolo - Raspberry Pi Long Duration Timelapse, Motion Tracking, with Low Ligh
 written by Claude Pageau Jul-2017 (release 7.x)
 This release uses OpenCV to do Motion Tracking.  It requires updated config.py
 """
-progVer = "ver 10.9"   # Requires Latest 10.x release of config.py
-__version__ = "10.9"   # May test for version number at a future time
+progVer = "ver 10.91"   # Requires Latest 10.x release of config.py
+__version__ = "10.91"   # May test for version number at a future time
 
 print("Loading ....")
 import datetime
@@ -320,7 +320,7 @@ def checkConfig():
 
 #-----------------------------------------------------------------------------------------------
 def displayInfo(motioncount, timelapsecount):
-    """ Display variable settings with plugin overlays if reqd """
+    """ Display variable settings with plugin overlays if required """
     if verbose:
         print("--------------------------------- Settings --------------------------------------")
         print("Config File .. configName=%s  configTitle=%s"
@@ -472,7 +472,10 @@ def subDirLatest(directory):
 
 #-----------------------------------------------------------------------------------------------
 def subDirCreate(directory, prefix):
-    """ Create a subdirectory in directory with unique name based on prefix and date time """
+    """
+    Create a subdirectory in directory with
+    unique name based on prefix and date time
+    """
     now = datetime.datetime.now()
     # Specify folder naming
     subDirName = ('%s%d-%02d-%02d-%02d%02d' % (prefix, now.year, now.month, now.day,
@@ -505,8 +508,10 @@ def subDirCheckMaxFiles(directory, filesMax):
 
 #-----------------------------------------------------------------------------------------------
 def subDirCheckMaxHrs(directory, hrsMax, prefix):
-    """Note to self need to add error checking
-       extract the date-time from the directory name """
+    """
+    Note to self need to add error checking
+    extract the date-time from the directory name
+    """
     dirName = os.path.split(directory)[1] # split dir path and keep dirName
     dirStr = dirName.replace(prefix, '')  # remove prefix from dirName so just date-time left
     dirDate = datetime.datetime.strptime(dirStr, "%Y-%m-%d-%H:%M")  # convert string to datetime
@@ -549,7 +554,9 @@ def subDirChecks(maxHours, maxFiles, directory, prefix):
 
 #-----------------------------------------------------------------------------------------------
 def checkMediaPaths():
-    """ Checks for image folders and creates them if they do not already exist."""
+    """
+    Checks for image folders and creates them if they do not already exist.
+    """
     if motionTrackOn:
         if not os.path.isdir(motionPath):
             logging.info("Create Motion Media Folder %s", motionPath)
@@ -592,7 +599,9 @@ def checkMediaPaths():
 
 #-----------------------------------------------------------------------------------------------
 def deleteOldFiles(maxFiles, dirPath, prefix):
-    """ Delete Oldest files gt or eq to maxfiles that match filename prefix """
+    """
+    Delete Oldest files gt or eq to maxfiles that match filename prefix
+    """
     try:
         fileList = sorted(glob.glob(os.path.join(dirPath, prefix + '*')), key=os.path.getmtime)
     except OSError as err:
@@ -609,8 +618,10 @@ def deleteOldFiles(maxFiles, dirPath, prefix):
 
 #-----------------------------------------------------------------------------------------------
 def saveRecent(recentMax, recentDir, filename, prefix):
-    """ save specified most recent files (timelapse and/or motion)
-    in recent subfolder """
+    """
+    save specified most recent files (timelapse and/or motion)
+    in recent subfolder
+    """
     deleteOldFiles(recentMax, recentDir, prefix)
     try:    # Copy image file to recent folder
         shutil.copy(filename, recentDir)
@@ -619,8 +630,10 @@ def saveRecent(recentMax, recentDir, filename, prefix):
 
 #-----------------------------------------------------------------------------------------------
 def filesToDelete(mediaDirPath, extension=imageFormat):
-    """Deletes files of specified format extension
-       by walking folder structure from specified mediaDirPath"""
+    """
+    Deletes files of specified format extension
+    by walking folder structure from specified mediaDirPath
+    """
     return sorted(
         (os.path.join(dirname, filename)
          for dirname, dirnames, filenames in os.walk(mediaDirPath)
@@ -630,8 +643,10 @@ def filesToDelete(mediaDirPath, extension=imageFormat):
 
 #-----------------------------------------------------------------------------------------------
 def freeSpaceUpTo(freeMB, mediaDir, extension=imageFormat):
-    """ Walks mediaDir and deletes oldest files until spaceFreeMB is achieved
-        Use with Caution"""
+    """
+    Walks mediaDir and deletes oldest files until spaceFreeMB is achieved.
+    You should Use with Caution this feature.
+    """
     mediaDirPath = os.path.abspath(mediaDir)
     if os.path.isdir(mediaDirPath):
         MB2Bytes = 1048576  # Conversion from MB to Bytes
@@ -1256,12 +1271,14 @@ def timolo():
             stopMotion = True
         if stopTimeLapse and stopMotion:
             logging.warn("NOTICE: Both Motion and Timelapse Disabled")
-            logging.warn("per Num Recycle=False and Max Counter Reached or timelapseExitSec Settings")
+            logging.warn("per Num Recycle=False and "
+                         "Max Counter Reached or timelapseExitSec Settings")
             logging.warn("Change %s Settings or Archive/Save Media Then", configName)
             logging.warn("Delete appropriate .dat File(s) to Reset Counter(s)")
             logging.warn("Exiting %s %s \n", progName, progVer)
             sys.exit(1)
-        if spaceTimerHrs > 0:  # if required check free disk space and delete older files (jpg)
+        # if required check free disk space and delete older files (jpg)
+        if spaceTimerHrs > 0:
             lastSpaceCheck = freeDiskSpaceCheck(lastSpaceCheck)
 
         # use image2 to check daymode as image1 may be average
@@ -1282,27 +1299,26 @@ def timolo():
         rightNow = datetime.datetime.now()   # refresh rightNow time
         if not timeToSleep(daymode):
           # Don't take images if noNightShots or noDayShots settings are valid
-            if (timelapseOn and
-                checkSchedStart(startTL)):
+            if (timelapseOn and checkSchedStart(startTL)):
                # Check for a scheduled date/time to start timelapse
                 if firstTimeLapse:
                     firstTimeLapse = False
                     takeTimeLapse = True
                 else:
                     takeTimeLapse = checkForTimelapse(timelapseStart)
-                if ((not stopTimeLapse) and
-                    takeTimeLapse and
-                    timelapseExitSec > 0):
+                if ((not stopTimeLapse) and takeTimeLapse and
+                        timelapseExitSec > 0):
                     if (datetime.datetime.now() - timelapseExitStart).total_seconds() > timelapseExitSec:
                         logging.info("timelapseExitSec=%i Exceeded.", timelapseExitSec)
                         logging.info("Suppressing Further Timelapse Images")
-                        logging.info("To RESET: Restart %s to Restart timelapseExitSec Timer. \n", progName)
+                        logging.info("To RESET: Restart %s to Restart "
+                                     "timelapseExitSec Timer. \n", progName)
                         takeTimeLapse = False  # Suppress further timelapse images
                         stopTimeLapse = True
-                if ((not stopTimeLapse) and
-                     timelapseNumOn and
-                     (not timelapseNumRecycle)):
-                    if timelapseNumMax > 0 and timelapseNumCount > (timelapseNumStart + timelapseNumMax):
+                if ((not stopTimeLapse) and timelapseNumOn
+                        and (not timelapseNumRecycle)):
+                    if (timelapseNumMax > 0 and
+                            timelapseNumCount > (timelapseNumStart + timelapseNumMax)):
                         logging.warn("timelapseNumRecycle=%s and Counter=%i Exceeds %i",
                                      timelapseNumRecycle, timelapseNumCount,
                                      timelapseNumStart + timelapseNumMax)
