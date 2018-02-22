@@ -4,8 +4,8 @@ pi-timolo - Raspberry Pi Long Duration Timelapse, Motion Tracking, with Low Ligh
 written by Claude Pageau Jul-2017 (release 7.x)
 This release uses OpenCV to do Motion Tracking.  It requires updated config.py
 """
-progVer = "ver 10.8"   # Requires Latest 10.x release of config.py
-__version__ = "10.8"   # May test for version number at a future time
+progVer = "ver 10.9"   # Requires Latest 10.x release of config.py
+__version__ = "10.9"   # May test for version number at a future time
 
 print("Loading ....")
 import datetime
@@ -700,7 +700,8 @@ def getCurrentCount(numberpath, numberstart):
         f.closed
         try:
             numbercounter = int(writeCount)
-        except ValueError:   # Found Corrupt dat file since cannot convert to integer
+        # Found Corrupt dat file since cannot convert to integer
+        except ValueError:
             # Try to determine if this is motion or timelapse
             if numberpath.find(motionPrefix) > 0:
                 filePath = motionPath + "/*" + imageFormat
@@ -709,7 +710,8 @@ def getCurrentCount(numberpath, numberstart):
                 filePath = timelapsePath + "/*" + imageFormat
                 fprefix = timelapsePath + timelapsePrefix + imageNamePrefix
             try:
-               # Scan image folder for most recent file and try to extract numbercounter
+               # Scan image folder for most recent file
+               # and try to extract most recent number counter
                 newest = max(glob.iglob(filePath), key=os.path.getctime)
                 writeCount = newest[len(fprefix)+1:newest.find(imageFormat)]
             except:
@@ -785,11 +787,11 @@ def postImageProcessing(numberon, counterstart, countermax, counter,
                             % (rightNow.year, rightNow.month, rightNow.day,
                                rightNow.hour, rightNow.minute, rightNow.second))
             if numberon:
-                if recycle:
-                    counterStr = "%i  "  % (counter)
+                if not recycle and countermax > 0:
+                    counterStr = "%i/%i "  % (counter, counterstart + countermax)
                     imageText = counterStr + dateTimeText
                 else:
-                    counterStr = "%i/%i "  % (counter, counterstart + countermax)
+                    counterStr = "%i  "  % (counter)
                     imageText = counterStr + dateTimeText
             else:
                 imageText = dateTimeText
@@ -806,9 +808,8 @@ def postImageProcessing(numberon, counterstart, countermax, counter,
                     counter = counterstart
                 else:
                     counter = counterstart + countermax + 1
-                    errorText = ("Exceeded Image Count numberMax=%i for %s \n"
-                                 % (countermax, filename))
-                    logging.warn(errorText)
+                    logging.warn("Exceeded Image Count numberMax=%i for %s \n",
+                                 countermax, filename)
         # write next image counter number to dat file
         writeCount = str(counter)
         if not os.path.exists(counterpath):
@@ -1298,7 +1299,7 @@ def timolo():
                         logging.info("To RESET: Restart %s to Restart timelapseExitSec Timer. \n", progName)
                         takeTimeLapse = False  # Suppress further timelapse images
                         stopTimeLapse = True
-                if ((not stopTimeLapse) and 
+                if ((not stopTimeLapse) and
                      timelapseNumOn and
                      (not timelapseNumRecycle)):
                     if timelapseNumMax > 0 and timelapseNumCount > (timelapseNumStart + timelapseNumMax):
