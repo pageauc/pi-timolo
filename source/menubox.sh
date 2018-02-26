@@ -119,11 +119,12 @@ function do_makevideo_menu ()
     do_main_menu
   elif [ $RET -eq 0 ]; then
     case "$SELECTION" in
-      a\ *) do_makevideo ;;
+      a\ *) do_makevideo 
+            do_makevideo_menu ;;
       b\ *) do_makevideo_config
             do_makevideo_menu ;;
       c\ *) clear
-            cat $DIR/video.conf
+            more $DIR/video.conf
             do_anykey
             do_makevideo_menu ;;
       q\ *) do_main_menu ;;
