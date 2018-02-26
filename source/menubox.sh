@@ -1,6 +1,6 @@
 #!/bin/bash
 
-ver="10.00"
+ver="10.10"
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 cd $DIR
@@ -293,6 +293,7 @@ function do_plugins_edit ()
     else
         echo "User Pressed Cancel. with No File Selected"
     fi
+    cd $DIR
 }
 
 #------------------------------------------------------------------------------
@@ -319,6 +320,7 @@ function do_sync_run ()
     else
         echo "User Pressed Cancel. with No File Selected"
     fi
+    cd $DIR
 }
 
 #------------------------------------------------------------------------------
@@ -606,6 +608,7 @@ function do_about()
 #------------------------------------------------------------------------------
 function do_main_menu ()
 {
+  cd $DIR
   init_status
   temp="$(/opt/vc/bin/vcgencmd measure_temp)"
   SELECTION=$(whiptail --title "pi-timolo Main Menu" --menu "Arrow/Enter Selects or Tab Key" 0 0 0 --cancel-button Quit --ok-button Select \
