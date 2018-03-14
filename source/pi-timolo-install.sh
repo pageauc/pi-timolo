@@ -1,6 +1,6 @@
 #!/bin/bash
 # Convenient pi-timolo-install.sh script written by Claude Pageau 1-Jul-2016
-ver="10.2"
+ver="10.3"
 progName=$(basename -- "$0")
 TIMOLO_DIR='pi-timolo'  # Default folder install location
 
@@ -163,8 +163,7 @@ if "$rclone_install" = true ; then
 fi
 
 echo "INFO  : $STATUS Install pi-timolo Dependencies Wait ..."
-sudo apt-get install python-pip
-sudo pip install python-dateutil
+
 sudo apt-get install -yq python-picamera
 sudo apt-get install -yq python3-picamera
 sudo apt-get install -yq python-imaging
@@ -175,6 +174,8 @@ sudo apt-get install -yq pandoc # convert markdown to plain text for Readme.md
 sudo apt-get install -yq gpac   # required for MP4Box video converter
 sudo apt-get install -yq fonts-freefont-ttf # Required for Jessie Lite Only
 sudo apt-get install -yq python-opencv
+sudo apt-get install -yq python-pip
+sudo pip install python-dateutil
 
 dos2unix -q *
 chmod +x *py
