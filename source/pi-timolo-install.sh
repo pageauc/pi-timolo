@@ -169,13 +169,13 @@ sudo apt-get install -yq python3-picamera
 sudo apt-get install -yq python-imaging
 sudo apt-get install -yq dos2unix
 sudo apt-get install -yq python-pyexiv2
-sudo apt-get install -yq libav-tools
+sudo apt-get install -yq libav-tools  # used for makevideo gpac
 sudo apt-get install -yq pandoc # convert markdown to plain text for Readme.md
 sudo apt-get install -yq gpac   # required for MP4Box video converter
 sudo apt-get install -yq fonts-freefont-ttf # Required for Jessie Lite Only
 sudo apt-get install -yq python-opencv
 sudo apt-get install -yq python-pip
-sudo pip install python-dateutil
+sudo pip install python-dateutil  # used for scheduled date/time feature
 
 dos2unix -q *
 chmod +x *py
