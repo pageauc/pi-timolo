@@ -30,7 +30,7 @@ imageVFlip = False             # default= False True Flips image Vertically
 imageHFlip = False             # default= False True Flips image Horizontally
 showDateOnImage = True         # default= True False=Do Not display date/time text on images
 
-motionVideoFPS = 30            # default= 30  If image size reduced to 640x480 then slow motion is possible at 90 fps
+motionVideoFPS = 25            # default= 25 If image size reduced to 640x480 then slow motion is possible at 90 fps
 motionVideoTimer = 10          # default= 10 seconds of video clip to take if Motion Detected
 motionNumOn = False            # default= False  True=filenames by sequenced Number  False=filenames by date/time
 # Use settings below if motionNumOn = True
