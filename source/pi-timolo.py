@@ -33,8 +33,8 @@ try:
 except ImportError:
     pass
 
-progVer = "ver 10.92"   # Requires Latest 10.x release of config.py
-__version__ = "10.92"   # May test for version number at a future time
+progVer = "ver 10.93"   # Requires Latest 10.x release of config.py
+__version__ = "10.93"   # May test for version number at a future time
 
 mypath = os.path.abspath(__file__) # Find the full path of this python script
 # get the path location only (excluding script name)
@@ -1031,18 +1031,17 @@ def takeQuickTimeLapse(moPath, imagePrefix, NumOn, motionNumCount,
         yield filename
         rightNow = datetime.datetime.now()
         timelapseDiff = (rightNow - checkTimeLapseTimer).total_seconds()
+        motionNumCount = postImageProcessing(NumOn,
+                                             motionNumStart,
+                                             motionNumMax,
+                                             motionNumCount,
+                                             motionNumRecycle,
+                                             NumPath, filename,
+                                             currentDayMode)
+        filename = getImageName(moPath, imagePrefix, NumOn, motionNumCount)
+        time.sleep(motionQuickTLInterval)
         if timelapseDiff > motionQuickTLTimer:
             keepTakingImages = False
-        else:
-            motionNumCount = postImageProcessing(NumOn,
-                                                 motionNumStart,
-                                                 motionNumMax,
-                                                 motionNumCount,
-                                                 motionNumRecycle,
-                                                 NumPath, filename,
-                                                 currentDayMode)
-            filename = getImageName(moPath, imagePrefix, NumOn, motionNumCount)
-            time.sleep(motionQuickTLInterval)
 
 #------------------------------------------------------------------------------
 def takeVideo(filename, duration, fps=30):
