@@ -1105,14 +1105,13 @@ def takeVideo(filename, duration, fps=25):
             camera.wait_recording(duration)
             camera.stop_recording()
             camera.close()
-        # This creates a subprocess that runs convid.sh
-        # with the filename as a parameter.  Note this will take
-        # some time so MP4Box logging info will be delayed
+        # This creates a subprocess that runs MP4Box to convert h264 file
+        # to MP4 with the filename as a parameter.  Note this will take
+        # some time so MP4Box logging info will be delayed.
         try:
-            # convid = "%s/convid.sh %s" % (baseDir, filename)
             logging.info("MP4Box %s", filePathMP4)
-            proc = subprocess.Popen(h264_mp4_cmd, shell=True, stdin=None, stdout=None,
-                                    stderr=None, close_fds=True)
+            proc = subprocess.Popen(h264_mp4_cmd, shell=True, stdin=None,
+                                    stdout=None, stderr=None, close_fds=True)
         except IOError:
             logging.error("subprocess %s", h264_mp4_cmd)
         if motionRecentMax > 0:
@@ -1156,7 +1155,8 @@ def trackPoint(grayimage1, grayimage2):
     differenceimage = cv2.blur(differenceimage, (BLUR_SIZE, BLUR_SIZE))
     # Get threshold of blurred difference image
     # based on THRESHOLD_SENSITIVITY variable
-    retval, thresholdimage = cv2.threshold(differenceimage, THRESHOLD_SENSITIVITY,
+    retval, thresholdimage = cv2.threshold(differenceimage,
+                                           THRESHOLD_SENSITIVITY,
                                            255, cv2.THRESH_BINARY)
     try:
         # opencv2 syntax default
@@ -1253,10 +1253,13 @@ def getSchedStart(dateToCheck):
                     # See if a valid time is found returns with current day
                     goodDateTime = parse(timeTry)
                 except:
-                    logging.error("Bad Date and/or Time Format %s", dateToCheck)
-                    logging.error('Use a Valid Date and/or Time Format Eg "DD-MMM-YYYY HH:MM:SS"')
+                    logging.error("Bad Date and/or Time Format %s",
+                                  dateToCheck)
+                    logging.error('Use a Valid Date and/or Time '
+                                  'Format Eg "DD-MMM-YYYY HH:MM:SS"')
                     goodDateTime = datetime.datetime.now()
-                    logging.warn("Resetting date/time to Now: %s", goodDateTime)
+                    logging.warn("Resetting date/time to Now: %s",
+                                 goodDateTime)
         # Check if date/time is past
         if goodDateTime < datetime.datetime.now():
             if ":" in dateToCheck:  # Check if there is a time component
@@ -1458,11 +1461,13 @@ def timolo():
                     if ((datetime.datetime.now() -
                          timelapseExitStart).total_seconds() >
                             timelapseExitSec):
-                        logging.info("timelapseExitSec=%i Exceeded.", timelapseExitSec)
+                        logging.info("timelapseExitSec=%i Exceeded.",
+                                     timelapseExitSec)
                         logging.info("Suppressing Further Timelapse Images")
                         logging.info("To RESET: Restart %s to Restart "
                                      "timelapseExitSec Timer. \n", progName)
-                        takeTimeLapse = False  # Suppress further timelapse images
+                        # Suppress further timelapse images
+                        takeTimeLapse = False
                         stopTimeLapse = True
                 if ((not stopTimeLapse) and timelapseNumOn
                         and (not timelapseNumRecycle)):
@@ -1680,7 +1685,8 @@ def timolo():
                                                         imagePrefix,
                                                         motionNumOn,
                                                         motionNumCount)
-                                takeVideo(filename, motionVideoTimer, motionVideoFPS)
+                                takeVideo(filename, motionVideoTimer,
+                                          motionVideoFPS)
                             else:
                                 filename = getImageName(moPath,
                                                         imagePrefix,
@@ -1802,7 +1808,8 @@ def videoRepeat():
                         logging.info("Exit since videoNumRecycle=%s "
                                      "and videoNumMax=%i Exceeded  %i Videos Recorded",
                                      videoNumRecycle, videoNumMax, videoCount)
-                logging.info("Recorded %i of %i Videos", videoCount, videoNumMax)
+                logging.info("Recorded %i of %i Videos",
+                             videoCount, videoNumMax)
             else:
                 logging.info("Recorded %i Videos  videoNumMax=%i 0=Continuous",
                              videoCount, videoNumMax)
@@ -1821,7 +1828,8 @@ def videoRepeat():
                              timeRemaining, videoTimer)
         else:
             videoStartTime = datetime.datetime.now()
-    logging.info("Exit: %i Videos Recorded in Folder %s", videoCount, videoPath)
+    logging.info("Exit: %i Videos Recorded in Folder %s",
+                 videoCount, videoPath)
 
 #------------------------------------------------------------------------------
 if __name__ == '__main__':
