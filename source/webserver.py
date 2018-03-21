@@ -10,7 +10,7 @@ import urllib
 from SimpleHTTPServer import SimpleHTTPRequestHandler
 from StringIO import StringIO
 
-PROG_VER = "ver 10.49 written by Claude Pageau"
+PROG_VER = "ver 10.95 written by Claude Pageau"
 '''
  SimpleHTTPServer python program to allow selection of images from right panel and display in an iframe left panel
  Use for local network use only since this is not guaranteed to be a secure web server.
@@ -82,6 +82,11 @@ class DirectoryHandler(SimpleHTTPRequestHandler):
     def list_directory(self, path):
         try:
             list = os.listdir(path)
+            for name in list:
+                fullname = os.path.join(path, name)
+                if (os.path.islink(fullname) and
+                    not os.path.exists(os.path.realpath(fullname))):
+                    list.remove(name)
             all_entries = len(list)
         except os.error:
             self.send_error(404, "No permission to list directory")
@@ -143,7 +148,8 @@ class DirectoryHandler(SimpleHTTPRequestHandler):
             date_modified = time.strftime('%H:%M:%S %d-%b-%Y', time.localtime(os.path.getmtime(fullname)))
             # Append / for directories or @ for symbolic links
             if os.path.islink(fullname):
-                displayname = name + "@"
+                if os.path.exists(os.path.realpath(fullname)):
+                    displayname = name + "@"
                 # Note: a link to a directory displays with @ and links with /
             if os.path.isdir(fullname):
                 # Note this will open a new tab to display the selected folder.
@@ -211,8 +217,8 @@ try:
     httpd.serve_forever()
 except KeyboardInterrupt:
     print("")
-    print("User Pressed ctrl-c")    
-    print("%s %s" % (PROG_NAME, PROG_VER))    
+    print("User Pressed ctrl-c")
+    print("%s %s" % (PROG_NAME, PROG_VER))
     print("Exiting Bye ...")
     httpd.shutdown()
     httpd.socket.close()

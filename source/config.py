@@ -73,10 +73,10 @@ motionPrefix = "mo-"        # default= "mo-" Prefix for all Motion Detect images
 motionStartAt = ""          # default= "" Off or Specify date/time to Start Sequence Eg "01-jan-20018 08:00:00" or "20:00:00"
 motionVideoOn = False       # default= False  True=Take a video clip rather than image
 motionVideoFPS = 15         # default= 15  If image size reduced to 640x480 then slow motion is possible at 90 fps
-motionVideoTimer = 30       # default= 30 seconds of video clip to take if Motion Detected
+motionVideoTimer = 10       # default= 10 seconds of video clip to take if Motion Detected
 motionQuickTLOn = False     # default= False  True=Take a quick time lapse sequence rather than a single image (overrides motionVideoOn)
-motionQuickTLTimer = 10     # default= 10 Duration in seconds of quick time lapse sequence after initial motion detected
-motionQuickTLInterval = 0   # default= 0 seconds between each Quick time lapse image. 0 is fast as possible
+motionQuickTLTimer = 20     # default= 20 Duration in seconds of quick time lapse sequence after initial motion detected
+motionQuickTLInterval = 4   # default= 0 seconds between each Quick time lapse image. 0 is fast as possible
 motionForce = 3600          # default= 3600 seconds (1 hr) Off=0  Force an image if no Motion Detected in specified seconds.
 motionNumOn = True          # default= True filenames by sequenced Number  False= filenames by date/time
 motionNumRecycle = True     # default= True when NumMax reached restart at NumStart instead of exiting

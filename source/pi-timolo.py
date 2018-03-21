@@ -33,8 +33,8 @@ try:
 except ImportError:
     pass
 
-progVer = "ver 10.93"   # Requires Latest 10.x release of config.py
-__version__ = "10.93"   # May test for version number at a future time
+progVer = "ver 10.95"   # Requires Latest 10.x release of config.py
+__version__ = "10.95"   # May test for version number at a future time
 
 mypath = os.path.abspath(__file__) # Find the full path of this python script
 # get the path location only (excluding script name)
@@ -659,21 +659,26 @@ def deleteOldFiles(maxFiles, dirPath, prefix):
             oldestFile = oldest
             try:   # Remove oldest file in recent folder
                 fileList.remove(oldest)
+                logging.info('%s', oldestFile)
                 os.remove(oldestFile)
             except OSError as err:
-                logging.error('Cannot Remove %s - %s', oldestFile, err)
+                logging.error('Failed %s  err: %s', oldestFile, err)
 
 #------------------------------------------------------------------------------
 def saveRecent(recentMax, recentDir, filename, prefix):
     """
-    save specified most recent files (timelapse and/or motion)
-    in recent subfolder
+    Create a symlink file in recent folder (timelapse or motion subfolder)
+    Delete Oldest symlink file if recentMax exceeded.
     """
-    deleteOldFiles(recentMax, recentDir, prefix)
-    try:    # Copy image file to recent folder
-        shutil.copy(filename, recentDir)
+    src = os.path.abspath(filename)  # original file path
+    dest = os.path.abspath(os.path.join(recentDir,
+                                        os.path.basename(filename)))
+    deleteOldFiles(recentMax, os.path.abspath(recentDir), prefix)
+    try:    # Create symlink in recent folder
+        logging.info('symlink %s', dest)
+        os.symlink(src, dest)  # Create a symlink to actual file
     except OSError as err:
-        logging.error('Copy from %s to %s - %s', filename, recentDir, err)
+        logging.error('symlink %s to %s  err: %s', dest, src, err)
 
 #------------------------------------------------------------------------------
 def filesToDelete(mediaDirPath, extension=imageFormat):
@@ -1022,10 +1027,11 @@ def takeNightImage(filename, pixelAve):
 def takeQuickTimeLapse(moPath, imagePrefix, NumOn, motionNumCount,
                        currentDayMode, NumPath):
     """ Take a quick timelapse sequence using yield if motion triggered """
-    logging.info("motion Quick Time Lapse for %i sec every %i sec",
+    logging.info("Start Sequence for %i sec every %i sec",
                  motionQuickTLTimer, motionQuickTLInterval)
     checkTimeLapseTimer = datetime.datetime.now()
     keepTakingImages = True
+    imgCnt = 0
     filename = getImageName(moPath, imagePrefix, NumOn, motionNumCount)
     while keepTakingImages:
         yield filename
@@ -1039,14 +1045,39 @@ def takeQuickTimeLapse(moPath, imagePrefix, NumOn, motionNumCount,
                                              NumPath, filename,
                                              currentDayMode)
         filename = getImageName(moPath, imagePrefix, NumOn, motionNumCount)
-        time.sleep(motionQuickTLInterval)
         if timelapseDiff > motionQuickTLTimer:
             keepTakingImages = False
+        else:
+            imgCnt += 1
+            if motionRecentMax > 0:
+                saveRecent(motionRecentMax,
+                           motionRecentDir,
+                           filename,
+                           imagePrefix)
+            time.sleep(motionQuickTLInterval)
+    logging.info('End Sequence Total %i Images in %i seconds',
+                 imgCnt, timelapseDiff)
 
 #------------------------------------------------------------------------------
-def takeVideo(filename, duration, fps=30):
+def takeVideo(filename, duration, fps=25):
     """ Take a short motion video if required """
-    logging.info("File : %s", filename)
+    # Working folder for h264 videos
+    h264_work = os.path.join(baseDir, "h264_work")
+    if not os.path.exists(h264_work):
+        try:
+            os.makedirs(h264_work)
+        except OSError as err:
+            logging.error('%s  err: %s', h264_work, err)
+        else:
+            logging.info('Created Dir %s', h264_work)
+    filePath264 = os.path.join(h264_work, os.path.basename(filename))
+    # Final destination for mp4 videos
+    filePathMP4 = os.path.join(os.path.dirname(filename),
+                               os.path.splitext(os.path.basename(filename))[0] + ".mp4")
+    # command to convert h264 video to mp4
+    h264_mp4_cmd = ("/usr/bin/MP4Box -add %s:fps=%i -new %s" %
+                    (filePath264, fps, filePathMP4))
+    logging.info("File : %s", filePath264)
     logging.info("Start: Size %ix%i for %i sec at %i fps",
                  imageWidth, imageHeight, duration, fps)
     if motionVideoOn or videoRepeatOn:
@@ -1070,18 +1101,25 @@ def takeVideo(filename, duration, fps=30):
                 camera.annotate_foreground = picamera.Color('black')
                 camera.annotate_background = picamera.Color('white')
                 camera.annotate_text = dateTimeText
-            camera.start_recording(filename)
+            camera.start_recording(filePath264)
             camera.wait_recording(duration)
             camera.stop_recording()
             camera.close()
         # This creates a subprocess that runs convid.sh
-        # with the filename as a parameter
+        # with the filename as a parameter.  Note this will take
+        # some time so MP4Box logging info will be delayed
         try:
-            convid = "%s/convid.sh %s" % (baseDir, filename)
-            proc = subprocess.Popen(convid, shell=True, stdin=None, stdout=None,
+            # convid = "%s/convid.sh %s" % (baseDir, filename)
+            logging.info("MP4Box %s", filePathMP4)
+            proc = subprocess.Popen(h264_mp4_cmd, shell=True, stdin=None, stdout=None,
                                     stderr=None, close_fds=True)
         except IOError:
-            logging.error("Sub Process %s Failed", convid)
+            logging.error("subprocess %s", h264_mp4_cmd)
+        if motionRecentMax > 0:
+            saveRecent(motionRecentMax,
+                       motionRecentDir,
+                       filePathMP4,
+                       motionPrefix)
         createSyncLockFile(filename)
 
 #------------------------------------------------------------------------------
@@ -1290,7 +1328,6 @@ def timolo():
     trackLen = 0.0
     if spaceTimerHrs > 0:
         lastSpaceCheck = datetime.datetime.now()
-
     if timelapseOn:
         tlstr = "TimeLapse"
         # Check if timelapse subDirs reqd and create one if non exists
@@ -1409,7 +1446,7 @@ def timolo():
         if not timeToSleep(daymode):
             # Don't take images if noNightShots
             # or noDayShots settings are valid
-            if (timelapseOn and checkSchedStart(startTL)):
+            if timelapseOn and checkSchedStart(startTL):
                # Check for a scheduled date/time to start timelapse
                 if firstTimeLapse:
                     firstTimeLapse = False
@@ -1540,7 +1577,7 @@ def timolo():
                         if trackLen > TRACK_TRIG_LEN_MAX:
                             motionFound = False
                             if motionTrackInfo:
-                                logging.info("TrackLen %if px Exceeded %i px Max Trig Len Allowed.",
+                                logging.info("TrackLen %i px Exceeded %i px Max Trig Len Allowed.",
                                              trackLen, TRACK_TRIG_LEN_MAX)
                         else:
                             motionFound = True
@@ -1564,7 +1601,7 @@ def timolo():
                         startPos = []
                         trackLen = 0.0
                 # Track timed out
-                if ((time.time() - trackTimeout > trackTimer) and startTrack):
+                if (time.time() - trackTimeout > trackTimer) and startTrack:
                     image1 = vs.read()
                     image2 = image1
                     grayimage1 = cv2.cvtColor(image1, cv2.COLOR_BGR2GRAY)
