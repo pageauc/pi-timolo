@@ -18,7 +18,7 @@ rcloneName="gdmedia"     # Name of Remote Storage Service
 syncRoot="/home/pi/pi-timolo"   # Root Folder to Start
 localDir="media/recent/timelapse"         # Source Folder on Local
 remoteDir="mycam/videos"        # Destination Folder on Remote
-rcloneParam="sync"       # rclone option to perform  Eg  sync, copy, move
+rcloneParam="sync -L"    # -L follow symlinks. other options  Eg sync, copy, move 
                          # IMPORTANT: sync will make remoteDir identical to localDir
                          # so remoteDir Files that do not exist on localDir will be Deleted.
 # ---------------------------------------
