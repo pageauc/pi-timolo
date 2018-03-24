@@ -33,8 +33,8 @@ try:
 except ImportError:
     pass
 
-progVer = "ver 10.95"   # Requires Latest 10.x release of config.py
-__version__ = "10.95"   # May test for version number at a future time
+progVer = "ver 10.96"   # Requires Latest 10.x release of config.py
+__version__ = "10.96"   # May test for version number at a future time
 
 mypath = os.path.abspath(__file__) # Find the full path of this python script
 # get the path location only (excluding script name)
@@ -46,7 +46,7 @@ print('%s %s  written by Claude Pageau' % (progName, progVer))
 
 # Check for config.py variable file to import and error out if not found.
 configFilePath = os.path.join(baseDir, "config.py")
-if not os.path.exists(configFilePath):
+if not os.path.isfile(configFilePath):
     print('%s File Not Found. Cannot Import Configuration Variables.'
           % configFilePath)
     print('Run Console Command Below to Download File from GitHub Repo')
@@ -129,7 +129,7 @@ if pluginEnable:     # Check and verify plugin and load variable overlay
                       "How-to-Install-or-Upgrade#quick-install")
         logging.error("Exiting %s Due to Error", progName)
         sys.exit(1)
-    elif not os.path.exists(pluginPath):
+    elif not os.path.isfile(pluginPath):
         logging.error("File Not Found pluginName %s", pluginPath)
         logging.error("Check Spelling of pluginName Value in %s",
                       configFilePath)
@@ -163,10 +163,10 @@ if pluginEnable:     # Check and verify plugin and load variable overlay
         sys.path.insert(0, pluginDir)  # add plugin directory to program PATH
         from plugins.current import *
         try:
-            if os.path.exists(pluginCurrent):
+            if os.path.isfile(pluginCurrent):
                 os.remove(pluginCurrent)
             pluginCurrentpyc = os.path.join(pluginDir, "current.pyc")
-            if os.path.exists(pluginCurrentpyc):
+            if os.path.isfile(pluginCurrentpyc):
                 os.remove(pluginCurrentpyc)
         except OSError as err:
             logging.warn("Failed Removal of %s - %s", pluginCurrentpyc, err)
@@ -521,7 +521,7 @@ def subDirCreate(directory, prefix):
                                                now.year, now.month, now.day,
                                                now.hour, now.minute))
     subDirPath = os.path.join(directory, subDirName)
-    if not os.path.exists(subDirPath):
+    if not os.path.isdir(subDirPath):
         try:
             os.makedirs(subDirPath)
         except OSError as err:
@@ -610,7 +610,7 @@ def checkMediaPaths():
             except OSError as err:
                 logging.error("Could Not Create %s - %s", motionPath, err)
                 sys.exit(1)
-            if os.path.exists(motionNumPath):
+            if os.path.isfile(motionNumPath):
                 logging.info("Delete Motion dat File %s", motionNumPath)
                 os.remove(motionNumPath)
     if timelapseOn:
@@ -621,7 +621,7 @@ def checkMediaPaths():
             except OSError as err:
                 logging.error("Could Not Create %s - %s", motionPath, err)
                 sys.exit(1)
-            if os.path.exists(timelapseNumPath):
+            if os.path.isfile(timelapseNumPath):
                 logging.info("Delete TimeLapse dat file %s", timelapseNumPath)
                 os.remove(timelapseNumPath)
     # Check for Recent Image Folders and create if they do not already exist.
@@ -757,7 +757,7 @@ def freeDiskSpaceCheck(lastSpaceCheck):
 def getCurrentCount(numberpath, numberstart):
     """ Create a .dat file to store currentCount
         or read file if it already Exists"""
-    if not os.path.exists(numberpath):
+    if not os.path.isfile(numberpath):
         # Create numberPath file if it does not exist
         logging.info("Creating New File %s numberstart= %s",
                      numberpath, numberstart)
@@ -888,7 +888,7 @@ def postImageProcessing(numberon, counterstart, countermax, counter,
                                  countermax, filename)
         # write next image counter number to dat file
         writeCount = str(counter)
-        if not os.path.exists(counterpath):
+        if not os.path.isfile(counterpath):
             logging.info("Create New Counter File writeCount=%s %s",
                          writeCount, counterpath)
             open(counterpath, 'w').close()
@@ -1063,7 +1063,7 @@ def takeVideo(filename, duration, fps=25):
     """ Take a short motion video if required """
     # Working folder for h264 videos
     h264_work = os.path.join(baseDir, "h264_work")
-    if not os.path.exists(h264_work):
+    if not os.path.isdir(h264_work):
         try:
             os.makedirs(h264_work)
         except OSError as err:
@@ -1127,7 +1127,7 @@ def createSyncLockFile(imagefilename):
     If required create a lock file to indicate file(s) to process
     """
     if createLockFile:
-        if not os.path.exists(lockFilePath):
+        if not os.path.isfile(lockFilePath):
             open(lockFilePath, 'w').close()
             logging.info("Create Lock File %s", lockFilePath)
         rightNow = datetime.datetime.now()
@@ -1863,10 +1863,10 @@ if __name__ == '__main__':
             sys.stdout.write("Exiting %s %s \n" % (progName, progVer))
     try:
         if pluginEnable:
-            if os.path.exists(pluginCurrent):
+            if os.path.isfile(pluginCurrent):
                 os.remove(pluginCurrent)
             pluginCurrentpyc = os.path.join(pluginDir, "current.pyc")
-            if os.path.exists(pluginCurrentpyc):
+            if os.path.isfile(pluginCurrentpyc):
                 os.remove(pluginCurrentpyc)
     except OSError as err:
         logging.warn("Failed To Remove File %s - %s", pluginCurrentpyc, err)

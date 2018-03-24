@@ -119,7 +119,7 @@ function do_makevideo_menu ()
     do_main_menu
   elif [ $RET -eq 0 ]; then
     case "$SELECTION" in
-      a\ *) do_makevideo 
+      a\ *) do_makevideo
             do_makevideo_menu ;;
       b\ *) do_makevideo_config
             do_makevideo_menu ;;
@@ -650,7 +650,7 @@ function do_main_menu ()
       l\ *) do_about
             do_main_menu ;;
       q\ *) clear
-            exit 0 ;;
+            exit ;;
          *) whiptail --msgbox "Programmer error: unrecognised option" 20 60 1 ;;
     esac || whiptail --msgbox "There was an error running selection $SELECTION" 20 60 1
   fi
