@@ -1,6 +1,6 @@
 #!/bin/bash
 # Convenient pi-timolo-install.sh script written by Claude Pageau 1-Jul-2016
-ver="10.3"
+ver="10.4"
 progName=$(basename -- "$0")
 TIMOLO_DIR='pi-timolo'  # Default folder install location
 
@@ -79,6 +79,7 @@ fi
 if [ ! -f config.py ] ; then
     cp config.py.new config.py
 fi
+cp config.py config.py.prev   # make copy of previous configuration
 
 if [ ! -f watch-app.sh ] ; then
     cp watch-app-new.sh watch-app.sh
