@@ -45,12 +45,12 @@ To Test Run default config.py - motion track(HD image) plus timelapse(5 min inte
 
 ## Description
 PI-TIMOLO is primarily designed for ***headless operation*** and includes rclone that
-can securely synchronize specified media files with a users remote storage service of choice. This works well for remote security and monitoring
+can securely synchronize specified media folders and files with a users remote storage service of choice. This works well for remote security and monitoring
 cameras. Camera config.py and conf settings can be easily administered remotely from a designated sync directory using ***watch-app.sh***
 script using a crontab entry to periodically check for updates between the pi-timolo camera and a users remote storage rclone service name. 
 
-pi-timolo is a python 2/3 compatible and can take timelapse and motion detection images/videos, separately or together. Will take
-long exposure Night (lowlight) images for Time Lapse and/or Motion. Has smooth twilight transitions based on a threshold light
+pi-timolo is python 2/3 compatible and can take timelapse and/or motion detection images/videos, separately or together. Will take
+long exposure Night (lowlight) images for Time Lapse and/or Motion. Has relatively smooth twilight transitions based on a threshold light
 setting, so a real time clock is not required. Customization settings are saved in a ***config.py*** and conf files and optional special
 purpose plugin config files. Optional plugin feature allows overlaying config.py settings with custom settings for specific tasks.  
 

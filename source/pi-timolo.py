@@ -23,7 +23,17 @@ import numpy as np
 from PIL import Image
 from PIL import ImageFont
 from PIL import ImageDraw
-from dateutil.parser import parse
+try:
+    from dateutil.parser import parse
+except ImportError:
+   print("ERROR : Could Not Import dateutil.parser")
+   print("        Disabling timelapseStartAt, motionStartAt and VideoStartAt")
+   print("        ----------------")
+   # Disable get_sched_start if import fails for Raspbian wheezy or Jessie
+   timelapseStartAt = ""
+   motionStartAt = ""
+   videoStartAt = ""
+
 try:
     # pyexiv2 Transfers image exif data to writeTextToImage
     # For python3 install of pyexiv2 lib
@@ -33,8 +43,8 @@ try:
 except ImportError:
     pass
 
-progVer = "ver 10.96"   # Requires Latest 10.x release of config.py
-__version__ = "10.96"   # May test for version number at a future time
+progVer = "ver 10.97"   # Requires Latest 10.x release of config.py
+__version__ = "10.97"   # May test for version number at a future time
 
 mypath = os.path.abspath(__file__) # Find the full path of this python script
 # get the path location only (excluding script name)
@@ -1769,7 +1779,6 @@ def videoRepeat():
     print("--------------------------------------------------------------------")
     print("WARNING: videoRepeatOn=%s Suppresses TimeLapse and Motion Settings."
           % videoRepeatOn)
-
     startVideoRepeat = getSchedStart(videoStartAt)
     if not checkSchedStart(startVideoRepeat):
         logging.info('Video Repeat: videoStartAt = "%s" ', videoStartAt)
