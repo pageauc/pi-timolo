@@ -176,13 +176,14 @@ sudo apt-get install -yq gpac   # required for MP4Box video converter
 sudo apt-get install -yq fonts-freefont-ttf # Required for Jessie Lite Only
 sudo apt-get install -yq python-opencv
 sudo apt-get install -yq python-pip
+sudo pip install python-dateutil  # used for scheduled date/time feature
 if [ $? -ne 0 ] ;  then
     # Upgrade version of pip on Raspbian Wheezy to add ssl support
     curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
     sudo python get-pip.py
+    # Retry pip install of dateutil
+    sudo pip install python-dateutil
 fi
-sudo pip install python-dateutil  # used for scheduled date/time feature
-
 dos2unix -q *
 chmod +x *py
 chmod -x config*py
