@@ -1,6 +1,6 @@
 #!/bin/bash
 # Convenient pi-timolo-install.sh script written by Claude Pageau 1-Jul-2016
-ver="10.4"
+ver="10.5"
 progName=$(basename -- "$0")
 TIMOLO_DIR='pi-timolo'  # Default folder install location
 
@@ -176,6 +176,11 @@ sudo apt-get install -yq gpac   # required for MP4Box video converter
 sudo apt-get install -yq fonts-freefont-ttf # Required for Jessie Lite Only
 sudo apt-get install -yq python-opencv
 sudo apt-get install -yq python-pip
+if [ $? -ne 0 ] ;  then
+    # Upgrade version of pip on Raspbian Wheezy to add ssl support
+    curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
+    sudo python get-pip.py
+fi
 sudo pip install python-dateutil  # used for scheduled date/time feature
 
 dos2unix -q *
@@ -195,7 +200,7 @@ if [ "$DIR" != "$INSTALL_PATH" ]; then
 fi
 
 # cleanup old files from previous versions of install
-cleanup_files=("gdrive" "install.sh" "makemovie.sh" "makedailymovie.sh" \
+cleanup_files=("get-pip.py" "gdrive" "install.sh" "makemovie.sh" "makedailymovie.sh" \
 "convid.conf" "convid.conf.orig" "convid.conf.prev" "convid.conf.1" "convid.conf.new" \
 "makevideo.conf" "makevideo.conf.orig" "makevideo.conf.prev" "makevideo.conf.1" \
 "makevideo.conf.new" "sync.sh" "pi-timolo-install.sh" "rclone-sync-new.sh" "rclone-videos-new.sh")

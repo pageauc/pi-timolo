@@ -28,6 +28,7 @@ try:
 except ImportError:
    print("ERROR : Could Not Import dateutil.parser")
    print("        Disabling timelapseStartAt, motionStartAt and VideoStartAt")
+   print("See https://github.com/pageauc/pi-timolo/wiki/Basic-Trouble-Shooting#problems-with-python-pip-install-on-wheezy")
    print("        ----------------")
    # Disable get_sched_start if import fails for Raspbian wheezy or Jessie
    timelapseStartAt = ""
