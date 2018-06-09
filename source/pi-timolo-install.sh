@@ -147,7 +147,7 @@ if "$rclone_install" = true ; then
     echo "INFO  : Install Latest Rclone from https://downloads.rclone.org/rclone-current-linux-arm.zip"
     wget -O rclone.zip -q --show-progress https://downloads.rclone.org/rclone-current-linux-arm.zip
     if [ $? -ne 0 ]; then
-        wget -O rclone.zip https://downloads.rclone.org/rclone-current-linux-arm.zip         
+        wget -O rclone.zip https://downloads.rclone.org/rclone-current-linux-arm.zip
     fi
     echo "INFO  : unzip rclone.zip to folder rclone-tmp"
     unzip -o -j -d rclone-tmp rclone.zip
@@ -184,7 +184,7 @@ sudo apt-get install -yq python-dateutil
 # Support for wheezy since pip on wheezy no longer has ssl support so upgrade pip
 if [ $? -ne 0 ] ;  then
     sudo pip install python-dateutil  # used for scheduled date/time feature
-    if [ $? -ne 0 ] ;  then  
+    if [ $? -ne 0 ] ;  then
         # Upgrade version of pip on Raspbian Wheezy to add ssl support
         curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
         sudo python get-pip.py
@@ -246,7 +246,7 @@ Minimal Instructions:
 
     cd ~/pi-timolo
     ./menubox.sh"
-    
+
 if $is_upgrade ; then
     echo "
 IMPORTANT: pi-timolo.py ver 10.x Adds a Sched StartAt Feature.
