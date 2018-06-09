@@ -61,7 +61,7 @@ if [ $? -ne 0 ] ;  then
     wget -O config.py.new https://raw.github.com/pageauc/pi-timolo/master/source/config.py
     wget -O watch-app-new.sh https://raw.github.com/pageauc/pi-timolo/master/source/watch-app.sh
     wget -O video.conf.new https://raw.github.com/pageauc/pi-timolo/master/source/video.conf
-    wget -O Readme.md -q https://raw.github.com/pageauc/pi-timolo/master/Readme.md
+    wget -O Readme.md https://raw.github.com/pageauc/pi-timolo/master/Readme.md
     wget -O media/webserver.txt https://raw.github.com/pageauc/pi-timolo/master/source/webserver.txt
     wget -O rclone-test.sh https://raw.github.com/pageauc/pi-timolo/master/source/rclone-samples/rclone-master.sh
 else
@@ -147,7 +147,7 @@ if "$rclone_install" = true ; then
     echo "INFO  : Install Latest Rclone from https://downloads.rclone.org/rclone-current-linux-arm.zip"
     wget -O rclone.zip -q --show-progress https://downloads.rclone.org/rclone-current-linux-arm.zip
     if [ $? -ne 0 ]; then
-        wget -O rclone.zip -q https://downloads.rclone.org/rclone-current-linux-arm.zip         
+        wget rclone.zip -O https://downloads.rclone.org/rclone-current-linux-arm.zip         
     fi
     echo "INFO  : unzip rclone.zip to folder rclone-tmp"
     unzip -o -j -d rclone-tmp rclone.zip
