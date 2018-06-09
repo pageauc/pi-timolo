@@ -1,6 +1,6 @@
 #!/bin/bash
 # Convenient pi-timolo-install.sh script written by Claude Pageau 1-Jul-2016
-ver="10.5"
+ver="10.6"
 progName=$(basename -- "$0")
 TIMOLO_DIR='pi-timolo'  # Default folder install location
 
@@ -176,13 +176,18 @@ sudo apt-get install -yq gpac   # required for MP4Box video converter
 sudo apt-get install -yq fonts-freefont-ttf # Required for Jessie Lite Only
 sudo apt-get install -yq python-opencv
 sudo apt-get install -yq python-pip
-sudo pip install python-dateutil  # used for scheduled date/time feature
+sudo apt-get install -yq python3-dateutil
+sudo apt-get install -yq python-dateutil
+# Support for wheezy since pip on wheezy no longer has ssl support so upgrade pip
 if [ $? -ne 0 ] ;  then
-    # Upgrade version of pip on Raspbian Wheezy to add ssl support
-    curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
-    sudo python get-pip.py
-    # Retry pip install of dateutil
-    sudo pip install python-dateutil
+    sudo pip install python-dateutil  # used for scheduled date/time feature
+    if [ $? -ne 0 ] ;  then  
+        # Upgrade version of pip on Raspbian Wheezy to add ssl support
+        curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
+        sudo python get-pip.py
+        # Retry pip install of dateutil
+        sudo pip install python-dateutil
+    fi
 fi
 dos2unix -q *
 chmod +x *py
@@ -238,10 +243,13 @@ Minimal Instructions:
 
     cd ~/pi-timolo
     ./menubox.sh"
+    
 if $is_upgrade ; then
-  echo "
-IMPORTANT: pi-timolo.py ver 10.x Adds a Sched StartAt Feature and
-           Requires latest config.py per commands below
+    echo "
+IMPORTANT: pi-timolo.py ver 10.x Adds a Sched StartAt Feature.
+           If pi-timolo.py gives error messages on start
+           then the latest config.py may not be configured.
+           Install per commands below if Required.
 
     cd ~/pi-timolo
     cp config.py config.py.bak
