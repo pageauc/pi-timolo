@@ -146,6 +146,9 @@ if "$rclone_install" = true ; then
     # Install rclone with latest version
     echo "INFO  : Install Latest Rclone from https://downloads.rclone.org/rclone-current-linux-arm.zip"
     wget -O rclone.zip -q --show-progress https://downloads.rclone.org/rclone-current-linux-arm.zip
+    if [ $? -ne 0 ]; then
+        wget -O rclone.zip -q https://downloads.rclone.org/rclone-current-linux-arm.zip         
+    fi
     echo "INFO  : unzip rclone.zip to folder rclone-tmp"
     unzip -o -j -d rclone-tmp rclone.zip
     echo "INFO  : Install files and man pages"
