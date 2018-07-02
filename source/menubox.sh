@@ -112,7 +112,7 @@ function do_makevideo_menu ()
   "a RUN" "makevideo.sh - motion or timelapse jpg's to mp4 video" \
   "b EDIT" "nano video.conf  makevideo.sh & config.sh Settings" \
   "c VIEW" "video.conf file  makevideo.sh & config.sh Settings" \
-  "q BACK" "to Main Menu"  3>&1 1>&2 2>&3)
+  "q BACK" "To Main Menu"  3>&1 1>&2 2>&3)
 
   RET=$?
   if [ $RET -eq 1 ]; then
@@ -176,7 +176,7 @@ function do_convid_menu ()
   "b CONVERT" "motion h264 files to MP4 videos" \
   "c EDIT" "nano video.conf  makevideo.sh & config.sh Settings" \
   "d VIEW" "video.conf  makevideo.sh & config.sh Settings" \
-  "q BACK" "to Main Menu" 3>&1 1>&2 2>&3 )
+  "q BACK" "To Main Menu" 3>&1 1>&2 2>&3 )
 
   RET=$?
   if [ $RET -eq 1 ]; then
@@ -334,7 +334,7 @@ function do_sync_menu ()
   "d LIST" "Names of Configured Remote Storage Services" \
   "e HELP" "Rclone Man Pages" \
   "f ABOUT" "Rclone Remote Storage Sync" \
-  "q BACK" "to Main Menu" 3>&1 1>&2 2>&3 )
+  "q BACK" "To Main Menu" 3>&1 1>&2 2>&3 )
 
   RET=$?
   if [ $RET -eq 1 ]; then
@@ -436,7 +436,7 @@ function do_settings_menu ()
   "b VIEW" "config.py for pi-timolo & webserver" \
   "c EDIT" "nano video.conf  makevideo.sh & config.sh Settings" \
   "d VIEW" "video.conf  makevideo.sh & config.sh Settings" \
-  "q BACK" "to Main Menu" 3>&1 1>&2 2>&3 )
+  "q BACK" "To Main Menu" 3>&1 1>&2 2>&3 )
 
   RET=$?
   if [ $RET -eq 1 ]; then
@@ -474,7 +474,7 @@ function do_watch_menu ()
   "b RUN" "Test Run watch-app.sh" \
   "c CRON" "Edit crontab" \
   "d ABOUT" "About watch-app.sh Remote Configure" \
-  "q BACK" "to Main Menu" 3>&1 1>&2 2>&3 )
+  "q BACK" "To Main Menu" 3>&1 1>&2 2>&3 )
 
   RET=$?
   if [ $RET -eq 1 ]; then
@@ -532,7 +532,7 @@ function do_plugins_menu ()
   "k slowmo" "nano plugins/slowmo.py" \
   "l strmvid" "nano plugins/strmvid.py" \
   "m UPGRADE" "Missing plugins From GitHub" \
-  "q BACK" "to Main Menu" 3>&1 1>&2 2>&3 )
+  "q BACK" "To Main Menu" 3>&1 1>&2 2>&3 )
 
   RET=$?
   if [ $RET -eq 1 ]; then

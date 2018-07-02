@@ -10,7 +10,7 @@ import urllib
 from SimpleHTTPServer import SimpleHTTPRequestHandler
 from StringIO import StringIO
 
-PROG_VER = "ver 10.95 written by Claude Pageau"
+PROG_VER = "ver 10.96  written by Claude Pageau"
 '''
  SimpleHTTPServer python program to allow selection of images from right panel and display in an iframe left panel
  Use for local network use only since this is not guaranteed to be a secure web server.
@@ -39,9 +39,9 @@ PROG_VER = "ver 10.95 written by Claude Pageau"
 SCRIPT_PATH = os.path.abspath(__file__)   # Find the full path of this python script
 BASE_DIR = os.path.dirname(SCRIPT_PATH)   # Get the path location only (excluding script name)
 PROG_NAME = os.path.basename(__file__)    # Name of this program
-
 # Check for variable file to import and error out if not found.
 CONFIG_FILE_PATH = os.path.join(BASE_DIR, "config.py")
+# Check if config file found and import variable settings.
 if not os.path.exists(CONFIG_FILE_PATH):
     print("ERROR - Cannot Import Configuration Variables.")
     print("        Missing Configuration File %s" % CONFIG_FILE_PATH)
@@ -63,17 +63,17 @@ try:
 except:
     print("ERROR - Can't Find a Network IP Address on this Raspberry Pi")
     print("        Configure Network and Try Again")
-    sys.exit(1)
+    myip = None
 
 if web_list_by_datetime:
-    dir_sort = 'DateTime'
+    dir_sort = 'Sort DateTime'
 else:
-    dir_sort = 'FileName'
+    dir_sort = 'Sort Filename'
 
 if web_list_sort_descending:
-    dir_order = 'Descend'
+    dir_order = 'Desc'
 else:
-    dir_order = 'Ascend'
+    dir_order = 'Asc'
 
 list_title = "%s %s" % (dir_sort, dir_order)
 
@@ -82,11 +82,6 @@ class DirectoryHandler(SimpleHTTPRequestHandler):
     def list_directory(self, path):
         try:
             list = os.listdir(path)
-            for name in list:
-                fullname = os.path.join(path, name)
-                if (os.path.islink(fullname) and
-                    not os.path.exists(os.path.realpath(fullname))):
-                    list.remove(name)
             all_entries = len(list)
         except os.error:
             self.send_error(404, "No permission to list directory")
@@ -103,7 +98,7 @@ class DirectoryHandler(SimpleHTTPRequestHandler):
         # Start HTML formatting code
         f.write('<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">')
         f.write('<head>')
-        # Setup Meta Tags
+        # Setup Meta Tags and better viewing on small screen devices
         f.write('<meta "Content-Type" content="txt/html; charset=ISO-8859-1" />')
         f.write('<meta name="viewport" content="width=device-width, initial-scale=1.0" />')
         if web_page_refresh_on:
@@ -117,22 +112,29 @@ class DirectoryHandler(SimpleHTTPRequestHandler):
         f.write('<iframe width="%s" height="%s" align="left"'
                 % (web_iframe_width_usage, web_image_height))
         if web_page_blank:
+            # display blank left iframe pane until right list item is selected
             f.write('src="%s" name="imgbox" id="imgbox" alt="%s">'
                     % ("about:blank", web_page_title))
-                    # display second entry in right list since list[0] may still be in progress
         else:
+            # display first entry in right list when iframe initially loads
             f.write('src="%s" name="imgbox" id="imgbox" alt="%s">'
                     % (list[0], web_page_title))
-                    # display second entry in right list since list[0] may still be in progress
 
         f.write('<p>iframes are not supported by your browser.</p></iframe>')
         # Start Right File selection List Panel
         list_style = '<div style="height: ' + web_list_height + 'px; overflow: auto; white-space: nowrap;">'
         f.write(list_style)
         # f.write('<center><b>%s</b></center>' % (self.path))
-        f.write('<center><b>%s</b></center>' % list_title)
+        if web_page_refresh_on:
+            sort_heading = ('&nbsp;&nbsp;Refresh %s s&nbsp;&nbsp;<b>%s</b>' %
+                            (web_page_refresh_sec, list_title))
+        else:
+            # Show a refresh button since auto refesh is turned off.
+            sort_heading = ('''<FORM>&nbsp;&nbsp;<INPUT TYPE="button" onClick="history.go(0)"
+VALUE="Refresh">&nbsp;&nbsp;<b>%s</b></FORM>''' % list_title)
+        f.write('%s' % sort_heading)
         f.write('<ul name="menu" id="menu" style="list-style-type:none; padding-left: 4px">')
-        # Create the formatted list of right panel hyperlinks to files in the specified directory
+        # Create the formatted list of right panel hyper-links to files in the specified directory
 
         if not self.path is "/":   # Display folder Back arrow navigation if not in web root
             f.write('<li><a href="%s" >%s</a></li>\n'
@@ -148,8 +150,7 @@ class DirectoryHandler(SimpleHTTPRequestHandler):
             date_modified = time.strftime('%H:%M:%S %d-%b-%Y', time.localtime(os.path.getmtime(fullname)))
             # Append / for directories or @ for symbolic links
             if os.path.islink(fullname):
-                if os.path.exists(os.path.realpath(fullname)):
-                    displayname = name + "@"
+                displayname = name + "@"
                 # Note: a link to a directory displays with @ and links with /
             if os.path.isdir(fullname):
                 # Note this will open a new tab to display the selected folder.
