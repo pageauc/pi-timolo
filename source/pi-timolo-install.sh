@@ -171,6 +171,7 @@ echo "INFO  : $STATUS Install pi-timolo Dependencies Wait ..."
 sudo apt-get install -yq python-picamera
 sudo apt-get install -yq python3-picamera
 sudo apt-get install -yq python-imaging
+sudo apt-get install -yq python3-pil
 sudo apt-get install -yq dos2unix
 sudo apt-get install -yq python-pyexiv2
 sudo apt-get install -yq libav-tools  # used for makevideo gpac
@@ -192,7 +193,6 @@ if [ $? -ne 0 ] ;  then
     fi
 fi
 sudo pip install python-dateutil
-sudo pip install image
 dos2unix -q *
 chmod +x *py
 chmod -x config*py
