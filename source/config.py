@@ -144,7 +144,7 @@ web_server_root = "media"     # default= "media" webserver root path to webserve
 web_page_title = "PI-TIMOLO Media"  # web page title that browser shows
 web_page_refresh_on = False   # default= False Off (No Auto Refresh)  True= Refresh On (per seconds below)
 web_page_refresh_sec = "180"  # default= "180" seconds to wait for web page refresh  seconds (three minutes)
-web_page_blank = True         # default= True Start left image with a blank page until a right menu item is selected
+web_page_blank = False        # default= True Start left image with a blank page until a right menu item is selected
                               # False displays second list[1] item since first may be in progress
 
 # Left iFrame Image Settings

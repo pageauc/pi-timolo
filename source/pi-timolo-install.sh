@@ -1,6 +1,6 @@
 #!/bin/bash
 # Convenient pi-timolo-install.sh script written by Claude Pageau 1-Jul-2016
-ver="10.6"
+ver="10.7"
 progName=$(basename -- "$0")
 TIMOLO_DIR='pi-timolo'  # Default folder install location
 
@@ -181,17 +181,18 @@ sudo apt-get install -yq python-opencv
 sudo apt-get install -yq python-pip
 sudo apt-get install -yq python3-dateutil
 sudo apt-get install -yq python-dateutil
-# Support for wheezy since pip on wheezy no longer has ssl support so upgrade pip
 if [ $? -ne 0 ] ;  then
+    sudo apt-get install -yq python3-pip
     sudo pip install python-dateutil  # used for scheduled date/time feature
     if [ $? -ne 0 ] ;  then
         # Upgrade version of pip on Raspbian Wheezy to add ssl support
         curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
         sudo python get-pip.py
-        # Retry pip install of dateutil
-        sudo pip install python-dateutil
+        rm get-pip.py
     fi
 fi
+sudo pip install python-dateutil
+sudo pip install image
 dos2unix -q *
 chmod +x *py
 chmod -x config*py
