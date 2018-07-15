@@ -44,8 +44,8 @@ try:
 except ImportError:
     pass
 
-progVer = "ver 10.97"   # Requires Latest 10.x release of config.py
-__version__ = "10.97"   # May test for version number at a future time
+progVer = "ver 10.98"   # Requires Latest 10.x release of config.py
+__version__ = "10.98"   # May test for version number at a future time
 
 mypath = os.path.abspath(__file__) # Find the full path of this python script
 # get the path location only (excluding script name)
@@ -528,7 +528,7 @@ def subDirCreate(directory, prefix):
     """
     now = datetime.datetime.now()
     # Specify folder naming
-    subDirName = ('%s%d-%02d-%02d-%02d%02d' % (prefix,
+    subDirName = ('%s%d-%02d%02d-%02d%02d' % (prefix,
                                                now.year, now.month, now.day,
                                                now.hour, now.minute))
     subDirPath = os.path.join(directory, subDirName)
