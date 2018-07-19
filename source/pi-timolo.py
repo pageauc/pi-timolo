@@ -44,8 +44,8 @@ try:
 except ImportError:
     pass
 
-progVer = "ver 10.99"   # Requires Latest 10.x release of config.py
-__version__ = "10.99"   # May test for version number at a future time
+progVer = "ver 11.00"   # Requires Latest 10.x release of config.py
+__version__ = "11.00"   # May test for version number at a future time
 
 mypath = os.path.abspath(__file__) # Find the full path of this python script
 # get the path location only (excluding script name)
@@ -212,6 +212,7 @@ cvBlue = (255, 0, 0)
 cvGreen = (0, 255, 0)
 cvRed = (0, 0, 255)
 LINE_THICKNESS = 1     # Thickness of opencv drawing lines
+LINE_COLOR = cvWhite   # color of lines to highlight motion stream area
 # Check if imageShowStream variable exists in config.py
 # To show stream rectange on still image
 try:
@@ -960,6 +961,23 @@ def takeTrackQuickPic(image, filename):
                  bigImageWidth, bigImageHeight, filename)
 
 #------------------------------------------------------------------------------
+def showBox(filename):
+    """
+    Show stream image detection area on image to align camera
+    This is a quick fix for restricting motion detection
+    to a portion of the final image. Change the stream image size
+    on line 206 and 207 above
+    Adjust track config.py file motionTrackTrigLen as required.
+    """
+    working_image = cv2.imread(filename)
+    x1y1 = (int((imageWidth - CAMERA_WIDTH)/2),
+            int((imageHeight - CAMERA_HEIGHT)/2))
+    x2y2 = (x1y1[0] + CAMERA_WIDTH,
+            x1y1[1] + CAMERA_HEIGHT)
+    cv2.rectangle(working_image, x1y1, x2y2, LINE_COLOR, LINE_THICKNESS)
+    cv2.imwrite(filename, working_image)
+
+#------------------------------------------------------------------------------
 def takeDayImage(filename, cam_sleep_time):
     """ Take a Day image using exp=auto and awb=auto """
     with picamera.PiCamera() as camera:
@@ -978,19 +996,9 @@ def takeDayImage(filename, cam_sleep_time):
         else:
             camera.capture(filename)
         camera.close()
-        # Show stream image detection area on image to align camera
-        # This is a quick fix for restricting motion detection
-        # to a portion of the final image. Change the stream image size
-        # on line 206 and 207 above
-        # Adjust track config.py file motionTrackTrigLen as required.
-        if imageShowStream:
-            working_image = cv2.imread(filename)
-            x1y1 = (int((imageWidth - CAMERA_WIDTH)/2),
-                    int((imageHeight - CAMERA_HEIGHT)/2))
-            x2y2 = (x1y1[0] + CAMERA_WIDTH,
-                    x1y1[1] + CAMERA_HEIGHT)
-            cv2.rectangle(working_image, x1y1, x2y2, cvBlue, LINE_THICKNESS)
-            cv2.imwrite(filename, working_image)
+
+    if imageShowStream:    # Show motion area on full image to align camera
+        show_box(filename)
 
     logging.info("camSleepSec=%.2f exp=auto awb=auto Size=%ix%i ",
                  cam_sleep_time, imageWidth, imageHeight)
@@ -1057,6 +1065,10 @@ def takeNightImage(filename, pixelAve):
         else:
             camera.capture(filename)
         camera.close()
+
+    if imageShowStream:    # Show motion area on full image to align camera
+        show_box(filename)
+
     # showDateOnImage displays FilePath to avoid showing twice
     if not showDateOnImage:
         logging.info("FilePath %s", filename)
