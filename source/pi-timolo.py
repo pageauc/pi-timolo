@@ -44,8 +44,8 @@ try:
 except ImportError:
     pass
 
-progVer = "ver 10.98"   # Requires Latest 10.x release of config.py
-__version__ = "10.98"   # May test for version number at a future time
+progVer = "ver 10.99"   # Requires Latest 10.x release of config.py
+__version__ = "10.99"   # May test for version number at a future time
 
 mypath = os.path.abspath(__file__) # Find the full path of this python script
 # get the path location only (excluding script name)
@@ -203,8 +203,21 @@ timelapsePath = os.path.join(baseDir, timelapseDir)  # Store Time Lapse images
 timelapseNumPath = os.path.join(baseDir, timelapsePrefix + baseFileName + ".dat")
 lockFilePath = os.path.join(baseDir, baseFileName + ".sync")
 # Video Stream Settings for motion Tracking using opencv motion tracking
-CAMERA_WIDTH = 640     # width of video stream
-CAMERA_HEIGHT = 480    # height of video stream
+CAMERA_WIDTH = 320     # width of video stream
+CAMERA_HEIGHT = 240    # height of video stream
+# Colors for drawing lines
+cvWhite = (255, 255, 255)
+cvBlack = (0, 0, 0)
+cvBlue = (255, 0, 0)
+cvGreen = (0, 255, 0)
+cvRed = (0, 0, 255)
+LINE_THICKNESS = 1     # Thickness of opencv drawing lines
+# Check if imageShowStream variable exists in config.py
+# To show stream rectange on still image
+try:
+    imageShowStream
+except:
+    imageShowStream = False
 bigImage = motionTrackQPBigger  # increase size of motionTrackQuickPic image
 bigImageWidth = int(CAMERA_WIDTH * bigImage)
 bigImageHeight = int(CAMERA_HEIGHT * bigImage)
@@ -965,6 +978,20 @@ def takeDayImage(filename, cam_sleep_time):
         else:
             camera.capture(filename)
         camera.close()
+        # Show stream image detection area on image to align camera
+        # This is a quick fix for restricting motion detection
+        # to a portion of the final image. Change the stream image size
+        # on line 206 and 207 above
+        # Adjust track config.py file motionTrackTrigLen as required.
+        if imageShowStream:
+            working_image = cv2.imread(filename)
+            x1y1 = (int((imageWidth - CAMERA_WIDTH)/2),
+                    int((imageHeight - CAMERA_HEIGHT)/2))
+            x2y2 = (x1y1[0] + CAMERA_WIDTH,
+                    x1y1[1] + CAMERA_HEIGHT)
+            cv2.rectangle(working_image, x1y1, x2y2, cvBlue, LINE_THICKNESS)
+            cv2.imwrite(filename, working_image)
+
     logging.info("camSleepSec=%.2f exp=auto awb=auto Size=%ix%i ",
                  cam_sleep_time, imageWidth, imageHeight)
     # showDateOnImage displays FilePath so avoid showing twice

@@ -36,6 +36,8 @@ noNightShots = False       # default= False True=No Night Images (Motion or Time
 noDayShots = False         # default= False True=No Day Images (Motion or Timelapse)
 imagePreview = False       # default= False True=Preview image on connected RPI Monitor
 useVideoPort = False       # default= False True=Use the video port to capture motion images (faster than the image port).
+imageShowStream = False    # default= False Show video stream area on full size image.
+                           # Use to Align Camera for motion tracking.  Turn off when Alignment complete.
 
 # Date/Time Settings for Displaying info Directly on Images
 # ---------------------------------------------------------
