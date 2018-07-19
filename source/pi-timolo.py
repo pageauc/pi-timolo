@@ -998,7 +998,7 @@ def takeDayImage(filename, cam_sleep_time):
         camera.close()
 
     if imageShowStream:    # Show motion area on full image to align camera
-        show_box(filename)
+        showBox(filename)
 
     logging.info("camSleepSec=%.2f exp=auto awb=auto Size=%ix%i ",
                  cam_sleep_time, imageWidth, imageHeight)
@@ -1067,7 +1067,7 @@ def takeNightImage(filename, pixelAve):
         camera.close()
 
     if imageShowStream:    # Show motion area on full image to align camera
-        show_box(filename)
+        showBox(filename)
 
     # showDateOnImage displays FilePath to avoid showing twice
     if not showDateOnImage:
