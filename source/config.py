@@ -64,7 +64,7 @@ motionTrackQuickPic = False # default= False True= save a frame image instead of
 motionTrackInfo = True      # default= False Hide detailed track progress logging messages
 motionTrackTimeOut = 0.3    # default= 0.3 seconds Resets Track if no movement tracked
 motionTrackTrigLen = 75     # default= 75 px Length of motion track to Trigger motionFound
-motionTrackMinArea = 200    # default= 200 sq px  Minimum Area required to start tracking
+motionTrackMinArea = 100    # default= 100 sq px  Minimum Area required to start tracking
 motionTrackFrameRate = 20   # default= 20 fps  PiVideoStream setting.  Single core RPI suggest 15 fps
 motionTrackQPBigger = 1.5   # default= 1.5 multiply size of QuickPic saved image from default 640x480
 
