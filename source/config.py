@@ -144,8 +144,8 @@ spaceFileExt  = 'jpg'       # default= 'jpg' File extension to Delete Oldest Fil
 web_server_port = 8080        # default= 8080 Web server access port eg http://192.168.1.100:8080
 web_server_root = "media"     # default= "media" webserver root path to webserver image/video sub-folders
 web_page_title = "PI-TIMOLO Media"  # web page title that browser shows
-web_page_refresh_on = False   # default= False Off (No Auto Refresh)  True= Refresh On (per seconds below)
-web_page_refresh_sec = "180"  # default= "180" seconds to wait for web page refresh  seconds (three minutes)
+web_page_refresh_on = True    # Refresh True=On (per seconds below) False=Off (never)
+web_page_refresh_sec = "900"  # default= "900" seconds to wait for web page refresh  seconds (15 minutes)
 web_page_blank = False        # default= True Start left image with a blank page until a right menu item is selected
                               # False displays second list[1] item since first may be in progress
 
