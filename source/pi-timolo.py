@@ -1797,7 +1797,7 @@ def timolo():
                             user_motion_code.userMotionCode(filename)
                             dotCount = showDots(motionDotsMax)
                         except ValueError:
-                            logging.error("Problem running userMotionCodeHere function from File %s",
+                            logging.error("Problem running userMotionCode function from File %s",
                                           userMotionFilePath)
                 else:
                     # show progress dots when no motion found
