@@ -1794,7 +1794,7 @@ def timolo():
                         # In the File user_motion_code.py
                         # ===========================================
                         try:
-                            user_motion_code.userMotionCode()
+                            user_motion_code.userMotionCode(filename)
                             dotCount = showDots(motionDotsMax)
                         except ValueError:
                             logging.error("Problem running userMotionCodeHere function from File %s",
