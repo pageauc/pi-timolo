@@ -72,6 +72,13 @@ else
     wget -O rclone-test.sh -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/rclone-samples/rclone-master.sh
 fi
 
+if [ ! -f user_motion_code.py ] ; then   # wget user_motion_code.py file if it does not exist
+    wget -O user_motion_code.py -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/user_motion_code.py
+    if [ $? -ne 0 ] ;  then
+        wget -O user_motion_code.py https://raw.github.com/pageauc/pi-timolo/master/source/user_motion_code.py
+    fi
+fi
+
 if [ ! -f video.conf ] ; then
     cp video.conf.new video.conf
 fi
@@ -83,10 +90,6 @@ cp config.py config.py.prev   # make copy of previous configuration
 
 if [ ! -f watch-app.sh ] ; then
     cp watch-app-new.sh watch-app.sh
-fi
-
-if [ ! -f user_motion_code.py ] ; then   # wget user_motion_code.py file if it does not exist
-    wget -O user_motion_code.py -q https://raw.github.com/pageauc/pi-timolo/master/source/user_motion_code.py
 fi
 
 # Install plugins if not already installed.  You must delete a plugin file to force reinstall.
