@@ -1,6 +1,6 @@
 #!/bin/bash
 # Convenient pi-timolo-install.sh script written by Claude Pageau 1-Jul-2016
-ver="10.7"
+ver="10.8"
 progName=$(basename -- "$0")
 TIMOLO_DIR='pi-timolo'  # Default folder install location
 
@@ -83,6 +83,10 @@ cp config.py config.py.prev   # make copy of previous configuration
 
 if [ ! -f watch-app.sh ] ; then
     cp watch-app-new.sh watch-app.sh
+fi
+
+if [ ! -f user_motion_code.py ] ; then   # wget user_motion_code.py file if it does not exist
+    wget -O user_motion_code.py -q https://raw.github.com/pageauc/pi-timolo/master/source/user_motion_code.py
 fi
 
 # Install plugins if not already installed.  You must delete a plugin file to force reinstall.

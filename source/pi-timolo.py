@@ -24,7 +24,7 @@ from PIL import Image
 from PIL import ImageFont
 from PIL import ImageDraw
 try:
-    from dateutil.parser import parse
+   from dateutil.parser import parse
 except ImportError:
    print("ERROR : Could Not Import dateutil.parser")
    print("        Disabling timelapseStartAt, motionStartAt and VideoStartAt")
@@ -44,8 +44,8 @@ try:
 except ImportError:
     pass
 
-progVer = "ver 11.00"   # Requires Latest 10.x release of config.py
-__version__ = "11.00"   # May test for version number at a future time
+progVer = "ver 11.10"   # Requires Latest 10.x release of config.py
+__version__ = "11.10"   # May test for version number at a future time
 
 mypath = os.path.abspath(__file__) # Find the full path of this python script
 # get the path location only (excluding script name)
@@ -86,6 +86,22 @@ else:
     logging.basicConfig(level=logging.CRITICAL,
                         format='%(asctime)s %(levelname)-8s %(funcName)-10s %(message)s',
                         datefmt='%Y-%m-%d %H:%M:%S')
+
+ # Check for user_motion_code.py file to import and error out if not found.
+userMotionFilePath = os.path.join(baseDir, "user_motion_code.py")
+if not os.path.isfile(userMotionFilePath):
+    logging.warning('%s File Not Found. Cannot Import user_motion_code functions.',
+                     userMotionFilePath)
+else:
+    # Read Configuration variables from config.py file
+    logging.info('Importing code from File %s', userMotionFilePath)
+    try:
+        motionCode = True
+        import user_motion_code
+    except ImportError:
+        logging.error("Failed Import of File user_motion_code.py Investigate Problem")
+        motionCode = False
+
 try:
     import cv2
 except ImportError:
@@ -241,16 +257,6 @@ if imageJpegQuality < 1:
     imageJpegQuality = 85
 elif imageJpegQuality > 100:
     imageJpegQuality = 100
-
-#------------------------------------------------------------------------------
-def userMotionCodeHere():
-    """
-    Users can put code here that needs to be run
-    prior to taking motion capture images
-    Eg Notify or activate something.
-    """
-    # Insert User code Below
-    return
 
 #------------------------------------------------------------------------------
 class PiVideoStream:
@@ -1782,13 +1788,17 @@ def timolo():
                     moPath = subDirChecks(motionSubDirMaxHours,
                                           motionSubDirMaxFiles,
                                           motionDir, motionPrefix)
-                    if motionFound:
+                    if motionFound and motionCode:
                         # ===========================================
-                        # Put your user code in userMotionCodeHere()
-                        # function at top of this script
+                        # Put your user code in userMotionCode() function
+                        # In the File user_motion_code.py
                         # ===========================================
-                        userMotionCodeHere()
-                        dotCount = showDots(motionDotsMax)
+                        try:
+                            user_motion_code.userMotionCode()
+                            dotCount = showDots(motionDotsMax)
+                        except ValueError:
+                            logging.error("Problem running userMotionCodeHere function from File %s",
+                                          userMotionFilePath)
                 else:
                     # show progress dots when no motion found
                     dotCount = showDots(dotCount)
