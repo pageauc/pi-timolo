@@ -44,8 +44,8 @@ try:
 except ImportError:
     pass
 
-progVer = "ver 11.10"   # Requires Latest 10.x release of config.py
-__version__ = "11.10"   # May test for version number at a future time
+progVer = "ver 11.11"   # Requires Latest 10.x release of config.py
+__version__ = "11.11"   # May test for version number at a future time
 
 mypath = os.path.abspath(__file__) # Find the full path of this python script
 # get the path location only (excluding script name)
@@ -286,14 +286,15 @@ class PiVideoStream:
                                                      use_video_port=True)
         # initialize the frame and the variable used to indicate
         # if the thread should be stopped
+        self.thread = None   # Initialize thread
         self.frame = None
         self.stopped = False
 
     def start(self):
         """ start the thread to read frames from the video stream"""
-        t = Thread(target=self.update, args=())
-        t.daemon = True
-        t.start()
+        self.thread = Thread(target=self.update, args=())
+        self.thread.daemon = True
+        self.thread.start()
         return self
 
     def update(self):
@@ -318,6 +319,8 @@ class PiVideoStream:
     def stop(self):
         """ indicate that the thread should be stopped """
         self.stopped = True
+        if self.thread is not None:
+            self.thread.join()
 
 #------------------------------------------------------------------------------
 def shut2Sec(shutspeed):
