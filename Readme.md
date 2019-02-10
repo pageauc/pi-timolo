@@ -2,6 +2,11 @@
 ### Raspberry (Pi)camera, (Ti)melapse, (Mo)tion, (Lo)wlight 
 ## For Details See [Program Features](https://github.com/pageauc/pi-timolo/wiki/Introduction#program-features) and [Wiki Instructions](https://github.com/pageauc/pi-timolo/wiki) and [YouTube Videos](https://www.youtube.com/playlist?list=PLLXJw_uJtQLa11A4qjVpn2D2T0pgfaSG0)
 
+***IMPORTANT:*** Stretch has long exposure low light camera freezing issue that requires a reboot to gain
+control of camera back per https://github.com/waveform80/picamera/issues/528 
+Operation under Jessie works fine.  Will issue update when Stretch issue resolved.  In the mean time
+use Jessie if you require very low light operation of pi-timolo.py
+
 * ***Release 9.x*** New Features have been Added. See Wiki Details below    
  [plugins Setup and Operation](https://github.com/pageauc/pi-timolo/wiki/How-to-Use-Plugins)   
  [Rclone Setup and Media Sync](https://github.com/pageauc/pi-timolo/wiki/How-to-Setup-rclone) (Replaces gdrive)    
