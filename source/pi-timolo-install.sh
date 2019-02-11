@@ -1,11 +1,11 @@
 #!/bin/bash
 # Convenient pi-timolo-install.sh script written by Claude Pageau 1-Jul-2016
-ver="11.1"
+ver="11.2"
 progName=$(basename -- "$0")
 TIMOLO_DIR='pi-timolo'  # Default folder install location
 
 # Make sure ver below matches latest rclone ver on https://downloads.rclone.org/rclone-current-linux-arm.zip
-rclone_cur_ver="rclone v1.45"
+rclone_cur_ver="rclone v1.5"
 
 cd ~
 is_upgrade=false

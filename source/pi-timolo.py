@@ -44,8 +44,8 @@ try:
 except ImportError:
     pass
 
-progVer = "ver 11.11"   # Requires Latest 10.x release of config.py
-__version__ = "11.11"   # May test for version number at a future time
+progVer = "ver 11.12"   # Requires Latest 10.x release of config.py
+__version__ = "11.12"   # May test for version number at a future time
 
 mypath = os.path.abspath(__file__) # Find the full path of this python script
 # get the path location only (excluding script name)
@@ -1073,6 +1073,7 @@ def takeNightImage(filename, pixelAve):
             camera.capture(filename, format='jpeg', quality=imageJpegQuality)
         else:
             camera.capture(filename)
+        camera.framerate = 5   # Adhoc Fix for Stretch camera freeze issue
         camera.close()
 
     if imageShowStream:    # Show motion area on full image to align camera
