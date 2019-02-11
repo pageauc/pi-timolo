@@ -2,10 +2,10 @@
 ### Raspberry (Pi)camera, (Ti)melapse, (Mo)tion, (Lo)wlight 
 ## For Details See [Program Features](https://github.com/pageauc/pi-timolo/wiki/Introduction#program-features) and [Wiki Instructions](https://github.com/pageauc/pi-timolo/wiki) and [YouTube Videos](https://www.youtube.com/playlist?list=PLLXJw_uJtQLa11A4qjVpn2D2T0pgfaSG0)
 
-***IMPORTANT:*** Raspbian Stretch and pi-timolo.py 11.11 and earlier has long exposure low light 
+***IMPORTANT:*** Raspbian Stretch and pi-timolo.py ver 11.11 and earlier has long exposure low light 
 camera freezing issue due to kernel panic that requires a reboot to gain
 control of camera back per https://github.com/waveform80/picamera/issues/528 
-Operation under Raspbian Jessie works fine. pi-timolo.py ver 11.2 has an adhoc fix to resolve issue but
+Operation under Raspbian Jessie works fine. pi-timolo.py ver 11.12 has an adhoc fix to resolve issue but
 requires the latest firmware. If you encounter camera freeze with latest Stretch image then
 you will need to run ***sudo rpi-update*** to update Stretch to latest firmware.  Normal
 backup precautions are advised before doing the firmware update.  
