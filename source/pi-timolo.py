@@ -1074,6 +1074,7 @@ def takeNightImage(filename, pixelAve):
         else:
             camera.capture(filename)
         camera.framerate = 5   # Adhoc Fix for Stretch camera freeze issue
+                               # Perform sudo rpi-update
         camera.close()
 
     if imageShowStream:    # Show motion area on full image to align camera

@@ -5,11 +5,11 @@
 ***IMPORTANT:*** Raspbian Stretch and pi-timolo.py ver 11.11 and earlier has long exposure low light 
 camera freezing issue due to kernel panic that requires a reboot to gain
 control of camera back per https://github.com/waveform80/picamera/issues/528 
-Operation under Raspbian Jessie works fine. pi-timolo.py ver 11.12 has an adhoc fix to resolve issue but
-requires the latest firmware. If you encounter camera freeze with latest Stretch image then
+pi-timolo.py ver 11.12 has a fix to resolve issue but
+requires the latest Raspbian firmware. If you encounter camera freeze with latest Stretch image then
 you will need to run ***sudo rpi-update*** to update Stretch to latest firmware.  Normal
-backup precautions are advised before doing the firmware update.  
-Note Jessie works fine and does Not encounter freezing issue with long exposure low light operation.
+backup precautions are advised before doing the firmware update.  See [wiki](https://github.com/pageauc/pi-timolo/wiki/Basic-Trouble-Shooting#raspbian-stretch-kernel-panic-and-camera-freeze)
+***Note:*** Raspbian Jessie works fine and does Not encounter freezing issue with long exposure low light operation.
 
 * ***Release 9.x*** New Features have been Added. See Wiki Details below    
  [plugins Setup and Operation](https://github.com/pageauc/pi-timolo/wiki/How-to-Use-Plugins)   
@@ -19,9 +19,9 @@ Note Jessie works fine and does Not encounter freezing issue with long exposure 
 * ***Release 10.x*** Added Sched Start to Motion Track, Timelapse and VideoRepeat. See Wiki Details below    
  [How To Schedule Motion, Timelapse or VideoRepeat](https://github.com/pageauc/pi-timolo/wiki/How-to-Schedule-Motion,-Timelapse-or-VideoRepeat)  
  This release requires config.py be updated by the user with config.py.new since new variables have been added.
-* ***Release 11.2*** Added adhoc fix for Debian Stretch kernel panic and camera freeze issue when running
+* ***Release 11.12*** Added adhoc fix for Debian Stretch kernel panic and camera freeze issue when running
  under very low light conditions.  Note a ***sudo rpi-update*** may be required to update firmware if freezing
- still occurs under pi-timolo.py ver 11.2 or greater
+ still occurs under pi-timolo.py ver 11.12 or greater
  
 ## Requirements
 Requires a [***Raspberry Pi computer***](https://www.raspberrypi.org/documentation/setup/) and a 
