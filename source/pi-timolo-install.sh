@@ -40,7 +40,7 @@ if $is_upgrade ; then
 
 else   # New Install
   timoloFiles=("config.py" "menubox.sh" "pi-timolo.py" "pi-timolo.sh" \
-"webserver.py" "webserver.sh" "watch-app.sh" \
+"webserver.py" "webserver.sh" "watch-app.sh" "shutdown.py" \
 "convid.sh" "makevideo.sh" "video.conf" "mvleavelast.sh" "remote-run.sh")
 fi
 
