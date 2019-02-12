@@ -3,7 +3,7 @@
 # Updated - 06-Jul-2017 IMPORTANT - Required for pi-timolo.py ver 7.0 or Greater
 # Done by - Claude Pageau
 
-configTitle = "pi-timolo ver 10.43 Default Settings"
+configTitle = "pi-timolo ver 11.13 Default Settings"
 configName  = "config.py"
 
 #======================================
@@ -27,11 +27,12 @@ debug = False              # default= False True = debug mode returns pixel aver
 imageNamePrefix = 'cam1-'  # default= 'cam1-' for all image file names. Eg garage-
 imageWidth = 1280          # default= 1024 Full Size Image Width in px
 imageHeight = 720          # default= 768  Full Size Image Height in px
-imageFormat = ".jpg"       # default = ".jpg"  image Formats .jpeg .png .gif .bmp
-imageJpegQuality = 95      # default = 95  jpg Encoder Quality Values 1(low)-100(high min compression) 0=85
+imageFormat = ".jpg"       # default= ".jpg"  image Formats .jpeg .png .gif .bmp
+imageJpegQuality = 95      # default= 95  jpg Encoder Quality Values 1(low)-100(high min compression) 0=85
 imageVFlip = True          # default= False True Flips image Vertically
 imageHFlip = True          # default= False True Flips image Horizontally
 imageRotation = 0          # Default= 0  Rotate image. Valid values: 0, 90, 180, 270
+imageGrayscale = False     # default= False  True=Save image as grayscale False=Color
 noNightShots = False       # default= False True=No Night Images (Motion or Timelapse)
 noDayShots = False         # default= False True=No Day Images (Motion or Timelapse)
 imagePreview = False       # default= False True=Preview image on connected RPI Monitor

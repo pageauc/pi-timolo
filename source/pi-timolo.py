@@ -44,8 +44,8 @@ try:
 except ImportError:
     pass
 
-progVer = "ver 11.12"   # Requires Latest 10.x release of config.py
-__version__ = "11.12"   # May test for version number at a future time
+progVer = "ver 11.13"   # Requires Latest 11.13 release of config.py
+__version__ = "11.13"   # May test for version number at a future time
 
 mypath = os.path.abspath(__file__) # Find the full path of this python script
 # get the path location only (excluding script name)
@@ -235,6 +235,11 @@ try:
     imageShowStream
 except:
     imageShowStream = False
+# Check if imageGrayscale variable exists in config.py. Set to False if not found
+try:
+    imageGrayscale
+except:
+    imageGrayscale = False
 bigImage = motionTrackQPBigger  # increase size of motionTrackQuickPic image
 bigImageWidth = int(CAMERA_WIDTH * bigImage)
 bigImageHeight = int(CAMERA_HEIGHT * bigImage)
@@ -997,6 +1002,8 @@ def takeDayImage(filename, cam_sleep_time):
         # Day Automatic Mode
         camera.exposure_mode = 'auto'
         camera.awb_mode = 'auto'
+        if imageGrayscale:
+            camera.color_effects = (128, 128)
         time.sleep(cam_sleep_time) # use motion or TL camera sleep to get AWB
         if imagePreview:
             camera.start_preview()
@@ -1035,6 +1042,8 @@ def takeNightImage(filename, pixelAve):
         camera.vflip = imageVFlip
         camera.hflip = imageHFlip
         camera.rotation = imageRotation # valid values are 0, 90, 180, 270
+        if imageGrayscale:
+            camera.color_effects = (128, 128)
         time.sleep(1)
         # Use Twilight Threshold variable framerate_range
         if pixelAve >= nightDarkThreshold:
