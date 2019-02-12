@@ -28,17 +28,17 @@ imageNamePrefix = 'cam1-'  # default= 'cam1-' for all image file names. Eg garag
 imageWidth = 1280          # default= 1024 Full Size Image Width in px
 imageHeight = 720          # default= 768  Full Size Image Height in px
 imageFormat = ".jpg"       # default= ".jpg"  image Formats .jpeg .png .gif .bmp
-imageJpegQuality = 95      # default= 95  jpg Encoder Quality Values 1(low)-100(high min compression) 0=85
+imageJpegQuality = 95      # default= 95 jpg Encoder Quality Values 1(low)-100(high min compression) 0=85
+imageRotation = 0          # Default= 0  Rotate image. Valid values: 0, 90, 180, 270
 imageVFlip = True          # default= False True Flips image Vertically
 imageHFlip = True          # default= False True Flips image Horizontally
-imageRotation = 0          # Default= 0  Rotate image. Valid values: 0, 90, 180, 270
-imageGrayscale = False     # default= False  True=Save image as grayscale False=Color
+imageGrayscale = False     # default= False True=Save image as grayscale False=Color
+imagePreview = False       # default= False True=Preview image on connected RPI Monitor or Display
 noNightShots = False       # default= False True=No Night Images (Motion or Timelapse)
 noDayShots = False         # default= False True=No Day Images (Motion or Timelapse)
-imagePreview = False       # default= False True=Preview image on connected RPI Monitor
 useVideoPort = False       # default= False True=Use the video port to capture motion images (faster than the image port).
-imageShowStream = False    # default= False Show video stream area on full size image.
-                           # Use to Align Camera for motion tracking.  Turn off when Alignment complete.
+imageShowStream = False    # default= False True=Show video stream motion tracking area on full size image.
+                           # Use to Align Camera for motion tracking.  Set to False when Alignment complete.
 
 # Date/Time Settings for Displaying info Directly on Images
 # ---------------------------------------------------------
