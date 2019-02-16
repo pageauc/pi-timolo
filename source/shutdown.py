@@ -1,24 +1,27 @@
 #!/usr/bin/env python
-# written by Claude Pageau
+# written by Claude Pageau ver 11.13
 
 # Safely shutdown Raspberry pi using a momentary switch
 # use a physical push button, toggle switch or just short two gpio jumper wires
 # You can salvage an old switch from a computer or other device.
 # Connect momentary switch to pin 5 and 6 (default)
-# or set gpio_pin variable to desired pin below
+# or set gpio_pin variable below to desired gpio pin number
 #
 # Set button_hold variable to number of seconds to
 # hold down momentary switch before action taken
 # default is 2 seconds.  0=No delay
 #
-# Add line below to sudo crontab -e (without #) change path as necessary
-# @reboot /home/pi/shutdown/shutdown.py
-#
 # make sure shutdown.py is executable
+# cd ~/pi-timolo
 # chmod +x shutdown.py
 #
-# After initial power boot press switch for specified time
-# to Initiate safe shutown (halt)
+# Add line below to sudo crontab -e (without #) change path as necessary
+# @reboot /home/pi/pi-timolo/shutdown.py
+#
+# After initial RPI power on 
+# Press switch or connect jumper wires for specified time
+# to Initiate safe shutdown (halt)
+#
 # After shutdown wait 5 seconds then press switch again
 # for specified time to initiate a startup
 # Wait a few seconds between between operations
