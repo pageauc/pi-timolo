@@ -1,5 +1,5 @@
 #!/bin/bash
-ver="5.00"
+ver="5.10"
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"  # get cur dir of this script
 progName=$(basename -- "$0")
 cd $DIR
@@ -35,7 +35,7 @@ done
 echo "--------------- SETTINGS -----------------
 
 watch_config_on  : $watch_config_on       # manage config true=on false=off
-watch_app_on     : $watch_app_on       # restart true=on false=off
+watch_app_on     : $watch_app_on          # restart true=on false=off
 watch_reboot_on  : $watch_reboot_on       # reboot true=on false=off
 watch_app_fname  : $watch_app_fname
 
@@ -57,14 +57,16 @@ function do_watch_restart ()
         progPID=$( pgrep -f "$watch_app_fname" )
         echo "$now INFO  : Stop $watch_app_fname PID $progPID"
         sudo kill $progPID >/dev/null 2>&1
-        sleep 1
+        sleep 3
     fi
     # restart the app
-   ./$watch_app_fname  >/dev/null 2>&1 &
-    sleep 1
+    ./$watch_app_fname  >/dev/null 2>&1 &
+    echo "Waiting 10 seconds for $watch_app_fname to restart"
+    sleep 10
     if [ -z "$(pgrep -f $watch_app_fname)" ] ; then
         # pi-timolo did not start
         echo "$now INFO  : Restart Failed $watch_app_fname"
+        do_watch_reboot        
     else
         progPID=$( pgrep -f $watch_app_fname )
         echo "$now INFO  : Restart OK $watch_app_fname PID $progPID"
