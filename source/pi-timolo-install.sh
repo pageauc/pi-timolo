@@ -5,7 +5,7 @@ progName=$(basename -- "$0")
 TIMOLO_DIR='pi-timolo'  # Default folder install location
 
 # Make sure ver below matches latest rclone ver on https://downloads.rclone.org/rclone-current-linux-arm.zip
-rclone_cur_ver="rclone v1.5"
+rclone_cur_ver="rclone v1.47.0"
 
 cd ~
 is_upgrade=false
