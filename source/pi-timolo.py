@@ -44,8 +44,8 @@ try:
 except ImportError:
     pass
 
-progVer = "ver 11.13"   # Requires Latest 11.13 release of config.py
-__version__ = "11.13"   # May test for version number at a future time
+progVer = "ver 11.2"   # Requires Latest 11.2 release of config.py
+__version__ = "11.2"   # May test for version number at a future time
 
 mypath = os.path.abspath(__file__) # Find the full path of this python script
 # get the path location only (excluding script name)
@@ -218,9 +218,6 @@ timelapsePath = os.path.join(baseDir, timelapseDir)  # Store Time Lapse images
 # timelapse dat file to save currentCount
 timelapseNumPath = os.path.join(baseDir, timelapsePrefix + baseFileName + ".dat")
 lockFilePath = os.path.join(baseDir, baseFileName + ".sync")
-# Video Stream Settings for motion Tracking using opencv motion tracking
-CAMERA_WIDTH = 320     # width of video stream
-CAMERA_HEIGHT = 240    # height of video stream
 # Colors for drawing lines
 cvWhite = (255, 255, 255)
 cvBlack = (0, 0, 0)
@@ -229,21 +226,36 @@ cvGreen = (0, 255, 0)
 cvRed = (0, 0, 255)
 LINE_THICKNESS = 1     # Thickness of opencv drawing lines
 LINE_COLOR = cvWhite   # color of lines to highlight motion stream area
+
+# Video Stream Settings for motion Tracking using opencv motion tracking
+try:
+    streamWidth        # check if streamWidth variable exists in config.py
+except:
+    streamWidth = 320   # Set default width of 320 if var not in config.py
+try:
+    streamHeight       # check if streamHeight variable exists in config.py
+except:
+    streamHeight = 240  # Set default height of 240 if var not in config.py
+CAMERA_WIDTH = streamWidth
+CAMERA_HEIGHT = streamHeight
+CAMERA_FRAMERATE = motionTrackFrameRate  # camera framerate
+
 # Check if imageShowStream variable exists in config.py
-# To show stream rectange on still image
+# Will display stream image rectange overlayed on still image
 try:
-    imageShowStream
+    imageShowStream    # check if imageShowStream variable in config.py
 except:
-    imageShowStream = False
-# Check if imageGrayscale variable exists in config.py. Set to False if not found
+    imageShowStream = False # Set default to False if var not in config.py
+
+# Check if imageGrayscale variable exists in config.py.
 try:
-    imageGrayscale
+    imageGrayscale    # Check if imageGrayscale variable exists in config.py
 except:
-    imageGrayscale = False
+    imageGrayscale = False  # Set default to False if var not found in config.py
+
 bigImage = motionTrackQPBigger  # increase size of motionTrackQuickPic image
 bigImageWidth = int(CAMERA_WIDTH * bigImage)
 bigImageHeight = int(CAMERA_HEIGHT * bigImage)
-CAMERA_FRAMERATE = motionTrackFrameRate  # camera framerate
 TRACK_TRIG_LEN = motionTrackTrigLen  # Length of track to trigger speed photo
 # Don't track progress until this Len reached.
 TRACK_TRIG_LEN_MIN = int(motionTrackTrigLen / 6)

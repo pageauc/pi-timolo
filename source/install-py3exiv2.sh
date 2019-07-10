@@ -16,7 +16,7 @@ else
     git clone https://github.com/mcmclx/py3exiv2.git
 fi
 cd py3exiv2
-echo "INFO  : Running pytho3 configure"
+echo "INFO  : Running python3 configure"
 python3 configure.py
 echo "INFO  : Compile from Source per build.sh"
 echo "INFO  : This will Take Some Time ..."

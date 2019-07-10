@@ -1,9 +1,9 @@
 # User Configuration variable settings for pitimolo
 # Purpose - Motion Detection Security Cam
-# Updated - 06-Jul-2017 IMPORTANT - Required for pi-timolo.py ver 7.0 or Greater
+# Updated - 06-Jul-2017 IMPORTANT - Required for pi-timolo.py ver 11.2 or Greater
 # Done by - Claude Pageau
 
-configTitle = "pi-timolo ver 11.13 Default Settings"
+configTitle = "pi-timolo ver 11.2 Default Settings"
 configName  = "config.py"
 
 #======================================
@@ -39,6 +39,9 @@ noDayShots = False         # default= False True=No Day Images (Motion or Timela
 useVideoPort = False       # default= False True=Use the video port to capture motion images (faster than the image port).
 imageShowStream = False    # default= False True=Show video stream motion tracking area on full size image.
                            # Use to Align Camera for motion tracking.  Set to False when Alignment complete.
+streamWidth = 320          # default= 320  Width of motion tracking stream detection area
+streamHeight = 240         # default= 240  Height of motion tracking stream detection area
+# Note see motionTrackFrameRate variable below to set stream video framerate for stream size above
 
 # Date/Time Settings for Displaying info Directly on Images
 # ---------------------------------------------------------
