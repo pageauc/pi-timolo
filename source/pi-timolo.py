@@ -48,8 +48,8 @@ except ImportError:
     print("        ./install-py3exiv2.sh")
     print("")
 
-progVer = "ver 11.31"   # Requires Latest 11.2 release of config.py
-__version__ = "11.31"   # May test for version number at a future time
+progVer = "ver 11.32"   # Requires Latest 11.2 release of config.py
+__version__ = "11.32"   # May test for version number at a future time
 
 mypath = os.path.abspath(__file__) # Find the full path of this python script
 # get the path location only (excluding script name)
@@ -926,8 +926,10 @@ def postImageProcessing(numberon, counterstart, countermax, counter,
         else:
             imageText = dateTimeText
         # Now put the imageText on the current image
-        if not motionVideoOn:
+        try:  # This will fail for a video file
             writeTextToImage(filename, imageText, currentDaymode)
+        except:
+            pass
     if createLockFile and motionTrackOn:
         createSyncLockFile(filename)
     # Process currentCount for next image if number sequence is enabled
