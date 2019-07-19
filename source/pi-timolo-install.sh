@@ -1,6 +1,6 @@
 #!/bin/bash
 # Convenient pi-timolo-install.sh script written by Claude Pageau 1-Jul-2016
-ver="11.2"
+ver="11.3"
 progName=$(basename -- "$0")
 TIMOLO_DIR='pi-timolo'  # Default folder install location
 
@@ -36,12 +36,12 @@ INFO  : $progName $ver  written by Claude Pageau
 if $is_upgrade ; then
   timoloFiles=("menubox.sh" "pi-timolo.py" "pi-timolo.sh"  \
  "webserver.py" "webserver.sh" \
-"convid.sh" "makevideo.sh" "mvleavelast.sh" "remote-run.sh")
+"convid.sh" "makevideo.sh" "mvleavelast.sh" "remote-run.sh" "install-py3exiv2.sh")
 
 else   # New Install
   timoloFiles=("config.py" "menubox.sh" "pi-timolo.py" "pi-timolo.sh" \
 "webserver.py" "webserver.sh" "watch-app.sh" "shutdown.py" \
-"convid.sh" "makevideo.sh" "video.conf" "mvleavelast.sh" "remote-run.sh")
+"convid.sh" "makevideo.sh" "video.conf" "mvleavelast.sh" "remote-run.sh" "install-py3exiv2.sh")
 fi
 
 for fname in "${timoloFiles[@]}" ; do

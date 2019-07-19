@@ -42,10 +42,14 @@ try:
     # Bypass pyexiv2 if library Not Found
     import pyexiv2
 except ImportError:
-    pass
+    print("WARN  : Could Not Import pyexiv2. Required for adding images EXIF meta data")
+    print("INFO  : If Running under python3 then Install pyexiv2 library for python3 per")
+    print("        cd ~/pi-timolo")
+    print("        ./install-py3exiv2.sh")
+    print("")
 
-progVer = "ver 11.2"   # Requires Latest 11.2 release of config.py
-__version__ = "11.2"   # May test for version number at a future time
+progVer = "ver 11.3"   # Requires Latest 11.2 release of config.py
+__version__ = "11.3"   # May test for version number at a future time
 
 mypath = os.path.abspath(__file__) # Find the full path of this python script
 # get the path location only (excluding script name)
@@ -907,25 +911,24 @@ def writeTextToImage(imagename, datetoprint, currentDayMode):
 def postImageProcessing(numberon, counterstart, countermax, counter,
                         recycle, counterpath, filename, currentDaymode):
     """ If required process text to display directly on image """
-    if not motionVideoOn:
-        rightNow = datetime.datetime.now()
-        if showDateOnImage:
-            dateTimeText = ("%04d%02d%02d_%02d:%02d:%02d"
-                            % (rightNow.year, rightNow.month, rightNow.day,
-                               rightNow.hour, rightNow.minute, rightNow.second))
-            if numberon:
-                if not recycle and countermax > 0:
-                    counterStr = "%i/%i " % (counter, counterstart + countermax)
-                    imageText = counterStr + dateTimeText
-                else:
-                    counterStr = "%i  "  % (counter)
-                    imageText = counterStr + dateTimeText
+    rightNow = datetime.datetime.now()
+    if showDateOnImage:
+        dateTimeText = ("%04d%02d%02d_%02d:%02d:%02d"
+                        % (rightNow.year, rightNow.month, rightNow.day,
+                           rightNow.hour, rightNow.minute, rightNow.second))
+        if numberon:
+            if not recycle and countermax > 0:
+                counterStr = "%i/%i " % (counter, counterstart + countermax)
+                imageText = counterStr + dateTimeText
             else:
-                imageText = dateTimeText
-            # Now put the imageText on the current image
-            writeTextToImage(filename, imageText, currentDaymode)
-        if createLockFile and motionTrackOn:
-            createSyncLockFile(filename)
+                counterStr = "%i  "  % (counter)
+                imageText = counterStr + dateTimeText
+        else:
+            imageText = dateTimeText
+        # Now put the imageText on the current image
+        writeTextToImage(filename, imageText, currentDaymode)
+    if createLockFile and motionTrackOn:
+        createSyncLockFile(filename)
     # Process currentCount for next image if number sequence is enabled
     if numberon:
         counter += 1
@@ -1778,14 +1781,14 @@ def timolo():
                                     takeDayImage(filename, motionCamSleep)
                                 else:
                                     takeNightImage(filename, pixAve)
-                            motionNumCount = postImageProcessing(motionNumOn,
-                                                                 motionNumStart,
-                                                                 motionNumMax,
-                                                                 motionNumCount,
-                                                                 motionNumRecycle,
-                                                                 motionNumPath,
-                                                                 filename,
-                                                                 daymode)
+                                motionNumCount = postImageProcessing(motionNumOn,
+                                                                     motionNumStart,
+                                                                     motionNumMax,
+                                                                     motionNumCount,
+                                                                     motionNumRecycle,
+                                                                     motionNumPath,
+                                                                     filename,
+                                                                     daymode)
                             if motionRecentMax > 0:
                                 if not motionVideoOn:
                                    # prevent h264 video files from

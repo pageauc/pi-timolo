@@ -104,7 +104,7 @@ createLockFile = False      # default= False True= Create pi-timolo.sync file wh
 timelapseOn = True          # default= False True=Turn timelapse On, False=Off
 timelapseDir = "media/timelapse" # default= "media/timelapse"  Storage Folder Path for Time Lapse Image Storage
 timelapsePrefix = "tl-"     # default= "tl-" Prefix for All timelapse images with this prefix
-timelapseStartAt = ""       # default= "" Off or Specify date/time to Start Sequence Eg "01-jan-20018 08:00:00" or "20:00:00"
+timelapseStartAt = ""       # default= "" Off or Specify date/time to Start Sequence Eg "01-dec-2019 08:00:00" or "20:00:00"
 timelapseTimer = 300        # default= 300 (5 min) Seconds between timelapse images
 timelapseCamSleep = 4.0     # default= 4.0 seconds day sleep so camera can measure AWB before taking photo
 timelapseNumOn = True       # default= True filenames Sequenced by Number False=filenames by date/time
@@ -123,7 +123,7 @@ timelapseRecentDir = "media/recent/timelapse"  # default= "media/recent/timelaps
 videoRepeatOn = False       # Turn on Video Repeat Mode IMPORTANT Overrides timelapse and motion
 videoPath = "media/videos"  # default= "media/videos" Storage folder path for videos
 videoPrefix = "vid-"        # prefix for video filenames
-videoStartAt = ""           # default= "" Off or Specify date/time to Start Sequence eg "01-jan-20018 08:00:00" or "20:00:00"
+videoStartAt = ""           # default= "" Off or Specify date/time to Start Sequence eg "01-dec-2019 08:00:00" or "20:00:00"
 videoDuration = 120         # default= 120 seconds for each video recording
 videoTimer = 60             # default= 60 minutes  Run Recording Session then Exit  0=Continuous
 videoFPS = 30               # default= 30 fps.  Note slow motion can be achieved at 640x480 image resolution at 90 fps
