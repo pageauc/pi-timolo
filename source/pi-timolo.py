@@ -48,8 +48,8 @@ except ImportError:
     print("        ./install-py3exiv2.sh")
     print("")
 
-progVer = "ver 11.3"   # Requires Latest 11.2 release of config.py
-__version__ = "11.3"   # May test for version number at a future time
+progVer = "ver 11.31"   # Requires Latest 11.2 release of config.py
+__version__ = "11.31"   # May test for version number at a future time
 
 mypath = os.path.abspath(__file__) # Find the full path of this python script
 # get the path location only (excluding script name)
@@ -926,7 +926,8 @@ def postImageProcessing(numberon, counterstart, countermax, counter,
         else:
             imageText = dateTimeText
         # Now put the imageText on the current image
-        writeTextToImage(filename, imageText, currentDaymode)
+        if not motionVideoOn:
+            writeTextToImage(filename, imageText, currentDaymode)
     if createLockFile and motionTrackOn:
         createSyncLockFile(filename)
     # Process currentCount for next image if number sequence is enabled
@@ -1781,14 +1782,14 @@ def timolo():
                                     takeDayImage(filename, motionCamSleep)
                                 else:
                                     takeNightImage(filename, pixAve)
-                                motionNumCount = postImageProcessing(motionNumOn,
-                                                                     motionNumStart,
-                                                                     motionNumMax,
-                                                                     motionNumCount,
-                                                                     motionNumRecycle,
-                                                                     motionNumPath,
-                                                                     filename,
-                                                                     daymode)
+                            motionNumCount = postImageProcessing(motionNumOn,
+                                                                 motionNumStart,
+                                                                 motionNumMax,
+                                                                 motionNumCount,
+                                                                 motionNumRecycle,
+                                                                 motionNumPath,
+                                                                 filename,
+                                                                 daymode)
                             if motionRecentMax > 0:
                                 if not motionVideoOn:
                                    # prevent h264 video files from
