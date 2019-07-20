@@ -48,8 +48,8 @@ except ImportError:
     print("        ./install-py3exiv2.sh")
     print("")
 
-progVer = "ver 11.32"   # Requires Latest 11.2 release of config.py
-__version__ = "11.32"   # May test for version number at a future time
+progVer = "ver 11.33"   # Requires Latest 11.2 release of config.py
+__version__ = "11.33"   # May test for version number at a future time
 
 mypath = os.path.abspath(__file__) # Find the full path of this python script
 # get the path location only (excluding script name)
@@ -231,31 +231,39 @@ cvRed = (0, 0, 255)
 LINE_THICKNESS = 1     # Thickness of opencv drawing lines
 LINE_COLOR = cvWhite   # color of lines to highlight motion stream area
 
-# Video Stream Settings for motion Tracking using opencv motion tracking
-try:
-    streamWidth        # check if streamWidth variable exists in config.py
-except:
+# Video Stream image Size Settings for camera opencv motion tracking
+try:          # check if streamWidth variable exists in config.py
+    streamWidth
+except NameError:
     streamWidth = 320   # Set default width of 320 if var not in config.py
-try:
-    streamHeight       # check if streamHeight variable exists in config.py
-except:
+    logging.warn('streamWidth variable Does Not Exist in %s', configFilePath)
+    logging.warn('Setting default value streamWidth = %i', streamWidth)
+
+try:        # check if streamHeight variable exists in config.py
+    streamHeight
+except NameError:
     streamHeight = 240  # Set default height of 240 if var not in config.py
+    logging.warn('streamHeight variable Does Not Exist in %s', configFilePath)
+    logging.warn('Setting default value streamHeight = %i', streamHeight)
+
 CAMERA_WIDTH = streamWidth
 CAMERA_HEIGHT = streamHeight
 CAMERA_FRAMERATE = motionTrackFrameRate  # camera framerate
 
-# Check if imageShowStream variable exists in config.py
 # Will display stream image rectange overlayed on still image
-try:
+try:       # Check if imageShowStream variable exists in config.py
     imageShowStream    # check if imageShowStream variable in config.py
-except:
+except NameError:
     imageShowStream = False # Set default to False if var not in config.py
+    logging.warn('imageShowStream variable Does Not Exist in %s', configFilePath)
+    logging.warn('Setting default value imageShowStream = %s', imageShowStream)
 
-# Check if imageGrayscale variable exists in config.py.
-try:
+try:       # Check if imageGrayscale variable exists in config.py.
     imageGrayscale    # Check if imageGrayscale variable exists in config.py
-except:
+except NameError:
     imageGrayscale = False  # Set default to False if var not found in config.py
+    logging.warn('imageGrayscale variable Does Not Exist in %s', configFilePath)
+    logging.warn('Setting default value imageGrayscale = %s', imageGrayscale)
 
 bigImage = motionTrackQPBigger  # increase size of motionTrackQuickPic image
 bigImageWidth = int(CAMERA_WIDTH * bigImage)
@@ -424,6 +432,7 @@ def displayInfo(motioncount, timelapsecount):
                  imageVFlip, imageHFlip, imageRotation, imagePreview))
         print("               JpegQuality=%i where 1=Low 100=High(Min Compression) 0=85"
               % (imageJpegQuality))
+        print("               imageGrayscale = %s" % ( imageGrayscale))
         print("   Low Light.. nightTwilightThreshold=%i"
               "  nightDarkThreshold=%i  nightBlackThreshold=%i"
               % (nightTwilightThreshold, nightDarkThreshold, nightBlackThreshold))
@@ -447,8 +456,8 @@ def displayInfo(motioncount, timelapsecount):
                   "  TrigLen=%i-%i px  TimeOut=%i sec"
                   % (motionTrackOn, motionPrefix, motionTrackMinArea,
                      motionTrackTrigLen, TRACK_TRIG_LEN_MAX, motionTrackTimeOut))
-            print("               motionTrackInfo=%s   motionDotsOn=%s"
-                  % (motionTrackInfo, motionDotsOn))
+            print("               motionTrackInfo=%s   motionDotsOn=%s  imageShowStream=%s"
+                  % (motionTrackInfo, motionDotsOn, imageShowStream))
             print("   Stream .... size=%ix%i  framerate=%i fps"
                   "  motionStreamStopSec=%.2f  QuickPic=%s"
                   % (CAMERA_WIDTH, CAMERA_HEIGHT, motionTrackFrameRate,
@@ -835,6 +844,7 @@ def getCurrentCount(numberpath, numberstart):
             else:
                 filePath = timelapsePath + "/*" + imageFormat
                 fprefix = timelapsePath + timelapsePrefix + imageNamePrefix
+
             try:
                # Scan image folder for most recent file
                # and try to extract most recent number counter
@@ -842,6 +852,7 @@ def getCurrentCount(numberpath, numberstart):
                 writeCount = newest[len(fprefix)+1:newest.find(imageFormat)]
             except:
                 writeCount = numberstart
+
             try:
                 numbercounter = int(writeCount)+1
             except ValueError:
@@ -891,11 +902,13 @@ def writeTextToImage(imagename, datetoprint, currentDayMode):
     img = Image.open(imagename)
     # For python3 install of pyexiv2 lib
     # See https://github.com/pageauc/pi-timolo/issues/79
+
     try:  # Read exif data since ImageDraw does not save this metadata
         metadata = pyexiv2.ImageMetadata(imagename)
         metadata.read()
     except:
         pass
+
     draw = ImageDraw.Draw(img)
     # draw.text((x, y),"Sample Text",(r,g,b))
     draw.text((x, y), text, FOREGROUND, font=font)
@@ -925,6 +938,7 @@ def postImageProcessing(numberon, counterstart, countermax, counter,
                 imageText = counterStr + dateTimeText
         else:
             imageText = dateTimeText
+
         # Now put the imageText on the current image
         try:  # This will fail for a video file
             writeTextToImage(filename, imageText, currentDaymode)

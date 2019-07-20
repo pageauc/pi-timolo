@@ -41,7 +41,7 @@ imageShowStream = False    # default= False True=Show video stream motion tracki
                            # Use to Align Camera for motion tracking.  Set to False when Alignment complete.
 streamWidth = 320          # default= 320  Width of motion tracking stream detection area
 streamHeight = 240         # default= 240  Height of motion tracking stream detection area
-# Note see motionTrackFrameRate variable below to set stream video framerate for stream size above
+# Note see motionTrackFrameRate variable below to set motion video stream framerate for stream size above
 
 # Date/Time Settings for Displaying info Directly on Images
 # ---------------------------------------------------------
