@@ -48,8 +48,8 @@ except ImportError:
     print("        ./install-py3exiv2.sh")
     print("")
 
-progVer = "ver 11.33"   # Requires Latest 11.2 release of config.py
-__version__ = "11.33"   # May test for version number at a future time
+progVer = "ver 11.4"   # Requires Latest 11.2 release of config.py
+__version__ = "11.4"   # May test for version number at a future time
 
 mypath = os.path.abspath(__file__) # Find the full path of this python script
 # get the path location only (excluding script name)
@@ -1747,6 +1747,11 @@ def timolo():
                                                              motionNumRecycle,
                                                              motionNumPath,
                                                              filename, daymode)
+                        if motionRecentMax > 0:
+                            saveRecent(motionRecentMax,
+                                       motionRecentDir,
+                                       filename,
+                                       imagePrefix)
                     else:
                         if motionTrackOn:
                             logging.info("Stop PiVideoStream ...")
