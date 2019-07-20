@@ -23,6 +23,7 @@ import numpy as np
 from PIL import Image
 from PIL import ImageFont
 from PIL import ImageDraw
+
 try:
    from dateutil.parser import parse
 except ImportError:
@@ -42,14 +43,15 @@ try:
     # Bypass pyexiv2 if library Not Found
     import pyexiv2
 except ImportError:
-    print("WARN  : Could Not Import pyexiv2. Required for adding images EXIF meta data")
+    print("WARN  : Could Not Import pyexiv2. Required for Saving Image EXIF meta data")
     print("INFO  : If Running under python3 then Install pyexiv2 library for python3 per")
     print("        cd ~/pi-timolo")
     print("        ./install-py3exiv2.sh")
     print("")
+    time.sleep(5)
 
-progVer = "ver 11.4"   # Requires Latest 11.2 release of config.py
-__version__ = "11.4"   # May test for version number at a future time
+progVer = "ver 11.41"   # Requires Latest 11.2 release of config.py
+__version__ = "11.41"   # May test for version number at a future time
 
 mypath = os.path.abspath(__file__) # Find the full path of this python script
 # get the path location only (excluding script name)
@@ -67,10 +69,14 @@ if not os.path.isfile(configFilePath):
     print('Run Console Command Below to Download File from GitHub Repo')
     print('wget -O config.py https://raw.github.com/pageauc/pi-timolo/master/source/config.py')
     sys.exit(1)
-else:
+
+try:
     # Read Configuration variables from config.py file
     print('Import Configuration Variables from File %s' % configFilePath)
     from config import *
+except ImportError:
+    print('ERROR - Could Not import Variables from %s' %(configFilePath))
+    sys.exit(1)
 
 # Setup Logging now that variables are imported from config.py/plugin
 if logDataToFile:
@@ -96,6 +102,7 @@ userMotionFilePath = os.path.join(baseDir, "user_motion_code.py")
 if not os.path.isfile(userMotionFilePath):
     logging.warning('%s File Not Found. Cannot Import user_motion_code functions.',
                      userMotionFilePath)
+    time.sleep(5)
 else:
     # Read Configuration variables from config.py file
     logging.info('Importing code from File %s', userMotionFilePath)
@@ -103,22 +110,24 @@ else:
         motionCode = True
         import user_motion_code
     except ImportError:
-        logging.error("Failed Import of File user_motion_code.py Investigate Problem")
+        logging.warn("Failed Import of File user_motion_code.py Investigate Problem")
         motionCode = False
+        time.sleep(5)
 
 try:
     import cv2
 except ImportError:
     if sys.version_info > (2, 9):
-        logging.error("python3 Failed to import cv2 opencv ver 3.x")
+        logging.error("Failed to import cv2 opencv for python3")
         logging.error("Try installing opencv for python3")
         logging.error("See https://github.com/pageauc/opencv3-setup")
     else:
-        logging.error("python2 Failed to import cv2")
+        logging.error("Failed to import cv2 for python2")
         logging.error("Try reinstalling per command")
         logging.error("sudo apt-get install python-opencv")
     logging.error("Exiting %s Due to Error", progName)
     sys.exit(1)
+
 try:
     from picamera import PiCamera
 except ImportError:
@@ -201,6 +210,7 @@ if pluginEnable:     # Check and verify plugin and load variable overlay
                 os.remove(pluginCurrentpyc)
         except OSError as err:
             logging.warn("Failed Removal of %s - %s", pluginCurrentpyc, err)
+            time.sleep(5)
 else:
     logging.info("No Plugin Enabled per pluginEnable=%s", pluginEnable)
 
@@ -237,14 +247,16 @@ try:          # check if streamWidth variable exists in config.py
 except NameError:
     streamWidth = 320   # Set default width of 320 if var not in config.py
     logging.warn('streamWidth variable Does Not Exist in %s', configFilePath)
-    logging.warn('Setting default value streamWidth = %i', streamWidth)
+    logging.info('Setting default value streamWidth = %i', streamWidth)
+    time.sleep(5)
 
 try:        # check if streamHeight variable exists in config.py
     streamHeight
 except NameError:
     streamHeight = 240  # Set default height of 240 if var not in config.py
     logging.warn('streamHeight variable Does Not Exist in %s', configFilePath)
-    logging.warn('Setting default value streamHeight = %i', streamHeight)
+    logging.info('Setting default value streamHeight = %i', streamHeight)
+    time.sleep(5)
 
 CAMERA_WIDTH = streamWidth
 CAMERA_HEIGHT = streamHeight
@@ -256,14 +268,16 @@ try:       # Check if imageShowStream variable exists in config.py
 except NameError:
     imageShowStream = False # Set default to False if var not in config.py
     logging.warn('imageShowStream variable Does Not Exist in %s', configFilePath)
-    logging.warn('Setting default value imageShowStream = %s', imageShowStream)
+    logging.info('Setting default value imageShowStream = %s', imageShowStream)
+    time.sleep(5)
 
 try:       # Check if imageGrayscale variable exists in config.py.
     imageGrayscale    # Check if imageGrayscale variable exists in config.py
 except NameError:
     imageGrayscale = False  # Set default to False if var not found in config.py
     logging.warn('imageGrayscale variable Does Not Exist in %s', configFilePath)
-    logging.warn('Setting default value imageGrayscale = %s', imageGrayscale)
+    logging.info('Setting default value imageGrayscale = %s', imageGrayscale)
+    time.sleep(5)
 
 bigImage = motionTrackQPBigger  # increase size of motionTrackQuickPic image
 bigImageWidth = int(CAMERA_WIDTH * bigImage)
@@ -1474,7 +1488,7 @@ def timolo():
         grayimage1 = cv2.cvtColor(image1, cv2.COLOR_BGR2GRAY)
     else:
         image2 = vs.read()  # use video stream to check for daymode
-        logging.warn("Motion Tracking is Suppressed per motionTrackOn=%s",
+        logging.info("Motion Tracking is Suppressed per variable motionTrackOn=%s",
                      motionTrackOn)
         stopMotion = True
     daymode = checkIfDayStream(daymode, image2)
