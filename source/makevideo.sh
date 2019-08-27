@@ -1,19 +1,11 @@
 #!/bin/bash
-ver="5.00"
+ver="5.5"
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"  # get cur dir of this script
 progName=$(basename -- "$0")
 cd $DIR
 echo "INFO  : $progName $ver  written by Claude Pageau"
 
-# Note - makevideo.sh variables are in video.conf
-# To install/update avconv execute the following command in RPI terminal session
-#
-# sudo apt-get install libav-tools
-#
-# For more details see GitHub Wiki here
-# https://github.com/pageauc/pi-timolo/wiki/Utilities
-
-# get current working folder that this script was launched from
+# Note makevideo.sh variables are in video.conf
 
 if [ -f video.conf ] ; then
    source $DIR/video.conf
@@ -34,7 +26,6 @@ else
 fi
 
 # ------------- Start Script ------------------
-
 #  Script variables
 tl_folder_working="$DIR/makevideo_tmp"
 tl_error_log_file="$DIR/makevideo_error.log"
@@ -148,16 +139,21 @@ cd $DIR      # Return back to launch folder
 echo "=========================================================================="
 echo "Making Video ... "$tl_videoname
 echo "=========================================================================="
-/usr/bin/avconv -y -f image2 -r $tl_fps -i $tl_folder_working/%5d.$tl_files_ext -aspect $tl_a_ratio -s $tl_vid_size $tl_folder_destination/$tl_videoname
-if [ $? -ne 0 ] ; then
-  echo "ERROR : avconv Encoding Failed for" $tl_folder_destination/$tl_videoname
-  echo "        Review avconv output for Error Messages and Correct Problem"
-  echo "ERROR : avconv Encoding Failed for" $tl_folder_destination/$tl_videoname >> $tl_error_log_file
+if [ -f /usr/bin/ffmpeg ] ; then
+  /usr/bin/ffmpeg -y -f image2 -r $tl_fps -i $tl_folder_working/%5d.$tl_files_ext -aspect $tl_a_ratio -s $tl_vid_size $tl_folder_destination/$tl_videoname
+else
+  /usr/bin/avconv -y -f image2 -r $tl_fps -i $tl_folder_working/%5d.$tl_files_ext -aspect $tl_a_ratio -s $tl_vid_size $tl_folder_destination/$tl_videoname
+fi
+
+if [ $? -ne 0 ] ; then   # Check for encoding error
+  echo "ERROR : Encoding Failed for" $tl_folder_destination/$tl_videoname
+  echo "        Review Output for Error Messages and Correct Problem"
+  echo "ERROR : Encoding Failed for" $tl_folder_destination/$tl_videoname >> $tl_error_log_file
   exit 1
 else
   echo "=========================================================================="
   echo "INFO  : Video Saved to" $tl_folder_destination/$tl_videoname
-
+fi
   # Process archive, delete or do nothing for encoded source image files
   if [ "$tl_archive_source_files" = true ] ; then    # Check if archiving enabled
     echo "INFO  : Archive Enabled per tl_archive_source_files="$tl_archive_source_files
