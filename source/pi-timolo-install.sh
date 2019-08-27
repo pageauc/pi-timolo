@@ -1,6 +1,6 @@
 #!/bin/bash
 # Convenient pi-timolo-install.sh script written by Claude Pageau 1-Jul-2016
-ver="11.3"
+ver="11.5"
 progName=$(basename -- "$0")
 TIMOLO_DIR='pi-timolo'  # Default folder install location
 
@@ -177,11 +177,13 @@ echo "INFO  : $STATUS Install pi-timolo Dependencies Wait ..."
 
 sudo apt-get install -yq python-picamera
 sudo apt-get install -yq python3-picamera
-sudo apt-get install -yq python-imaging
+sudo apt-get install -yq python-pil
 sudo apt-get install -yq python3-pil
+sudo apt-get install -yq python-imaging  # depricated in Buster
 sudo apt-get install -yq dos2unix
 sudo apt-get install -yq python-pyexiv2
-sudo apt-get install -yq libav-tools  # used for makevideo gpac
+sudo apt-get install -yq ffmpeg   # required for Buster.
+sudo apt-get install -yq libav-tools  # used for makevideo gpac replaced by ffmpeg in Buster
 sudo apt-get install -yq pandoc # convert markdown to plain text for Readme.md
 sudo apt-get install -yq gpac   # required for MP4Box video converter
 sudo apt-get install -yq fonts-freefont-ttf # Required for Jessie Lite Only
@@ -200,6 +202,17 @@ if [ $? -ne 0 ] ;  then
     fi
 fi
 sudo pip install python-dateutil
+# Install dependencies for py3exiv2 pip install.
+# This is required to transfer exif data when
+# after puting text on images.
+# Note some of these may already be installed but
+# doing anyway just in case.
+echo "INFO  : Installing py3exiv2.  This might take a While ..."
+sudo apt-get install -yq python-all-dev
+sudo apt-get install -yq libexiv2-dev
+sudo apt-get install -yq libboost-python-dev
+sudo apt-get install -yq g++
+sudo pip install py3exiv2
 dos2unix -q *
 chmod +x *py
 chmod -x config*py
