@@ -1,5 +1,5 @@
 #!/bin/bash
-ver="5.5"
+ver="5.6"
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"  # get cur dir of this script
 progName=$(basename -- "$0")
 cd $DIR
@@ -154,57 +154,57 @@ else
   echo "=========================================================================="
   echo "INFO  : Video Saved to" $tl_folder_destination/$tl_videoname
 fi
-  # Process archive, delete or do nothing for encoded source image files
-  if [ "$tl_archive_source_files" = true ] ; then    # Check if archiving enabled
-    echo "INFO  : Archive Enabled per tl_archive_source_files="$tl_archive_source_files
-    echo "INFO  : Archive Files from $tl_folder_source to $tl_archive_dest_folder/$subfolderName"
-    echo "INFO  : This will Take Some Time.  Wait ...."
-    ls $tl_folder_working |     # get directory listing of working folder symlinks
-    (
-      while read linkFile
-      do
-        imageFilePath=$( readlink -f $tl_folder_working/$linkFile )  # read symlink for full path to image file
-        imageFilename=$(basename $imageFilePath)
-        # echo "INFO  - Move $imageFilePath to $tl_archive_dest_folder"
-        cp -p  $imageFilePath $tl_archive_dest_folder/$subfolderName # copy image file and preserve timestamp
-        if [ -e $tl_archive_dest_folder/$subfolderName/$imageFilename ] ; then
-            rm -f $imageFilePath   # Remove original image file without prompt
-            if [ -e $imageFilePath ] ; then
-                echo "ERROR : Delete Failed $imageFilePath.  Please Investigate ..."
-                echo "ERROR : Delete Failed $imageFilePath.  Please Investigate ..." >> $tl_error_log_file
-            fi
-        else
-            echo "ERROR : Copy Failed $imageFilePath to $tl_archive_dest_folder/$subfolderName"
-            echo "ERROR : Copy Failed $imageFilePath to $tl_archive_dest_folder/"$subfolderName >> $tl_error_log_file
-        fi
-      done
-    )
-  elif [ "$tl_delete_source_files" = true ] ; then   # Check if delete source files is enabled
-    echo "WARN  : Variable tl_delete_source_files : $tl_delete_source_files"
-    echo "WARN  : Start Deleting Encoded Source Files in $tl_folder_source"
-    ls $tl_folder_working |    # get directory listing of working folder symlinks
-    (
-      while read linkFile
-      do
-        imageFile=$(readlink -f $tl_folder_working/$linkFile)
-        echo "WARN  : Deleting $imageFile"
-        rm -f $imageFile
-        if [ -e $imageFile ] ; then
-            echo "ERROR : Delete Failed for $imageFile"
-            echo "ERROR : Delete Failed for $imageFile" >> $tl_error_log_file
-        fi
-      done
-    )
-  fi
 
-  echo "INFO  : Deleting Working Folder" $tl_folder_working
-  rm -R $tl_folder_working
-  if [ $? -ne 0 ] ; then
-    echo "ERROR : Could not Delete Working Folder $tl_folder_working"
-    echo "        Check for permissions or other possible problems"
-    echo "ERROR : Could not Delete Working Folder" $tl_folder_working >> $tl_error_log_file
-    exit 1
-  fi
+# Process archive, delete or do nothing for encoded source image files
+if [ "$tl_archive_source_files" = true ] ; then    # Check if archiving enabled
+  echo "INFO  : Archive Enabled per tl_archive_source_files="$tl_archive_source_files
+  echo "INFO  : Archive Files from $tl_folder_source to $tl_archive_dest_folder/$subfolderName"
+  echo "INFO  : This will Take Some Time.  Wait ...."
+  ls $tl_folder_working |     # get directory listing of working folder symlinks
+  (
+    while read linkFile
+    do
+      imageFilePath=$( readlink -f $tl_folder_working/$linkFile )  # read symlink for full path to image file
+      imageFilename=$(basename $imageFilePath)
+      # echo "INFO  - Move $imageFilePath to $tl_archive_dest_folder"
+      cp -p  $imageFilePath $tl_archive_dest_folder/$subfolderName # copy image file and preserve timestamp
+      if [ -e $tl_archive_dest_folder/$subfolderName/$imageFilename ] ; then
+          rm -f $imageFilePath   # Remove original image file without prompt
+          if [ -e $imageFilePath ] ; then
+              echo "ERROR : Delete Failed $imageFilePath.  Please Investigate ..."
+              echo "ERROR : Delete Failed $imageFilePath.  Please Investigate ..." >> $tl_error_log_file
+          fi
+      else
+          echo "ERROR : Copy Failed $imageFilePath to $tl_archive_dest_folder/$subfolderName"
+          echo "ERROR : Copy Failed $imageFilePath to $tl_archive_dest_folder/"$subfolderName >> $tl_error_log_file
+      fi
+    done
+  )
+elif [ "$tl_delete_source_files" = true ] ; then   # Check if delete source files is enabled
+  echo "WARN  : Variable tl_delete_source_files : $tl_delete_source_files"
+  echo "WARN  : Start Deleting Encoded Source Files in $tl_folder_source"
+  ls $tl_folder_working |    # get directory listing of working folder symlinks
+  (
+    while read linkFile
+    do
+      imageFile=$(readlink -f $tl_folder_working/$linkFile)
+      echo "WARN  : Deleting $imageFile"
+      rm -f $imageFile
+      if [ -e $imageFile ] ; then
+          echo "ERROR : Delete Failed for $imageFile"
+          echo "ERROR : Delete Failed for $imageFile" >> $tl_error_log_file
+      fi
+    done
+  )
+fi
+
+echo "INFO  : Deleting Working Folder" $tl_folder_working
+rm -R $tl_folder_working
+if [ $? -ne 0 ] ; then
+  echo "ERROR : Could not Delete Working Folder $tl_folder_working"
+  echo "        Check for permissions or other possible problems"
+  echo "ERROR : Could not Delete Working Folder" $tl_folder_working >> $tl_error_log_file
+  exit 1
 fi
 
 # Check if video file is to be copied to a network share
