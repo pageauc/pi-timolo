@@ -25,16 +25,16 @@ from PIL import ImageFont
 from PIL import ImageDraw
 
 try:
-   from dateutil.parser import parse
+    from dateutil.parser import parse
 except ImportError:
-   print("ERROR : Could Not Import dateutil.parser")
-   print("        Disabling timelapseStartAt, motionStartAt and VideoStartAt")
-   print("See https://github.com/pageauc/pi-timolo/wiki/Basic-Trouble-Shooting#problems-with-python-pip-install-on-wheezy")
-   print("        ----------------")
-   # Disable get_sched_start if import fails for Raspbian wheezy or Jessie
-   timelapseStartAt = ""
-   motionStartAt = ""
-   videoStartAt = ""
+    print("ERROR : Could Not Import dateutil.parser")
+    print("        Disabling timelapseStartAt, motionStartAt and VideoStartAt")
+    print("See https://github.com/pageauc/pi-timolo/wiki/Basic-Trouble-Shooting#problems-with-python-pip-install-on-wheezy")
+    print("        ----------------")
+    # Disable get_sched_start if import fails for Raspbian wheezy or Jessie
+    timelapseStartAt = ""
+    motionStartAt = ""
+    videoStartAt = ""
 
 try:
     # pyexiv2 Transfers image exif data to writeTextToImage
@@ -50,8 +50,8 @@ except ImportError:
     print("")
     time.sleep(5)
 
-progVer = "ver 11.41"   # Requires Latest 11.2 release of config.py
-__version__ = "11.41"   # May test for version number at a future time
+progVer = "ver 11.42"   # Requires Latest 11.2 release of config.py
+__version__ = "11.42"   # May test for version number at a future time
 
 mypath = os.path.abspath(__file__) # Find the full path of this python script
 # get the path location only (excluding script name)
@@ -101,7 +101,7 @@ else:
 userMotionFilePath = os.path.join(baseDir, "user_motion_code.py")
 if not os.path.isfile(userMotionFilePath):
     logging.warning('%s File Not Found. Cannot Import user_motion_code functions.',
-                     userMotionFilePath)
+                    userMotionFilePath)
     time.sleep(5)
 else:
     # Read Configuration variables from config.py file
@@ -446,7 +446,7 @@ def displayInfo(motioncount, timelapsecount):
                  imageVFlip, imageHFlip, imageRotation, imagePreview))
         print("               JpegQuality=%i where 1=Low 100=High(Min Compression) 0=85"
               % (imageJpegQuality))
-        print("               imageGrayscale = %s" % ( imageGrayscale))
+        print("               imageGrayscale = %s" % (imageGrayscale))
         print("   Low Light.. nightTwilightThreshold=%i"
               "  nightDarkThreshold=%i  nightBlackThreshold=%i"
               % (nightTwilightThreshold, nightDarkThreshold, nightBlackThreshold))
@@ -596,8 +596,8 @@ def subDirCreate(directory, prefix):
     now = datetime.datetime.now()
     # Specify folder naming
     subDirName = ('%s%d-%02d%02d-%02d%02d' % (prefix,
-                                               now.year, now.month, now.day,
-                                               now.hour, now.minute))
+                                              now.year, now.month, now.day,
+                                              now.hour, now.minute))
     subDirPath = os.path.join(directory, subDirName)
     if not os.path.isdir(subDirPath):
         try:
@@ -899,6 +899,7 @@ def writeTextToImage(imagename, datetoprint, currentDayMode):
             FOREGROUND = (255, 255, 255)
             textColour = "White"
     img = cv2.imread(imagename)
+    # This is grayscale image so channels is not avail or used
     height, width, channels = img.shape
     # centre text and compensate for graphics text being wider
     x = int((width/2) - (len(imagename)*2))
