@@ -1,6 +1,6 @@
 #!/bin/bash
 # Convenient pi-timolo-install.sh script written by Claude Pageau 1-Jul-2016
-ver="11.5"
+ver="11.6"
 progName=$(basename -- "$0")
 TIMOLO_DIR='pi-timolo'  # Default folder install location
 
@@ -212,7 +212,14 @@ sudo apt-get install -yq python-all-dev
 sudo apt-get install -yq libexiv2-dev
 sudo apt-get install -yq libboost-python-dev
 sudo apt-get install -yq g++
-sudo pip install py3exiv2
+
+# Check if there is enough memory to compile py3exiv2 since
+# 512 memory on pi zero or older rpi's locks up.
+TOTAL_MEM=$(free -m | grep Mem | tr -s " " | cut -f 2 -d " ")
+if [ "$TOTAL_MEM" -gt "600" ] ; then
+   echo "Compile and Install python3 exiv2  This Will Take Some Time ..."
+   sudo pip install py3exiv2
+fi
 dos2unix -q *
 chmod +x *py
 chmod -x config*py
