@@ -207,18 +207,20 @@ sudo pip install python-dateutil
 # after puting text on images.
 # Note some of these may already be installed but
 # doing anyway just in case.
-echo "INFO  : Installing py3exiv2.  This might take a While ..."
-sudo apt-get install -yq python-all-dev
-sudo apt-get install -yq libexiv2-dev
-sudo apt-get install -yq libboost-python-dev
-sudo apt-get install -yq g++
 
 # Check if there is enough memory to compile py3exiv2 since
 # 512 memory on pi zero or older rpi's locks up.
 TOTAL_MEM=$(free -m | grep Mem | tr -s " " | cut -f 2 -d " ")
 if [ "$TOTAL_MEM" -gt "600" ] ; then
-   echo "Compile and Install python3 exiv2  This Will Take Some Time ..."
-   sudo pip install py3exiv2
+    echo "INFO  : Installing py3exiv2.  This might take a While ..."
+    sudo apt-get install -yq python-all-dev
+    sudo apt-get install -yq libexiv2-dev
+    sudo apt-get install -yq libboost-python-dev
+    sudo apt-get install -yq g++
+    echo "INFO  : Compile and Install python3 exiv2  This Will Take Some Time ..."
+    sudo pip install py3exiv2
+else
+    echo "INFO  : $TOTAL_MEM mb Not enough RAM memory to install python3 pyexiv2"   
 fi
 dos2unix -q *
 chmod +x *py
