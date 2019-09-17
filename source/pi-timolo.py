@@ -7,10 +7,24 @@ This release uses OpenCV to do Motion Tracking.
 It requires updated config.py
 """
 from __future__ import print_function
+progVer = "ver 11.45"   # Requires Latest 11.2 release of config.py
+__version__ = "11.45"   # May test for version number at a future time
+
+import os
+mypath = os.path.abspath(__file__) # Find the full path of this python script
+# get the path location only (excluding script name)
+baseDir = os.path.dirname(mypath)
+baseFileName = os.path.splitext(os.path.basename(mypath))[0]
+progName = os.path.basename(__file__)
+logFilePath = os.path.join(baseDir, baseFileName + ".log")
+horz_line = '-------------------------------------------------------'
+print(horz_line)
+print('%s %s  written by Claude Pageau' % (progName, progVer))
+print(horz_line)
 print('Loading ....')
+
 import datetime
 import logging
-import os
 import sys
 import subprocess
 import shutil
@@ -49,17 +63,131 @@ except ImportError:
     print("        ./install-py3exiv2.sh")
     print("")
     time.sleep(5)
+except OSError as err:
+    print("WARN  : Could Not import python3 pyexiv2 due to an Operating System Error")
+    print("        %s" % err)
+    print("WARN  : Camera images will be missing exif meta data")
+    time.sleep(5)
 
-progVer = "ver 11.42"   # Requires Latest 11.2 release of config.py
-__version__ = "11.42"   # May test for version number at a future time
-
-mypath = os.path.abspath(__file__) # Find the full path of this python script
-# get the path location only (excluding script name)
-baseDir = os.path.dirname(mypath)
-baseFileName = os.path.splitext(os.path.basename(mypath))[0]
-progName = os.path.basename(__file__)
-logFilePath = os.path.join(baseDir, baseFileName + ".log")
-print('%s %s  written by Claude Pageau' % (progName, progVer))
+"""
+This is a dictionary of the default settings for pi-timolo.py
+If you don't want to use a config.py file these will create the required
+variables with default values.  Change dictionary values if you want different
+variable default values.
+A message will be displayed if a variable is Not imported from config.py.
+Note: plugins can override default and config.py values if plugins are
+      enabled.  This happens after config.py variables are initialized
+"""
+default_settings = {
+    'pluginEnable':False,
+    'pluginName':"shopcam",
+    'verbose':True,
+    'logDataToFile':False,
+    'debug':False,
+    'imageNamePrefix':'cam1-',
+    'imageWidth':80,
+    'imageHeight':20,
+    'imageFormat':"jpg",
+    'imageJpegQuality':5,
+    'imageRotation':0,
+    'imageVFlip':True,
+    'imageHFlip':True,
+    'imageGrayscale':False,
+    'imagePreview':False,
+    'noNightShots':False,
+    'noDayShots':False,
+    'useVideoPort':False,
+    'imageShowStream':False,
+    'streamWidth':320,
+    'streamHeight':240,
+    'showDateOnImage':True,
+    'showTextFontSize':18,
+    'showTextBottom':True,
+    'showTextWhite':True,
+    'showTextWhiteNight':True,
+    'nightTwilightThreshold':90,
+    'nightDarkThreshold':50,
+    'nightBlackThreshold':4,
+    'nightSleepSec':30,
+    'nightMaxShutSec':5.9,
+    'nightMaxISO':800,
+    'nightDarkAdjust':4.7,
+    'motionTrackOn':True,
+    'motionTrackQuickPic':False,
+    'motionTrackInfo':True,
+    'motionTrackTimeOut':0.3,
+    'motionTrackTrigLen':75,
+    'motionTrackMinArea':100,
+    'motionTrackFrameRate':20,
+    'motionTrackQPBigger':3.0,
+    'motionDir':"media/motion",
+    'motionPrefix':"mo-",
+    'motionStartAt':"",
+    'motionVideoOn':False,
+    'motionVideoFPS':15,
+    'motionVideoTimer':10,
+    'motionQuickTLOn':False,
+    'motionQuickTLTimer':20,
+    'motionQuickTLInterval':4,
+    'motionForce':3600,
+    'motionNumOn':True,
+    'motionNumRecycle':True,
+    'motionNumStart':1000,
+    'motionNumMax':500,
+    'motionSubDirMaxFiles':0,
+    'motionSubDirMaxHours':0,
+    'motionRecentMax':40,
+    'motionRecentDir':"media/recent/motion",
+    'motionDotsOn':False,
+    'motionDotsMax':100,
+    'motionCamSleep':0.7,
+    'createLockFile':False,
+    'timelapseOn':True,
+    'timelapseDir':"media/timelapse",
+    'timelapsePrefix':"tl-",
+    'timelapseStartAt':"",
+    'timelapseTimer':300,
+    'timelapseCamSleep':4.0,
+    'timelapseNumOn':True,
+    'timelapseNumRecycle':True,
+    'timelapseNumStart':1000,
+    'timelapseNumMax':2000,
+    'timelapseExitSec':0,
+    'timelapseMaxFiles':0,
+    'timelapseSubDirMaxFiles':0,
+    'timelapseSubDirMaxHours':0,
+    'timelapseRecentMax':40,
+    'timelapseRecentDir':"media/recent/timelapse",
+    'videoRepeatOn':False,
+    'videoPath':"media/videos",
+    'videoPrefix':"vid-",
+    'videoStartAt':"",
+    'videoDuration':120,
+    'videoTimer':60,
+    'videoFPS':30,
+    'videoNumOn':False,
+    'videoNumRecycle':False,
+    'videoNumStart':100,
+    'videoNumMax':20,
+    'spaceTimerHrs':0,
+    'spaceFreeMB':500,
+    'spaceMediaDir':'/home/pi/pi-timolo/media',
+    'spaceFileExt':'jpg',
+    'web_server_port':8080,
+    'web_server_root':"media",
+    'web_page_title':"PI-TIMOLO Media",
+    'web_page_refresh_on':True,
+    'web_page_refresh_sec':"900",
+    'web_page_blank':False,
+    'web_image_height':"768",
+    'web_iframe_width_usage':"70%",
+    'web_iframe_width':"100%",
+    'web_iframe_height':"100%",
+    'web_max_list_entries':0,
+    'web_list_height':"768",
+    'web_list_by_datetime':True,
+    'web_list_sort_descending':True
+    }
 
 # Check for config.py variable file to import and error out if not found.
 configFilePath = os.path.join(baseDir, "config.py")
@@ -75,8 +203,18 @@ try:
     print('Import Configuration Variables from File %s' % configFilePath)
     from config import *
 except ImportError:
-    print('ERROR - Could Not import Variables from %s' %(configFilePath))
-    sys.exit(1)
+    print('ERROR - Could Not import Variables from %s' % configFilePath)
+
+"""
+Check if variables were imported from config.py. If not create variable using
+the values in the default_settings dictionary above.
+"""
+for key, val in default_settings.items():
+    try:
+        exec(key)
+    except NameError:
+        print('WARN  : config.py Variable Not Found. Setting ' + key + ' = ' + str(val))
+        exec(key + '=val')
 
 # Setup Logging now that variables are imported from config.py/plugin
 if logDataToFile:
@@ -241,43 +379,9 @@ cvRed = (0, 0, 255)
 LINE_THICKNESS = 1     # Thickness of opencv drawing lines
 LINE_COLOR = cvWhite   # color of lines to highlight motion stream area
 
-# Video Stream image Size Settings for camera opencv motion tracking
-try:          # check if streamWidth variable exists in config.py
-    streamWidth
-except NameError:
-    streamWidth = 320   # Set default width of 320 if var not in config.py
-    logging.warn('streamWidth variable Does Not Exist in %s', configFilePath)
-    logging.info('Setting default value streamWidth = %i', streamWidth)
-    time.sleep(5)
-
-try:        # check if streamHeight variable exists in config.py
-    streamHeight
-except NameError:
-    streamHeight = 240  # Set default height of 240 if var not in config.py
-    logging.warn('streamHeight variable Does Not Exist in %s', configFilePath)
-    logging.info('Setting default value streamHeight = %i', streamHeight)
-    time.sleep(5)
-
 CAMERA_WIDTH = streamWidth
 CAMERA_HEIGHT = streamHeight
 CAMERA_FRAMERATE = motionTrackFrameRate  # camera framerate
-
-# Will display stream image rectange overlayed on still image
-try:       # Check if imageShowStream variable exists in config.py
-    imageShowStream    # check if imageShowStream variable in config.py
-except NameError:
-    imageShowStream = False # Set default to False if var not in config.py
-    logging.warn('imageShowStream variable Does Not Exist in %s', configFilePath)
-    logging.info('Setting default value imageShowStream = %s', imageShowStream)
-    time.sleep(5)
-
-try:       # Check if imageGrayscale variable exists in config.py.
-    imageGrayscale    # Check if imageGrayscale variable exists in config.py
-except NameError:
-    imageGrayscale = False  # Set default to False if var not found in config.py
-    logging.warn('imageGrayscale variable Does Not Exist in %s', configFilePath)
-    logging.info('Setting default value imageGrayscale = %s', imageGrayscale)
-    time.sleep(5)
 
 bigImage = motionTrackQPBigger  # increase size of motionTrackQuickPic image
 bigImageWidth = int(CAMERA_WIDTH * bigImage)
