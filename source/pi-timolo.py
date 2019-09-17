@@ -7,7 +7,7 @@ This release uses OpenCV to do Motion Tracking.
 It requires updated config.py
 """
 from __future__ import print_function
-progVer = "ver 11.51"   # Requires Latest 11.2 release of config.py
+progVer = "ver 11.52"   # Requires Latest 11.2 release of config.py
 __version__ = progVer   # May test for version number at a future time
 
 import os
@@ -24,6 +24,7 @@ print('%s %s  written by Claude Pageau' % (progName, progVer))
 print(horz_line)
 print('Loading Wait ....')
 
+# import python library modules
 import datetime
 import logging
 import sys
@@ -39,6 +40,7 @@ from PIL import Image
 from PIL import ImageFont
 from PIL import ImageDraw
 
+# Attempt to import dateutil
 try:
     from dateutil.parser import parse
 except ImportError:
@@ -51,6 +53,7 @@ except ImportError:
     motionStartAt = ""
     videoStartAt = ""
 
+# Attempt to import pyexiv2.  Note python3 can be a problem
 try:
     # pyexiv2 Transfers image exif data to writeTextToImage
     # For python3 install of pyexiv2 lib
@@ -79,16 +82,18 @@ Note: plugins can override default and config.py values if plugins are
       enabled.  This happens after config.py variables are initialized
 """
 default_settings = {
+    'configName':'default_settings',
+    'configTitle':'No config.py so using internal dictionary settings',
     'pluginEnable':False,
     'pluginName':"shopcam",
     'verbose':True,
     'logDataToFile':False,
     'debug':False,
     'imageNamePrefix':'cam1-',
-    'imageWidth':80,
-    'imageHeight':20,
-    'imageFormat':"jpg",
-    'imageJpegQuality':5,
+    'imageWidth':1920,
+    'imageHeight':1080,
+    'imageFormat':".jpg",
+    'imageJpegQuality':95,
     'imageRotation':0,
     'imageVFlip':True,
     'imageHFlip':True,
@@ -357,6 +362,14 @@ if pluginEnable:     # Check and verify plugin and load variable overlay
 else:
     logging.info("No Plugin Enabled per pluginEnable=%s", pluginEnable)
 
+# Turn on verbose when debug mode is enabled
+if debug:
+    verbose = True
+
+# Make sure image format extention starts with a dot
+if not imageFormat.startswith('.',0,1):
+    imageFormat = '.' + imageFormat
+
 #==================================
 #      System Variables
 # Should Not need to be customized
@@ -402,8 +415,7 @@ TRACK_TIMEOUT = motionTrackTimeOut
 MIN_AREA = motionTrackMinArea
 BLUR_SIZE = 10  # OpenCV setting for Gaussian difference image blur
 THRESHOLD_SENSITIVITY = 20  # OpenCV setting for difference image threshold
-if debug:
-    verbose = True
+
 # Fix range Errors  Use zero to set default quality to 85
 if imageJpegQuality < 1:
     imageJpegQuality = 85
@@ -546,16 +558,17 @@ def displayInfo(motioncount, timelapsecount):
                   " (Overlays %s Variable Settings)"
                   % (pluginEnable, pluginName, configName))
         else:
-            print("     Plugin .. pluginEnable=%s  Disabled (Using Only %s Settings)"
-                  % (pluginEnable, configName))
+            print("     Plugin .. pluginEnable=%s" % pluginEnable)
         print("")
-        print("Image Info ... Size=%ix%i  Prefix=%s"
-              "  VFlip=%s  HFlip=%s  Rotation=%i  Preview=%s"
-              % (imageWidth, imageHeight, imageNamePrefix,
-                 imageVFlip, imageHFlip, imageRotation, imagePreview))
-        print("               JpegQuality=%i where 1=Low 100=High(Min Compression) 0=85"
-              % (imageJpegQuality))
-        print("               imageGrayscale = %s" % (imageGrayscale))
+        print("Image Info ... Size=%ix%i  ext=%s  Prefix=%s"
+              "  VFlip=%s  HFlip=%s  Rotation=%i"
+              % (imageWidth, imageHeight, imageFormat, imageNamePrefix,
+                 imageVFlip, imageHFlip, imageRotation))
+        print("               imageGrayscale=%s   Preview=%s"
+              % (imageGrayscale, imagePreview))
+        if imageFormat == '.jpg' or imageFormat == '.jpeg':
+            print("               JpegQuality=%i where 1=Low 100=High"
+                  % (imageJpegQuality))
         print("   Low Light.. nightTwilightThreshold=%i"
               "  nightDarkThreshold=%i  nightBlackThreshold=%i"
               % (nightTwilightThreshold, nightDarkThreshold, nightBlackThreshold))
@@ -2080,8 +2093,10 @@ if __name__ == '__main__':
                      configFilePath, pluginName)
     else:
         logging.info("Start pi-timolo per %s Settings", configFilePath)
+
     if not verbose:
         print("NOTICE: Logging Disabled per variable verbose=False  ctrl-c Exits")
+
     try:
         if videoRepeatOn:
             videoRepeat()
@@ -2095,6 +2110,7 @@ if __name__ == '__main__':
         else:
             sys.stdout.write("User Pressed Keyboard ctrl-c \n")
             sys.stdout.write("Exiting %s %s \n" % (progName, progVer))
+
     try:
         if pluginEnable:
             if os.path.isfile(pluginCurrent):
