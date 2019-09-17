@@ -43,9 +43,8 @@ try:
     from dateutil.parser import parse
 except ImportError:
     print("WARN : Could Not Import dateutil.parser")
-    print("        Disabling timelapseStartAt, motionStartAt and VideoStartAt")
-    print("See https://github.com/pageauc/pi-timolo/wiki/Basic-Trouble-Shooting#problems-with-python-pip-install-on-wheezy")
-    print("        ----------------")
+    print("       Disabling timelapseStartAt, motionStartAt and VideoStartAt")
+    print("       See https://github.com/pageauc/pi-timolo/wiki/Basic-Trouble-Shooting#problems-with-python-pip-install-on-wheezy")
     warn_on = True
     # Disable get_sched_start if import fails for Raspbian wheezy or Jessie
     timelapseStartAt = ""
@@ -63,7 +62,6 @@ except ImportError:
     print("        If Running under python3 then Install pyexiv2 library for python3 per")
     print("        cd ~/pi-timolo")
     print("        ./install-py3exiv2.sh")
-    print("")
     warn_on = True
 except OSError as err:
     print("WARN  : Could Not import python3 pyexiv2 due to an Operating System Error")
@@ -204,7 +202,7 @@ try:
     # Read Configuration variables from config.py file
     from config import *
 except ImportError:
-    print('WARN - Could Not import Variables from %s' % configFilePath)
+    print('WARN  : Could Not import Variables from %s' % configFilePath)
     warn_on = True
 
 """
