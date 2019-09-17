@@ -7,7 +7,7 @@ This release uses OpenCV to do Motion Tracking.
 It requires updated config.py
 """
 from __future__ import print_function
-progVer = "ver 11.50"   # Requires Latest 11.2 release of config.py
+progVer = "ver 11.51"   # Requires Latest 11.2 release of config.py
 __version__ = progVer   # May test for version number at a future time
 
 import os
@@ -191,18 +191,20 @@ default_settings = {
 
 # Check for config.py variable file to import and error out if not found.
 configFilePath = os.path.join(baseDir, "config.py")
-if not os.path.isfile(configFilePath):
+if os.path.isfile(configFilePath):
+    try:
+        # Read Configuration variables from config.py file
+        from config import *
+    except ImportError:
+        print('WARN  : Problem Importing Variables from %s' % configFilePath)
+        warn_on = True
+else:
     print('WARN  : %s File Not Found. Cannot Import Configuration Variables.'
           % configFilePath)
-    print('INFO  : Run Console Command Below to Download File from GitHub Repo')
+    print('        Run Console Command Below to Download File from GitHub Repo')
     print('        wget -O config.py https://raw.github.com/pageauc/pi-timolo/master/source/config.py')
-    warn_on = True
-
-try:
-    # Read Configuration variables from config.py file
-    from config import *
-except ImportError:
-    print('WARN  : Could Not import Variables from %s' % configFilePath)
+    print('        or cp config.py.new config.py')
+    print('        Will now use default_settings dictionary variable values.')
     warn_on = True
 
 """
