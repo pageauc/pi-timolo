@@ -7,10 +7,11 @@ This release uses OpenCV to do Motion Tracking.
 It requires updated config.py
 """
 from __future__ import print_function
-progVer = "ver 11.45"   # Requires Latest 11.2 release of config.py
-__version__ = "11.45"   # May test for version number at a future time
+progVer = "ver 11.50"   # Requires Latest 11.2 release of config.py
+__version__ = progVer   # May test for version number at a future time
 
 import os
+warn_on = False   # Add short delay to review warning messages
 mypath = os.path.abspath(__file__) # Find the full path of this python script
 # get the path location only (excluding script name)
 baseDir = os.path.dirname(mypath)
@@ -21,7 +22,7 @@ horz_line = '-------------------------------------------------------'
 print(horz_line)
 print('%s %s  written by Claude Pageau' % (progName, progVer))
 print(horz_line)
-print('Loading ....')
+print('Loading Wait ....')
 
 import datetime
 import logging
@@ -41,10 +42,11 @@ from PIL import ImageDraw
 try:
     from dateutil.parser import parse
 except ImportError:
-    print("ERROR : Could Not Import dateutil.parser")
+    print("WARN : Could Not Import dateutil.parser")
     print("        Disabling timelapseStartAt, motionStartAt and VideoStartAt")
     print("See https://github.com/pageauc/pi-timolo/wiki/Basic-Trouble-Shooting#problems-with-python-pip-install-on-wheezy")
     print("        ----------------")
+    warn_on = True
     # Disable get_sched_start if import fails for Raspbian wheezy or Jessie
     timelapseStartAt = ""
     motionStartAt = ""
@@ -58,16 +60,16 @@ try:
     import pyexiv2
 except ImportError:
     print("WARN  : Could Not Import pyexiv2. Required for Saving Image EXIF meta data")
-    print("INFO  : If Running under python3 then Install pyexiv2 library for python3 per")
+    print("        If Running under python3 then Install pyexiv2 library for python3 per")
     print("        cd ~/pi-timolo")
     print("        ./install-py3exiv2.sh")
     print("")
-    time.sleep(5)
+    warn_on = True
 except OSError as err:
     print("WARN  : Could Not import python3 pyexiv2 due to an Operating System Error")
     print("        %s" % err)
-    print("WARN  : Camera images will be missing exif meta data")
-    time.sleep(5)
+    print("        Camera images will be missing exif meta data")
+    warn_on = True
 
 """
 This is a dictionary of the default settings for pi-timolo.py
@@ -192,18 +194,18 @@ default_settings = {
 # Check for config.py variable file to import and error out if not found.
 configFilePath = os.path.join(baseDir, "config.py")
 if not os.path.isfile(configFilePath):
-    print('%s File Not Found. Cannot Import Configuration Variables.'
+    print('WARN  : %s File Not Found. Cannot Import Configuration Variables.'
           % configFilePath)
-    print('Run Console Command Below to Download File from GitHub Repo')
-    print('wget -O config.py https://raw.github.com/pageauc/pi-timolo/master/source/config.py')
-    sys.exit(1)
+    print('INFO  : Run Console Command Below to Download File from GitHub Repo')
+    print('        wget -O config.py https://raw.github.com/pageauc/pi-timolo/master/source/config.py')
+    warn_on = True
 
 try:
     # Read Configuration variables from config.py file
-    print('Import Configuration Variables from File %s' % configFilePath)
     from config import *
 except ImportError:
-    print('ERROR - Could Not import Variables from %s' % configFilePath)
+    print('WARN - Could Not import Variables from %s' % configFilePath)
+    warn_on = True
 
 """
 Check if variables were imported from config.py. If not create variable using
@@ -215,6 +217,7 @@ for key, val in default_settings.items():
     except NameError:
         print('WARN  : config.py Variable Not Found. Setting ' + key + ' = ' + str(val))
         exec(key + '=val')
+        warn_on = True
 
 # Setup Logging now that variables are imported from config.py/plugin
 if logDataToFile:
@@ -223,13 +226,10 @@ if logDataToFile:
                         datefmt='%Y-%m-%d %H:%M:%S',
                         filename=logFilePath,
                         filemode='w')
-    logging.info("Sending Logging Data to %s  (Console Messages Disabled)",
-                 logFilePath)
 elif verbose:
     logging.basicConfig(level=logging.DEBUG,
                         format='%(asctime)s %(levelname)-8s %(funcName)-10s %(message)s',
                         datefmt='%Y-%m-%d %H:%M:%S')
-    logging.info("Logging to Console per Variable verbose=True")
 else:
     logging.basicConfig(level=logging.CRITICAL,
                         format='%(asctime)s %(levelname)-8s %(funcName)-10s %(message)s',
@@ -238,19 +238,24 @@ else:
  # Check for user_motion_code.py file to import and error out if not found.
 userMotionFilePath = os.path.join(baseDir, "user_motion_code.py")
 if not os.path.isfile(userMotionFilePath):
-    logging.warning('%s File Not Found. Cannot Import user_motion_code functions.',
-                    userMotionFilePath)
-    time.sleep(5)
+    print('WARN  : %s File Not Found. Cannot Import user_motion_code functions.'
+           % userMotionFilePath)
+    warn_on = True
 else:
     # Read Configuration variables from config.py file
-    logging.info('Importing code from File %s', userMotionFilePath)
     try:
         motionCode = True
         import user_motion_code
     except ImportError:
-        logging.warn("Failed Import of File user_motion_code.py Investigate Problem")
+        print('WARN  : Failed Import of File user_motion_code.py Investigate Problem')
         motionCode = False
-        time.sleep(5)
+        warn_on = True
+
+# Give some time to read any warnings
+if warn_on and verbose:
+    print('')
+    print('Please Review Warnings  Wait 10 sec ...')
+    time.sleep(10)
 
 try:
     import cv2
