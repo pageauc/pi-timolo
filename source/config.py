@@ -20,11 +20,30 @@ pluginName = "shopcam"     # Specify filename in plugins subfolder without .py e
 
 verbose = True             # default= True Sends logging Info to Console. False if running script as daeman
 logDataToFile = False      # default= False True logs diagnostic data to a disk file for review
-debug = False              # default= False True = debug mode returns pixel average data for tuning
+debug = False              # default= False True= debug mode returns pixel average data for tuning
+
+# Pimoroni pantilthat settings.
+PANTILT_ON = False        # default= False True= Timelapse Enable pimoroni pantilt hat camera pan tilt
+# define list of pan/tilt servo positions to sequence through
+# (0, 0) is pantilt center position.  Increments are in degrees between -90 and +90 deg
+# Camera is moved when timelapse event occurs.
+CAM_STOPS = [(90, 10),
+             (60, 10),
+             (30, 10),
+             (0, 10),
+             (-30, 10),
+             (-60, 10),
+             (-90, 10),
+             (-60, 10),
+             (-30, 10),
+             (0, 10),
+             (30, 10),
+             (60, 10)
+            ]
 
 # Image Settings
 # --------------
-imageNamePrefix = 'cam1-'  # default= 'cam1-' for all image file names. Eg garage-
+imageNamePrefix = 'kitcam-'  # default= 'cam1-' for all image file names. Eg garage-
 imageWidth = 1280          # default= 1024 Full Size Image Width in px
 imageHeight = 720          # default= 768  Full Size Image Height in px
 imageFormat = ".jpg"       # default= ".jpg"  image Formats .jpeg .png .gif .bmp
@@ -83,7 +102,7 @@ motionVideoTimer = 10       # default= 10 seconds of video clip to take if Motio
 motionQuickTLOn = False     # default= False  True=Take a quick time lapse sequence rather than a single image (overrides motionVideoOn)
 motionQuickTLTimer = 20     # default= 20 Duration in seconds of quick time lapse sequence after initial motion detected
 motionQuickTLInterval = 4   # default= 0 seconds between each Quick time lapse image. 0 is fast as possible
-motionForce = 3600          # default= 3600 seconds (1 hr) Off=0  Force an image if no Motion Detected in specified seconds.
+motionForce = 0             # default= 3600 seconds (1 hr) Off=0  Force an image if no Motion Detected in specified seconds.
 motionNumOn = True          # default= True filenames by sequenced Number  False= filenames by date/time
 motionNumRecycle = True     # default= True when NumMax reached restart at NumStart instead of exiting
 motionNumStart = 1000       # default= 1000 Start 0f motion number sequence

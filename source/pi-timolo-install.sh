@@ -1,6 +1,6 @@
 #!/bin/bash
 # Convenient pi-timolo-install.sh script written by Claude Pageau 1-Jul-2016
-ver="11.6"
+ver="11.7"
 progName=$(basename -- "$0")
 TIMOLO_DIR='pi-timolo'  # Default folder install location
 
@@ -35,13 +35,13 @@ INFO  : $progName $ver  written by Claude Pageau
 # check if this is an upgrade and bypass update of configuration files
 if $is_upgrade ; then
   timoloFiles=("menubox.sh" "pi-timolo.py" "pi-timolo.sh"  \
- "webserver.py" "webserver.sh" \
-"convid.sh" "makevideo.sh" "mvleavelast.sh" "remote-run.sh" "install-py3exiv2.sh")
+  "webserver.py" "webserver.sh" "pancam.py" \
+  "convid.sh" "makevideo.sh" "mvleavelast.sh" "remote-run.sh" "install-py3exiv2.sh")
 
 else   # New Install
   timoloFiles=("config.py" "menubox.sh" "pi-timolo.py" "pi-timolo.sh" \
-"webserver.py" "webserver.sh" "watch-app.sh" "shutdown.py" \
-"convid.sh" "makevideo.sh" "video.conf" "mvleavelast.sh" "remote-run.sh" "install-py3exiv2.sh")
+  "webserver.py" "webserver.sh" "watch-app.sh" "shutdown.py" "pancam.py" \
+  "convid.sh" "makevideo.sh" "video.conf" "mvleavelast.sh" "remote-run.sh" "install-py3exiv2.sh")
 fi
 
 for fname in "${timoloFiles[@]}" ; do
@@ -183,14 +183,17 @@ sudo apt-get install -yq python-imaging  # depricated in Buster
 sudo apt-get install -yq dos2unix
 sudo apt-get install -yq python-pyexiv2
 sudo apt-get install -yq ffmpeg   # required for Buster.
-sudo apt-get install -yq libav-tools  # used for makevideo gpac replaced by ffmpeg in Buster
+sudo apt-get install -yq libav-tools  # backward compatible, replaced by ffmpeg in Buster
 sudo apt-get install -yq pandoc # convert markdown to plain text for Readme.md
 sudo apt-get install -yq gpac   # required for MP4Box video converter
 sudo apt-get install -yq fonts-freefont-ttf # Required for Jessie Lite Only
 sudo apt-get install -yq python-opencv
+sudo apt-get install -yq python3-opencv  # Raspbian Buster Installs opencv 3.2 (won't change existing)
 sudo apt-get install -yq python-pip
 sudo apt-get install -yq python3-dateutil
 sudo apt-get install -yq python-dateutil
+sudo apt-get install -yq pantilthat
+
 if [ $? -ne 0 ] ;  then
     sudo apt-get install -yq python3-pip
     sudo pip install python-dateutil  # used for scheduled date/time feature

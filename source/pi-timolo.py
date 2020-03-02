@@ -7,7 +7,7 @@ This release uses OpenCV to do Motion Tracking.
 It requires updated config.py
 """
 from __future__ import print_function
-progVer = "ver 11.52"   # Requires Latest 11.2 release of config.py
+progVer = "ver 11.53"   # Requires Latest 11.2 release of config.py
 __version__ = progVer   # May test for version number at a future time
 
 import os
@@ -85,6 +85,7 @@ default_settings = {
     'configName':'default_settings',
     'configTitle':'No config.py so using internal dictionary settings',
     'pluginEnable':False,
+    'PANTILT_ON':False,
     'pluginName':"shopcam",
     'verbose':True,
     'logDataToFile':False,
@@ -211,6 +212,10 @@ else:
     print('        or cp config.py.new config.py')
     print('        Will now use default_settings dictionary variable values.')
     warn_on = True
+
+if PANTILT_ON:
+    import pancam
+    cam = pancam.CamMove()
 
 """
 Check if variables were imported from config.py. If not create variable using
@@ -1545,6 +1550,7 @@ def timolo():
     """
     # Counter for showDots() display if not motion found
     # shows system is working
+    cam_pos = 0    # CAM_STOPS List Start position of pantilt
     dotCount = 0
     checkMediaPaths()
     timelapseNumCount = 0
@@ -1762,6 +1768,8 @@ def timolo():
                     vs.stop()
                     time.sleep(motionStreamStopSec)
                     # reset time lapse timer
+                    if PANTILT_ON:
+                        cam_pos = cam.move(cam_pos)  # move pimoroni pantilt servos
                     timelapseStart = datetime.datetime.now()
                     if daymode:
                         takeDayImage(filename, timelapseCamSleep)
