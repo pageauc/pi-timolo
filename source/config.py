@@ -43,7 +43,7 @@ CAM_STOPS = [(90, 10),
 
 # Image Settings
 # --------------
-imageNamePrefix = 'cam-'   # default= 'cam1-' for all image file names. Eg garage-
+imageNamePrefix = 'cam1-'  # default= 'cam1-' for all image file names. Eg garage-
 imageWidth = 1280          # default= 1024 Full Size Image Width in px
 imageHeight = 720          # default= 768  Full Size Image Height in px
 imageFormat = ".jpg"       # default= ".jpg"  image Formats .jpeg .png .gif .bmp
