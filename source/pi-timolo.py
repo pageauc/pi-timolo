@@ -7,7 +7,7 @@ This release uses OpenCV to do Motion Tracking.
 It requires updated config.py
 """
 from __future__ import print_function
-progVer = "ver 11.54"   # Requires Latest 11.2 release of config.py
+progVer = "ver 11.55"   # Requires Latest 11.2 release of config.py
 __version__ = progVer   # May test for version number at a future time
 
 import os
@@ -582,9 +582,9 @@ def displayInfo(motioncount, timelapsecount):
         if imageFormat == '.jpg' or imageFormat == '.jpeg':
             print("               JpegQuality=%i where 1=Low 100=High"
                   % (imageJpegQuality))
-        print("   Low Light.. nightTwilightThreshold=%i"
+        print("   Low Light.. nightTwilightModeOn=%s  nightTwilightThreshold=%i"
               "  nightDarkThreshold=%i  nightBlackThreshold=%i"
-              % (nightTwilightThreshold, nightDarkThreshold, nightBlackThreshold))
+              % (nightTwilightModeOn, nightTwilightThreshold, nightDarkThreshold, nightBlackThreshold))
         print("               nightMaxShutSec=%.2f  nightMaxISO=%i"
               "  nightDarkAdjust=%.2f  nightSleepSec=%i"
               % (nightMaxShutSec, nightMaxISO, nightDarkAdjust, nightSleepSec))
