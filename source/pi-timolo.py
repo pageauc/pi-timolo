@@ -7,7 +7,7 @@ This release uses OpenCV to do Motion Tracking.
 It requires updated config.py
 """
 from __future__ import print_function
-progVer = "ver 11.53"   # Requires Latest 11.2 release of config.py
+progVer = "ver 11.54"   # Requires Latest 11.2 release of config.py
 __version__ = progVer   # May test for version number at a future time
 
 import os
@@ -111,6 +111,7 @@ default_settings = {
     'showTextBottom':True,
     'showTextWhite':True,
     'showTextWhiteNight':True,
+    'nightTwilightModeOn':True,
     'nightTwilightThreshold':90,
     'nightDarkThreshold':50,
     'nightBlackThreshold':4,
@@ -405,6 +406,13 @@ LINE_COLOR = cvWhite   # color of lines to highlight motion stream area
 CAMERA_WIDTH = streamWidth
 CAMERA_HEIGHT = streamHeight
 CAMERA_FRAMERATE = motionTrackFrameRate  # camera framerate
+
+# If camera being used inside where there is not twilight
+# Reduce night threshold settings to reduce overexposures.
+if not nightTwilightModeOn:
+    nightTwilightThreshold = 20
+    nightDarkThreshold = 10
+    nightBlackThreshold = 4
 
 bigImage = motionTrackQPBigger  # increase size of motionTrackQuickPic image
 bigImageWidth = int(CAMERA_WIDTH * bigImage)

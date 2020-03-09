@@ -72,10 +72,11 @@ showTextWhiteNight = True  # default= True Changes night text to white.  Useful 
 
 # Low Light Twilight and Night Settings
 # -------------------------------------
+nightTwilightModeOn = True  # default= True Outside Lighting  False= Inside with No Twilight Lighting (reduce over exposures)
 nightTwilightThreshold = 90 # default= 90 dayPixAve where twilight starts (framerate_range shutter)
 nightDarkThreshold = 50     # default= 50 dayPixAve where camera variable shutter long exposure starts
 nightBlackThreshold = 4     # default= 4  dayPixAve where almost no light so Max settings used
-nightSleepSec = 30          # default= 30 Sec - Time period to allow camera to calculate low light AWB
+nightSleepSec = 20          # default= 30 Sec - Time period to allow camera to calculate low light AWB
 nightMaxShutSec = 5.9       # default= 5.9 Sec Highest V1 Cam shutter for long exposures V2=10 Sec.
 nightMaxISO  = 800          # default= 800 Night ISO setting for Long Exposure below nightThreshold
 nightDarkAdjust = 4.7       # default= 4.7 Factor to fine tune nightDarkThreshold brightness (lower is brighter)
