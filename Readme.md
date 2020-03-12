@@ -22,6 +22,10 @@ backup precautions are advised before doing the firmware update.  See [wiki](htt
 * ***Release 11.12*** Added adhoc fix for Debian Stretch kernel panic and camera freeze issue when running
  under very low light conditions.  Note a ***sudo rpi-update*** may be required to update firmware if freezing
  still occurs under pi-timolo.py ver 11.12 or greater
+* ***Release 11.55*** Added config.py setting ***nightTwilightModeOn***  True is the normal twilight mode for outside conditions.
+False is used for indoors conditions where there is no twilight.  This setting will avoid overexposure when lights
+or sudden lighting changes are encountered.  If you have previously experienced overexposure when camera is indoors then
+this setting should help. 
  
 ## Requirements
 Requires a [***Raspberry Pi computer***](https://www.raspberrypi.org/documentation/setup/) and a 
