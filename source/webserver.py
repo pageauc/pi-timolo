@@ -2,6 +2,7 @@
 
 import cgi
 import os
+import subprocess
 import socket
 import SocketServer
 import sys
@@ -10,7 +11,7 @@ import urllib
 from SimpleHTTPServer import SimpleHTTPRequestHandler
 from StringIO import StringIO
 
-PROG_VER = "ver 10.98  written by Claude Pageau"
+PROG_VER = "ver 10.99 written by Claude Pageau"
 '''
  SimpleHTTPServer python program to allow selection of images from right panel and display in an iframe left panel
  Use for local network use only since this is not guaranteed to be a secure web server.
@@ -54,6 +55,7 @@ else:
 os.chdir(web_server_root)
 web_root = os.getcwd()
 os.chdir(BASE_DIR)
+MNT_POINT = "./"
 
 try:
     myip = ([l for l in ([ip for ip in socket.gethostbyname_ex(socket.gethostname())[2] if not ip.startswith("127.")][:1],
@@ -76,6 +78,22 @@ else:
     dir_order = 'Asc'
 
 list_title = "%s %s" % (dir_sort, dir_order)
+
+def df(drive_mnt):
+    '''
+       function to read disk drive data using unix df command
+       for the specified mount point.
+       Returns a formatted string of Disk Status
+    '''
+    try:
+        df = subprocess.Popen(["df", "-h", drive_mnt], stdout=subprocess.PIPE)
+        output = df.communicate()[0]
+        device, size, used, available, percent, mountpoint = output.split("\n")[1].split()
+        drive_status = ("Disk Info: %s Mount Point: %s Used: %s %s of %s  Avail: %s" %
+                        (device, mountpoint, percent, used, size, available))
+    except:
+        drive_status = "df command Error. No drive status avail"
+    return drive_status
 
 class DirectoryHandler(SimpleHTTPRequestHandler):
 
@@ -134,13 +152,12 @@ class DirectoryHandler(SimpleHTTPRequestHandler):
         list_style = '<div style="height: ' + web_list_height + 'px; overflow: auto; white-space: nowrap;">'
         f.write(list_style)
         # f.write('<center><b>%s</b></center>' % (self.path))
-        # Show a refresh button at top of right pane
+        # Show a refresh button at top of right pane listing
         refresh_button = ('''<FORM>&nbsp;&nbsp;<INPUT TYPE="button" onClick="history.go(0)"
 VALUE="Refresh">&nbsp;&nbsp;<b>%s</b></FORM>''' % list_title)
         f.write('%s' % refresh_button)
         f.write('<ul name="menu" id="menu" style="list-style-type:none; padding-left: 4px">')
         # Create the formatted list of right panel hyper-links to files in the specified directory
-
         if not self.path is "/":   # Display folder Back arrow navigation if not in web root
             f.write('<li><a href="%s" >%s</a></li>\n'
                     % (urllib.quote(".."), cgi.escape("< BACK")))
@@ -169,17 +186,19 @@ VALUE="Refresh">&nbsp;&nbsp;<b>%s</b></FORM>''' % list_title)
         if (not self.path is "/") and display_entries > 35:   # Display folder Back arrow navigation if not in web root
             f.write('<li><a href="%s" >%s</a></li>\n' % (urllib.quote(".."), cgi.escape("< BACK")))
         f.write('</ul></div><p><b>')
-        f.write('<div style="float: left; padding-left: 40px;">Web Root is [ %s ]</div>' % web_server_root)
+        drive_status = df(MNT_POINT)
+        f.write('<div style="float: left; padding-left: 40px;">Web Root is [ %s ]  %s</div>' % 
+                (web_server_root, drive_status))
         f.write('<div style="text-align: center;">%s</div>' % web_page_title)
 
         if web_page_refresh_on:
-            f.write('<div style="float: left; padding-left: 40px;">Auto Refresh [ %s sec ]</div>' % web_page_refresh_sec)
+            f.write('<div style="float: left; padding-left: 40px;">Auto Refresh = %s sec</div>' % web_page_refresh_sec)
 
         if web_max_list_entries > 1:
-            f.write('<div style="text-align: right; padding-right: 40px;">Listing Only %i of %i Files in [ %s ]</div>'
+            f.write('<div style="text-align: right; padding-right: 40px;">Listing Only %i of %i Files in %s</div>'
                     % (display_entries, all_entries, self.path))
         else:
-            f.write('<div style="text-align: right; padding-right: 50px;">Listing All %i Files in [ %s ]</div>'
+            f.write('<div style="text-align: right; padding-right: 50px;">Listing All %i Files in %s</div>'
                     % (all_entries, self.path))
         # Display web refresh info only if setting is turned on
         f.write('</b></p>')
