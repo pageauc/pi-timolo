@@ -1,6 +1,6 @@
 #!/bin/bash
 # Convenient pi-timolo-install.sh script written by Claude Pageau 1-Jul-2016
-ver="11.7"
+ver="11.8"
 progName=$(basename -- "$0")
 TIMOLO_DIR='pi-timolo'  # Default folder install location
 
@@ -192,7 +192,8 @@ sudo apt-get install -yq python3-opencv  # Raspbian Buster Installs opencv 3.2 (
 sudo apt-get install -yq python-pip
 sudo apt-get install -yq python3-dateutil
 sudo apt-get install -yq python-dateutil
-sudo apt-get install -yq pantilthat
+sudo apt-get install python-pantilthat
+sudo apt-get install python3-pantilthat
 
 if [ $? -ne 0 ] ;  then
     sudo apt-get install -yq python3-pip
