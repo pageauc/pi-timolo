@@ -131,8 +131,8 @@ Detailed pi-timolo Wiki https://github.com/pageauc/pi-timolo/wiki
 [hackster facial recognition using pi-timolo](https://www.hackster.io/gr1m/raspberry-pi-facial-recognition-16e34e)    
 [Neverending project timelapse using pi-timolo](https://www.theneverendingprojectslist.com/raspberrypiprojects/timelapse/)       
 [hedgehog camera using pi-timolo](http://www.sconemad.com/blog/hedgeycam/) and [step by step](https://oraclefrontovik.com/2016/08/28/a-step-by-step-guide-to-building-a-raspberry-pi-hedgehog-camera/)    
-[Museum Insect activity monitoring using pi-timolo](https://www.vam.ac.uk/blog/caring-for-our-collections/making-a-simple-insect-activity-monitor-using-a-raspberry-pi)
-[Brett Beeson timelapse cloud project using pi-timolo](https://brettbeeson.com.au/timelapse-cloud/)
+[Museum Insect activity monitoring using pi-timolo](https://www.vam.ac.uk/blog/caring-for-our-collections/making-a-simple-insect-activity-monitor-using-a-raspberry-pi)    
+[Brett Beeson timelapse cloud project using pi-timolo](https://brettbeeson.com.au/timelapse-cloud/)    
 	
 Good Luck
 Claude Pageau 
