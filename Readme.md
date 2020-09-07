@@ -65,7 +65,7 @@ can securely synchronize specified media folders and files with a users remote s
 cameras. Camera config.py and conf settings can be easily administered remotely from a designated sync directory using ***watch-app.sh***
 script using a crontab entry to periodically check for updates between the pi-timolo camera and a users remote storage rclone service name. 
 
-pi-timolo is python 2/3 compatible and can take timelapse and/or motion detection images/videos, separately or together. Will take
+pi-timolo is python 2/3 compatible and can take timelapse and/or motion tracking images/videos, separately or together. Will take
 long exposure Night (lowlight) images for Time Lapse and/or Motion. Has relatively smooth twilight transitions based on a threshold light
 setting, so a real time clock is not required. Customization settings are saved in a ***config.py*** and conf files and optional special
 purpose plugin config files. Optional plugin feature allows overlaying config.py settings with custom settings for specific tasks.  
@@ -125,7 +125,7 @@ To Test Run from ssh console or terminal session.
  
 ## Reference Links  
 Detailed pi-timolo Wiki https://github.com/pageauc/pi-timolo/wiki  
-[my pi-timolo YouTube Videos playlist](https://www.youtube.com/playlist?list=PLLXJw_uJtQLa11A4qjVpn2D2T0pgfaSG0)    
+[my pi-timolo and other YouTube Videos playlist](https://www.youtube.com/playlist?list=PLLXJw_uJtQLa11A4qjVpn2D2T0pgfaSG0)    
 [MagPi Object Recognition using pi-timolo](https://magpi.raspberrypi.org/articles/wildlife-camera-object-recognition)    
 [makezine night vision project using pi-timolo](https://makezine.com/2016/05/26/spy-on-garden-critters-with-raspberry-pi-powered-night-vision/)    
 [hackster facial recognition using pi-timolo](https://www.hackster.io/gr1m/raspberry-pi-facial-recognition-16e34e)    
