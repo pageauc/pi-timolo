@@ -7,7 +7,7 @@ This release uses OpenCV to do Motion Tracking.
 It requires updated config.py
 """
 from __future__ import print_function
-progVer = "ver 11.55"   # Requires Latest 11.2 release of config.py
+progVer = "ver 11.60"   # Requires Latest 11.2 release of config.py
 __version__ = progVer   # May test for version number at a future time
 
 import os
@@ -412,8 +412,10 @@ LINE_COLOR = cvWhite   # color of lines to highlight motion stream area
 CAMERA_WIDTH = streamWidth
 CAMERA_HEIGHT = streamHeight
 CAMERA_FRAMERATE = motionTrackFrameRate  # camera framerate
+if (not motionTrackOn) and timelapseOn:  # Reduce FPS if only timelapse since you only need to measure light level
+    CAMERA_FRAMERATE = 1
 
-# If camera being used inside where there is not twilight
+# If camera being used inside where there is no twilight
 # Reduce night threshold settings to reduce overexposures.
 if not nightTwilightModeOn:
     nightTwilightThreshold = 20
