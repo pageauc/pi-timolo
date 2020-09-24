@@ -412,8 +412,6 @@ LINE_COLOR = cvWhite   # color of lines to highlight motion stream area
 CAMERA_WIDTH = streamWidth
 CAMERA_HEIGHT = streamHeight
 CAMERA_FRAMERATE = motionTrackFrameRate  # camera framerate
-if (not motionTrackOn) and timelapseOn:  # Reduce FPS if only timelapse since you only need to measure light level
-    CAMERA_FRAMERATE = 5
 
 # If camera being used inside where there is no twilight
 # Reduce night threshold settings to reduce overexposures.
