@@ -1721,7 +1721,6 @@ def timolo():
             else:
                 image2 = vs.read()
         else:
-            time.sleep(0.1)
             if checkPixAve(pixAveStart):
                 vs = PiVideoStream().start()
                 time.sleep(1)
@@ -1733,7 +1732,7 @@ def timolo():
                 pixAveStart = datetime.datetime.now()
                 # if daymode has changed, reset background
                 # to avoid false motion trigger
-
+            time.sleep(0.1)
         rightNow = datetime.datetime.now() # refresh rightNow time
         if not timeToSleep(daymode):
             # Don't take images if noNightShots
@@ -1776,7 +1775,7 @@ def timolo():
                         stopTimeLapse = True
                 if takeTimeLapse and (not stopTimeLapse):
                     # Reset the timelapse timer
-                    timelapseStart = datetime.datetime.now() 
+                    timelapseStart = datetime.datetime.now()
                     if motionDotsOn and motionTrackOn:
                         # reset motion dots
                         dotCount = showDots(motionDotsMax + 2)
@@ -1812,13 +1811,13 @@ def timolo():
                     filename = getImageName(tlPath, imagePrefix,
                                             timelapseNumOn, timelapseNumCount)
                     if motionTrackOn:
-                        logging.info("Stop Motion Track PiVideoStream ...")
+                        logging.info("Stop Motion Tracking PiVideoStream ...")
                         vs.stop()
-                    time.sleep(motionStreamStopSec)
+                        time.sleep(motionStreamStopSec)
                     # reset time lapse timer
                     if PANTILT_ON:
                         cam_pos = cam.move(cam_pos)  # move pimoroni pantilt servos
-                    # Time to take a Day or Night Time Lapse Image               
+                    # Time to take a Day or Night Time Lapse Image
                     if daymode:
                         takeDayImage(filename, timelapseCamSleep)
                     else:
@@ -1830,6 +1829,15 @@ def timolo():
                                                             timelapseNumRecycle,
                                                             timelapseNumPath,
                                                             filename, daymode)
+
+                    if motionTrackOn:
+                        logging.info("Restart Motion Tracking PiVideoStream ....")
+                        vs = PiVideoStream().start()
+                        vs.camera.rotation = imageRotation
+                        vs.camera.hflip = imageHFlip
+                        vs.camera.vflip = imageVFlip
+                        time.sleep(1)
+
                     if timelapseRecentMax > 0:
                         saveRecent(timelapseRecentMax, timelapseRecentDir,
                                    filename, imagePrefix)
@@ -1837,13 +1845,7 @@ def timolo():
                         deleteOldFiles(timelapseMaxFiles, timelapseDir,
                                        imagePrefix)
                     dotCount = showDots(motionDotsMax)
-                    if motionTrackOn:
-                        logging.info("Restart Motion Track PiVideoStream ....")
-                        vs = PiVideoStream().start()
-                        vs.camera.rotation = imageRotation
-                        vs.camera.hflip = imageHFlip
-                        vs.camera.vflip = imageVFlip
-                        time.sleep(1)
+
                     tlPath = subDirChecks(timelapseSubDirMaxHours,
                                           timelapseSubDirMaxFiles,
                                           timelapseDir, timelapsePrefix)
