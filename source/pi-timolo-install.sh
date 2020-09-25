@@ -5,7 +5,7 @@ progName=$(basename -- "$0")
 TIMOLO_DIR='pi-timolo'  # Default folder install location
 
 # Make sure ver below matches latest rclone ver on https://downloads.rclone.org/rclone-current-linux-arm.zip
-rclone_cur_ver="rclone v1.48.0"
+rclone_cur_ver="rclone v1.53.1"
 
 cd ~
 is_upgrade=false
@@ -149,7 +149,7 @@ if [ -f /usr/bin/rclone ]; then
     fi
 fi
 
-if "$rclone_install" = true ; then
+if "$rclone_install" == true ; then
     # Install rclone with latest version
     echo "INFO  : Install Latest Rclone from https://downloads.rclone.org/rclone-current-linux-arm.zip"
     wget -O rclone.zip -q --show-progress https://downloads.rclone.org/rclone-current-linux-arm.zip
@@ -171,6 +171,8 @@ if "$rclone_install" = true ; then
     rm rclone.zip
     rm -r rclone-tmp
     echo "INFO  : /usr/bin/rclone Install Complete"
+else
+    echo "INFO  : /usr/bin/rclone is Up-To-Date"
 fi
 
 echo "INFO  : $STATUS Install pi-timolo Dependencies Wait ..."
