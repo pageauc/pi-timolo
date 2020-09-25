@@ -7,7 +7,7 @@ This release uses OpenCV to do Motion Tracking.
 It requires updated config.py
 """
 from __future__ import print_function
-progVer = "ver 11.61"   # Requires Latest 11.2 release of config.py
+progVer = "ver 11.62"   # Requires Latest 11.2 release of config.py
 __version__ = progVer   # May test for version number at a future time
 
 import os
@@ -409,8 +409,12 @@ cvRed = (0, 0, 255)
 LINE_THICKNESS = 1     # Thickness of opencv drawing lines
 LINE_COLOR = cvWhite   # color of lines to highlight motion stream area
 
-CAMERA_WIDTH = streamWidth
-CAMERA_HEIGHT = streamHeight
+# Round image resolution to avoid picamera errors
+imageWidth = (imageWidth + 31) // 32 * 32
+imageHeight = (imageHeight + 15) // 16 * 16
+ 
+CAMERA_WIDTH = (streamWidth + 31) // 32 * 32
+CAMERA_HEIGHT = (streamHeight + 15) // 16 * 16
 CAMERA_FRAMERATE = motionTrackFrameRate  # camera framerate
 
 # If camera being used inside where there is no twilight
