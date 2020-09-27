@@ -7,7 +7,7 @@ This release uses OpenCV to do Motion Tracking.
 It requires updated config.py
 """
 from __future__ import print_function
-progVer = "ver 11.70"   # Requires Latest 11.2 release of config.py
+progVer = "ver 11.71"   # Requires Latest 11.2 release of config.py
 __version__ = progVer   # May test for version number at a future time
 
 import os
@@ -1237,7 +1237,7 @@ def takeNightImage(filename, pixelAve):
         camera.rotation = imageRotation # valid values are 0, 90, 180, 270
         if imageGrayscale:
             camera.color_effects = (128, 128)
-        time.sleep(1)
+        time.sleep(cam_sleep_time)
         # Use Twilight Threshold variable framerate_range
         if pixelAve >= nightDarkThreshold:
             camera.framerate_range = (Fraction(1, 6), Fraction(30, 1))
@@ -1649,7 +1649,7 @@ def timolo():
         pixAve = getStreamPixAve(image2)
     else:
         vs = PiVideoStream().start()
-        time.sleep(2)
+        time.sleep(0.5)
         image2 = vs.read()  # use video stream to check for pixAve & daymode
         pixAve = getStreamPixAve(image2)
         daymode = checkIfDayStream(daymode, image2)
@@ -1723,16 +1723,14 @@ def timolo():
         else:
             if checkPixAve(pixAveStart):
                 vs = PiVideoStream().start()
-                time.sleep(1)
+                time.sleep(0.5)
                 image2 = vs.read()  # use video stream to check for daymode
                 pixAve = getStreamPixAve(image2)
                 if daymode != checkIfDayStream(daymode, image2):
                     daymode = not daymode
                 vs.stop()
                 pixAveStart = datetime.datetime.now()
-                # if daymode has changed, reset background
-                # to avoid false motion trigger
-            time.sleep(0.1)
+            time.sleep(0.01)  # short delay to aviod high cpu usage
         rightNow = datetime.datetime.now() # refresh rightNow time
         if not timeToSleep(daymode):
             # Don't take images if noNightShots
