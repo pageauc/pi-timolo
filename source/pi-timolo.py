@@ -1237,7 +1237,6 @@ def takeNightImage(filename, pixelAve):
         camera.rotation = imageRotation # valid values are 0, 90, 180, 270
         if imageGrayscale:
             camera.color_effects = (128, 128)
-        time.sleep(cam_sleep_time)
         # Use Twilight Threshold variable framerate_range
         if pixelAve >= nightDarkThreshold:
             camera.framerate_range = (Fraction(1, 6), Fraction(30, 1))
@@ -1275,7 +1274,7 @@ def takeNightImage(filename, pixelAve):
             camera.capture(filename, format='jpeg', quality=imageJpegQuality)
         else:
             camera.capture(filename)
-        camera.framerate = 5   # Adhoc Fix for Stretch camera freeze issue
+        camera.framerate = 10   # Adhoc Fix for Stretch camera freeze issue
                                # Perform sudo rpi-update
         camera.close()
 
