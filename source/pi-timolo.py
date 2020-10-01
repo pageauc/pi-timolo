@@ -7,7 +7,7 @@ This release uses OpenCV to do Motion Tracking.
 It requires updated config.py
 """
 from __future__ import print_function
-progVer = "ver 11.71"   # Requires Latest 11.2 release of config.py
+progVer = "ver 11.75"   # Requires Latest 11.2 release of config.py
 __version__ = progVer   # May test for version number at a future time
 
 import os
@@ -35,6 +35,7 @@ import time
 import math
 from threading import Thread
 from fractions import Fraction
+from pkg_resources import require  # Used for checking picamera version
 import numpy as np
 from PIL import Image
 from PIL import ImageFont
@@ -314,6 +315,8 @@ if (camResult.find("0")) >= 0:   # Was a 0 found in vcgencmd output
     sys.exit(1)
 else:
     logging.info("Pi Camera Module is Enabled and Connected %s", camResult)
+    picameraVer = require('picamera')[0].version
+    logging.info('picamera version is %s', picameraVer)
 
 if pluginEnable:     # Check and verify plugin and load variable overlay
     pluginDir = os.path.join(baseDir, "plugins")
@@ -411,11 +414,29 @@ LINE_THICKNESS = 1     # Thickness of opencv drawing lines
 LINE_COLOR = cvWhite   # color of lines to highlight motion stream area
 
 # Round image resolution to avoid picamera errors
+if picameraVer[0] == '2':
+    imageWidthMax = 3280
+    imageHeightMax = 2464
+else:
+    imageWidthMax = 2592
+    imageHeightMax = 1944
+logging.info('picamera ver %s Max Resolution is %i x %i',
+             picameraVer, imageWidthMax, imageHeightMax)
+
+# Round image resolution to avoid picamera errors
 imageWidth = (imageWidth + 31) // 32 * 32
+if imageWidth > imageWidthMax:
+   imgaeWidth = imageWidthMax
 imageHeight = (imageHeight + 15) // 16 * 16
+if imageHeight > imageHeightMax:
+   imageHeight = imageHeightMax
 
 CAMERA_WIDTH = (streamWidth + 31) // 32 * 32
+if CAMERA_WIDTH > imageWidthMax:
+    CAMERA_WIDTH = imageWidthMax
 CAMERA_HEIGHT = (streamHeight + 15) // 16 * 16
+if CAMERA_HEIGHT > imageWidthMax:
+    CAMERA_HEIGHT = imageWidthMax
 CAMERA_FRAMERATE = motionTrackFrameRate  # camera framerate
 
 # If camera being used inside where there is no twilight
@@ -843,7 +864,7 @@ def checkMediaPaths():
             try:
                 os.makedirs(timelapsePath)
             except OSError as err:
-                logging.error("Could Not Create %s - %s", motionPath, err)
+                logging.error("Could Not Create %s - %s", timelapsePath, err)
                 sys.exit(1)
             if os.path.isfile(timelapseNumPath):
                 logging.info("Delete TimeLapse dat file %s", timelapseNumPath)
