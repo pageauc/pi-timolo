@@ -7,7 +7,7 @@ This release uses OpenCV to do Motion Tracking.
 It requires updated config.py
 """
 from __future__ import print_function
-progVer = "ver 11.76"   # Requires Latest 11.2 release of config.py
+progVer = "ver 11.77"   # Requires Latest 11.2 release of config.py
 __version__ = progVer   # May test for version number at a future time
 
 import os
@@ -426,7 +426,7 @@ logging.info('picamera ver %s Max Resolution is %i x %i',
 # Round image resolution to avoid picamera errors
 imageWidth = (imageWidth + 31) // 32 * 32
 if imageWidth > imageWidthMax:
-   imgaeWidth = imageWidthMax
+   imageWidth = imageWidthMax
 imageHeight = (imageHeight + 15) // 16 * 16
 if imageHeight > imageHeightMax:
    imageHeight = imageHeightMax
