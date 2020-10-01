@@ -7,7 +7,7 @@ This release uses OpenCV to do Motion Tracking.
 It requires updated config.py
 """
 from __future__ import print_function
-progVer = "ver 11.75"   # Requires Latest 11.2 release of config.py
+progVer = "ver 11.76"   # Requires Latest 11.2 release of config.py
 __version__ = progVer   # May test for version number at a future time
 
 import os
@@ -435,8 +435,8 @@ CAMERA_WIDTH = (streamWidth + 31) // 32 * 32
 if CAMERA_WIDTH > imageWidthMax:
     CAMERA_WIDTH = imageWidthMax
 CAMERA_HEIGHT = (streamHeight + 15) // 16 * 16
-if CAMERA_HEIGHT > imageWidthMax:
-    CAMERA_HEIGHT = imageWidthMax
+if CAMERA_HEIGHT > imageHeightMax:
+    CAMERA_HEIGHT = imageHeightMax
 CAMERA_FRAMERATE = motionTrackFrameRate  # camera framerate
 
 # If camera being used inside where there is no twilight
