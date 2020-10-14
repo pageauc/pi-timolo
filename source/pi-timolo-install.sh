@@ -81,8 +81,13 @@ sudo mkdir -p /usr/local/lib/python3.7/dist-packages/waveshare
 sudo cp pantilthat.py /usr/local/lib/python3.7/dist-packages/waveshare
 sudo touch /usr/local/lib/python3.7/dist-packages/waveshare/__init__.py
 rm pantilthat.py
-chmod +x image-stitching
+chmod +x *py
+chmod -x config*py
+chmod +x *sh
+chmod +x rclone-samples/*sh
+
 echo "copy image-stitching to /usr/local/bin"
+chmod +x image-stitching
 sudo cp ./image-stitching /usr/local/bin
 rm ./image-stitching
 
@@ -248,10 +253,6 @@ if [ $? -ne 0 ] ;  then
 fi
 sudo pip install python-dateutil
 dos2unix -q *
-chmod +x *py
-chmod -x config*py
-chmod +x *sh
-chmod +x rclone-samples/*sh
 
 echo "INFO  : $STATUS Done Dependencies Install"
 
