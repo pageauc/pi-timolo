@@ -35,11 +35,17 @@ INFO  : $progName $ver  written by Claude Pageau
 # check if this is an upgrade and bypass update of configuration files
 if $is_upgrade ; then
   timoloFiles=("menubox.sh" "pi-timolo.py" "pi-timolo.sh" "image-stitching" "config.cfg" \
-  "webserver.py" "webserver.sh" "pantilthat.py"\
+  "webserver.py" "webserver.sh" "pantilthat.py" \
   "convid.sh" "makevideo.sh" "mvleavelast.sh" "remote-run.sh" "install-py3exiv2.sh")
 
+  if [ ! -f config.cfg ]; then
+    mv plugins plugins.bak
+    mkdir data
+    mv *dat data
+  fi
+
 else   # New Install
-  timoloFiles=("config.py" "menubox.sh" "pi-timolo.py" "pi-timolo.sh" "image-stitching" "config.cfg"\
+  timoloFiles=("config.py" "menubox.sh" "pi-timolo.py" "pi-timolo.sh" "image-stitching" "config.cfg" \
   "webserver.py" "webserver.sh" "watch-app.sh" "shutdown.py" "pantilthat.py" \
   "convid.sh" "makevideo.sh" "video.conf" "mvleavelast.sh" "remote-run.sh" "install-py3exiv2.sh")
 fi
@@ -98,6 +104,7 @@ if [ ! -f user_motion_code.py ] ; then   # wget user_motion_code.py file if it d
     fi
 fi
 
+
 if [ ! -f video.conf ] ; then
     cp video.conf.new video.conf
 fi
@@ -118,7 +125,6 @@ PLUGINS_DIR='plugins'  # Default folder install location
 pluginFiles=("__init__.py" "dashcam.py" "secfast.py" "secQTL.py" "secstill.py" \
 "secvid.py" "strmvid.py" "shopcam.py" "slowmo.py" "TLlong.py" "TLshort.py")
 
-mv $PLUGINS_DIR $PLUGINS_DIR.bak
 
 mkdir -p $PLUGINS_DIR
 cd $PLUGINS_DIR
