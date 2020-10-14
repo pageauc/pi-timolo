@@ -86,14 +86,14 @@ TIMELAPSE_SUBDIR_MAX_FILES = 0 # Default= 0 off or specify MaxFiles - Creates Ne
 TIMELAPSE_SUBDIR_MAX_HOURS = 0 # Default= 0 off or specify MaxHours - Creates New dated sub-folder if MaxHours exceeded
 TIMELAPSE_PANTILT_ON = False   # True= Move pantilt to next TIMELAPSE_PANTILT_STOPS position for
                                # each timelapse triggered. Set PANTILT_ON = True below.
-TIMELAPSE_PANTILT_STOPS = [(90, 10),    # Pan side to side taking one TL image at each stop. Change to suit
-                           (45, 10),
-                           (0, 10),
-                           (-45, 10),
-                           (-90, 10),
-                           (-45, 10),
-                           (0, 10),
-                           (45, 10),
+TIMELAPSE_PANTILT_STOPS = [(90, -10),    # Pan side to side taking one TL image at each stop. Change to suit
+                           (45, -10),
+                           (0, -10),
+                           (-45, -10),
+                           (-90, -10),
+                           (-45, -10),
+                           (0, -10),
+                           (45, -10),
                           ]
 
 # Motion Track Settings
@@ -159,7 +159,7 @@ VIDEO_NUM_MAX  = 20          # Default= 20 Max number of videos desired. 0=Conti
 # ------------------------------
 PANTILT_ON = False           # True= Enable Pan Tilt Hat hardware,  False= Disable for TIMELAPSE_PANTILT_ON and PANO_ON
 PANTILT_IS_PIMORONI = True   # True= Use Pimoroni pantilehat, False= Use Waveshare pantilthat
-PANTILT_HOME = (0, 20)       # Pan Tilt Postion between -90 and + 90 to Return to after an operation
+PANTILT_HOME = (0, -10)      # Pan Tilt Postion between -90 and + 90 to Return to after an operation
 PANTILT_SLEEP_SEC = 0.1      # Default= 0.1 Allow time for pantilt servos to move
 
 # Panoramic Images Settings
@@ -180,9 +180,9 @@ PANO_PROG_PATH = '/usr/local/bin/image-stitching'  # Path to image stitching pro
 # Default setting [(36, 20), (0, 20), (-36, 20)] is for 1920x1080 camera resolution
 # More images requires more time to stitch.  Adjust settings as necessary to avoid multiple stitches at once.
 # Tested on single core RPI, but stitches much faster on quad core
-PANO_CAM_STOPS = [(36, 20),
-                  (0, 20),
-                  (-36, 20)
+PANO_CAM_STOPS = [(36, -10),
+                  (0, -10),
+                  (-36, -10)
                  ]
 
 # Manage Disk Space Settings

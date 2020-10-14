@@ -117,7 +117,6 @@ class PanTilt:
     ''' Tilt Up and Down  with Up = -90 and Down = 90
         if flip_servo = False
     '''
-    angle = -angle  # Reverse tilt to be compatible with pimoroni pantilthat library
     if angle > 90:
         angle = 90
     if angle < -90:
