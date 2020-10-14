@@ -20,48 +20,22 @@ then these settings will override the config.py settings.
 
 """
 
-# Customize Settings Below to Suit your Project Needs
-# ---------------------------------------------------
+# Security Cam Quick Pic Motion Capture Security
+# -------------------------------------------
+IMAGE_NAME_PREFIX = 'fast-' # Default= 'cam1-' for all image file names. Eg garage-
 
-imageNamePrefix = 'fast-'      # default= 'fast-' for all image file names. Eg garage-
-imageVFlip = False             # default= False True Flips image Vertically
-imageHFlip = False             # default= False True Flips image Horizontally
-showDateOnImage = True         # default= True False=Do Not display date/time text on images
+MOTION_TRACK_ON = True        # Default= True True=Turns Motion Detect On, False=Off
+MOTION_PREFIX = "mo-"        # Default= "mo-" Prefix for all Motion Detect images
+MOTION_TRACK_QUICK_PIC_ON = True # Default= False True= Grab stream frame rather than stopping stream to take full size image
+MOTION_TRACK_QUICK_PIC_BIGGER = 3.0 # Default= 3.0 multiply size of QuickPic saved image from Default 640x480
+MOTION_DIR = "media/fast"  # Default= "media/motion"  Folder Path for Motion Detect Image Storage
+MOTION_RECENT_DIR = "media/recent/fast"  # Default= "media/recent/motion"  Location of motionRecent files
+MOTION_VIDEO_ON = False      # Default= False  True=Take a video clip rather than image
+MOTION_TRACK_MINI_TL_ON = False     # Default= False  True=Take a quick time lapse sequence rather than a single image (overrides MOTION_VIDEO_ON)
 
-motionPrefix = "mo-"           # default= "mo-" stream image Prefix for all Motion Detect images
-motionDir = "media/secfast"    # default= "media/secvid"  Folder Path for Motion Detect Image Storage
-motionTrackQPBigger = 1.5      # default= 1.5 multiply size of QuickPic saved image from default 640x480
-motionNumOn = True             # default= True  True=filenames by sequenced Number  False=filenames by date/time
-# Use settings below if motionNumOn = True
-motionNumRecycle = True        # default= False (off) True= Restart at NumStart when motionNumMax reached
-motionNumStart = 1000          # default= 10000 Start 0f motion number sequence
-motionNumMax  = 2000           # default= 0 (0=Continuous) or specify Max number of motion images desired.
-motionForce = 3600             # default= 3600 seconds Off=0  Force an image if no Motion Detected in specified seconds
-
-createLockFile = True          # default= False True=Create pi-timolo.sync file whenever images saved.
-                               # Lock File is used to indicate motion images have been added
-                               # so sync.sh can sync in background via sudo crontab -e
-
-# Manage subfolders
-# -----------------
-motionSubDirMaxHours = 0       # 0=off or specify Max Hrs to create new sub-folder if HrsMax exceeded
-motionSubDirMaxFiles = 0       # 0=off or specify MaxFiles before a new sub-folder created
-motionRecentMax = 100          # 0=off  Maintain specified number of most recent files in motionRecentDir
-motionRecentDir = "media/recent/secfast"  # default= "media/recent/secstill"  Location of motionRecent files
-
-# Manage Disk Space Settings
-#---------------------------
-spaceTimerHrs = 1              # default= 1  0=off or specify hours frequency to perform free disk space check
-spaceFreeMB = 500              # default= 500  Target Free space in MB Required.
-spaceMediaDir = motionDir      # default= motion per variable above
-spaceFileExt  = 'jpg'          # default= 'jpg' File extension to Delete Oldest Files
-
-# Do Not Change these Settings
-# ----------------------------
-motionTrackQuickPic = True     # True=Take quick image from video stream  False=Off
-motionTrackOn = True           # Turn on Motion Tracking
-motionVideoOn = False          # True=Take a video after motion event  False=Off
-motionQuickTLOn = False        # Turn on motion timelapse sequence mode
-timelapseOn = False            # Turn off normal time lapse mode so only motion mode used.
-videoRepeatOn = False          # Turn on Video Repeat Mode IMPORTANT Overrides timelapse and motion
-
+# Turn off other features
+TIMELAPSE_ON = False          # Default= False True=Turn timelapse On, False=Off
+MOTION_VIDEO_ON = False       # Default= False  True=Take a video clip rather than image
+MOTION_TRACK_MINI_TL_ON = False  # Default= False  True=Take a quick time lapse sequence rather than a single image (overrides MOTION_VIDEO_ON)
+VIDEO_REPEAT_ON = False      # Turn on Video Repeat Mode IMPORTANT Overrides timelapse and motion
+PANTILT_ON = False           # True= Enable Pan Tilt Hat hardware,  False= Disable for TIMELAPSE_PANTILT_ON and PANO_ON

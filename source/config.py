@@ -3,8 +3,9 @@
 # Updated - 06-Jul-2017 IMPORTANT - Required for pi-timolo.py ver 11.2 or Greater
 # Done by - Claude Pageau
 
-configTitle = "pi-timolo ver 11.2 Default Settings"
-configName  = "config.py"
+CONFIG_TITLE = "pi-timolo ver 12.0 Default Settings"
+CONFIG_FILENAME  = "config.py"
+CONFIG_VERSION = 12.0   # Version of this file used for compatiblity checking
 
 #======================================
 #   pi-timolo.py Settings
@@ -12,152 +13,184 @@ configName  = "config.py"
 
 # Logging and Debug Settings
 # --------------------------
-# Note - Set verbose to False if script is run in background or from /etc/rc.local
+# Note - Set VERBOSE_ON to False if script is run in background or from /etc/rc.local
 
-pluginEnable = False       # default= False True reads customized settings from a custom.py file
-pluginName = "shopcam"     # Specify filename in plugins subfolder without .py extension per below
-                           # TLlong, TLshort, secfast, secstill, strmvid, secvid, secQTL, shopcam, dashcam, slowmo
+PLUGIN_ON = False       # Default= False True reads customized settings from a custom.py file
+PLUGIN_NAME = "shopcam" # Specify filename in plugins subfolder without .py extension per below
+                        # TLlong, TLshort, secfast, secstill, strmvid, secvid, secQTL, shopcam, dashcam, slowmo
 
-verbose = True             # default= True Sends logging Info to Console. False if running script as daeman
-logDataToFile = False      # default= False True logs diagnostic data to a disk file for review
-debug = False              # default= False True= debug mode returns pixel average data for tuning
-
-# Pimoroni pantilthat settings.
-PANTILT_ON = False        # default= False True= Timelapse Enable pimoroni pantilt hat camera pan tilt
-# define list of pan/tilt servo positions to sequence through
-# (0, 0) is pantilt center position.  Increments are in degrees between -90 and +90 deg
-# Camera is moved when timelapse event occurs.
-CAM_STOPS = [(90, 10),
-             (60, 10),
-             (30, 10),
-             (0, 10),
-             (-30, 10),
-             (-60, 10),
-             (-90, 10),
-             (-60, 10),
-             (-30, 10),
-             (0, 10),
-             (30, 10),
-             (60, 10)
-            ]
+VERBOSE_ON = True       # Default= True Sends logging Info to Console. False if running script as daeman
+LOG_TO_FILE_ON = False  # Default= False True logs diagnostic data to a disk file for review
+DEBUG_ON = False        # Default= False True= DEBUG_ON mode returns pixel average data for tuning
 
 # Image Settings
 # --------------
-imageNamePrefix = 'cam1-'  # default= 'cam1-' for all image file names. Eg garage-
-imageWidth = 1280          # default= 1024 Full Size Image Width in px
-imageHeight = 720          # default= 768  Full Size Image Height in px
-imageFormat = ".jpg"       # default= ".jpg"  image Formats .jpeg .png .gif .bmp
-imageJpegQuality = 95      # default= 95 jpg Encoder Quality Values 1(low)-100(high min compression) 0=85
-imageRotation = 0          # Default= 0  Rotate image. Valid values: 0, 90, 180, 270
-imageVFlip = True          # default= False True Flips image Vertically
-imageHFlip = True          # default= False True Flips image Horizontally
-imageGrayscale = False     # default= False True=Save image as grayscale False=Color
-imagePreview = False       # default= False True=Preview image on connected RPI Monitor or Display
-noNightShots = False       # default= False True=No Night Images (Motion or Timelapse)
-noDayShots = False         # default= False True=No Day Images (Motion or Timelapse)
-useVideoPort = False       # default= False True=Use the video port to capture motion images (faster than the image port).
-imageShowStream = False    # default= False True=Show video stream motion tracking area on full size image.
-                           # Use to Align Camera for motion tracking.  Set to False when Alignment complete.
-streamWidth = 320          # default= 320  Width of motion tracking stream detection area
-streamHeight = 240         # default= 240  Height of motion tracking stream detection area
-# Note see motionTrackFrameRate variable below to set motion video stream framerate for stream size above
+IMAGE_NAME_PREFIX = 'cam1-'  # Default= 'cam1-' for all image file names. Eg garage-
+IMAGE_WIDTH = 1280           # Default= 1024 Full Size Image Width in px
+IMAGE_HEIGHT = 720           # Default= 768  Full Size Image Height in px
+IMAGE_FORMAT = ".jpg"        # Default= ".jpg"  image Formats .jpeg .png .gif .bmp
+IMAGE_JPG_QUAL = 95          # Default= 95 jpg Encoder Quality Values 1(low)-100(high min compression) 0=85
+IMAGE_ROTATION = 0           # Default= 0  Rotate image. Valid values: 0, 90, 180, 270
+IMAGE_VFLIP = True           # Default= False True Flips image Vertically
+IMAGE_HFLIP = True           # Default= False True Flips image Horizontally
+IMAGE_GRAYSCALE = False      # Default= False True=Save image as grayscale False=Color
+IMAGE_PREVIEW = False        # Default= False True=Preview image on connected RPI Monitor or Display
+IMAGE_NO_NIGHT_SHOTS = False # Default= False True=No Night Images (Motion or Timelapse)
+IMAGE_NO_DAY_SHOTS = False   # Default= False True=No Day Images (Motion or Timelapse)
+IMAGE_USE_VIDEOPORT = False  # Default= False True=Use the video port to capture motion images (faster than the image port).
+IMAGE_SHOW_STREAM = False    # Default= False True=Show video stream motion tracking area on full size image.
+                             # Use to Align Camera for motion tracking.  Set to False when Alignment complete.
+STREAM_WIDTH = 320           # Default= 320  Width of motion tracking stream detection area
+STREAM_HEIGHT = 240          # Default= 240  Height of motion tracking stream detection area
+STREAM_FPS = 20              # Default= 20 fps PiVideoStream setting.  Single core RPI suggest 15 fps
+STREAM_STOP_SEC = 0.7        # Default= 0.7 Allow time to stop video stream thread to release camera
+
+# Note see STREAM_FPS variable below to set motion video stream framerate for stream size above
 
 # Date/Time Settings for Displaying info Directly on Images
 # ---------------------------------------------------------
-showDateOnImage = True     # default= True False=Do Not display date/time text on images
-showTextFontSize = 18      # default= 18 Size of image Font in pixel height
-showTextBottom = True      # default= True Bottom Location of image Text False= Top
-showTextWhite = True       # default= True White Colour of image Text False= Black
-showTextWhiteNight = True  # default= True Changes night text to white.  Useful if night needs white text instead of black
+SHOW_DATE_ON_IMAGE = True    # Default= True False=Do Not display date/time text on images
+SHOW_TEXT_FONT_SIZE = 18     # Default= 18 Size of image Font in pixel height
+SHOW_TEXT_BOTTOM = True      # Default= True Bottom Location of image Text False= Top
+SHOW_TEXT_WHITE = True       # Default= True White Colour of image Text False= Black
+SHOW_TEXT_WHITE_NIGHT = True # Default= True Changes night text to white.  Useful if night needs white text instead of black
 
 # Low Light Twilight and Night Settings
 # -------------------------------------
-nightTwilightModeOn = True  # default= True Outside Lighting  False= Inside with No Twilight Lighting (reduce over exposures)
-nightTwilightThreshold = 90 # default= 90 dayPixAve where twilight starts (framerate_range shutter)
-nightDarkThreshold = 50     # default= 50 dayPixAve where camera variable shutter long exposure starts
-nightBlackThreshold = 4     # default= 4  dayPixAve where almost no light so Max settings used
-nightSleepSec = 20          # default= 30 Sec - Time period to allow camera to calculate low light AWB
-nightMaxShutSec = 5.9       # default= 5.9 Sec Highest V1 Cam shutter for long exposures V2=10 Sec.
-nightMaxISO  = 800          # default= 800 Night ISO setting for Long Exposure below nightThreshold
-nightDarkAdjust = 4.7       # default= 4.7 Factor to fine tune nightDarkThreshold brightness (lower is brighter)
-
-# Motion Track Settings
-# ---------------------
-motionTrackOn = True        # default= True True=Turns Motion Detect On, False=Off
-motionTrackQuickPic = False # default= False True= save a frame image instead of switching out of opencv
-motionTrackInfo = True      # default= False Hide detailed track progress logging messages
-motionTrackTimeOut = 0.3    # default= 0.3 seconds Resets Track if no movement tracked
-motionTrackTrigLen = 75     # default= 75 px Length of motion track to Trigger motionFound
-motionTrackMinArea = 100    # default= 100 sq px  Minimum Area required to start tracking
-motionTrackFrameRate = 20   # default= 20 fps  PiVideoStream setting.  Single core RPI suggest 15 fps
-motionTrackQPBigger = 3.0   # default= 3.0 multiply size of QuickPic saved image from default 640x480
-
-# Motion Settings
-# ---------------
-motionDir = "media/motion"  # default= "media/motion"  Folder Path for Motion Detect Image Storage
-motionPrefix = "mo-"        # default= "mo-" Prefix for all Motion Detect images
-motionStartAt = ""          # default= "" Off or Specify date/time to Start Sequence Eg "01-jan-20018 08:00:00" or "20:00:00"
-motionVideoOn = False       # default= False  True=Take a video clip rather than image
-motionVideoFPS = 15         # default= 15  If image size reduced to 640x480 then slow motion is possible at 90 fps
-motionVideoTimer = 10       # default= 10 seconds of video clip to take if Motion Detected
-motionQuickTLOn = False     # default= False  True=Take a quick time lapse sequence rather than a single image (overrides motionVideoOn)
-motionQuickTLTimer = 20     # default= 20 Duration in seconds of quick time lapse sequence after initial motion detected
-motionQuickTLInterval = 4   # default= 0 seconds between each Quick time lapse image. 0 is fast as possible
-motionForce = 0             # default= 3600 seconds (1 hr) Off=0  Force an image if no Motion Detected in specified seconds.
-motionNumOn = True          # default= True filenames by sequenced Number  False= filenames by date/time
-motionNumRecycle = True     # default= True when NumMax reached restart at NumStart instead of exiting
-motionNumStart = 1000       # default= 1000 Start 0f motion number sequence
-motionNumMax  = 500         # default= 0 Max number of motion images desired. 0=Continuous
-motionSubDirMaxFiles = 0    # 0=off or specify Max Files to create new sub-folder if FilesMax exceeded
-motionSubDirMaxHours = 0    # 0=off or specify Max Hrs to create new sub-folder if HrsMax exceeded
-motionRecentMax = 40        # 0=off  Maintain specified number of most recent files in motionRecentDir
-motionRecentDir = "media/recent/motion"  # default= "media/recent/motion"  Location of motionRecent files
-motionDotsOn = False        # default= True Displays motion loop progress dots if verbose=True False=Non
-motionDotsMax = 100         # default= 100 Number of motion dots before starting new line if motionDotsOn=True
-motionCamSleep = 0.7        # default= 0.7 Sec of day sleep so camera can measure AWB before taking photo
-createLockFile = False      # default= False True= Create pi-timolo.sync file whenever motion images saved.
-                            # Lock File is used to indicate motion images have been added
-                            # so sync.sh can sync in background via sudo crontab -e
+NIGHT_TWILIGHT_MODE_ON = True # Default= True Outside Lighting  False= Inside with No Twilight Lighting (reduce over exposures)
+NIGHT_TWILIGHT_THRESHOLD = 90 # Default= 90 dayPixAve where twilight starts (framerate_range shutter)
+NIGHT_DARK_THRESHOLD = 50     # Default= 50 dayPixAve where camera variable shutter long exposure starts
+NIGHT_BLACK_THRESHOLD = 4     # Default= 4  dayPixAve where almost no light so Max settings used
+NIGHT_SLEEP_SEC = 20          # Default= 30 Sec - Time period to allow camera to calculate low light AWB
+NIGHT_MAX_SHUT_SEC = 5.9      # Default= 5.9 Sec Highest V1 Cam shutter for long exposures V2=10 Sec.
+NIGHT_MAX_ISO  = 800          # Default= 800 Night ISO setting for Long Exposure below nightThreshold
+NIGHT_DARK_ADJUST = 4.7       # Default= 4.7 Factor to fine tune NIGHT_DARK_THRESHOLD brightness (lower is brighter)
 
 # Time Lapse Settings
 # -------------------
-timelapseOn = True          # default= False True=Turn timelapse On, False=Off
-timelapseDir = "media/timelapse" # default= "media/timelapse"  Storage Folder Path for Time Lapse Image Storage
-timelapsePrefix = "tl-"     # default= "tl-" Prefix for All timelapse images with this prefix
-timelapseStartAt = ""       # default= "" Off or Specify date/time to Start Sequence Eg "01-dec-2019 08:00:00" or "20:00:00"
-timelapseTimer = 300        # default= 300 (5 min) Seconds between timelapse images
-timelapseCamSleep = 4.0     # default= 4.0 seconds day sleep so camera can measure AWB before taking photo
-timelapseNumOn = True       # default= True filenames Sequenced by Number False=filenames by date/time
-timelapseNumRecycle = True  # default= True Restart Numbering at NumStart  False= Surpress Timelapse at NumMax
-timelapseNumStart = 1000    # default= 1000 Start of timelapse number sequence
-timelapseNumMax = 2000      # default= 2000 Max number of timelapse images desired. 0=Continuous
-timelapseExitSec = 0        # default= 0 seconds Surpress Timelapse after specified Seconds  0=Continuous
-timelapseMaxFiles = 0       # default= 0 off or specify MaxFiles to maintain then oldest are deleted  default=0 (off)
-timelapseSubDirMaxFiles = 0 # default= 0 off or specify MaxFiles - Creates New dated sub-folder if MaxFiles exceeded
-timelapseSubDirMaxHours = 0 # default= 0 off or specify MaxHours - Creates New dated sub-folder if MaxHours exceeded
-timelapseRecentMax = 40     # default= 0 off or specify number of most recent files to save in timelapseRecentDir
-timelapseRecentDir = "media/recent/timelapse"  # default= "media/recent/timelapse"  location of timelapseRecent files
+TIMELAPSE_ON = True           # Default= False True=Turn timelapse On, False=Off
+TIMELAPSE_PREFIX = "tl-"      # Default= "tl-" Prefix for All timelapse images with this prefix
+TIMELAPSE_TIMER_SEC = 120     # Default= 120 (2 min) Seconds between timelapse images.
+TIMELAPSE_DIR = "media/timelapse" # Default= "media/timelapse"  Storage Folder Path for Time Lapse Image Storage
+TIMELAPSE_RECENT_DIR = "media/recent/timelapse"  # Default= "media/recent/timelapse"  location of timelapseRecent files
+TIMELAPSE_RECENT_MAX = 40     # Default= 0 off or specify number of most recent files to save in TIMELAPSE_RECENT_DIR
+TIMELAPSE_START_AT = ""       # Default= "" Off or Specify date/time to Start Sequence Eg "01-dec-2019 08:00:00" or "20:00:00"
+TIMELAPSE_CAM_SLEEP_SEC = 4.0 # Default= 4.0 seconds day sleep so camera can measure AWB before taking photo
+TIMELAPSE_NUM_ON = True       # Default= True filenames Sequenced by Number False=filenames by date/time
+TIMELAPSE_NUM_RECYCLE_ON = True # Default= True Restart Numbering at NumStart  False= Surpress Timelapse at NumMax
+TIMELAPSE_NUM_START = 1000    # Default= 1000 Start of timelapse number sequence
+TIMELAPSE_NUM_MAX = 2000      # Default= 2000 Max number of timelapse images desired. 0=Continuous
+TIMELAPSE_EXIT_SEC = 0        # Default= 0 seconds Surpress Timelapse after specified Seconds  0=Continuous
+TIMELAPSE_MAX_FILES = 0       # Default= 0 off or specify MaxFiles to maintain then oldest are deleted  Default=0 (off)
+TIMELAPSE_SUBDIR_MAX_FILES = 0 # Default= 0 off or specify MaxFiles - Creates New dated sub-folder if MaxFiles exceeded
+TIMELAPSE_SUBDIR_MAX_HOURS = 0 # Default= 0 off or specify MaxHours - Creates New dated sub-folder if MaxHours exceeded
+TIMELAPSE_PANTILT_ON = False   # True= Move pantilt to next TIMELAPSE_PANTILT_STOPS position for
+                               # each timelapse triggered. Set PANTILT_ON = True below.
+TIMELAPSE_PANTILT_STOPS = [(90, 10),    # Pan side to side taking one TL image at each stop. Change to suit
+                           (45, 10),
+                           (0, 10),
+                           (-45, 10),
+                           (-90, 10),
+                           (-45, 10),
+                           (0, 10),
+                           (45, 10),
+                          ]
 
-# Video Repeat Mode (suppresses Timelapse and Motion Settings)
-# -----------------
-videoRepeatOn = False       # Turn on Video Repeat Mode IMPORTANT Overrides timelapse and motion
-videoPath = "media/videos"  # default= "media/videos" Storage folder path for videos
-videoPrefix = "vid-"        # prefix for video filenames
-videoStartAt = ""           # default= "" Off or Specify date/time to Start Sequence eg "01-dec-2019 08:00:00" or "20:00:00"
-videoDuration = 120         # default= 120 seconds for each video recording
-videoTimer = 60             # default= 60 minutes  Run Recording Session then Exit  0=Continuous
-videoFPS = 30               # default= 30 fps.  Note slow motion can be achieved at 640x480 image resolution at 90 fps
-videoNumOn = False          # default= True True=filenames by sequence Number  False=filenames by date/time
-videoNumRecycle = False     # default= False when NumMax reached restart at NumStart instead of exiting
-videoNumStart = 100         # default= 100 Start of video filename number sequence
-videoNumMax  = 20           # default= 20 Max number of videos desired. 0=Continuous
+# Motion Track Settings
+# ---------------------
+MOTION_TRACK_ON = True         # Default= True True=Turns Motion Detect On, False=Off
+MOTION_TRACK_INFO_ON = True    # Default= False Hide detailed track progress logging messages
+MOTION_TRACK_TIMEOUT_SEC = 0.3 # Default= 0.3 seconds Resets Track if no movement tracked
+MOTION_TRACK_TRIG_LEN = 75     # Default= 75 px Length of motion track to Trigger motionFound
+MOTION_TRACK_MIN_AREA = 100    # Default= 100 sq px  Minimum Area required to start tracking
+
+# Motion Settings
+# ---------------
+MOTION_PREFIX = "mo-"        # Default= "mo-" Prefix for all Motion Detect images
+MOTION_DIR = "media/motion"  # Default= "media/motion"  Folder Path for Motion Detect Image Storage
+MOTION_RECENT_DIR = "media/recent/motion"  # Default= "media/recent/motion"  Location of motionRecent files
+MOTION_RECENT_MAX = 40       # 0=off  Maintain specified number of most recent files in motionRecentDir
+MOTION_START_AT = ""         # Default= "" Off or Specify date/time to Start Sequence Eg "01-jan-20018 08:00:00" or "20:00:00"
+MOTION_NUM_ON = True         # Default= True filenames by sequenced Number  False= filenames by date/time
+MOTION_NUM_RECYCLE_ON = True # Default= True when NumMax reached restart at NumStart instead of exiting
+MOTION_NUM_START = 1000      # Default= 1000 Start 0f motion number sequence
+MOTION_NUM_MAX  = 2000       # Default= 2000 Max number of motion images desired. 0=Continuous
+
+# Default is motion tracking action is to take a Full size image.
+# You can override default action by enabling ONE of the three options below.
+# ---------------------------------------------------------------------------
+MOTION_VIDEO_ON = False      # Default= False  True=Take a video clip rather than image
+MOTION_VIDEO_FPS = 15        # Default= 15 If image size reduced to 640x480 then slow motion is possible at 90 fps
+MOTION_VIDEO_TIMER_SEC = 10  # Default= 10 seconds of video clip to take if Motion Detected
+
+MOTION_TRACK_MINI_TL_ON = False     # Default= False  True=Take a quick time lapse sequence rather than a single image (overrides MOTION_VIDEO_ON)
+MOTION_TRACK_MINI_TL_SEQ_SEC = 30   # Default= 30 Duration in seconds of quick time lapse sequence after initial motion detected
+MOTION_TRACK_MINI_TL_TIMER_SEC = 5  # Default= 5 seconds between each Quick time lapse image. 0 is fast as possible
+
+MOTION_TRACK_QUICK_PIC_ON = False   # Default= False True= Grab stream frame rather than stopping stream to take full size image
+MOTION_TRACK_QUICK_PIC_BIGGER = 3.0 # Default= 3.0 multiply size of QuickPic saved image from Default 640x480
+# ---------------------------------------------------------------------------
+MOTION_FORCE_SEC = 3600      # Default= 3600 seconds (1 hr) OFF=0  Force an image if no Motion Detected in specified seconds.
+MOTION_CAM_SLEEP = 0.7       # Default= 0.7 Sec of day sleep so camera can measure AWB before taking photo
+MOTION_SUBDIR_MAX_FILES = 0  # 0=off or specify Max Files to create new sub-folder if FilesMax exceeded
+MOTION_SUBDIR_MAX_HOURS = 0  # 0=off or specify Max Hrs to create new sub-folder if HrsMax exceeded
+MOTION_DOTS_ON = False       # Default= True Displays motion loop progress dots if VERBOSE_ON=True False=Non
+MOTION_DOTS_MAX = 100        # Default= 100 Number of motion dots before starting new line if MOTION_DOTS_ON=True
+CREATE_LOCKFILE = False      # Default= False True= Create pi-timolo.sync file whenever motion images saved.
+                             # Lock File is used to indicate motion images have been added
+                             # So sync.sh can remote sync only as required via a sudo crontab -e entry
+
+# Dash Cam Video Repeat Mode (Suppresses Timelapse, Motion Settings and Pano)
+# --------------------------
+VIDEO_REPEAT_ON = False      # Turn on Video Repeat Mode IMPORTANT Overrides timelapse and motion
+VIDEO_DIR = "media/videos"   # Default= "media/videos" Storage folder path for videos
+VIDEO_PREFIX = "vid-"        # prefix for video filenames
+VIDEO_START_AT = ""          # Default= "" Off or Specify date/time to Start Sequence eg "01-dec-2019 08:00:00" or "20:00:00"
+VIDEO_FILE_SEC = 60          # Default= 60 seconds for each video recording
+VIDEO_SESSION_MIN = 30       # Default= 30 minutes  Run Recording Session then Exit  0=Continuous
+VIDEO_FPS = 30               # Default= 30 fps.  Note slow motion can be achieved at 640x480 image resolution at 90 fps
+VIDEO_NUM_ON = False         # Default= True True=filenames by sequence Number  False=filenames by date/time
+VIDEO_NUM_RECYCLE_ON = False # Default= False when NumMax reached restart at NumStart instead of exiting
+VIDEO_NUM_START = 1000       # Default= 1000 Start of video filename number sequence
+VIDEO_NUM_MAX  = 20          # Default= 20 Max number of videos desired. 0=Continuous
+
+# Settings for Pan Tilt Hardware
+# Pan and Tilt positions are in degrees between -90 and + 90
+# ------------------------------
+PANTILT_ON = False           # True= Enable Pan Tilt Hat hardware,  False= Disable for TIMELAPSE_PANTILT_ON and PANO_ON
+PANTILT_IS_PIMORONI = True   # True= Use Pimoroni pantilehat, False= Use Waveshare pantilthat
+PANTILT_HOME = (0, 20)       # Pan Tilt Postion between -90 and + 90 to Return to after an operation
+PANTILT_SLEEP_SEC = 0.1      # Default= 0.1 Allow time for pantilt servos to move
+
+# Panoramic Images Settings
+# -------------------------
+PANO_ON = False              # True= Enable panoramic image using pantilt overlapping images
+                             # Note this can run in parallel with timelapse and motion tracking
+PANO_IMAGE_PREFIX = 'pano-'  # Prefix for pano images
+PANO_TIMER_SEC = 300         # Default= 300 5min Duration between taking pano images (Allow enough time for stitching)
+                             # Adjust timer To avoid multiple stitching operations at once per cpu and cores
+PANO_NUM_START = 1000        # Default= 1000 Start of image numbering sequence
+PANO_NUM_MAX   = 20          # Maximum number of pano's to take 0=Continuous.
+PANO_NUM_RECYCLE = True      # True will Recycle numbering when NUM MAX exceeded
+PANO_IMAGES_DIR = './media/pano/images'  # Dir for storing pantilt source images
+PANO_DIR = './media/pano/panos'  # Dir for storing final panoramic images
+PANO_PROG_PATH = '/usr/local/bin/image-stitching'  # Path to image stitching program config.cfg in pi-timolo dir.
+
+# pantilt stops to take overlapping images. You need sufficient overlap for successful stitching
+# Default setting [(36, 20), (0, 20), (-36, 20)] is for 1920x1080 camera resolution
+# More images requires more time to stitch.  Adjust settings as necessary to avoid multiple stitches at once.
+# Tested on single core RPI, but stitches much faster on quad core
+PANO_CAM_STOPS = [(36, 20),
+                  (0, 20),
+                  (-36, 20)
+                 ]
 
 # Manage Disk Space Settings
 #---------------------------
-spaceTimerHrs = 0           # default= 0  0=off or specify hours frequency to perform free disk space check
-spaceFreeMB = 500           # default= 500  Target Free space in MB Required.
-spaceMediaDir = '/home/pi/pi-timolo/media'  # default= '/home/pi/pi-timolo/media'  Starting point for directory walk
-spaceFileExt  = 'jpg'       # default= 'jpg' File extension to Delete Oldest Files
+SPACE_MEDIA_DIR = '/home/pi/pi-timolo/media'  # Default= '/home/pi/pi-timolo/media'  Starting point for directory walk
+SPACE_TIMER_HOURS = 0         # Default= 0  0=off or specify hours frequency to perform free disk space check
+SPACE_TARGET_MB = 500         # Default= 500  Target Free space in MB Required.
+SPACE_TARGET_EXT  = 'jpg'     # Default= 'jpg' File extension to Delete Oldest Files
 
 #======================================
 #       webserver.py Settings
@@ -165,26 +198,26 @@ spaceFileExt  = 'jpg'       # default= 'jpg' File extension to Delete Oldest Fil
 
 # Web Server settings
 # -------------------
-web_server_port = 8080        # default= 8080 Web server access port eg http://192.168.1.100:8080
-web_server_root = "media"     # default= "media" webserver root path to webserver image/video sub-folders
+web_server_port = 8080        # Default= 8080 Web server access port eg http://192.168.1.100:8080
+web_server_root = "media"     # Default= "media" webserver root path to webserver image/video sub-folders
 web_page_title = "PI-TIMOLO Media"  # web page title that browser shows
 web_page_refresh_on = True    # Refresh True=On (per seconds below) False=Off (never)
-web_page_refresh_sec = "900"  # default= "900" seconds to wait for web page refresh  seconds (15 minutes)
-web_page_blank = False        # default= True Start left image with a blank page until a right menu item is selected
+web_page_refresh_sec = "900"  # Default= "900" seconds to wait for web page refresh  seconds (15 minutes)
+web_page_blank = False        # Default= True Start left image with a blank page until a right menu item is selected
                               # False displays second list[1] item since first may be in progress
 
 # Left iFrame Image Settings
 # --------------------------
-web_image_height = "768"       # default= "768" px height of images to display in iframe
+web_image_height = "768"       # Default= "768" px height of images to display in iframe
 web_iframe_width_usage = "75%" # Left Pane - Sets % of total screen width allowed for iframe. Rest for right list
 web_iframe_width = "100%"      # Desired frame width to display images. can be eg percent "80%" or px "1280"
 web_iframe_height = "100%"     # Desired frame height to display images. Scroll bars if image larger (percent or px)
 
 # Right Side Files List
 # ---------------------
-web_max_list_entries = 0         # default= 0 All or Specify Max right side file entries to show (must be > 1)
+web_max_list_entries = 0         # Default= 0 All or Specify Max right side file entries to show (must be > 1)
 web_list_height = web_image_height  # Right List - side menu height in px (link selection)
-web_list_by_datetime = True      # default= True Sort by datetime False= Sort by filename
-web_list_sort_descending = True  # default= True descending  False= Ascending for sort order (filename or datetime per web_list_by_datetime setting
+web_list_by_datetime = True      # Default= True Sort by datetime False= Sort by filename
+web_list_sort_descending = True  # Default= True descending  False= Ascending for sort order (filename or datetime per web_list_by_datetime setting
 
 # ---------------------------------------------- End of User Variables -----------------------------------------------------

@@ -1,6 +1,6 @@
 #!/bin/bash
 # Convenient pi-timolo-install.sh script written by Claude Pageau 1-Jul-2016
-ver="11.8"
+ver="12.0"
 progName=$(basename -- "$0")
 TIMOLO_DIR='pi-timolo'  # Default folder install location
 
@@ -34,13 +34,13 @@ INFO  : $progName $ver  written by Claude Pageau
 "
 # check if this is an upgrade and bypass update of configuration files
 if $is_upgrade ; then
-  timoloFiles=("menubox.sh" "pi-timolo.py" "pi-timolo.sh"  \
-  "webserver.py" "webserver.sh" "pancam.py" \
+  timoloFiles=("menubox.sh" "pi-timolo.py" "pi-timolo.sh" "image-stitching" "config.cfg" \
+  "webserver.py" "webserver.sh" "pantilthat.py"\
   "convid.sh" "makevideo.sh" "mvleavelast.sh" "remote-run.sh" "install-py3exiv2.sh")
 
 else   # New Install
-  timoloFiles=("config.py" "menubox.sh" "pi-timolo.py" "pi-timolo.sh" \
-  "webserver.py" "webserver.sh" "watch-app.sh" "shutdown.py" "pancam.py" \
+  timoloFiles=("config.py" "menubox.sh" "pi-timolo.py" "pi-timolo.sh" "image-stitching" "config.cfg"\
+  "webserver.py" "webserver.sh" "watch-app.sh" "shutdown.py" "pantilthat.py" \
   "convid.sh" "makevideo.sh" "video.conf" "mvleavelast.sh" "remote-run.sh" "install-py3exiv2.sh")
 fi
 
@@ -72,6 +72,20 @@ else
     wget -O rclone-test.sh -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/rclone-samples/rclone-master.sh
 fi
 
+# create python library module folders for python2 and python3
+echo "Setup Waveshare pantilt python library files"
+sudo mkdir -p /usr/local/lib/python2.7/dist-packages/waveshare
+sudo cp pantilthat.py /usr/local/lib/python2.7/dist-packages/waveshare
+sudo touch /usr/local/lib/python2.7/dist-packages/waveshare/__init__.py
+sudo mkdir -p /usr/local/lib/python3.7/dist-packages/waveshare
+sudo cp pantilthat.py /usr/local/lib/python3.7/dist-packages/waveshare
+sudo touch /usr/local/lib/python3.7/dist-packages/waveshare/__init__.py
+rm pantilthat.py
+chmod +x image-stitching
+echo "copy image-stitching to /usr/local/bin"
+sudo cp ./image-stitching /usr/local/bin
+rm ./image-stitching
+
 if [ ! -f user_motion_code.py ] ; then   # wget user_motion_code.py file if it does not exist
     wget -O user_motion_code.py -q --show-progress https://raw.github.com/pageauc/pi-timolo/master/source/user_motion_code.py
     if [ $? -ne 0 ] ;  then
@@ -98,6 +112,8 @@ PLUGINS_DIR='plugins'  # Default folder install location
 # List of plugin Files to Check
 pluginFiles=("__init__.py" "dashcam.py" "secfast.py" "secQTL.py" "secstill.py" \
 "secvid.py" "strmvid.py" "shopcam.py" "slowmo.py" "TLlong.py" "TLshort.py")
+
+mv $PLUGINS_DIR $PLUGINS_DIR.bak
 
 mkdir -p $PLUGINS_DIR
 cd $PLUGINS_DIR
@@ -138,6 +154,7 @@ for fname in "${rcloneFiles[@]}" ; do
         fi
     fi
 done
+
 cd ..
 
 rclone_install=true
@@ -196,6 +213,28 @@ sudo apt-get install -yq python3-dateutil
 sudo apt-get install -yq python-dateutil
 sudo apt-get install python-pantilthat
 sudo apt-get install python3-pantilthat
+sudo apt-get -yq install python-rpi.gpio
+sudo apt-get -yq install python3-rpi.gpio
+
+bcm_ver='68'
+cd ~
+echo "$0 Install bcm2835-1.$bcm_ver  Please wait ..."
+echo "$0 Downloading http://www.airspayce.com/mikem/bcm2835/bcm2835-1.$bcm_ver.tar.gz"
+wget http://www.airspayce.com/mikem/bcm2835/bcm2835-1.$bcm_ver.tar.gz
+tar -zxvf bcm2835-1.$bcm_ver.tar.gz
+cd bcm2835-1.$bcm_ver
+sudo ./configure
+echo "$0 Compiling ..... One Moment Please"
+sudo make
+sudo make check
+echo "$0 Running make install"
+sudo make install
+echo "$0 Performing Cleanup"
+cd ~
+rm bcm2835-1.$bcm_ver.tar.gz
+sudo rm -r  bcm2835-1.$bcm_ver
+echo "$0 Completed Install of bcm2835-1.$bcm_ver"
+echo ""
 
 if [ $? -ne 0 ] ;  then
     sudo apt-get install -yq python3-pip
@@ -225,7 +264,7 @@ if [ "$DIR" != "$INSTALL_PATH" ]; then
 fi
 
 # cleanup old files from previous versions of install
-cleanup_files=("get-pip.py" "gdrive" "install.sh" "makemovie.sh" "makedailymovie.sh" \
+cleanup_files=("get-pip.py" "gdrive" "install.sh" "makemovie.sh" "makedailymovie.sh" "pancam.py" \
 "convid.conf" "convid.conf.orig" "convid.conf.prev" "convid.conf.1" "convid.conf.new" \
 "makevideo.conf" "makevideo.conf.orig" "makevideo.conf.prev" "makevideo.conf.1" \
 "makevideo.conf.new" "sync.sh" "pi-timolo-install.sh" "rclone-sync-new.sh" "rclone-videos-new.sh")
@@ -246,19 +285,20 @@ fi
 
 echo "
 -----------------------------------------------
-INFO  : $STATUS Complete ver 10.x
+INFO  : $STATUS Complete ver 12.0
 -----------------------------------------------
 Minimal Instructions:
-1 - It is suggested you run sudo apt-get update and sudo apt-get upgrade
+1 - Run sudo raspi-config Interfacing Options and enable I2C and Pi Camera
+2 - It is suggested you run sudo apt-get update and sudo apt-get upgrade
     Reboot RPI if there are significant Raspbian system updates.
-2 - If config.py already exists then latest file is config.py.new
-3 - To Test Run pi-timolo execute the following commands in RPI SSH
+3 - If config.py already exists then latest file is config.py.new
+4 - To Test Run pi-timolo execute the following commands in RPI SSH
     or terminal session. Default is Motion Track On and TimeLapse On
 
     cd ~/pi-timolo
     ./pi-timolo.py
 
-4 - To manage pi-timolo, Run menubox.sh Execute commands below
+5 - To manage pi-timolo, Run menubox.sh Execute commands below
 
     cd ~/pi-timolo
     ./menubox.sh"
@@ -269,6 +309,9 @@ IMPORTANT: pi-timolo.py ver 10.x Adds a Sched StartAt Feature.
            If pi-timolo.py gives error messages on start
            then the latest config.py may not be configured.
            Install per commands below if Required.
+
+           pi-timolo.py ver 12.0 Adds pantilt panoramic image stitching option
+           See config.py for variable comments.
 
     cd ~/pi-timolo
     cp config.py config.py.bak
