@@ -40,7 +40,7 @@ if $is_upgrade ; then
 
   if [ ! -f config.cfg ]; then
     mv plugins plugins.bak
-    mkdir data
+    mkdir -p data
     mv *dat data
   fi
 
