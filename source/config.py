@@ -123,7 +123,7 @@ MOTION_VIDEO_ON = False      # Default= False  True=Take a video clip rather tha
 MOTION_VIDEO_FPS = 15        # Default= 15 If resolution reduced to 640x480 then slow motion is possible at 90 fps
 MOTION_VIDEO_TIMER_SEC = 10  # Default= 10 secs Duration of single Video clip to take after Motion Detected
 
-MOTION_TRACK_MINI_TL_ON = False     # Default= False  True=Take a quick time lapse sequence rather than a single image (overrides MOTION_VIDEO_ON)
+MOTION_TRACK_MINI_TL_ON = False     # Default= False  True= Take a mini time lapse sequence rather than a single image (overrides MOTION_VIDEO_ON)
 MOTION_TRACK_MINI_TL_SEQ_SEC = 30   # Default= 30 secs Duration of complete mini timelapse sequence after initial motion detected
 MOTION_TRACK_MINI_TL_TIMER_SEC = 5  # Default= 5 secs between each image. 0 is as fast as possible
 
