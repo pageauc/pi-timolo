@@ -125,7 +125,6 @@ PLUGINS_DIR='plugins'  # Default folder install location
 pluginFiles=("__init__.py" "dashcam.py" "secfast.py" "secQTL.py" "secstill.py" \
 "secvid.py" "strmvid.py" "shopcam.py" "slowmo.py" "TLlong.py" "TLshort.py")
 
-
 mkdir -p $PLUGINS_DIR
 cd $PLUGINS_DIR
 for fname in "${pluginFiles[@]}" ; do
@@ -257,6 +256,9 @@ if [ $? -ne 0 ] ;  then
         rm get-pip.py
     fi
 fi
+
+cd $TIMOLO_DIR
+
 sudo pip install python-dateutil
 dos2unix -q *
 
