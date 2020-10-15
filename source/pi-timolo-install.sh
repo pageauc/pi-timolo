@@ -260,7 +260,8 @@ fi
 cd $TIMOLO_DIR
 
 sudo pip install python-dateutil
-dos2unix -q *
+dos2unix -q *py
+dos2unix -q *sh
 
 echo "INFO  : $STATUS Done Dependencies Install"
 
