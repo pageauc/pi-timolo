@@ -27,8 +27,8 @@ False is used for indoors conditions where there is no twilight.  This setting w
 or sudden lighting changes are encountered.  If you have previously experienced overexposure when camera is indoors then
 this setting should help. 
 * ***Release 12.0*** Added [pantilthat panoramic image stitching Feature](https://github.com/pageauc/pi-timolo/wiki/Panoramic-Images-Stitching-Feature) 
-with support for Pimoroni and Waveshare pantilthat (and compatilble) hardware.
-This release also renames all the config.py variable Constants to snake_case and does some code cleanup.  You need to update to
+with support for Pimoroni and [Waveshare pantilthat](https://github.com/pageauc/waveshare.pantilthat) (and compatilble) hardware.
+This release also renames all the [config.py](https://github.com/pageauc/pi-timolo/blob/master/source/config.py) variable Constants to snake_case and does some code cleanup.  You need to update to
 the new config.py.  Built in instructions will prompt you if needed.  Please raise github issue if there are
 problems. See config.py comments and revised wiki for details. 
  
