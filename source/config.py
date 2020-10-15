@@ -116,18 +116,18 @@ MOTION_NUM_RECYCLE_ON = True # Default= True when NumMax reached restart at NumS
 MOTION_NUM_START = 1000      # Default= 1000 Start 0f motion number sequence
 MOTION_NUM_MAX  = 2000       # Default= 2000 Max number of motion images desired. 0=Continuous
 
-# Default is motion tracking action is to take a Full size image.
+# Default motion tracking action is to take a Full size image (all other motion options set to False).
 # You can override default action by enabling ONE of the three options below.
 # ---------------------------------------------------------------------------
 MOTION_VIDEO_ON = False      # Default= False  True=Take a video clip rather than image
-MOTION_VIDEO_FPS = 15        # Default= 15 If image size reduced to 640x480 then slow motion is possible at 90 fps
-MOTION_VIDEO_TIMER_SEC = 10  # Default= 10 seconds of video clip to take if Motion Detected
+MOTION_VIDEO_FPS = 15        # Default= 15 If resolution reduced to 640x480 then slow motion is possible at 90 fps
+MOTION_VIDEO_TIMER_SEC = 10  # Default= 10 secs Duration of single Video clip to take after Motion Detected
 
 MOTION_TRACK_MINI_TL_ON = False     # Default= False  True=Take a quick time lapse sequence rather than a single image (overrides MOTION_VIDEO_ON)
-MOTION_TRACK_MINI_TL_SEQ_SEC = 30   # Default= 30 Duration in seconds of quick time lapse sequence after initial motion detected
-MOTION_TRACK_MINI_TL_TIMER_SEC = 5  # Default= 5 seconds between each Quick time lapse image. 0 is fast as possible
+MOTION_TRACK_MINI_TL_SEQ_SEC = 30   # Default= 30 secs Duration of complete mini timelapse sequence after initial motion detected
+MOTION_TRACK_MINI_TL_TIMER_SEC = 5  # Default= 5 secs between each image. 0 is as fast as possible
 
-MOTION_TRACK_QUICK_PIC_ON = False   # Default= False True= Grab stream frame rather than stopping stream to take full size image
+MOTION_TRACK_QUICK_PIC_ON = False   # Default= False True= Grab single stream frame rather than stopping stream to take full size image
 MOTION_TRACK_QUICK_PIC_BIGGER = 3.0 # Default= 3.0 multiply size of QuickPic saved image from Default 640x480
 # ---------------------------------------------------------------------------
 MOTION_FORCE_SEC = 3600      # Default= 3600 seconds (1 hr) OFF=0  Force an image if no Motion Detected in specified seconds.
