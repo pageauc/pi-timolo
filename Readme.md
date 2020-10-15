@@ -26,10 +26,11 @@ backup precautions are advised before doing the firmware update.  See [wiki](htt
 False is used for indoors conditions where there is no twilight.  This setting will avoid overexposure when lights
 or sudden lighting changes are encountered.  If you have previously experienced overexposure when camera is indoors then
 this setting should help. 
-* ***Release 12.0*** Added pantilthat panoramic image stitching with support for Waveshare pantilthat as well as Pimoroni.
-This release also renames all the config.py variables to snake_case and does some code cleanup.  You need to update to
+* ***Release 12.0*** Added [pantilthat panoramic image stitching Feature](https://github.com/pageauc/pi-timolo/wiki/Panoramic-Images-Stitching-Feature) 
+with support for Pimoroni and Waveshare pantilthat (and compatilble) hardware.
+This release also renames all the config.py variable Constants to snake_case and does some code cleanup.  You need to update to
 the new config.py.  Built in instructions will prompt you if needed.  Please raise github issue if there are
-problems. I still need to update wiki but config.py comments will help. 
+problems. See config.py comments and revised wiki for details. 
  
 ## Requirements
 Requires a [***Raspberry Pi computer***](https://www.raspberrypi.org/documentation/setup/) and a 
