@@ -8,7 +8,7 @@ It requires updated config.py
 Oct 2020 Added panoramic pantilt option plus other improvements.
 '''
 from __future__ import print_function
-PROG_VER = "ver 12.0"   # Requires Latest 12.0 release of config.py
+PROG_VER = "ver 12.01"   # Requires Latest 12.0 release of config.py
 __version__ = PROG_VER  # May test for version number at a future time
 
 import os
@@ -188,8 +188,9 @@ default_settings = {
     'VIDEO_NUM_MAX':20,
     'PANTILT_ON':False,
     'PANTILT_IS_PIMORONI':False,
-    'PANTILT_HOME':(0, 20),
+    'PANTILT_HOME':(0, -10),
     'PANO_ON':False,
+    'PANO_DAYONLY_ON': True,
     'PANO_TIMER_SEC':160,
     'PANO_IMAGE_PREFIX':'pano-',
     'PANO_NUM_START':1000,
@@ -1378,9 +1379,7 @@ def take_pano(pano_seq_num):
                          pan, tilt)
         camera.close()
     # Center pantilt
-    pan, tilt = PANTILT_HOME
-    pantilthat.pan(pan)
-    pantilthat.tilt(tilt)
+    pantilt_go_home()
 
     if not os.path.isfile(PANO_PROG_PATH):
         logging.error('Cannot Find Pano Executable File at %s', PANO_PROG_PATH)
@@ -1405,7 +1404,7 @@ def take_pano(pano_seq_num):
         logging.error("Failed subprocess %s", stitch_cmd)
     pano_seq_num += 1
     if PANO_NUM_RECYCLE and PANO_NUM_MAX > 0:
-        if pano_seq_num > PANO_NUM_START + PANO_NUM_MAX + 1:
+        if pano_seq_num > PANO_NUM_START + PANO_NUM_MAX:
             logging.info('PANO_NUM_RECYCLE Activated. Reset pano_seq_num to %i',
                          PANO_NUM_START)
             pano_seq_num = PANO_NUM_START
@@ -1520,6 +1519,18 @@ def take_mo_mini_timelapse(moPath, prefix, NumOn, motionNumCount,
 
     logging.info('END - Total %i Images in %i sec every %i sec',
                  imgCnt, timelapseDiff, MOTION_TRACK_MINI_TL_TIMER_SEC)
+
+def pantilt_go_home():
+    '''
+    Move pantilt to home position. If pantilt installed then this
+    can position pantilt to a home position for consistent
+    motion tracking and timelapse camera pointing.
+    '''
+    if PANTILT_ON:
+        pantilthat.pan(PANTILT_HOME[0])
+        time.sleep(PANTILT_SLEEP_SEC)
+        pantilthat.tilt(PANTILT_HOME[1])
+        time.sleep(PANTILT_SLEEP_SEC)
 
 #------------------------------------------------------------------------------
 def create_sync_lockfile(imagefilename):
@@ -1792,14 +1803,10 @@ def timolo():
 
     # Initialize some Timers
     pix_ave_timer = datetime.datetime.now()
-
     motion_force_timer = datetime.datetime.now()
     timelapseExitStart = datetime.datetime.now()
     startTL = getSchedStart(TIMELAPSE_START_AT)
     startMO = getSchedStart(MOTION_START_AT)
-
-
-
     trackLen = 0.0
     if SPACE_TIMER_HOURS > 0:
         lastSpaceCheck = datetime.datetime.now()
@@ -2038,10 +2045,6 @@ def timolo():
                         if cam_tl_pos >= len(TIMELAPSE_PANTILT_STOPS):
                             cam_tl_pos = 0
                         pan, tilt = TIMELAPSE_PANTILT_STOPS[cam_tl_pos]
-                        pantilthat.pan(PANTILT_HOME[0])
-                        time.sleep(PANTILT_SLEEP_SEC)
-                        pantilthat.tilt(PANTILT_HOME[1])
-                        time.sleep(PANTILT_SLEEP_SEC)
 
                     if MOTION_TRACK_ON:
                         logging.info("Restart Motion Tracking PiVideoStream ....")
@@ -2068,8 +2071,9 @@ def timolo():
                                                              next_timelapse_time.second))
                     logging.info('Next Timelapse at %s  Waiting ...',
                                  next_timelapse_at)
+                    pantilt_go_home()
 
-            if PANO_ON and PANTILT_ON:
+            if PANTILT_ON and PANO_ON:
                 # force a pano on first startup then go by timer.
                 if first_pano:
                     first_pano = False
@@ -2284,6 +2288,7 @@ def timolo():
                             trackTimeout = time.time()
                             startPos = []
                             startTrack = False
+                    pantilt_go_home()        
                     moPath = subDirChecks(MOTION_SUBDIR_MAX_HOURS,
                                           MOTION_SUBDIR_MAX_FILES,
                                           MOTION_DIR, MOTION_PREFIX)
@@ -2413,6 +2418,7 @@ if __name__ == '__main__':
         print("NOTICE: Logging Disabled per variable VERBOSE_ON=False  ctrl-c Exits")
 
     try:
+        pantilt_go_home()
         if VIDEO_REPEAT_ON:
             videoRepeat()
         else:
