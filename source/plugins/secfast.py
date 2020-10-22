@@ -30,8 +30,6 @@ MOTION_TRACK_QUICK_PIC_ON = True # Default= False True= Grab stream frame rather
 MOTION_TRACK_QUICK_PIC_BIGGER = 3.0 # Default= 3.0 multiply size of QuickPic saved image from Default 640x480
 MOTION_DIR = "media/fast"  # Default= "media/motion"  Folder Path for Motion Detect Image Storage
 MOTION_RECENT_DIR = "media/recent/fast"  # Default= "media/recent/motion"  Location of motionRecent files
-MOTION_VIDEO_ON = False      # Default= False  True=Take a video clip rather than image
-MOTION_TRACK_MINI_TL_ON = False     # Default= False  True=Take a quick time lapse sequence rather than a single image (overrides MOTION_VIDEO_ON)
 
 # Turn off other features
 TIMELAPSE_ON = False          # Default= False True=Turn timelapse On, False=Off
