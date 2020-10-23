@@ -72,9 +72,9 @@ TIMELAPSE_ON = True           # Default= False True=Turn timelapse On, False=Off
 TIMELAPSE_PREFIX = "tl-"      # Default= "tl-" Prefix for All timelapse images with this prefix
 TIMELAPSE_TIMER_SEC = 120     # Default= 120 (2 min) Seconds between timelapse images.
 TIMELAPSE_DIR = "media/timelapse" # Default= "media/timelapse"  Storage Folder Path for Time Lapse Image Storage
-TIMELAPSE_RECENT_DIR = "media/recent/timelapse"  # Default= "media/recent/timelapse"  location of timelapseRecent files
-TIMELAPSE_RECENT_MAX = 40     # Default= 0 off or specify number of most recent files to save in TIMELAPSE_RECENT_DIR
-TIMELAPSE_START_AT = ""       # Default= "" Off or Specify date/time to Start Sequence Eg "01-dec-2019 08:00:00" or "20:00:00"
+TIMELAPSE_RECENT_DIR = "media/recent/timelapse"  # Default= "media/recent/timelapse"  location of timelapse recent files
+TIMELAPSE_RECENT_MAX = 40     # Default= 40 0=Off or specify number of most recent files in TIMELAPSE_RECENT_DIR
+TIMELAPSE_START_AT = ""       # Default= "" Off or specify date/time to Start Sequence Eg "01-dec-2019 08:00:00" or "20:00:00"
 TIMELAPSE_CAM_SLEEP_SEC = 4.0 # Default= 4.0 seconds day sleep so camera can measure AWB before taking photo
 TIMELAPSE_NUM_ON = True       # Default= True filenames Sequenced by Number False=filenames by date/time
 TIMELAPSE_NUM_RECYCLE_ON = True # Default= True Restart Numbering at NumStart  False= Surpress Timelapse at NumMax
@@ -108,8 +108,8 @@ MOTION_TRACK_MIN_AREA = 100    # Default= 100 sq px  Minimum Area required to st
 # ---------------
 MOTION_PREFIX = "mo-"        # Default= "mo-" Prefix for all Motion Detect images
 MOTION_DIR = "media/motion"  # Default= "media/motion"  Folder Path for Motion Detect Image Storage
-MOTION_RECENT_DIR = "media/recent/motion"  # Default= "media/recent/motion"  Location of motionRecent files
-MOTION_RECENT_MAX = 40       # 0=off  Maintain specified number of most recent files in motionRecentDir
+MOTION_RECENT_DIR = "media/recent/motion"  # Default= "media/recent/motion"  Location of motion Recent files
+MOTION_RECENT_MAX = 40       # Default= 40 0=off or specify number of recent files in MOTION_RECENT_DIR
 MOTION_START_AT = ""         # Default= "" Off or Specify date/time to Start Sequence Eg "01-jan-20018 08:00:00" or "20:00:00"
 MOTION_NUM_ON = True         # Default= True filenames by sequenced Number  False= filenames by date/time
 MOTION_NUM_RECYCLE_ON = True # Default= True when NumMax reached restart at NumStart instead of exiting
