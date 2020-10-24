@@ -8,7 +8,7 @@ It requires updated config.py
 Oct 2020 Added panoramic pantilt option plus other improvements.
 '''
 from __future__ import print_function
-PROG_VER = "ver 12.01"   # Requires Latest 12.0 release of config.py
+PROG_VER = "ver 12.02"   # Requires Latest 12.0 release of config.py
 __version__ = PROG_VER  # May test for version number at a future time
 
 import os
@@ -869,7 +869,7 @@ def subDirCheckMaxHrs(directory, hrsMax, prefix):
     # remove prefix from dirName so just date-time left
     dirStr = dirName.replace(prefix, '')
     # convert string to datetime
-    dirDate = datetime.datetime.strptime(dirStr, "%Y-%m-%d-%H:%M")
+    dirDate = datetime.datetime.strptime(dirStr, "%Y-%m%d-%H%M")
     rightNow = datetime.datetime.now()   # get datetime now
     diff = rightNow - dirDate  # get time difference between dates
     days, seconds = diff.days, diff.seconds
@@ -2288,7 +2288,7 @@ def timolo():
                             trackTimeout = time.time()
                             startPos = []
                             startTrack = False
-                    pantilt_go_home()        
+                    pantilt_go_home()
                     moPath = subDirChecks(MOTION_SUBDIR_MAX_HOURS,
                                           MOTION_SUBDIR_MAX_FILES,
                                           MOTION_DIR, MOTION_PREFIX)
