@@ -8,7 +8,7 @@ It requires updated config.py
 Oct 2020 Added panoramic pantilt option plus other improvements.
 '''
 from __future__ import print_function
-PROG_VER = "ver 12.02"   # Requires Latest 12.0 release of config.py
+PROG_VER = "ver 12.03"   # Requires Latest 12.0 release of config.py
 __version__ = PROG_VER  # May test for version number at a future time
 
 import os
@@ -873,7 +873,7 @@ def subDirCheckMaxHrs(directory, hrsMax, prefix):
     rightNow = datetime.datetime.now()   # get datetime now
     diff = rightNow - dirDate  # get time difference between dates
     days, seconds = diff.days, diff.seconds
-    dirAgeHours = days * 24 + seconds // 3600  # convert to hours
+    dirAgeHours = float(days * 24 + (seconds / 3600.0))  # convert to hours
     if dirAgeHours > hrsMax:   # See if hours are exceeded
         makeNewDir = True
         logging.info('MaxHrs %i Exceeds %i for %s',
