@@ -81,9 +81,9 @@ TIMELAPSE_NUM_RECYCLE_ON = True # Default= True Restart Numbering at NumStart  F
 TIMELAPSE_NUM_START = 1000    # Default= 1000 Start of timelapse number sequence
 TIMELAPSE_NUM_MAX = 2000      # Default= 2000 Max number of timelapse images desired. 0=Continuous
 TIMELAPSE_EXIT_SEC = 0        # Default= 0 seconds Surpress Timelapse after specified Seconds  0=Continuous
-TIMELAPSE_MAX_FILES = 0       # Default= 0 Off or specify MaxFiles to maintain then oldest are deleted  Default=0 (off)
-TIMELAPSE_SUBDIR_MAX_FILES = 0 # Default= 0 Off or specify MaxFiles - Creates New dated sub-folder if MaxFiles exceeded
-TIMELAPSE_SUBDIR_MAX_HOURS = 0 # Default= 0 Off or specify MaxHours - Creates New dated sub-folder if MaxHours exceeded
+TIMELAPSE_MAX_FILES = 0       # Default= 0 0=Off or specify MaxFiles to maintain then oldest are deleted  Default=0 (Off)
+TIMELAPSE_SUBDIR_MAX_FILES = 0 # Default= 0 0=Off or specify MaxFiles - Creates New dated sub-folder if MaxFiles exceeded
+TIMELAPSE_SUBDIR_MAX_HOURS = 0 # Default= 0 0=Off or specify MaxHours - Creates New dated sub-folder if MaxHours exceeded
 TIMELAPSE_PANTILT_ON = False   # True= Move pantilt to next TIMELAPSE_PANTILT_STOPS position for
                                # each timelapse triggered. Set PANTILT_ON = True below.
 TIMELAPSE_PANTILT_STOPS = [(90, -10),    # Pan side to side taking one TL image at each stop. Change to suit
@@ -109,7 +109,7 @@ MOTION_TRACK_MIN_AREA = 100    # Default= 100 sq px  Minimum Area required to st
 MOTION_PREFIX = "mo-"        # Default= "mo-" Prefix for all Motion Detect images
 MOTION_DIR = "media/motion"  # Default= "media/motion"  Folder Path for Motion Detect Image Storage
 MOTION_RECENT_DIR = "media/recent/motion"  # Default= "media/recent/motion"  Location of motion Recent files
-MOTION_RECENT_MAX = 40       # Default= 40 0=off or specify number of recent files in MOTION_RECENT_DIR
+MOTION_RECENT_MAX = 40       # Default= 40 0=Off or specify number of recent files in MOTION_RECENT_DIR
 MOTION_START_AT = ""         # Default= "" Off or Specify date/time to Start Sequence Eg "01-jan-20018 08:00:00" or "20:00:00"
 MOTION_NUM_ON = True         # Default= True filenames by sequenced Number  False= filenames by date/time
 MOTION_NUM_RECYCLE_ON = True # Default= True when NumMax reached restart at NumStart instead of exiting
@@ -132,11 +132,11 @@ MOTION_TRACK_QUICK_PIC_BIGGER = 3.0 # Default= 3.0 multiply size of QuickPic sav
 # ---------------------------------------------------------------------------
 MOTION_FORCE_SEC = 3600      # Default= 3600 seconds (1 hr) OFF=0  Force an image if no Motion Detected in specified seconds.
 MOTION_CAM_SLEEP = 0.7       # Default= 0.7 Sec of day sleep so camera can measure AWB before taking photo
-MOTION_SUBDIR_MAX_FILES = 0  # Default= 0 Off or specify Max Files to create new sub-folder if MAX FILES exceeded
-MOTION_SUBDIR_MAX_HOURS = 0  # Default= 0 Off or specify Max Hrs to create new sub-folder if MAX HOURS exceeded
+MOTION_SUBDIR_MAX_FILES = 0  # Default= 0 0=Off or specify Max Files to create new sub-folder if MAX FILES exceeded
+MOTION_SUBDIR_MAX_HOURS = 0  # Default= 0 0=Off or specify Max Hrs to create new sub-folder if MAX HOURS exceeded
 MOTION_DOTS_ON = False       # Default= True Displays motion loop progress dots if VERBOSE_ON=True False=Non
 MOTION_DOTS_MAX = 100        # Default= 100 Number of motion dots before starting new line if MOTION_DOTS_ON=True
-CREATE_LOCKFILE = False      # Default= False True= Create pi-timolo.sync file whenever motion images saved.
+CREATE_LOCKFILE = False      # Default= False Off True= Create pi-timolo.sync file whenever motion images saved.
                              # Lock File is used to indicate motion images have been added
                              # So sync.sh can remote sync only as required via a sudo crontab -e entry
 
@@ -149,7 +149,7 @@ VIDEO_START_AT = ""          # Default= "" Off or Specify date/time to Start Seq
 VIDEO_FILE_SEC = 60          # Default= 60 seconds for each video recording
 VIDEO_SESSION_MIN = 30       # Default= 30 minutes  Run Recording Session then Exit  0=Continuous
 VIDEO_FPS = 30               # Default= 30 fps.  Note slow motion can be achieved at 640x480 image resolution at 90 fps
-VIDEO_NUM_ON = False         # Default= True True=filenames by sequence Number  False=filenames by date/time
+VIDEO_NUM_ON = False         # Default= True True=filenames by sequence Number  False=Filenames by date/time
 VIDEO_NUM_RECYCLE_ON = False # Default= False when NumMax reached restart at NumStart instead of exiting
 VIDEO_NUM_START = 1000       # Default= 1000 Start of video filename number sequence
 VIDEO_NUM_MAX  = 20          # Default= 20 Max number of videos desired. 0=Continuous
@@ -157,9 +157,9 @@ VIDEO_NUM_MAX  = 20          # Default= 20 Max number of videos desired. 0=Conti
 # Settings for Pan Tilt Hardware
 # Pan and Tilt positions are in degrees between -90 and + 90
 # ------------------------------
-PANTILT_ON = False           # True= Enable Pan Tilt Hat hardware,  False= Disable for TIMELAPSE_PANTILT_ON and PANO_ON
-PANTILT_IS_PIMORONI = True   # True= Use Pimoroni pantilehat, False= Use Waveshare pantilthat
-PANTILT_HOME = (0, -10)      # Pan Tilt Postion between -90 and + 90 to Return to after an operation
+PANTILT_ON = False           # Default= False Off, True= Enable Pan Tilt Hat Hardware (Load Drivers)
+PANTILT_IS_PIMORONI = True   # Default= True Use Pimoroni pantilehat, False= Use Waveshare pantilthat
+PANTILT_HOME = (0, -10)      # Default= (0, -10) Pan Tilt Home Postion. Values between -90 and + 90
 PANTILT_SLEEP_SEC = 0.1      # Default= 0.1 Allow time for pantilt servos to move
 
 # Panoramic Images Settings
@@ -189,7 +189,7 @@ PANO_CAM_STOPS = [(36, -10),
 # Manage Disk Space Settings
 #---------------------------
 SPACE_MEDIA_DIR = '/home/pi/pi-timolo/media'  # Default= '/home/pi/pi-timolo/media'  Starting point for directory walk
-SPACE_TIMER_HOURS = 0         # Default= 0  0=off or specify hours frequency to perform free disk space check
+SPACE_TIMER_HOURS = 0         # Default= 0  Off or specify hours frequency to perform free disk space check
 SPACE_TARGET_MB = 500         # Default= 500  Target Free space in MB Required.
 SPACE_TARGET_EXT  = 'jpg'     # Default= 'jpg' File extension to Delete Oldest Files
 
