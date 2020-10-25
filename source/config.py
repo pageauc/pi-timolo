@@ -3,9 +3,9 @@
 # Updated - 06-Jul-2017 IMPORTANT - Required for pi-timolo.py ver 11.2 or Greater
 # Done by - Claude Pageau
 
-CONFIG_TITLE = "pi-timolo ver 12.0 Default Settings"
+CONFIG_TITLE = "pi-timolo ver 12.04 Default Settings"
 CONFIG_FILENAME  = "config.py"
-CONFIG_VERSION = 12.0   # Version of this file used for compatiblity checking
+CONFIG_VERSION = 12.04  # Version of this file used for compatiblity checking
 
 #======================================
 #   pi-timolo.py Settings
@@ -81,9 +81,9 @@ TIMELAPSE_NUM_RECYCLE_ON = True # Default= True Restart Numbering at NumStart  F
 TIMELAPSE_NUM_START = 1000    # Default= 1000 Start of timelapse number sequence
 TIMELAPSE_NUM_MAX = 2000      # Default= 2000 Max number of timelapse images desired. 0=Continuous
 TIMELAPSE_EXIT_SEC = 0        # Default= 0 seconds Surpress Timelapse after specified Seconds  0=Continuous
-TIMELAPSE_MAX_FILES = 0       # Default= 0 off or specify MaxFiles to maintain then oldest are deleted  Default=0 (off)
-TIMELAPSE_SUBDIR_MAX_FILES = 0 # Default= 0 off or specify MaxFiles - Creates New dated sub-folder if MaxFiles exceeded
-TIMELAPSE_SUBDIR_MAX_HOURS = 0 # Default= 0 off or specify MaxHours - Creates New dated sub-folder if MaxHours exceeded
+TIMELAPSE_MAX_FILES = 0       # Default= 0 Off or specify MaxFiles to maintain then oldest are deleted  Default=0 (off)
+TIMELAPSE_SUBDIR_MAX_FILES = 0 # Default= 0 Off or specify MaxFiles - Creates New dated sub-folder if MaxFiles exceeded
+TIMELAPSE_SUBDIR_MAX_HOURS = 0 # Default= 0 Off or specify MaxHours - Creates New dated sub-folder if MaxHours exceeded
 TIMELAPSE_PANTILT_ON = False   # True= Move pantilt to next TIMELAPSE_PANTILT_STOPS position for
                                # each timelapse triggered. Set PANTILT_ON = True below.
 TIMELAPSE_PANTILT_STOPS = [(90, -10),    # Pan side to side taking one TL image at each stop. Change to suit
@@ -132,8 +132,8 @@ MOTION_TRACK_QUICK_PIC_BIGGER = 3.0 # Default= 3.0 multiply size of QuickPic sav
 # ---------------------------------------------------------------------------
 MOTION_FORCE_SEC = 3600      # Default= 3600 seconds (1 hr) OFF=0  Force an image if no Motion Detected in specified seconds.
 MOTION_CAM_SLEEP = 0.7       # Default= 0.7 Sec of day sleep so camera can measure AWB before taking photo
-MOTION_SUBDIR_MAX_FILES = 0  # 0=off or specify Max Files to create new sub-folder if FilesMax exceeded
-MOTION_SUBDIR_MAX_HOURS = 0  # 0=off or specify Max Hrs to create new sub-folder if HrsMax exceeded
+MOTION_SUBDIR_MAX_FILES = 0  # Default= 0 Off or specify Max Files to create new sub-folder if MAX FILES exceeded
+MOTION_SUBDIR_MAX_HOURS = 0  # Default= 0 Off or specify Max Hrs to create new sub-folder if MAX HOURS exceeded
 MOTION_DOTS_ON = False       # Default= True Displays motion loop progress dots if VERBOSE_ON=True False=Non
 MOTION_DOTS_MAX = 100        # Default= 100 Number of motion dots before starting new line if MOTION_DOTS_ON=True
 CREATE_LOCKFILE = False      # Default= False True= Create pi-timolo.sync file whenever motion images saved.
@@ -142,9 +142,9 @@ CREATE_LOCKFILE = False      # Default= False True= Create pi-timolo.sync file w
 
 # Dash Cam Video Repeat Mode (Suppresses Timelapse, Motion Settings and Pano)
 # --------------------------
-VIDEO_REPEAT_ON = False      # Turn on Video Repeat Mode IMPORTANT Overrides timelapse and motion
+VIDEO_REPEAT_ON = False      # Default= False OFF True= Turn on Video Repeat Mode IMPORTANT Overrides Timelapse and Motion
 VIDEO_DIR = "media/videos"   # Default= "media/videos" Storage folder path for videos
-VIDEO_PREFIX = "vid-"        # prefix for video filenames
+VIDEO_PREFIX = "vid-"        # Default= 'vid-" prefix for video filenames
 VIDEO_START_AT = ""          # Default= "" Off or Specify date/time to Start Sequence eg "01-dec-2019 08:00:00" or "20:00:00"
 VIDEO_FILE_SEC = 60          # Default= 60 seconds for each video recording
 VIDEO_SESSION_MIN = 30       # Default= 30 minutes  Run Recording Session then Exit  0=Continuous
@@ -165,13 +165,14 @@ PANTILT_SLEEP_SEC = 0.1      # Default= 0.1 Allow time for pantilt servos to mov
 # Panoramic Images Settings
 # -------------------------
 PANO_ON = False              # True= Enable panoramic image using pantilt overlapping images
-                             # Note this can run in parallel with timelapse and motion tracking
+                             #       Note this can run in parallel with timelapse and motion tracking
 PANO_IMAGE_PREFIX = 'pano-'  # Prefix for pano images
-PANO_TIMER_SEC = 300         # Default= 300 5min Duration between taking pano images (Allow enough time for stitching)
+PANO_TIMER_SEC = 300         # Default= 300 5 min Duration between taking pano images (Allow enough time for stitching)
                              # Adjust timer To avoid multiple stitching operations at once per cpu and cores
 PANO_NUM_START = 1000        # Default= 1000 Start of image numbering sequence
-PANO_NUM_MAX   = 20          # Maximum number of pano's to take 0=Continuous.
-PANO_NUM_RECYCLE = True      # True will Recycle numbering when NUM MAX exceeded
+PANO_NUM_MAX   = 20          # Default= 20 Maximum number of pano's to take 0=Continuous.
+PANO_NUM_RECYCLE = True      # Default= True Recycle numbering when NUM MAX exceeded. False= Exit
+PANO_DAYONLY_ON = True       # Default= True Take Pano only during day.  False= Day and Night
 PANO_IMAGES_DIR = './media/pano/images'  # Dir for storing pantilt source images
 PANO_DIR = './media/pano/panos'  # Dir for storing final panoramic images
 PANO_PROG_PATH = '/usr/local/bin/image-stitching'  # Path to image stitching program config.cfg in pi-timolo dir.

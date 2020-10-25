@@ -8,7 +8,7 @@ It requires updated config.py
 Oct 2020 Added panoramic pantilt option plus other improvements.
 '''
 from __future__ import print_function
-PROG_VER = "ver 12.03"   # Requires Latest 12.0 release of config.py
+PROG_VER = "ver 12.04"   # Requires Latest 12.0 release of config.py
 __version__ = PROG_VER  # May test for version number at a future time
 
 import os
@@ -452,7 +452,7 @@ if not IMAGE_FORMAT.startswith('.', 0, 1):
 #      System Variables
 # Should Not need to be customized
 #==================================
-PIX_AVE_TIMER_SEC = 30  # Interval time for checking pixAverage Readings
+PIX_AVE_TIMER_SEC = 30     # Interval time for checking pixAverage Readings
 SECONDS2MICRO = 1000000    # Used to convert from seconds to microseconds
 NIGHT_MAX_SHUTTER = int(NIGHT_MAX_SHUT_SEC * SECONDS2MICRO)
 # default=5 seconds IMPORTANT- 6 seconds works sometimes
@@ -2086,24 +2086,30 @@ def timolo():
                     pano_timer, start_pano = check_timer(pano_timer, PANO_TIMER_SEC)
 
                 if start_pano:
-                    if MOTION_TRACK_ON:
-                        logging.info("Stop Motion Tracking PiVideoStream ...")
-                        vs.stop()
-                        time.sleep(STREAM_STOP_SEC)
-                    pano_seq_num = take_pano(pano_seq_num)
-                    if MOTION_TRACK_ON:
-                        logging.info("Restart Motion Tracking PiVideoStream ....")
-                        vs = PiVideoStream().start()
-                        vs.camera.rotation = IMAGE_ROTATION
-                        vs.camera.hflip = IMAGE_HFLIP
-                        vs.camera.vflip = IMAGE_VFLIP
-                        time.sleep(1)
-                    next_pano_time = pano_timer + datetime.timedelta(seconds=PANO_TIMER_SEC)
-                    next_pano_at = ("%02d:%02d:%02d" % (next_pano_time.hour,
-                                                        next_pano_time.minute,
-                                                        next_pano_time.second))
-                    logging.info('Next Pano at %s  Waiting ...',
-                                 next_pano_at)
+                     if (PANO_DAYONLY_ON and daymode) or not PANO_DAYONLY_ON:
+                          if MOTION_TRACK_ON:
+                               logging.info("Stop Motion Tracking PiVideoStream ...")
+                               vs.stop()
+                               time.sleep(STREAM_STOP_SEC)
+                          pano_seq_num = take_pano(pano_seq_num)
+                          if MOTION_TRACK_ON:
+                               logging.info("Restart Motion Tracking PiVideoStream ....")
+                               vs = PiVideoStream().start()
+                               vs.camera.rotation = IMAGE_ROTATION
+                               vs.camera.hflip = IMAGE_HFLIP
+                               vs.camera.vflip = IMAGE_VFLIP
+                               time.sleep(1)
+                     else:
+                          logging.info('Pano Turned Off During Night per PANO_DAYONLY_ON=%s',
+                                       PANO_DAYONLY_ON)
+
+                     next_pano_time = pano_timer + datetime.timedelta(seconds=PANO_TIMER_SEC)
+                     next_pano_at = ("%02d:%02d:%02d" % (next_pano_time.hour,
+                                                         next_pano_time.minute,
+                                                         next_pano_time.second))
+                     logging.info('Next Pano at %s  Waiting ...',
+                                   next_pano_at)
+
 
             if MOTION_TRACK_ON and checkSchedStart(startMO) and takeMotion and (not stopMotion):
                 # IMPORTANT - Night motion tracking may not work very well
