@@ -180,10 +180,10 @@ PANO_IMAGES_DIR = './media/pano/images'  # Dir for storing pantilt source images
 PANO_DIR = './media/pano/panos'  # Dir for storing final panoramic images
 PANO_PROG_PATH = '/usr/local/bin/image-stitching'  # Path to image stitching program config.cfg in pi-timolo dir.
 
-# pantilt stops to take overlapping images. You need sufficient overlap for successful stitching
+# Set stops to take overlapping images. You need sufficient overlap for successful stitching
 # Default setting [(36, 20), (0, 20), (-36, 20)] is for 1920x1080 camera resolution
-# More images requires more time to stitch.  Adjust settings as necessary to avoid multiple stitches at once.
-# Tested on single core RPI, but stitches much faster on quad core
+# More images requires more time to stitch.  Adjust PANO_TIMER_SEC setting to avoid multiple stitches at once.
+# Tested on single core RPI, but will stitch much faster on quad core.
 PANO_CAM_STOPS = [(36, -10),
                   (0, -10),
                   (-36, -10)
