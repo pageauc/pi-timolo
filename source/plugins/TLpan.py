@@ -1,5 +1,8 @@
 """
-pluginName = TLShort
+pluginName = TLpan
+
+IMPORTANT set config.py PANTILT_IS_PIMORONI for your default pantilt hardware
+it is not included in this plugin to avoid conflicts 
 
 Senario Panning Timelapse Project
 -------------------------------
@@ -40,7 +43,6 @@ TIMELAPSE_SUBDIR_MAX_FILES = 2000 # Default= 0 off or specify MaxFiles - Creates
 TIMELAPSE_SUBDIR_MAX_HOURS = 0 # Default= 0 off or specify MaxHours - Creates New dated sub-folder if MaxHours exceeded
 
 PANTILT_ON = True             # True= Enable Pan Tilt Hat hardware,  False= Disable for TIMELAPSE_PANTILT_ON and PANO_ON
-PANTILT_IS_PIMORONI = True   # Default= True Use Pimoroni pantilehat, False= Use Waveshare pantilthat
 PANTILT_HOME = (0, -10)      # Default= (0, -10) Pan Tilt Home Postion. Values between -90 and + 90
 
 TIMELAPSE_PANTILT_ON = True   # True= Move pantilt to next TIMELAPSE_PANTILT_STOPS position for

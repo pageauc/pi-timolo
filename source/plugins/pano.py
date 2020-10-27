@@ -1,6 +1,9 @@
 """
 pluginName = pano
 
+IMPORTANT set config.py PANTILT_IS_PIMORONI for your default pantilt hardware
+it is not included in this plugin to avoid conflicts 
+
 Senario Panning Timelapse Project
 -------------------------------
 This will require a working Pimoroni, Waveshare or Compatible Pan Tilt Hat Hardware.
@@ -20,13 +23,12 @@ then these settings will override the config.py settings.
 # ---------------------------------------------------
 
 IMAGE_NAME_PREFIX = 'cam1-'  # Default= 'cam1-' for all image file names. Eg garage-
-IMAGE_WIDTH = 1920            # Default= 1024 Full Size Image Width in px
-IMAGE_HEIGHT = 1080           # Default= 768  Full Size Image Height in px
-IMAGE_FORMAT = ".jpg"         # Default= ".jpg"  image Formats .jpeg .png .gif .bmp
-IMAGE_JPG_QUAL = 95           # Default= 95 jpg Encoder Quality Values 1(low)-100(high min compression) 0=85
+IMAGE_WIDTH = 1920           # Default= 1024 Full Size Image Width in px
+IMAGE_HEIGHT = 1080          # Default= 768  Full Size Image Height in px
+IMAGE_FORMAT = ".jpg"        # Default= ".jpg"  image Formats .jpeg .png .gif .bmp
+IMAGE_JPG_QUAL = 95          # Default= 95 jpg Encoder Quality Values 1(low)-100(high min compression) 0=85
 
-PANTILT_ON = True             # True= Enable Pan Tilt Hat hardware,  False= Disable for TIMELAPSE_PANTILT_ON and PANO_ON
-PANTILT_IS_PIMORONI = True   # Default= True Use Pimoroni pantilehat, False= Use Waveshare pantilthat
+PANTILT_ON = True            # True= Enable Pan Tilt Hat hardware,  False= Disable for TIMELAPSE_PANTILT_ON and PANO_ON
 PANTILT_HOME = (0, -10)      # Default= (0, -10) Pan Tilt Home Postion. Values between -90 and + 90
 
 PANO_ON = True               # Default= True Enable image stitching using pantilt overlapping images False= Disabled
