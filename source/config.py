@@ -84,12 +84,11 @@ TIMELAPSE_EXIT_SEC = 0        # Default= 0 seconds Surpress Timelapse after spec
 TIMELAPSE_MAX_FILES = 0       # Default= 0 0=Off or specify MaxFiles to maintain then oldest are deleted  Default=0 (Off)
 TIMELAPSE_SUBDIR_MAX_FILES = 0 # Default= 0 0=Off or specify MaxFiles - Creates New dated sub-folder if MaxFiles exceeded
 TIMELAPSE_SUBDIR_MAX_HOURS = 0 # Default= 0 0=Off or specify MaxHours - Creates New dated sub-folder if MaxHours exceeded
-TIMELAPSE_PANTILT_ON = False   # True= Move pantilt to next TIMELAPSE_PANTILT_STOPS position for
-                               # each timelapse triggered. Set PANTILT_ON = True below.
 
 # Pan side to side taking one TL image at each stop. Returns to PANTILT_HOME after each stop. 
-# See PanTilt settings below to set PANTILT_ON = True 
-# and Select Pimoroni or Waveshare hardware per PANTILT_IS_PIMORONI setting.
+# See PANTILT Hardware settings below to set PANTILT_ON = True 
+# then Select Pimoroni or Waveshare hardware per PANTILT_IS_PIMORONI setting.
+TIMELAPSE_PANTILT_ON = False   # Default= False  Disabled   True= Enabled
 TIMELAPSE_PANTILT_STOPS = [(90, -10),   
                            (45, -10),
                            (0, -10),
