@@ -86,7 +86,11 @@ TIMELAPSE_SUBDIR_MAX_FILES = 0 # Default= 0 0=Off or specify MaxFiles - Creates 
 TIMELAPSE_SUBDIR_MAX_HOURS = 0 # Default= 0 0=Off or specify MaxHours - Creates New dated sub-folder if MaxHours exceeded
 TIMELAPSE_PANTILT_ON = False   # True= Move pantilt to next TIMELAPSE_PANTILT_STOPS position for
                                # each timelapse triggered. Set PANTILT_ON = True below.
-TIMELAPSE_PANTILT_STOPS = [(90, -10),    # Pan side to side taking one TL image at each stop. Change to suit
+
+# Pan side to side taking one TL image at each stop. Returns to PANTILT_HOME after each stop. 
+# See PanTilt settings below to set PANTILT_ON = True 
+# and Select Pimoroni or Waveshare hardware per PANTILT_IS_PIMORONI setting.
+TIMELAPSE_PANTILT_STOPS = [(90, -10),   
                            (45, -10),
                            (0, -10),
                            (-45, -10),
@@ -164,11 +168,11 @@ PANTILT_SLEEP_SEC = 0.1      # Default= 0.1 Allow time for pantilt servos to mov
 
 # Panoramic Images Settings
 # -------------------------
-PANO_ON = False              # True= Enable panoramic image using pantilt overlapping images
-                             #       Note this can run in parallel with timelapse and motion tracking
-PANO_IMAGE_PREFIX = 'pano-'  # Prefix for pano images
-PANO_TIMER_SEC = 300         # Default= 300 5 min Duration between taking pano images (Allow enough time for stitching)
-                             # Adjust timer To avoid multiple stitching operations at once per cpu and cores
+PANO_ON = True               # Default= True Enable image stitching using pantilt overlapping images False= Disabled
+                             # Note this can run in parallel with timelapse and motion tracking
+PANO_IMAGE_PREFIX = 'pano-'  # Default= 'pano-' Prefix for pano images
+PANO_TIMER_SEC = 300         # Default= 300 (5 min) Duration between taking pano images (Helps avoid multiple stitch tasks)
+                             # FYI Stitching time on RPI4 can be less than 10 seconds.
 PANO_NUM_START = 1000        # Default= 1000 Start of image numbering sequence
 PANO_NUM_MAX   = 20          # Default= 20 Maximum number of pano's to take 0=Continuous.
 PANO_NUM_RECYCLE = True      # Default= True Recycle numbering when NUM MAX exceeded. False= Exit
@@ -189,7 +193,7 @@ PANO_CAM_STOPS = [(36, -10),
 # Manage Disk Space Settings
 #---------------------------
 SPACE_MEDIA_DIR = '/home/pi/pi-timolo/media'  # Default= '/home/pi/pi-timolo/media'  Starting point for directory walk
-SPACE_TIMER_HOURS = 0         # Default= 0  Off or specify hours frequency to perform free disk space check
+SPACE_TIMER_HOURS = 0         # Default= 0  0=Off or specify hours frequency to perform free disk space check
 SPACE_TARGET_MB = 500         # Default= 500  Target Free space in MB Required.
 SPACE_TARGET_EXT  = 'jpg'     # Default= 'jpg' File extension to Delete Oldest Files
 
