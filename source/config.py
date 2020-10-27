@@ -17,7 +17,8 @@ CONFIG_VERSION = 12.04  # Version of this file used for compatiblity checking
 
 PLUGIN_ON = False       # Default= False True reads customized settings from a custom.py file
 PLUGIN_NAME = "shopcam" # Specify filename in plugins subfolder without .py extension per below
-                        # TLlong, TLshort, secfast, secstill, strmvid, secvid, secQTL, shopcam, dashcam, slowmo
+                        # TLlong, TLshort, secfast, secstill, strmvid, secvid,
+                        # secQTL, shopcam, dashcam, slowmo, TLpan, pano
 
 VERBOSE_ON = True       # Default= True Sends logging Info to Console. False if running script as daeman
 LOG_TO_FILE_ON = False  # Default= False True logs diagnostic data to a disk file for review
@@ -85,11 +86,11 @@ TIMELAPSE_MAX_FILES = 0       # Default= 0 0=Off or specify MaxFiles to maintain
 TIMELAPSE_SUBDIR_MAX_FILES = 0 # Default= 0 0=Off or specify MaxFiles - Creates New dated sub-folder if MaxFiles exceeded
 TIMELAPSE_SUBDIR_MAX_HOURS = 0 # Default= 0 0=Off or specify MaxHours - Creates New dated sub-folder if MaxHours exceeded
 
-# Pan side to side taking one TL image at each stop. Returns to PANTILT_HOME after each stop. 
-# See PANTILT Hardware settings below to set PANTILT_ON = True 
+# Pan side to side taking one TL image at each stop. Returns to PANTILT_HOME after each stop.
+# See PANTILT Hardware settings below to set PANTILT_ON = True
 # then Select Pimoroni or Waveshare hardware per PANTILT_IS_PIMORONI setting.
 TIMELAPSE_PANTILT_ON = False   # Default= False  Disabled   True= Enabled
-TIMELAPSE_PANTILT_STOPS = [(90, -10),   
+TIMELAPSE_PANTILT_STOPS = [(90, -10),
                            (45, -10),
                            (0, -10),
                            (-45, -10),

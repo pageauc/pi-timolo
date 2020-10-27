@@ -123,7 +123,7 @@ echo "INFO  : $STATUS Check/Install pi-timolo/plugins    Wait ..."
 PLUGINS_DIR='plugins'  # Default folder install location
 # List of plugin Files to Check
 pluginFiles=("__init__.py" "dashcam.py" "secfast.py" "secQTL.py" "secstill.py" \
-"secvid.py" "strmvid.py" "shopcam.py" "slowmo.py" "TLlong.py" "TLshort.py")
+"secvid.py" "strmvid.py" "shopcam.py" "slowmo.py" "TLlong.py" "TLshort.py" "TLpan.py" "pano.py")
 
 mkdir -p $PLUGINS_DIR
 cd $PLUGINS_DIR
