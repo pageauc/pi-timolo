@@ -8,7 +8,7 @@ It requires updated config.py
 Oct 2020 Added panoramic pantilt option plus other improvements.
 '''
 from __future__ import print_function
-PROG_VER = "ver 12.05"   # Requires Latest 12.0 release of config.py
+PROG_VER = "ver 12.06"   # Requires Latest 12.0 release of config.py
 __version__ = PROG_VER  # May test for version number at a future time
 
 import os
@@ -2013,8 +2013,8 @@ def timolo():
                                          "  ExitSec=%i 0=Continuous",
                                          daymode, TIMELAPSE_TIMER_SEC,
                                          TIMELAPSE_EXIT_SEC)
-                    image_prefix = TIMELAPSE_PREFIX + IMAGE_NAME_PREFIX
-                    filename = get_image_filename(tlPath, image_prefix,
+                    tl_prefix = TIMELAPSE_PREFIX + IMAGE_NAME_PREFIX
+                    filename = get_image_filename(tlPath, tl_prefix,
                                                   TIMELAPSE_NUM_ON,
                                                   timelapseNumCount)
                     if MOTION_TRACK_ON:
@@ -2056,10 +2056,10 @@ def timolo():
 
                     if TIMELAPSE_RECENT_MAX > 0:
                         saveRecent(TIMELAPSE_RECENT_MAX, TIMELAPSE_RECENT_DIR,
-                                   filename, image_prefix)
+                                   filename, tl_prefix)
                     if TIMELAPSE_MAX_FILES > 0:
                         deleteOldFiles(TIMELAPSE_MAX_FILES, TIMELAPSE_DIR,
-                                       image_prefix)
+                                       tl_prefix)
                     dotCount = show_dots(MOTION_DOTS_MAX)
 
                     tlPath = subDirChecks(TIMELAPSE_SUBDIR_MAX_HOURS,
