@@ -8,7 +8,7 @@ It requires updated config.py
 Oct 2020 Added panoramic pantilt option plus other improvements.
 '''
 from __future__ import print_function
-PROG_VER = "ver 12.04"   # Requires Latest 12.0 release of config.py
+PROG_VER = "ver 12.05"   # Requires Latest 12.0 release of config.py
 __version__ = PROG_VER  # May test for version number at a future time
 
 import os
@@ -2056,10 +2056,10 @@ def timolo():
 
                     if TIMELAPSE_RECENT_MAX > 0:
                         saveRecent(TIMELAPSE_RECENT_MAX, TIMELAPSE_RECENT_DIR,
-                                   filename, IMAGE_NAME_PREFIX)
+                                   filename, image_prefix)
                     if TIMELAPSE_MAX_FILES > 0:
                         deleteOldFiles(TIMELAPSE_MAX_FILES, TIMELAPSE_DIR,
-                                       IMAGE_NAME_PREFIX)
+                                       image_prefix)
                     dotCount = show_dots(MOTION_DOTS_MAX)
 
                     tlPath = subDirChecks(TIMELAPSE_SUBDIR_MAX_HOURS,
@@ -2187,6 +2187,7 @@ def timolo():
                     image1 = vs.read()
                     image2 = image1
                     grayimage1 = cv2.cvtColor(image1, cv2.COLOR_BGR2GRAY)
+                    grayimage2 = grayimage1
                     grayimage2 = grayimage1
                     dotCount = show_dots(MOTION_DOTS_MAX + 2) # New Line
                     logging.info("No Motion Detected for %s minutes. "
@@ -2431,6 +2432,7 @@ if __name__ == '__main__':
             timolo()
     except KeyboardInterrupt:
         print("")
+        pantilt_go_home() # Ensure mouse is returned to home position
         if VERBOSE_ON:
             logging.info("User Pressed Keyboard ctrl-c")
             logging.info("Exiting %s %s", PROG_NAME, PROG_VER)
