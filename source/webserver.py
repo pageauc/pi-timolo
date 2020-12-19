@@ -135,6 +135,7 @@ class DirectoryHandler(SimpleHTTPRequestHandler):
                 file_found = True
                 break
             cnt += 1
+        print("here")
         # Start HTML formatting code
         f.write(b'<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">')
         f.write(b'<head>')
@@ -171,7 +172,7 @@ VALUE="Refresh">&nbsp;&nbsp;<b>%s</b></FORM>''' % list_title)
         # Create the formatted list of right panel hyper-links to files in the specified directory
         if not self.path is "/":   # Display folder Back arrow navigation if not in web root
             f.write(b'<li><a href="%s" >%s</a></li>\n'
-                    % (urllib.parse.quote(".."), html.escape("< BACK")))
+                    % (urllib.parse.quote("..").encode('utf-8'), html.escape("< BACK").encode('utf-8')))
         display_entries = 0
         file_found = False
         for name in list:
