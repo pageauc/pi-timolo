@@ -135,7 +135,6 @@ class DirectoryHandler(SimpleHTTPRequestHandler):
                 file_found = True
                 break
             cnt += 1
-        print("here")
         # Start HTML formatting code
         f.write(b'<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">')
         f.write(b'<head>')
