@@ -1,17 +1,18 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 
 import cgi
+import html
 import os
 import subprocess
 import socket
 import fcntl
 import struct
-import SocketServer
+import socketserver
 import sys
 import time
 import urllib
-from SimpleHTTPServer import SimpleHTTPRequestHandler
-from StringIO import StringIO
+from http.server import SimpleHTTPRequestHandler
+from io import BytesIO
 
 PROG_VER = "ver 11.00 written by Claude Pageau"
 '''
@@ -113,7 +114,7 @@ class DirectoryHandler(SimpleHTTPRequestHandler):
             list = os.listdir(path)
             all_entries = len(list)
         except os.error:
-            self.send_error(404, "No permission to list directory")
+            self.send_error(404, b"No permission to list directory")
             return None
 
         if web_list_by_datetime:
@@ -122,8 +123,8 @@ class DirectoryHandler(SimpleHTTPRequestHandler):
         else:
             # Sort by File Name
             list.sort(key=lambda a: a.lower(), reverse=web_list_sort_descending)
-        f = StringIO()
-        displaypath = cgi.escape(urllib.unquote(self.path))
+        f = BytesIO()
+        displaypath = html.escape(urllib.parse.unquote(self.path))
         # find index of first file or hyperlink
 
         file_found = False
@@ -134,44 +135,44 @@ class DirectoryHandler(SimpleHTTPRequestHandler):
                 file_found = True
                 break
             cnt += 1
-
+        print("here")
         # Start HTML formatting code
-        f.write('<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">')
-        f.write('<head>')
+        f.write(b'<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">')
+        f.write(b'<head>')
         # Setup Meta Tags and better viewing on small screen devices
-        f.write('<meta "Content-Type" content="txt/html; charset=ISO-8859-1" />')
-        f.write('<meta name="viewport" content="width=device-width, initial-scale=1.0" />')
+        f.write(b'<meta "Content-Type" content="txt/html; charset=ISO-8859-1" />')
+        f.write(b'<meta name="viewport" content="width=device-width, initial-scale=1.0" />')
         if web_page_refresh_on:
-            f.write('<meta http-equiv="refresh" content="%s" />' % web_page_refresh_sec)
-        f.write('</head>')
+            f.write(b'<meta http-equiv="refresh" content="%s" />' % web_page_refresh_sec.encode('utf-8'))
+        f.write(b'</head>')
 
         tpath, cur_folder = os.path.split(self.path)
-        f.write("<html><title>%s %s</title>" % (web_page_title, self.path))
-        f.write("<body>")
+        f.write(b"<html><title>%s %s</title>" % (web_page_title.encode('utf-8'), self.path.encode('utf-8')))
+        f.write(b"<body>")
         # Start Left iframe Image Panel
-        f.write('<iframe width="%s" height="%s" align="left"'
-                % (web_iframe_width_usage, web_image_height))
+        f.write(b'<iframe width="%s" height="%s" align="left"'
+                % (web_iframe_width_usage.encode('utf-8'), web_image_height.encode('utf-8')))
         if file_found:  # file was display it in left pane
-            f.write('src="%s" name="imgbox" id="imgbox" alt="%s">'
-                    % (list[cnt], web_page_title))
+            f.write(b'src="%s" name="imgbox" id="imgbox" alt="%s">'
+                    % (list[cnt].encode('utf-8'), web_page_title.encode('utf-8')))
         else:  # No files found so blank left pane
-            f.write('src="%s" name="imgbox" id="imgbox" alt="%s">'
-                    % ("about:blank", web_page_title))
+            f.write(b'src="%s" name="imgbox" id="imgbox" alt="%s">'
+                    % (b"about:blank", web_page_title.encode('utf-8')))
 
-        f.write('<p>iframes are not supported by your browser.</p></iframe>')
+        f.write(b'<p>iframes are not supported by your browser.</p></iframe>')
         # Start Right File selection List Panel
-        list_style = '<div style="height: ' + web_list_height + 'px; overflow: auto; white-space: nowrap;">'
+        list_style = b'<div style="height: ' + web_list_height.encode('utf-8') + b'px; overflow: auto; white-space: nowrap;">'
         f.write(list_style)
-        # f.write('<center><b>%s</b></center>' % (self.path))
+        # f.write(b'<center><b>%s</b></center>' % (self.path.encode('utf-8')))
         # Show a refresh button at top of right pane listing
         refresh_button = ('''<FORM>&nbsp;&nbsp;<INPUT TYPE="button" onClick="history.go(0)"
 VALUE="Refresh">&nbsp;&nbsp;<b>%s</b></FORM>''' % list_title)
-        f.write('%s' % refresh_button)
-        f.write('<ul name="menu" id="menu" style="list-style-type:none; padding-left: 4px">')
+        f.write(b'%s' % refresh_button.encode('utf-8'))
+        f.write(b'<ul name="menu" id="menu" style="list-style-type:none; padding-left: 4px">')
         # Create the formatted list of right panel hyper-links to files in the specified directory
         if not self.path is "/":   # Display folder Back arrow navigation if not in web root
-            f.write('<li><a href="%s" >%s</a></li>\n'
-                    % (urllib.quote(".."), cgi.escape("< BACK")))
+            f.write(b'<li><a href="%s" >%s</a></li>\n'
+                    % (urllib.parse.quote(".."), html.escape("< BACK")))
         display_entries = 0
         file_found = False
         for name in list:
@@ -188,44 +189,44 @@ VALUE="Refresh">&nbsp;&nbsp;<b>%s</b></FORM>''' % list_title)
             if os.path.isdir(fullname):   # check if entry is a directory
                 displayname = name + "/"
                 linkname = os.path.join(displaypath, displayname)
-                f.write('<li><a href="%s" >%s</a></li>\n'
-                        % (urllib.quote(linkname), cgi.escape(displayname)))
+                f.write(b'<li><a href="%s" >%s</a></li>\n'
+                        % (urllib.parse.quote(linkname).encode('utf-8'), html.escape(displayname).encode('utf-8')))
             else:
-                f.write('<li><a href="%s" target="imgbox">%s</a> - %s</li>\n'
-                        % (urllib.quote(linkname), cgi.escape(displayname), date_modified))
+                f.write(b'<li><a href="%s" target="imgbox">%s</a> - %s</li>\n'
+                        % (urllib.parse.quote(linkname).encode('utf-8'), html.escape(displayname).encode('utf-8'), date_modified.encode('utf-8')))
 
         if (not self.path is "/") and display_entries > 35:   # Display folder Back arrow navigation if not in web root
-            f.write('<li><a href="%s" >%s</a></li>\n' % (urllib.quote(".."), cgi.escape("< BACK")))
-        f.write('</ul></div><p><b>')
+            f.write(b'<li><a href="%s" >%s</a></li>\n' % (urllib.parse.quote(".."), html.escape("< BACK")))
+        f.write(b'</ul></div><p><b>')
         drive_status = df(MNT_POINT)
-        f.write('<div style="float: left; padding-left: 40px;">Web Root is [ %s ]  %s</div>' %
-                (web_server_root, drive_status))
-        f.write('<div style="text-align: center;">%s</div>' % web_page_title)
+        f.write(b'<div style="float: left; padding-left: 40px;">Web Root is [ %s ]  %s</div>' %
+                (web_server_root.encode('utf-8'), drive_status.encode('utf-8')))
+        f.write(b'<div style="text-align: center;">%s</div>' % web_page_title.encode('utf-8'))
 
         if web_page_refresh_on:
-            f.write('<div style="float: left; padding-left: 40px;">Auto Refresh = %s sec</div>' % web_page_refresh_sec)
+            f.write(b'<div style="float: left; padding-left: 40px;">Auto Refresh = %s sec</div>' % web_page_refresh_sec.encode('utf-8'))
 
         if web_max_list_entries > 1:
-            f.write('<div style="text-align: right; padding-right: 40px;">Listing Only %i of %i Files in %s</div>'
-                    % (display_entries, all_entries, self.path))
+            f.write(b'<div style="text-align: right; padding-right: 40px;">Listing Only %i of %i Files in %s</div>'
+                    % (display_entries.encode('utf-8'), all_entries.encode('utf-8'), self.path.encode('utf-8')))
         else:
-            f.write('<div style="text-align: right; padding-right: 50px;">Listing All %i Files in %s</div>'
-                    % (all_entries, self.path))
+            f.write(b'<div style="text-align: right; padding-right: 50px;">Listing All %i Files in %s</div>'
+                    % (all_entries, self.path.encode('utf-8')))
         # Display web refresh info only if setting is turned on
-        f.write('</b></p>')
+        f.write(b'</b></p>')
         length = f.tell()
         f.seek(0)
         self.send_response(200)
         encoding = sys.getfilesystemencoding()
-        self.send_header("Content-type", "text/html; charset=%s" % encoding)
-        self.send_header("Content-Length", str(length))
+        self.send_header(b"Content-type", b"text/html; charset=%s" % encoding.encode('utf-8'))
+        self.send_header("Content-Length".encode('utf-8'), str(length))
         self.end_headers()
         return f
 
 # Start Web Server Processing
 os.chdir(web_server_root)
-SocketServer.TCPServer.allow_reuse_address = True
-httpd = SocketServer.TCPServer(("", web_server_port), DirectoryHandler)
+socketserver.TCPServer.allow_reuse_address = True
+httpd = socketserver.TCPServer(("", web_server_port), DirectoryHandler)
 
 net_interface_names = [ b'eth0', b'wlan0' ]   # byte string list of interface names to check
 ip_list = []
@@ -273,7 +274,3 @@ except KeyboardInterrupt:
     httpd.socket.close()
 except IOError as e:
     print("I/O error({0}): {1}".format(e.errno, e.strerror))
-
-
-
-
