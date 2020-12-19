@@ -196,7 +196,7 @@ VALUE="Refresh">&nbsp;&nbsp;<b>%s</b></FORM>''' % list_title)
                         % (urllib.parse.quote(linkname).encode('utf-8'), html.escape(displayname).encode('utf-8'), date_modified.encode('utf-8')))
 
         if (not self.path is "/") and display_entries > 35:   # Display folder Back arrow navigation if not in web root
-            f.write(b'<li><a href="%s" >%s</a></li>\n' % (urllib.parse.quote(".."), html.escape("< BACK")))
+            f.write(b'<li><a href="%s" >%s</a></li>\n' % (urllib.parse.quote("..").encode('utf-8'), html.escape("< BACK").encode('utf-8')))
         f.write(b'</ul></div><p><b>')
         drive_status = df(MNT_POINT)
         f.write(b'<div style="float: left; padding-left: 40px;">Web Root is [ %s ]  %s</div>' %
