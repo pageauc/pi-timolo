@@ -1,6 +1,6 @@
 #!/bin/bash
 # Convenient pi-timolo-install.sh script written by Claude Pageau 1-Jul-2016
-ver="12.02"
+ver="12.03"
 progName=$(basename -- "$0")
 TIMOLO_DIR='pi-timolo'  # Default folder install location
 
