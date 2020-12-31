@@ -35,7 +35,7 @@ INFO  : $progName $ver  written by Claude Pageau
 # check if this is an upgrade and bypass update of configuration files
 if $is_upgrade ; then
   timoloFiles=("menubox.sh" "pi-timolo.py" "pi-timolo.sh" "image-stitching" "config.cfg" \
-  "webserver.py" "webserver.sh" "pantilthat.py" \
+  "webserver.py" "webserver3.py" "webserver.sh" "pantilthat.py" \
   "convid.sh" "makevideo.sh" "mvleavelast.sh" "remote-run.sh" "install-py3exiv2.sh")
 
   if [ ! -f config.cfg ]; then
@@ -46,7 +46,7 @@ if $is_upgrade ; then
 
 else   # New Install
   timoloFiles=("config.py" "menubox.sh" "pi-timolo.py" "pi-timolo.sh" "image-stitching" "config.cfg" \
-  "webserver.py" "webserver.sh" "watch-app.sh" "shutdown.py" "pantilthat.py" \
+  "webserver.py" "webserver3.py" "webserver.sh" "watch-app.sh" "shutdown.py" "pantilthat.py" \
   "convid.sh" "makevideo.sh" "video.conf" "mvleavelast.sh" "remote-run.sh" "install-py3exiv2.sh")
 fi
 
