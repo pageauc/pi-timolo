@@ -33,6 +33,7 @@ PROG_VER = "ver 12.00 written by Claude Pageau modified by Alexandre Strube for 
  4 - On a LAN computer web browser url bar, input this RPI ip address and port number per below
      example    http://192.168.1.110:8080
  Variable Settings are imported from config.py
+ To implement this version edit webserver.sh
 '''
 
 SCRIPT_PATH = os.path.abspath(__file__)   # Find the full path of this python script
