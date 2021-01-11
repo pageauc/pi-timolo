@@ -2,10 +2,11 @@
 # This script will run the webserver.py as a background task
 # You will then be able close the terminal session.  To auto start
 # Add the following command to the /etc/rc.local
-# /home/pi/webserver/webserver.sh start
+# /home/pi/webserver/webserver.sh start  
+# To implement webserver3.py copy it to webserver.py.  Not Use Buster or later 
 
 progpath="/home/pi/pi-timolo"
-progname="webserver3.py"
+progname="webserver.py"
 
 echo "$0 ver 1.2 written by Claude Pageau"
 echo "-----------------------------------------------"
