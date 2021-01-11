@@ -5,9 +5,9 @@
 # /home/pi/webserver/webserver.sh start
 
 progpath="/home/pi/pi-timolo"
-progname="webserver.py"
+progname="webserver3.py"
 
-echo "$0 ver 1.1 written by Claude Pageau"
+echo "$0 ver 1.2 written by Claude Pageau"
 echo "-----------------------------------------------"
 cd "$progpath"
 
