@@ -91,6 +91,12 @@ from a logged in ssh or terminal session execute the following commands.
     cp pi-timolo.py pi-timolo.py.old
     wget -O config.py https://raw.github.com/pageauc/pi-timolo/master/source/config.py
     wget -O pi-timolo.py https://raw.github.com/pageauc/pi-timolo/master/source/pi-timolo.py    
+
+To implement webserver3.py (Buster or Later) perform the following
+
+    cp webserver.py webserver2.py
+    cp webserver3.py webserver.py
+
     
 Edit config.py to transfer any customized settings from config.py.old  
     
