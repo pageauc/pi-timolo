@@ -95,7 +95,7 @@ def df(drive_mnt):
     try:
         df = subprocess.Popen(["df", "-h", drive_mnt], stdout=subprocess.PIPE)
         output = df.communicate()[0]
-        device, size, used, available, percent, mountpoint = output.split("\n")[1].split()
+        device, size, used, available, percent, mountpoint = output.split("\n".encode('utf-8'))[1].split()
         drive_status = ("Drive [ %s ] Mount_Point [ %s ] Space_Used [ %s %s of %s ] Space_Avail [ %s ]" %
                         (device, mountpoint, percent, used, size, available))
     except:
