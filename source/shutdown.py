@@ -18,8 +18,9 @@
 # default is 2 seconds.  0=No delay
 
 # Software Install
-#     mkdir ~/pi/shutdown
-#     cd ~/pi/shutdown
+#     cd ~
+#     mkdir shutdown
+#     cd shutdown
 #     wget https://raw.github.com/pageauc/pi-timolo/master/source/shutdown.py
 #     chmod +x shutdown.py
 #     sudo crontab -e
