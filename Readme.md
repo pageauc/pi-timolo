@@ -136,7 +136,7 @@ To Test Run from ssh console or terminal session.
 
 ## shutdown.py
 This will safely halt the raspberry pi when a momentary switch is held for a specified number of seconds
-for details see [wiki How to Use shutdown.py)(https://github.com/pageauc/pi-timolo/wiki/How-to-use-shutdown.py)
+for details see wiki [How to Use shutdown.py](https://github.com/pageauc/pi-timolo/wiki/How-to-use-shutdown.py)
 
 ## Reference Links 
 [Detailed pi-timolo Wiki](https://github.com/pageauc/pi-timolo/wiki)  
