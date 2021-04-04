@@ -133,9 +133,13 @@ To Test Run from ssh console or terminal session.
     ./webserver.py
 
 ![webserver browser screen shot](webserver.jpg)
- 
-## Reference Links  
-Detailed pi-timolo Wiki https://github.com/pageauc/pi-timolo/wiki  
+
+## shutdown.py
+This will safely halt the raspberry pi when a momentary switch is held for a specified number of seconds
+for details see [wiki How to Use shutdown.py)(https://github.com/pageauc/pi-timolo/wiki/How-to-use-shutdown.py)
+
+## Reference Links 
+[Detailed pi-timolo Wiki](https://github.com/pageauc/pi-timolo/wiki)  
 [my pi-timolo and other YouTube Videos playlist](https://www.youtube.com/playlist?list=PLLXJw_uJtQLa11A4qjVpn2D2T0pgfaSG0)    
 [MagPi Object Recognition using pi-timolo](https://magpi.raspberrypi.org/articles/wildlife-camera-object-recognition)    
 [makezine night vision project using pi-timolo](https://makezine.com/2016/05/26/spy-on-garden-critters-with-raspberry-pi-powered-night-vision/)    
