@@ -8,7 +8,7 @@ It requires updated config.py
 Oct 2020 Added panoramic pantilt option plus other improvements.
 '''
 from __future__ import print_function
-PROG_VER = "ver 12.06"   # Requires Latest 12.0 release of config.py
+PROG_VER = "ver 12.07"   # Requires Latest 12.0 release of config.py
 __version__ = PROG_VER  # May test for version number at a future time
 
 import os
@@ -36,7 +36,6 @@ import time
 import math
 from threading import Thread
 from fractions import Fraction
-from pkg_resources import require  # Used for checking picamera version
 import numpy as np
 from PIL import Image
 from PIL import ImageFont
@@ -377,9 +376,23 @@ if (camResult.find("0")) >= 0:   # Was a 0 found in vcgencmd output
     logging.error("Exiting %s Due to Error", PROG_NAME)
     sys.exit(1)
 else:
+    # use raspistill to check maximum image resolution of attached camera module
     logging.info("Pi Camera Module is Enabled and Connected %s", camResult)
-    picameraVer = require('picamera')[0].version
-    logging.info('picamera version is %s', picameraVer)
+    logging.info('Checking Pi Camera Module Version Wait ...')
+    os.system('/usr/bin/raspistill -o ./image.jpg')
+    from PIL.ExifTags import TAGS
+    img = Image.open('./image.jpg')
+    exif_data = img._getexif()
+    for tag, value in exif_data.items():
+    #   print TAGS.get(tag, tag), value
+        if TAGS.get(tag, tag) == 'ImageWidth':
+            imageWidth = value
+            if value >= 3280:
+                picameraVer = '2'
+            else:
+                picameraVer = '1'
+    os.remove('./image.jpg')
+    logging.info('picamera hardware version is %s', picameraVer)
 
 if PLUGIN_ON:     # Check and verify plugin and load variable overlay
     pluginDir = os.path.join(BASE_DIR, "plugins")
@@ -480,7 +493,7 @@ LINE_THICKNESS = 1     # Thickness of opencv drawing lines
 LINE_COLOR = cvWhite   # color of lines to highlight motion stream area
 
 # Round image resolution to avoid picamera errors
-if picameraVer[0] == '2':
+if picameraVer == '2':
     imageWidthMax = 3280
     imageHeightMax = 2464
 else:
