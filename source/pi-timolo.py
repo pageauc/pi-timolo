@@ -8,7 +8,7 @@ It requires updated config.py
 Oct 2020 Added panoramic pantilt option plus other improvements.
 '''
 from __future__ import print_function
-PROG_VER = "ver 12.07"   # Requires Latest 12.0 release of config.py
+PROG_VER = "ver 12.10"  # Requires Latest 12.0 release of config.py
 __version__ = PROG_VER  # May test for version number at a future time
 
 import os
@@ -379,20 +379,16 @@ else:
     # use raspistill to check maximum image resolution of attached camera module
     logging.info("Pi Camera Module is Enabled and Connected %s", camResult)
     logging.info('Checking Pi Camera Module Version Wait ...')
-    os.system('/usr/bin/raspistill -o ./image.jpg')
-    from PIL.ExifTags import TAGS
-    img = Image.open('./image.jpg')
-    exif_data = img._getexif()
-    for tag, value in exif_data.items():
-    #   print TAGS.get(tag, tag), value
-        if TAGS.get(tag, tag) == 'ImageWidth':
-            imageWidth = value
-            if value >= 3280:
-                picameraVer = '2'
-            else:
-                picameraVer = '1'
-    os.remove('./image.jpg')
-    logging.info('picamera hardware version is %s', picameraVer)
+    import picamera
+    with picamera.PiCamera() as camera:
+        CAM_MAX_RESOLUTION = camera.MAX_RESOLUTION
+    logging.info("PiCamera Max resolution is %s", CAM_MAX_RESOLUTION)
+    CAM_MAX_WIDTH, CAM_MAX_HEIGHT = CAM_MAX_RESOLUTION.width, CAM_MAX_RESOLUTION.height
+    if CAM_MAX_WIDTH == '3280':
+        picameraVer = '2'
+    else:
+        picameraVer = '1'
+    logging.info('PiCamera Module Hardware is Ver %s', picameraVer)
 
 if PLUGIN_ON:     # Check and verify plugin and load variable overlay
     pluginDir = os.path.join(BASE_DIR, "plugins")
@@ -1175,7 +1171,11 @@ def writeTextToImage(imagename, datetoprint, currentDayMode):
     draw = ImageDraw.Draw(img)
     # draw.text((x, y),"Sample Text",(r,g,b))
     draw.text((x, y), text, FOREGROUND, font=font)
-    img.save(imagename)
+    if IMAGE_FORMAT.upper == '.JPG':
+        img.save(imagename,quality=IMAGE_JPG_QUAL)
+    else:
+        img.save(imagename)
+
     logging.info("Added %s Text [ %s ]", textColour, datetoprint)
     try:
         metadata.write() # Write previously saved exif data to image file
