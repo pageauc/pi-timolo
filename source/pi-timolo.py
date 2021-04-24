@@ -8,7 +8,7 @@ It requires updated config.py
 Oct 2020 Added panoramic pantilt option plus other improvements.
 '''
 from __future__ import print_function
-PROG_VER = "ver 12.10"  # Requires Latest 12.0 release of config.py
+PROG_VER = "ver 12.11"  # Requires Latest 12.0 release of config.py
 __version__ = PROG_VER  # May test for version number at a future time
 
 import os
@@ -1172,7 +1172,7 @@ def writeTextToImage(imagename, datetoprint, currentDayMode):
     # draw.text((x, y),"Sample Text",(r,g,b))
     draw.text((x, y), text, FOREGROUND, font=font)
     if IMAGE_FORMAT.upper == '.JPG':
-        img.save(imagename,quality=IMAGE_JPG_QUAL)
+        img.save(imagename, quality="keep")
     else:
         img.save(imagename)
 
