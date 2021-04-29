@@ -8,7 +8,7 @@ It requires updated config.py
 Oct 2020 Added panoramic pantilt option plus other improvements.
 '''
 from __future__ import print_function
-PROG_VER = "ver 12.13"  # Requires Latest 12.0 release of config.py
+PROG_VER = "ver 12.14"  # Requires Latest 12.0 release of config.py
 __version__ = PROG_VER  # May test for version number at a future time
 
 import os
@@ -443,7 +443,7 @@ if PLUGIN_ON:     # Check and verify plugin and load variable overlay
             if os.path.isfile(pluginCurrentpyc):
                 os.remove(pluginCurrentpyc)
         except OSError as err:
-            logging.warn("Failed Removal of %s - %s", pluginCurrentpyc, err)
+            logging.warning("Failed Removal of %s - %s", pluginCurrentpyc, err)
             time.sleep(5)
 else:
     logging.info("No Plugin Enabled per PLUGIN_ON=%s", PLUGIN_ON)
@@ -1114,8 +1114,8 @@ def get_current_count(numberpath, numberstart):
                 numbercounter = int(writeCount)+1
             except ValueError:
                 numbercounter = numberstart
-            logging.warn("Found Invalid Data in %s Resetting Counter to %s",
-                         numberpath, numbercounter)
+            logging.warning("Found Invalid Data in %s Resetting Counter to %s",
+                            numberpath, numbercounter)
         f = open(numberpath, 'w+')
         f.write(str(numbercounter))
         f.close()
@@ -1170,7 +1170,7 @@ def writeTextToImage(imagename, datetoprint, currentDayMode):
     draw = ImageDraw.Draw(img)
     # draw.text((x, y),"Sample Text",(r,g,b))
     draw.text((x, y), text, FOREGROUND, font=font)
-    if IMAGE_FORMAT.upper == '.JPG':
+    if IMAGE_FORMAT.lower == '.jpg' or IMAGE_FORMAT.lower == '.jpeg':
         img.save(imagename, quality="keep")
     else:
         img.save(imagename)
@@ -1179,7 +1179,7 @@ def writeTextToImage(imagename, datetoprint, currentDayMode):
     try:
         metadata.write() # Write previously saved exif data to image file
     except:
-        logging.warn("Image EXIF Data Not Transferred.")
+        logging.warning("Image EXIF Data Not Transferred.")
     logging.info("Saved %s", imagename)
 
 #------------------------------------------------------------------------------
@@ -1237,8 +1237,8 @@ def postImageProcessing(numberon, counterstart, countermax, counter,
                     counter = counterstart
                 else:
                     counter = counterstart + countermax + 1
-                    logging.warn("Exceeded Image Count numberMax=%i for %s \n",
-                                 countermax, filename)
+                    logging.warning("Exceeded Image Count numberMax=%i for %s \n",
+                                    countermax, filename)
         # write next image counter number to dat file
         writeCounter(counter, counterpath)
     return counter
@@ -1396,12 +1396,12 @@ def take_pano(pano_seq_num):
     if not os.path.isfile(PANO_PROG_PATH):
         logging.error('Cannot Find Pano Executable File at %s', PANO_PROG_PATH)
         logging.info('Please run menubox.sh UPGRADE to correct problem')
-        logging.warn('Exiting - Cannot Run Image Stitching of Images.')
+        logging.warning('Exiting - Cannot Run Image Stitching of Images.')
         return
     if not os.path.isfile('./config.cfg'):
         logging.error('Cannot Find ./config.cfg required for %s', PANO_PROG_PATH)
         logging.info('Please run menubox.sh UPGRADE to correct problem')
-        logging.warn('Exiting - Cannot Run Image Stitching of Images.')
+        logging.warning('Exiting - Cannot Run Image Stitching of Images.')
         return
 
     # Create the stitch command line string
@@ -1742,8 +1742,8 @@ def getSchedStart(dateToCheck):
                     logging.error('Use a Valid Date and/or Time '
                                   'Format Eg "DD-MMM-YYYY HH:MM:SS"')
                     goodDateTime = datetime.datetime.now()
-                    logging.warn("Resetting date/time to Now: %s",
-                                 goodDateTime)
+                    logging.warning("Resetting date/time to Now: %s",
+                                    goodDateTime)
         # Check if date/time is past
         if goodDateTime < datetime.datetime.now():
             if ":" in dateToCheck:  # Check if there is a time component
@@ -1833,8 +1833,8 @@ def timolo():
                                                   TIMELAPSE_NUM_START)
             tlCnt = str(timelapseNumCount)
     else:
-        logging.warn("Timelapse is Suppressed per TIMELAPSE_ON=%s",
-                     TIMELAPSE_ON)
+        logging.warning("Timelapse is Suppressed per TIMELAPSE_ON=%s",
+                        TIMELAPSE_ON)
         stop_timelapse = True
 
     if MOTION_TRACK_ON:
@@ -1911,21 +1911,21 @@ def timolo():
             logging.warning("MOTION_NUM_RECYCLE_ON=%s and motionNumCount %i Exceeds %i",
                             MOTION_NUM_RECYCLE_ON, motionNumCount,
                             MOTION_NUM_START + MOTION_NUM_MAX)
-            logging.warn("Suppressing Further Motion Tracking")
-            logging.warn("To Reset: Change %s Settings or Archive Images",
-                         CONFIG_FILENAME)
-            logging.warn("Then Delete %s and Restart %s \n",
-                         NUM_PATH_MOTION, PROG_NAME)
+            logging.warning("Suppressing Further Motion Tracking")
+            logging.warning("To Reset: Change %s Settings or Archive Images",
+                            CONFIG_FILENAME)
+            logging.warning("Then Delete %s and Restart %s \n",
+                            NUM_PATH_MOTION, PROG_NAME)
             takeMotion = False
             stopMotion = True
         if stop_timelapse and stopMotion and not PANO_ON and not VIDEO_REPEAT_ON:
-            logging.warn("NOTICE: Motion, Timelapse, Pano and Video Repeat are Disabled")
-            logging.warn("per Num Recycle=False and "
-                         "Max Counter Reached or TIMELAPSE_EXIT_SEC Settings")
-            logging.warn("Change %s Settings or Archive/Save Media Then",
-                         CONFIG_FILENAME)
-            logging.warn("Delete appropriate .dat File(s) to Reset Counter(s)")
-            logging.warn("Exiting %s %s \n", PROG_NAME, PROG_VER)
+            logging.warning("NOTICE: Motion, Timelapse, Pano and Video Repeat are Disabled")
+            logging.warning("per Num Recycle=False and "
+                            "Max Counter Reached or TIMELAPSE_EXIT_SEC Settings")
+            logging.warning("Change %s Settings or Archive/Save Media Then",
+                            CONFIG_FILENAME)
+            logging.warning("Delete appropriate .dat File(s) to Reset Counter(s)")
+            logging.warning("Exiting %s %s \n", PROG_NAME, PROG_VER)
             sys.exit(1)
         # if required check free disk space and delete older files (jpg)
         if SPACE_TIMER_HOURS > 0:
@@ -1981,14 +1981,14 @@ def timolo():
                         and (not TIMELAPSE_NUM_RECYCLE_ON)):
                     if (TIMELAPSE_NUM_MAX > 0 and
                             timelapseNumCount > (TIMELAPSE_NUM_START + TIMELAPSE_NUM_MAX)):
-                        logging.warn("TIMELAPSE_NUM_RECYCLE_ON=%s and Counter=%i Exceeds %i",
-                                     TIMELAPSE_NUM_RECYCLE_ON, timelapseNumCount,
-                                     TIMELAPSE_NUM_START + TIMELAPSE_NUM_MAX)
-                        logging.warn("Suppressing Further Timelapse Images")
-                        logging.warn("To RESET: Change %s Settings or Archive Images",
-                                     CONFIG_FILENAME)
-                        logging.warn("Then Delete %s and Restart %s \n",
-                                     NUM_PATH_TIMELAPSE, PROG_NAME)
+                        logging.warning("TIMELAPSE_NUM_RECYCLE_ON=%s and Counter=%i Exceeds %i",
+                                        TIMELAPSE_NUM_RECYCLE_ON, timelapseNumCount,
+                                        TIMELAPSE_NUM_START + TIMELAPSE_NUM_MAX)
+                        logging.warning("Suppressing Further Timelapse Images")
+                        logging.warning("To RESET: Change %s Settings or Archive Images",
+                                        CONFIG_FILENAME)
+                        logging.warning("Then Delete %s and Restart %s \n",
+                                        NUM_PATH_TIMELAPSE, PROG_NAME)
                         # Suppress further timelapse images
                         take_timelapse = False
                         stop_timelapse = True
@@ -2404,7 +2404,7 @@ def videoRepeat():
                 keepRecording = False
                 errorText = ("Stop Recording Since VIDEO_SESSION_MIN=%i minutes Exceeded \n",
                              VIDEO_SESSION_MIN)
-                logging.warn(errorText)
+                logging.warning(errorText)
                 sys.stdout.write(errorText)
             else:
                 logging.info("Remaining Time %.1f of %i minutes",
@@ -2460,5 +2460,5 @@ if __name__ == '__main__':
             if os.path.isfile(pluginCurrentpyc):
                 os.remove(pluginCurrentpyc)
     except OSError as err:
-        logging.warn("Failed To Remove File %s - %s", pluginCurrentpyc, err)
+        logging.warning("Failed To Remove File %s - %s", pluginCurrentpyc, err)
         sys.exit(1)
