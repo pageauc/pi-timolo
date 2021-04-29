@@ -8,7 +8,7 @@ It requires updated config.py
 Oct 2020 Added panoramic pantilt option plus other improvements.
 '''
 from __future__ import print_function
-PROG_VER = "ver 12.11"  # Requires Latest 12.0 release of config.py
+PROG_VER = "ver 12.12"  # Requires Latest 12.0 release of config.py
 __version__ = PROG_VER  # May test for version number at a future time
 
 import os
@@ -1276,7 +1276,7 @@ def get_image_filename(path, prefix, numberon, counter):
 #------------------------------------------------------------------------------
 def take_mo_quick_pic(image, filename):
     ''' Enlarge and Save stream image if MOTION_TRACK_QUICK_PIC_ON=True'''
-    big_image = cv2.resize(image, (bigImageWidth, bigImageHeight))
+    big_image = cv2.resize(image, (bigImageWidth, bigImageHeight)) if bigImage != 1 else image
     cv2.imwrite(filename, big_image)
     logging.info("Saved %ix%i Image to %s",
                  bigImageWidth, bigImageHeight, filename)
