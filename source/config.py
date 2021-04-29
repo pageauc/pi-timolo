@@ -3,9 +3,9 @@
 # Updated - 06-Jul-2017 IMPORTANT - Required for pi-timolo.py ver 11.2 or Greater
 # Done by - Claude Pageau
 
-CONFIG_TITLE = "pi-timolo ver 12.04 Default Settings"
+CONFIG_TITLE = "pi-timolo ver 12.13 Default Settings"
 CONFIG_FILENAME  = "config.py"
-CONFIG_VERSION = 12.04  # Version of this file used for compatiblity checking
+CONFIG_VERSION = 12.13  # Version of this file used for compatiblity checking
 
 #======================================
 #   pi-timolo.py Settings
@@ -38,7 +38,6 @@ IMAGE_GRAYSCALE = False      # Default= False True=Save image as grayscale False
 IMAGE_PREVIEW = False        # Default= False True=Preview image on connected RPI Monitor or Display
 IMAGE_NO_NIGHT_SHOTS = False # Default= False True=No Night Images (Motion or Timelapse)
 IMAGE_NO_DAY_SHOTS = False   # Default= False True=No Day Images (Motion or Timelapse)
-IMAGE_USE_VIDEOPORT = False  # Default= False True=Use the video port to capture motion images (faster than the image port).
 IMAGE_SHOW_STREAM = False    # Default= False True=Show video stream motion tracking area on full size image.
                              # Use to Align Camera for motion tracking.  Set to False when Alignment complete.
 STREAM_WIDTH = 320           # Default= 320  Width of motion tracking stream detection area

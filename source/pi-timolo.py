@@ -8,7 +8,7 @@ It requires updated config.py
 Oct 2020 Added panoramic pantilt option plus other improvements.
 '''
 from __future__ import print_function
-PROG_VER = "ver 12.12"  # Requires Latest 12.0 release of config.py
+PROG_VER = "ver 12.13"  # Requires Latest 12.0 release of config.py
 __version__ = PROG_VER  # May test for version number at a future time
 
 import os
@@ -103,7 +103,6 @@ default_settings = {
     'IMAGE_PREVIEW':False,
     'IMAGE_NO_NIGHT_SHOTS':False,
     'IMAGE_NO_DAY_SHOTS':False,
-    'IMAGE_USE_VIDEOPORT':False,
     'IMAGE_SHOW_STREAM':False,
     'STREAM_WIDTH':320,
     'STREAM_HEIGHT':240,
