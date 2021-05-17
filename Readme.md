@@ -147,7 +147,8 @@ for details see wiki [How to Use shutdown.py](https://github.com/pageauc/pi-timo
 [Neverending project timelapse using pi-timolo](https://www.theneverendingprojectslist.com/raspberrypiprojects/timelapse/)       
 [hedgehog camera using pi-timolo](http://www.sconemad.com/blog/hedgeycam/) and [step by step](https://oraclefrontovik.com/2016/08/28/a-step-by-step-guide-to-building-a-raspberry-pi-hedgehog-camera/)    
 [Museum Insect activity monitoring using pi-timolo](https://www.vam.ac.uk/blog/caring-for-our-collections/making-a-simple-insect-activity-monitor-using-a-raspberry-pi)    
-[Brett Beeson timelapse cloud project using pi-timolo](https://brettbeeson.com.au/timelapse-cloud/)    
+[Brett Beeson timelapse cloud project using pi-timolo](https://brettbeeson.com.au/timelapse-cloud/)     
+[Bird and Squirrel Detector](https://magpi.raspberrypi.org/articles/ml-based-bird-and-squirrel-detector)  
 	
 Good Luck
 Claude Pageau 
