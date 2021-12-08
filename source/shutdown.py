@@ -32,7 +32,7 @@
 # to Initiate safe shutown (halt).  You can then safely power off RPI
 # or
 # After halt, wait approx 5 seconds then press switch
-# again for specified time to intiate a restart or RPI
+# again for specified time to intiate a restart of RPI
 
 import RPi.GPIO as GPIO
 import time

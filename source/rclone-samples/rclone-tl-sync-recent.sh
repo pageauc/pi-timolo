@@ -17,10 +17,10 @@ lockFileCheck=false      # true= Checks for pi-timolo.sync file. false = No Chec
 rcloneName="gdmedia"     # Name of Remote Storage Service
 syncRoot="/home/pi/pi-timolo"   # Root Folder to Start
 localDir="media/recent/timelapse"         # Source Folder on Local
-remoteDir="mycam/videos"        # Destination Folder on Remote
-rcloneParam="sync -L"    # -L follow symlinks. other options  Eg sync, copy, move 
-                         # IMPORTANT: sync will make remoteDir identical to localDir
-                         # so remoteDir Files that do not exist on localDir will be Deleted.
+remoteDir="mycam/videos"  # Destination Folder on Remote
+rcloneParam="sync -v -L"  # -L follow symlinks. other options  Eg sync, copy, move
+                          # IMPORTANT: sync will make remoteDir identical to localDir
+                          # so remoteDir Files that do not exist on localDir will be Deleted.
 # ---------------------------------------
 
 
@@ -65,7 +65,7 @@ else
             fi
             echo "INFO  : /usr/bin/rclone $rcloneParam -v $localDir $rcloneName:$remoteDir"
             echo "        One Moment Please ..."
-            /usr/bin/rclone $rcloneParam -v $localDir $rcloneName:$remoteDir
+            /usr/bin/rclone $rcloneParam $localDir $rcloneName:$remoteDir
             if [ ! $? -eq 0 ]; then
                 echo "---------------------------------------------------"
                 echo "ERROR : rclone $rcloneParam Failed."
