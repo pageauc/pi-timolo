@@ -104,7 +104,7 @@ TIMELAPSE_PANTILT_STOPS = [(90, -10),
 MOTION_TRACK_ON = True         # Default= True True=Turns Motion Detect On, False=Off
 MOTION_TRACK_INFO_ON = True    # Default= False Hide detailed track progress logging messages
 MOTION_TRACK_TIMEOUT_SEC = 0.3 # Default= 0.3 seconds Resets Track if no movement tracked
-MOTION_TRACK_TRIG_LEN = 75     # Default= 75 px Length of motion track to Trigger motionFound
+MOTION_TRACK_TRIG_LEN = 50     # Default= 75 px Length of motion track to Trigger motionFound
 MOTION_TRACK_MIN_AREA = 100    # Default= 100 sq px  Minimum Area required to start tracking
 
 # Motion Settings

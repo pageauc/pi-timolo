@@ -8,7 +8,7 @@ It requires updated config.py
 Oct 2020 Added panoramic pantilt option plus other improvements.
 '''
 from __future__ import print_function
-PROG_VER = "ver 12.14"  # Requires Latest 12.0 release of config.py
+PROG_VER = "ver 12.16"  # Requires Latest 12.0 release of config.py
 __version__ = PROG_VER  # May test for version number at a future time
 
 import os
@@ -525,7 +525,7 @@ if not NIGHT_TWILIGHT_MODE_ON:
 bigImage = MOTION_TRACK_QUICK_PIC_BIGGER
 bigImageWidth = int(stream_width * bigImage)
 bigImageHeight = int(stream_height * bigImage)
-TRACK_TRIG_LEN = MOTION_TRACK_TRIG_LEN  # Length of track to trigger speed photo
+TRACK_TRIG_LEN = MOTION_TRACK_TRIG_LEN  # Pixels moved to trigger motion photo
 # Don't track progress until this Len reached.
 TRACK_TRIG_LEN_MIN = int(MOTION_TRACK_TRIG_LEN / 6)
 # Set max overshoot triglen allowed half cam height
@@ -1939,18 +1939,21 @@ def timolo():
                 image1 = image2
             else:
                 image2 = vs.read()
-        else:
+        elif TIMELAPSE_ON:
+            vs = PiVideoStream().start()
+            time.sleep(0.5)
+            image2 = vs.read()  # use video stream to check for daymode
+            vs.stop()
             # check the timer for measuring pixel average of a stream frame
-            pix_ave_timer, take_pix_ave = check_timer(pix_ave_timer, PIX_AVE_TIMER_SEC)
-            if take_pix_ave:
-                vs = PiVideoStream().start()
-                time.sleep(0.5)
-                image2 = vs.read()  # use video stream to check for daymode
-                pixAve = get_stream_pix_ave(image2)
-                if daymode != check_if_day_stream(daymode, image2):
-                    daymode = not daymode
-                vs.stop()
-            time.sleep(0.01)  # short delay to aviod high cpu usage
+        pix_ave_timer, take_pix_ave = check_timer(pix_ave_timer, PIX_AVE_TIMER_SEC)
+        if take_pix_ave:
+            pixAve = get_stream_pix_ave(image2)
+            daymode = check_if_day_stream(daymode, image2)
+            if daymode != check_if_day_stream(daymode, image2):
+                daymode = not daymode
+        if not daymode and TIMELAPSE_ON:
+            time.sleep(0.01)  # short delay to aviod high cpu usage at night
+
         if not time_to_sleep(daymode):
             # Don't take images if IMAGE_NO_NIGHT_SHOTS
             # or IMAGE_NO_DAY_SHOTS settings are valid
@@ -2149,9 +2152,9 @@ def timolo():
                                          movePoint2[0], movePoint2[1],
                                          trackLen, TRACK_TRIG_LEN)
                     # Track length triggered
-                    if trackLen > TRACK_TRIG_LEN:
+                    if trackLen >= TRACK_TRIG_LEN:
                         # reduce chance of two objects at different positions
-                        if trackLen > TRACK_TRIG_LEN_MAX:
+                        if trackLen >= TRACK_TRIG_LEN_MAX:
                             motionFound = False
                             if MOTION_TRACK_INFO_ON:
                                 logging.info("TrackLen %i px Exceeded %i px Max Trig Len Allowed.",
@@ -2300,8 +2303,7 @@ def timolo():
                             time.sleep(1)
                             image1 = vs.read()
                             image2 = image1
-                            grayimage1 = cv2.cvtColor(image1,
-                                                      cv2.COLOR_BGR2GRAY)
+                            grayimage1 = cv2.cvtColor(image1, cv2.COLOR_BGR2GRAY)
                             grayimage2 = grayimage1
                             trackLen = 0.0
                             trackTimeout = time.time()
