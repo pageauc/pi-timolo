@@ -8,7 +8,7 @@ It requires updated config.py
 Oct 2020 Added panoramic pantilt option plus other improvements.
 '''
 from __future__ import print_function
-PROG_VER = "ver 12.17"  # Requires Latest 12.0 release of config.py
+PROG_VER = "ver 12.18"  # Requires Latest 12.0 release of config.py
 __version__ = PROG_VER  # May test for version number at a future time
 
 import os
@@ -1912,8 +1912,6 @@ def timolo():
     logging.info("daymode=%s  MOTION_DOTS_ON=%s ", daymode, MOTION_DOTS_ON)
     dotCount = show_dots(MOTION_DOTS_MAX)  # reset motion dots
 
-    if PANTILT_ON:
-        logging.info("Camera Pantilt Hardware is %s", pantilt_is)
     first_pano = True  # Force a pano sequence on startup
     firstTimeLapse = True  # Force a timelapse on startup
     while True:  # Start main program Loop.
@@ -2442,6 +2440,9 @@ if __name__ == '__main__':
     ts.stop()
     time.sleep(STREAM_STOP_SEC)
     logging.info("Pi Camera is Available.")
+    if PANTILT_ON:
+        logging.info("Camera Pantilt Hardware is %s", pantilt_is)
+
     if PLUGIN_ON:
         logging.info("Start pi-timolo per %s and plugins/%s.py Settings",
                      CONFIG_FILE_PATH, PLUGIN_NAME)
