@@ -8,7 +8,7 @@ It requires updated config.py
 Oct 2020 Added panoramic pantilt option plus other improvements.
 '''
 from __future__ import print_function
-PROG_VER = "ver 12.16"  # Requires Latest 12.0 release of config.py
+PROG_VER = "ver 12.17"  # Requires Latest 12.0 release of config.py
 __version__ = PROG_VER  # May test for version number at a future time
 
 import os
@@ -268,34 +268,44 @@ for key, val in default_settings.items():
         WARN_ON = True
 
 if PANTILT_ON:
+    pan_x, tilt_y = PANTILT_HOME
     if PANTILT_IS_PIMORONI:
-        print('INFO  : Loading Pimoroni and compatible pantilthat driver ...')
-        import pantilthat
+        try:
+            import pantilthat
+        except ImportError:
+            print('ERROR : Import Pimoroni PanTiltHat Python Library per')
+            print('        sudo apt install pantilthat')
+            sys.exit()
+        try:
+            pantilthat.pan(pan_x)
+        except IOError:
+            print('ERROR: pantilthat hardware problem')
+            print('nano edit config.py per below')
+            print('    nano config.py')
+            print('Change value of variable per below. ctrl-x y to save and exit')
+            print('    PANTILT_IS_PIMORONI = False')
+            sys.exit()
+        pantilt_is = 'Pimoroni'
     else:
-        print('INFO  : Loading Waveshare and compatible pantilthat driver ...')
-        from waveshare.pantilthat import PanTilt
-        pantilthat = PanTilt()
-    pan, tilt = PANTILT_HOME
-    try:
-        pantilthat.pan(pan)
-        time.sleep(PANTILT_SLEEP_SEC)
-        pantilthat.tilt(tilt)
-        time.sleep(PANTILT_SLEEP_SEC)
-        print('INFO  : Successfully imported pantilthat driver.')
-        print('Loading Wait ...')
-    except IOError:
-        print('ERROR : Problem with pantilthat hardware\n')
-        print('        Pimoroni and Waveshare compatible pantilthats are supported.\n')
-        if PANTILT_IS_PIMORONI:
-            print('        Try setting config.py PANTILT_IS_PIMORONI = False')
-            print('        This will attempt to use the Waveshare (or compatible) pantilthat driver.')
-        else:
-            print('        Try setting config.py PANTILT_IS_PIMORONI = True')
-            print('        This will attempt to use the Pimoroni(or compatible) pantilthat driver')
-        print('\n        Then restart pi-timolo.py.  If this message persists your hardware may not work')
-        print('        You may have to try changing driver details at line 270 in pi-timolo.py')
-        print('        or set config.py PANTILT_ON = False to disable pantilt feature.')
-        sys.exit(1)
+        try:
+            # import pantilthat
+            from waveshare.pantilthat import PanTilt
+        except ImportError:
+            print('ERROR : Install Waveshare PanTiltHat Python Library per')
+            print('        curl -L https://raw.githubusercontent.com/pageauc/waveshare.pantilthat/main/install.sh | bash')
+            sys.exit()
+        try:
+            pantilthat = PanTilt()
+            pantilthat.pan(pan_x)
+        except IOError:
+            print('ERROR: pantilthat hardware problem')
+            print('nano edit config.py per below')
+            print('    nano config.py')
+            print('Change value of variable per below. ctrl-x y to save and exit')
+            print('    PANTILT_IS_PIMORONI = True')
+            sys.exit()
+        pantilt_is = 'Waveshare'
+
 
 # Setup Logging now that variables are imported from config.py/plugin
 if LOG_TO_FILE_ON:
@@ -1368,7 +1378,7 @@ def take_pano(pano_seq_num):
 
         for cam_pos in PANO_CAM_STOPS:   # take images at each specified stop
             pano_image_num += 1 # Set image numbering for this image
-            pan, tilt = cam_pos # set pan tilt values for this image
+            pan_x, tilt_y = cam_pos # set pan tilt values for this image
             pano_filename = os.path.join(PANO_IMAGES_DIR,
                                          PANO_IMAGE_PREFIX +
                                          IMAGE_NAME_PREFIX +
@@ -1376,8 +1386,8 @@ def take_pano(pano_seq_num):
                                          '-' + str(pano_image_num) +
                                          IMAGE_FORMAT)
             pano_image_files += ' ' + pano_filename
-            pantilthat.pan(pan)
-            pantilthat.tilt(tilt)
+            pantilthat.pan(pan_x)
+            pantilthat.tilt(tilt_y)
             if pano_seq_num == 1:
                 time.sleep(0.3)
             time.sleep(PANTILT_SLEEP_SEC)
@@ -1388,7 +1398,7 @@ def take_pano(pano_seq_num):
             logging.info('Size %ix%i Saved %s at cam_pos(%i, %i)',
                          image_width, image_height,
                          pano_filename,
-                         pan, tilt)
+                         pan_x, tilt_y)
         camera.close()
     # Center pantilt
     pantilt_go_home()
@@ -1532,6 +1542,7 @@ def take_mo_mini_timelapse(moPath, prefix, NumOn, motionNumCount,
     logging.info('END - Total %i Images in %i sec every %i sec',
                  imgCnt, timelapseDiff, MOTION_TRACK_MINI_TL_TIMER_SEC)
 
+#------------------------------------------------------------------------------
 def pantilt_go_home():
     '''
     Move pantilt to home position. If pantilt installed then this
@@ -1794,7 +1805,7 @@ def timolo():
     # shows system is working
 
     cam_tl_pos = 0    # TIMELAPSE_PANTILT_STOPS List Start position of pantilt
-    pan, tilt = TIMELAPSE_PANTILT_STOPS[cam_tl_pos]
+    pan_x, tilt_y = TIMELAPSE_PANTILT_STOPS[cam_tl_pos]
     dotCount = 0
     check_media_paths()
     timelapseNumCount = 0
@@ -1901,6 +1912,8 @@ def timolo():
     logging.info("daymode=%s  MOTION_DOTS_ON=%s ", daymode, MOTION_DOTS_ON)
     dotCount = show_dots(MOTION_DOTS_MAX)  # reset motion dots
 
+    if PANTILT_ON:
+        logging.info("Camera Pantilt Hardware is %s", pantilt_is)
     first_pano = True  # Force a pano sequence on startup
     firstTimeLapse = True  # Force a timelapse on startup
     while True:  # Start main program Loop.
@@ -2039,10 +2052,10 @@ def timolo():
                     # Time to take a Day or Night Time Lapse Image
                     if TIMELAPSE_PANTILT_ON and PANTILT_ON:
                         logging.info('Timelapse Pan Tilt at (%i, %i) cam_tl_pos %i/%i',
-                                     pan, tilt, cam_tl_pos, len(TIMELAPSE_PANTILT_STOPS))
-                        pantilthat.pan(pan)  # move pimoroni pantilt servos
+                                     pan_x, tilt_y, cam_tl_pos, len(TIMELAPSE_PANTILT_STOPS))
+                        pantilthat.pan(pan_x)  # move pimoroni pantilt servos
                         time.sleep(PANTILT_SLEEP_SEC)
-                        pantilthat.tilt(tilt)
+                        pantilthat.tilt(tilt_y)
                         time.sleep(PANTILT_SLEEP_SEC)
                     if daymode:
                         take_day_image(filename, TIMELAPSE_CAM_SLEEP_SEC)
@@ -2059,7 +2072,7 @@ def timolo():
                         cam_tl_pos += 1
                         if cam_tl_pos >= len(TIMELAPSE_PANTILT_STOPS):
                             cam_tl_pos = 0
-                        pan, tilt = TIMELAPSE_PANTILT_STOPS[cam_tl_pos]
+                        pan_x, tilt_y = TIMELAPSE_PANTILT_STOPS[cam_tl_pos]
 
                     if MOTION_TRACK_ON:
                         logging.info("Restart Motion Tracking PiVideoStream ....")
