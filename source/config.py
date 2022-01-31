@@ -3,9 +3,9 @@
 # Updated - 06-Jul-2017 IMPORTANT - Required for pi-timolo.py ver 11.2 or Greater
 # Done by - Claude Pageau
 
-CONFIG_TITLE = "pi-timolo ver 12.13 Default Settings"
+CONFIG_TITLE = "pi-timolo ver 12.5 Default Settings"
 CONFIG_FILENAME  = "config.py"
-CONFIG_VERSION = 12.13  # Version of this file used for compatiblity checking
+CONFIG_VERSION = 12.5  # Version of this file used for compatiblity checking
 
 #======================================
 #   pi-timolo.py Settings
@@ -27,8 +27,8 @@ DEBUG_ON = False        # Default= False True= DEBUG_ON mode returns pixel avera
 # Image Settings
 # --------------
 IMAGE_NAME_PREFIX = 'cam1-'  # Default= 'cam1-' for all image file names. Eg garage-
-IMAGE_WIDTH = 1280           # Default= 1024 Full Size Image Width in px
-IMAGE_HEIGHT = 720           # Default= 768  Full Size Image Height in px
+IMAGE_WIDTH = 1024           # Default= 1024 Full Size Image Width in px
+IMAGE_HEIGHT = 768           # Default= 768  Full Size Image Height in px
 IMAGE_FORMAT = ".jpg"        # Default= ".jpg"  image Formats .jpeg .png .gif .bmp
 IMAGE_JPG_QUAL = 95          # Default= 95 jpg Encoder Quality Values 1(low)-100(high min compression) 0=85
 IMAGE_ROTATION = 0           # Default= 0  Rotate image. Valid values: 0, 90, 180, 270
@@ -36,6 +36,7 @@ IMAGE_VFLIP = True           # Default= False True Flips image Vertically
 IMAGE_HFLIP = True           # Default= False True Flips image Horizontally
 IMAGE_GRAYSCALE = False      # Default= False True=Save image as grayscale False=Color
 IMAGE_PREVIEW = False        # Default= False True=Preview image on connected RPI Monitor or Display
+IMAGE_PIX_AVE_TIMER_SEC = 15 # Default= 15 Interval seconds for checking pixAverage Readings (reduces cpu usage)
 IMAGE_NO_NIGHT_SHOTS = False # Default= False True=No Night Images (Motion or Timelapse)
 IMAGE_NO_DAY_SHOTS = False   # Default= False True=No Day Images (Motion or Timelapse)
 IMAGE_SHOW_STREAM = False    # Default= False True=Show video stream motion tracking area on full size image.
@@ -61,7 +62,7 @@ NIGHT_TWILIGHT_MODE_ON = True # Default= True Outside Lighting  False= Inside wi
 NIGHT_TWILIGHT_THRESHOLD = 90 # Default= 90 dayPixAve where twilight starts (framerate_range shutter)
 NIGHT_DARK_THRESHOLD = 50     # Default= 50 dayPixAve where camera variable shutter long exposure starts
 NIGHT_BLACK_THRESHOLD = 4     # Default= 4  dayPixAve where almost no light so Max settings used
-NIGHT_SLEEP_SEC = 20          # Default= 30 Sec - Time period to allow camera to calculate low light AWB
+NIGHT_SLEEP_SEC = 20          # Default= 20 Sec - Time period to allow camera to calculate low light AWB
 NIGHT_MAX_SHUT_SEC = 5.9      # Default= 5.9 Sec Highest V1 Cam shutter for long exposures V2=10 Sec.
 NIGHT_MAX_ISO  = 800          # Default= 800 Night ISO setting for Long Exposure below nightThreshold
 NIGHT_DARK_ADJUST = 4.7       # Default= 4.7 Factor to fine tune NIGHT_DARK_THRESHOLD brightness (lower is brighter)
@@ -85,24 +86,10 @@ TIMELAPSE_MAX_FILES = 0       # Default= 0 0=Off or specify MaxFiles to maintain
 TIMELAPSE_SUBDIR_MAX_FILES = 0 # Default= 0 0=Off or specify MaxFiles - Creates New dated sub-folder if MaxFiles exceeded
 TIMELAPSE_SUBDIR_MAX_HOURS = 0 # Default= 0 0=Off or specify MaxHours - Creates New dated sub-folder if MaxHours exceeded
 
-# Pan side to side taking one TL image at each stop. Returns to PANTILT_HOME after each stop.
-# See PANTILT Hardware settings below to set PANTILT_ON = True
-# then Select Pimoroni or Waveshare hardware per PANTILT_IS_PIMORONI setting.
-TIMELAPSE_PANTILT_ON = False   # Default= False  Disabled   True= Enabled
-TIMELAPSE_PANTILT_STOPS = [(90, -10),
-                           (45, -10),
-                           (0, -10),
-                           (-45, -10),
-                           (-90, -10),
-                           (-45, -10),
-                           (0, -10),
-                           (45, -10),
-                          ]
-
 # Motion Track Settings
 # ---------------------
 MOTION_TRACK_ON = True         # Default= True True=Turns Motion Detect On, False=Off
-MOTION_TRACK_INFO_ON = True    # Default= False Hide detailed track progress logging messages
+MOTION_TRACK_INFO_ON = True    # Default= True False= Hide detailed track progress logging messages
 MOTION_TRACK_TIMEOUT_SEC = 0.3 # Default= 0.3 seconds Resets Track if no movement tracked
 MOTION_TRACK_TRIG_LEN = 50     # Default= 75 px Length of motion track to Trigger motionFound
 MOTION_TRACK_MIN_AREA = 100    # Default= 100 sq px  Minimum Area required to start tracking
@@ -118,21 +105,6 @@ MOTION_NUM_ON = True         # Default= True filenames by sequenced Number  Fals
 MOTION_NUM_RECYCLE_ON = True # Default= True when NumMax reached restart at NumStart instead of exiting
 MOTION_NUM_START = 1000      # Default= 1000 Start 0f motion number sequence
 MOTION_NUM_MAX  = 2000       # Default= 2000 Max number of motion images desired. 0=Continuous
-
-# Default motion tracking action is to take a Full size image (all other motion options set to False).
-# You can override default action by enabling ONE of the three options below.
-# ---------------------------------------------------------------------------
-MOTION_VIDEO_ON = False      # Default= False  True=Take a video clip rather than image
-MOTION_VIDEO_FPS = 15        # Default= 15 If resolution reduced to 640x480 then slow motion is possible at 90 fps
-MOTION_VIDEO_TIMER_SEC = 10  # Default= 10 secs Duration of single Video clip to take after Motion Detected
-
-MOTION_TRACK_MINI_TL_ON = False     # Default= False  True= Take a mini time lapse sequence rather than a single image (overrides MOTION_VIDEO_ON)
-MOTION_TRACK_MINI_TL_SEQ_SEC = 30   # Default= 30 secs Duration of complete mini timelapse sequence after initial motion detected
-MOTION_TRACK_MINI_TL_TIMER_SEC = 5  # Default= 5 secs between each image. 0 is as fast as possible
-
-MOTION_TRACK_QUICK_PIC_ON = False   # Default= False True= Grab single stream frame rather than stopping stream to take full size image
-MOTION_TRACK_QUICK_PIC_BIGGER = 3.0 # Default= 3.0 multiply size of QuickPic saved image from Default 640x480
-# ---------------------------------------------------------------------------
 MOTION_FORCE_SEC = 3600      # Default= 3600 seconds (1 hr) OFF=0  Force an image if no Motion Detected in specified seconds.
 MOTION_CAM_SLEEP = 0.7       # Default= 0.7 Sec of day sleep so camera can measure AWB before taking photo
 MOTION_SUBDIR_MAX_FILES = 0  # Default= 0 0=Off or specify Max Files to create new sub-folder if MAX FILES exceeded
@@ -143,51 +115,95 @@ CREATE_LOCKFILE = False      # Default= False Off True= Create pi-timolo.sync fi
                              # Lock File is used to indicate motion images have been added
                              # So sync.sh can remote sync only as required via a sudo crontab -e entry
 
-# Dash Cam Video Repeat Mode (Suppresses Timelapse, Motion Settings and Pano)
-# --------------------------
+# Default motion tracking action is to take image per IMAGE_ settings above
+# with all MOTION_...._ON options below set to False.
+# You can override default action by enabling ONE of the FOUR options below.
+# ---------------------------------------------------------------------------------
+MOTION_TRACK_QUICK_PIC_ON = False   # Default= False True= Grab single stream frame rather than stopping stream to take full size image
+MOTION_TRACK_QUICK_PIC_BIGGER = 3.0 # Default= 3.0 multiply size of QuickPic saved image from Default 640x480
+
+MOTION_TRACK_MINI_TL_ON = False     # Default= False  True= Take a mini time lapse sequence rather than a single image (overrides MOTION_VIDEO_ON)
+MOTION_TRACK_MINI_TL_SEQ_SEC = 30   # Default= 30 secs Duration of complete mini timelapse sequence after initial motion detected
+MOTION_TRACK_MINI_TL_TIMER_SEC = 5  # Default= 5 secs between each image. 0 is as fast as possible
+
+MOTION_TRACK_PANTILT_SEQ_ON = False  # Default= False True= Takes Pantilt Images per PANTILT_SEQ_STOPS below.
+
+MOTION_VIDEO_ON = False      # Default= False  True=Take a video clip rather than image
+MOTION_VIDEO_WIDTH = 640     # Default= 640 Width of video in pixels
+MOTION_VIDEO_HEIGHT = 480    # Default= 480 Height of video in pixels
+MOTION_VIDEO_FPS = 15        # Default= 15 If resolution reduced to 640x480 then slow motion is possible at 90 fps
+MOTION_VIDEO_TIMER_SEC = 10  # Default= 10 secs Duration of single Video clip to take after Motion Detected
+# ---------------------------------------------------------------------------
+
+# Settings for Pan Tilt Hardware
+# Pan and Tilt positions are in degrees between -90 and + 90
+# ------------------------------
+PANTILT_ON = False          # Default= False Off, True= Enable Pan Tilt Hat Hardware (Load Drivers)
+PANTILT_IS_PIMORONI = True  # Default= True Use Pimoroni pantilehat, False= Use Waveshare pantilthat
+PANTILT_HOME = (0, 0)       # Default= (0, -10) Pan Tilt Home Postion. Values between -90 and + 90
+PANTILT_SLEEP_SEC = 0.1     # Default= 0.1 Allow time for pantilt servos to move
+PANTILT_SPEED = 0.5
+
+# Settings for pantilt image sequence
+# ----------------------------
+PANTILT_SEQ_ON = False      # Default= False Off, True= Enable a PanTilt Image Sequence
+PANTILT_SEQ_TIMER_SEC = 600
+PANTILT_SEQ_IMAGES_DIR = "media/pantilt-seq"
+PANTILT_SEQ_IMAGE_PREFIX = 'seq-'
+PANTILT_SEQ_RECENT_DIR = "media/recent/seq"  # Default= "media/recent/seq"  Location of pantilt Recent files
+PANTILT_SEQ_RECENT_MAX = 40  # Default= 40 0=Off or specify number of recent files in MOTION_RECENT_DIR
+PANTILT_SEQ_DAYONLY_ON = True
+PANTILT_SEQ_NUM_ON = True
+PANTILT_SEQ_NUM_RECYCLE_ON = True
+PANTILT_SEQ_NUM_START = 1000
+PANTILT_SEQ_NUM_MAX = 200
+PANTILT_SEQ_STOPS = [(90, 0),
+                     (45, 0),
+                     (0, 0),
+                     (-45, 0),
+                     (-90, 0),
+                    ]
+
+# Settings for Timelapse Panoramic Image Settings
+# --------------------------------------
+PANO_ON = False              # Default= True Enable image stitching using pantilt overlapping images False= Disabled
+                             # Note this can run in parallel with timelapse and motion tracking
+                             # Image Width and Height per IMAGE_WIDTH and IMAGE_HEIGHT settings above
+PANO_TIMER_SEC = 300         # Default= 300 (5 min) Duration between taking pano images (Helps avoid multiple stitch tasks)
+                             # FYI Stitching time on RPI4 can be less than 10 seconds.
+PANO_IMAGES_DIR = './media/pano/images'  # Dir for storing pantilt source images
+PANO_DIR = './media/pano/panos'  # Dir for storing final panoramic images
+PANO_IMAGE_PREFIX = 'pano-'  # Default= 'pano-' Prefix for pano images
+PANO_DAYONLY_ON = True       # Default= True Take Pano only during day.  False= Day and Night
+PANO_NUM_RECYCLE = True      # Default= True Recycle numbering when NUM MAX exceeded. False= Exit
+PANO_NUM_START = 1000        # Default= 1000 Start of image numbering sequence
+PANO_NUM_MAX   = 20          # Default= 20 Maximum number of pano's to take 0=Continuous.
+PANO_PROG_PATH = '/usr/local/bin/image-stitching'  # Path to image stitching program config.cfg in pi-timolo dir.
+# Set stops to take overlapping images. You need sufficient overlap for successful stitching
+# Default setting [(-30, 0), (0, 0), (30, 0)] You will need to adjust for different image resolutions
+# More images requires more time to stitch.  Adjust PANO_TIMER_SEC setting to avoid multiple stitches at once.
+# Tested on single core RPI, but will stitch much faster on quad core.
+PANO_CAM_STOPS = [(-30, 0),
+                  (0, 0),
+                  (30, 0)
+                 ]
+
+# Dash Cam Video Repeat Mode
+# IMPORTANT: Suppresses Timelapse, Motion Track and Pano
+# ------------------------------------------------------
 VIDEO_REPEAT_ON = False      # Default= False OFF True= Turn on Video Repeat Mode IMPORTANT Overrides Timelapse and Motion
+VIDEO_REPEAT_WIDTH = 1280    # Default= 1280 Width of video in pixels
+VIDEO_REPEAT_HEIGHT = 720    # Default= 720  Height of video in pixels
 VIDEO_DIR = "media/videos"   # Default= "media/videos" Storage folder path for videos
 VIDEO_PREFIX = "vid-"        # Default= 'vid-" prefix for video filenames
 VIDEO_START_AT = ""          # Default= "" Off or Specify date/time to Start Sequence eg "01-dec-2019 08:00:00" or "20:00:00"
 VIDEO_FILE_SEC = 60          # Default= 60 seconds for each video recording
 VIDEO_SESSION_MIN = 30       # Default= 30 minutes  Run Recording Session then Exit  0=Continuous
-VIDEO_FPS = 30               # Default= 30 fps.  Note slow motion can be achieved at 640x480 image resolution at 90 fps
-VIDEO_NUM_ON = False         # Default= True True=filenames by sequence Number  False=Filenames by date/time
+VIDEO_FPS = 15               # Default= 15 fps.  Note slow motion can be achieved at 640x480 image resolution at 90 fps
+VIDEO_NUM_ON = False         # Default= False True= filenames by sequence Number  False=Filenames by date/time
 VIDEO_NUM_RECYCLE_ON = False # Default= False when NumMax reached restart at NumStart instead of exiting
 VIDEO_NUM_START = 1000       # Default= 1000 Start of video filename number sequence
 VIDEO_NUM_MAX  = 20          # Default= 20 Max number of videos desired. 0=Continuous
-
-# Settings for Pan Tilt Hardware
-# Pan and Tilt positions are in degrees between -90 and + 90
-# ------------------------------
-PANTILT_ON = False           # Default= False Off, True= Enable Pan Tilt Hat Hardware (Load Drivers)
-PANTILT_IS_PIMORONI = True   # Default= True Use Pimoroni pantilehat, False= Use Waveshare pantilthat
-PANTILT_HOME = (0, -10)      # Default= (0, -10) Pan Tilt Home Postion. Values between -90 and + 90
-PANTILT_SLEEP_SEC = 0.1      # Default= 0.1 Allow time for pantilt servos to move
-
-# Panoramic Images Settings
-# -------------------------
-PANO_ON = True               # Default= True Enable image stitching using pantilt overlapping images False= Disabled
-                             # Note this can run in parallel with timelapse and motion tracking
-PANO_IMAGE_PREFIX = 'pano-'  # Default= 'pano-' Prefix for pano images
-PANO_TIMER_SEC = 300         # Default= 300 (5 min) Duration between taking pano images (Helps avoid multiple stitch tasks)
-                             # FYI Stitching time on RPI4 can be less than 10 seconds.
-PANO_NUM_START = 1000        # Default= 1000 Start of image numbering sequence
-PANO_NUM_MAX   = 20          # Default= 20 Maximum number of pano's to take 0=Continuous.
-PANO_NUM_RECYCLE = True      # Default= True Recycle numbering when NUM MAX exceeded. False= Exit
-PANO_DAYONLY_ON = True       # Default= True Take Pano only during day.  False= Day and Night
-PANO_IMAGES_DIR = './media/pano/images'  # Dir for storing pantilt source images
-PANO_DIR = './media/pano/panos'  # Dir for storing final panoramic images
-PANO_PROG_PATH = '/usr/local/bin/image-stitching'  # Path to image stitching program config.cfg in pi-timolo dir.
-
-# Set stops to take overlapping images. You need sufficient overlap for successful stitching
-# Default setting [(36, 20), (0, 20), (-36, 20)] is for 1920x1080 camera resolution
-# More images requires more time to stitch.  Adjust PANO_TIMER_SEC setting to avoid multiple stitches at once.
-# Tested on single core RPI, but will stitch much faster on quad core.
-PANO_CAM_STOPS = [(36, -10),
-                  (0, -10),
-                  (-36, -10)
-                 ]
 
 # Manage Disk Space Settings
 #---------------------------

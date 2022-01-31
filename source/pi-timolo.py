@@ -8,7 +8,7 @@ It requires updated config.py
 Oct 2020 Added panoramic pantilt option plus other improvements.
 '''
 from __future__ import print_function
-PROG_VER = "ver 12.18"  # Requires Latest 12.0 release of config.py
+PROG_VER = "ver 12.50"  # Requires Latest 12.5 release of config.py
 __version__ = PROG_VER  # May test for version number at a future time
 
 import os
@@ -101,6 +101,7 @@ default_settings = {
     'IMAGE_HFLIP':True,
     'IMAGE_GRAYSCALE':False,
     'IMAGE_PREVIEW':False,
+    'IMAGE_PIX_AVE_TIMER_SEC':15,
     'IMAGE_NO_NIGHT_SHOTS':False,
     'IMAGE_NO_DAY_SHOTS':False,
     'IMAGE_SHOW_STREAM':False,
@@ -137,13 +138,6 @@ default_settings = {
     'TIMELAPSE_SUBDIR_MAX_HOURS':0,
     'TIMELAPSE_RECENT_MAX':40,
     'TIMELAPSE_RECENT_DIR':"media/recent/timelapse",
-    'TIMELAPSE_PANTILT_ON':False,
-    'TIMELAPSE_PANTILT_STOPS':[(90, 10),
-                               (45, 10),
-                               (0, 10),
-                               (-45, 10),
-                               (-90, 10),
-                              ],
     'MOTION_TRACK_ON':True,
     'MOTION_TRACK_QUICK_PIC_ON':False,
     'MOTION_TRACK_INFO_ON':True,
@@ -156,10 +150,13 @@ default_settings = {
     'MOTION_START_AT':"",
     'MOTION_VIDEO_ON':False,
     'MOTION_VIDEO_FPS':15,
+    'MOTION_VIDEO_WIDTH':640,
+    'MOTION_VIDEO_HEIGHT':480,
     'MOTION_VIDEO_TIMER_SEC':10,
     'MOTION_TRACK_MINI_TL_ON':False,
     'MOTION_TRACK_MINI_TL_SEQ_SEC':20,
     'MOTION_TRACK_MINI_TL_TIMER_SEC':4,
+    'MOTION_TRACK_PANTILT_SEQ_ON':False,
     'MOTION_FORCE_SEC':3600,
     'MOTION_NUM_ON':True,
     'MOTION_NUM_RECYCLE_ON':True,
@@ -174,6 +171,8 @@ default_settings = {
     'MOTION_CAM_SLEEP':0.7,
     'CREATE_LOCKFILE':False,
     'VIDEO_REPEAT_ON':False,
+    'VIDEO_REPEAT_WIDTH':1280,
+    'VIDEO_REPEAT_HEIGHT':720,
     'VIDEO_DIR':"media/videos",
     'VIDEO_PREFIX':"vid-",
     'VIDEO_START_AT':"",
@@ -187,6 +186,22 @@ default_settings = {
     'PANTILT_ON':False,
     'PANTILT_IS_PIMORONI':False,
     'PANTILT_HOME':(0, -10),
+    'PANTILT_SPEED':0.5,
+    'PANTILT_SEQ_ON':False,
+    'PANTILT_SEQ_DAYONLY_ON':True,
+    'PANTILT_SEQ_TIMER_SEC':600,
+    'PANTILT_SEQ_IMAGE_PREFIX':'seq-',
+    'PANTILT_SEQ_NUM_ON':True,
+    'PANTILT_SEQ_NUM_START':1000,
+    'PANTILT_SEQ_NUM_MAX':200,
+    'PANTILT_SEQ_NUM_RECYCLE_ON':True,
+    'PANTILT_SEQ_IMAGES_DIR':"media/pantilt_seq",
+    'PANTILT_SEQ_STOPS':[(90, 10),
+                         (45, 10),
+                         (0, 10),
+                         (-45, 10),
+                         (-90, 10),
+                        ],
     'PANO_ON':False,
     'PANO_DAYONLY_ON': True,
     'PANO_TIMER_SEC':160,
@@ -305,7 +320,6 @@ if PANTILT_ON:
             print('    PANTILT_IS_PIMORONI = True')
             sys.exit()
         pantilt_is = 'Waveshare'
-
 
 # Setup Logging now that variables are imported from config.py/plugin
 if LOG_TO_FILE_ON:
@@ -470,7 +484,6 @@ if not IMAGE_FORMAT.startswith('.', 0, 1):
 #      System Variables
 # Should Not need to be customized
 #==================================
-PIX_AVE_TIMER_SEC = 30     # Interval time for checking pixAverage Readings
 SECONDS2MICRO = 1000000    # Used to convert from seconds to microseconds
 NIGHT_MAX_SHUTTER = int(NIGHT_MAX_SHUT_SEC * SECONDS2MICRO)
 # default=5 seconds IMPORTANT- 6 seconds works sometimes
@@ -480,10 +493,12 @@ daymode = False            # default should always be False.
 MOTION_PATH = os.path.join(BASE_DIR, MOTION_DIR)  # Store Motion images
 # motion dat file to save currentCount
 
+# Setup filepath's for storing image numbering data
 DATA_DIR = './data'
 NUM_PATH_MOTION = os.path.join(DATA_DIR, MOTION_PREFIX + BASE_FILENAME + ".dat")
-NUM_PATH_PANO = os.path.join(DATA_DIR, PANO_IMAGE_PREFIX + BASE_FILENAME + ".dat")
 NUM_PATH_TIMELAPSE = os.path.join(DATA_DIR, TIMELAPSE_PREFIX + BASE_FILENAME + ".dat")
+NUM_PATH_PANO = os.path.join(DATA_DIR, PANO_IMAGE_PREFIX + BASE_FILENAME + ".dat")
+NUM_PATH_PANTILT_SEQ = os.path.join(DATA_DIR, PANTILT_SEQ_IMAGE_PREFIX + BASE_FILENAME + ".dat")
 
 TIMELAPSE_PATH = os.path.join(BASE_DIR, TIMELAPSE_DIR)  # Store Time Lapse images
 # timelapse dat file to save currentCount
@@ -625,7 +640,7 @@ def shut2sec(shutspeed):
     return shutstring
 
 #------------------------------------------------------------------------------
-def show_time():
+def showTime():
     ''' Show current date time in text format '''
     rightNow = datetime.datetime.now()
     currentTime = ("%04d-%02d-%02d %02d:%02d:%02d" % (rightNow.year,
@@ -637,7 +652,7 @@ def show_time():
     return currentTime
 
 #------------------------------------------------------------------------------
-def show_dots(dotcnt):
+def showDots(dotcnt):
     '''
     If motionShowDots=True then display a progress
     dot for each cycle.  If MOTION_TRACK_ON then this would
@@ -651,7 +666,7 @@ def show_dots(dotcnt):
                 dotcnt = 0
             elif dotcnt > MOTION_DOTS_MAX:
                 print("")
-                stime = show_time() + " ."
+                stime = showTime() + " ."
                 sys.stdout.write(stime)
                 sys.stdout.flush()
                 dotcnt = 0
@@ -661,7 +676,7 @@ def show_dots(dotcnt):
     return dotcnt
 
 #------------------------------------------------------------------------------
-def check_config():
+def checkConfig():
     '''
     Check if both User disabled everything
     in config.py. At least one option needs to be enabled
@@ -677,7 +692,7 @@ def check_config():
         sys.exit(1)
 
 #------------------------------------------------------------------------------
-def display_info(motioncount, timelapsecount):
+def displayInfo(motioncount, timelapsecount):
     ''' Display variable settings with plugin overlays if required '''
     if VERBOSE_ON:
         print("----------------------------------- Settings "
@@ -825,10 +840,10 @@ def display_info(motioncount, timelapsecount):
               % (LOG_TO_FILE_ON, LOG_FILE_PATH))
         print("--------------------------------- Log Activity "
               "---------------------------------")
-    check_config()
+    checkConfig()
 
 #------------------------------------------------------------------------------
-def get_last_subdir(directory):
+def getLastSubdir(directory):
     ''' Scan for directories and return most recent '''
     dirList = ([name for name in
                 os.listdir(directory) if
@@ -841,7 +856,7 @@ def get_last_subdir(directory):
     return lastSubDir
 
 #------------------------------------------------------------------------------
-def create_subdir(directory, prefix):
+def createSubdir(directory, prefix):
     '''
     Create a subdirectory in directory with
     unique name based on prefix and date time
@@ -907,27 +922,27 @@ def subDirChecks(maxHours, maxFiles, directory, prefix):
         # logging.info('No sub-folders Required in %s', directory)
         subDirPath = directory
     else:
-        subDirPath = get_last_subdir(directory)
+        subDirPath = getLastSubdir(directory)
         if subDirPath == directory:   # No subDir Found
             logging.info('No sub folders Found in %s', directory)
-            subDirPath = create_subdir(directory, prefix)
+            subDirPath = createSubdir(directory, prefix)
         # Check MaxHours Folder Age Only
         elif (maxHours > 0 and maxFiles < 1):
             if subDirCheckMaxHrs(subDirPath, maxHours, prefix):
-                subDirPath = create_subdir(directory, prefix)
+                subDirPath = createSubdir(directory, prefix)
         elif (maxHours < 1 and maxFiles > 0):   # Check Max Files Only
             if subDirCheckMaxFiles(subDirPath, maxFiles):
-                subDirPath = create_subdir(directory, prefix)
+                subDirPath = createSubdir(directory, prefix)
         elif maxHours > 0 and maxFiles > 0:   # Check both Max Files and Age
             if subDirCheckMaxHrs(subDirPath, maxHours, prefix):
                 if subDirCheckMaxFiles(subDirPath, maxFiles):
-                    subDirPath = create_subdir(directory, prefix)
+                    subDirPath = createSubdir(directory, prefix)
                 else:
                     logging.info('MaxFiles Not Exceeded in %s', subDirPath)
     os.path.abspath(subDirPath)
     return subDirPath
 
-def make_media_dir(dir_path):
+def makeMediaDir(dir_path):
     '''Create a folder sequence'''
     make_dir = False
     if not os.path.isdir(dir_path):
@@ -941,35 +956,39 @@ def make_media_dir(dir_path):
     return make_dir
 
 #------------------------------------------------------------------------------
-def check_media_paths():
+def checkMediaPaths():
     '''
     Checks for image folders and
     create them if they do not already exist.
     '''
-    make_media_dir(DATA_DIR)
+    makeMediaDir(DATA_DIR)
 
     if MOTION_TRACK_ON:
-        if make_media_dir(MOTION_PATH):
+        if makeMediaDir(MOTION_PATH):
             if os.path.isfile(NUM_PATH_MOTION):
                 logging.info("Delete Motion dat File %s", NUM_PATH_MOTION)
                 os.remove(NUM_PATH_MOTION)
 
     if TIMELAPSE_ON:
-        if make_media_dir(TIMELAPSE_PATH):
+        if makeMediaDir(TIMELAPSE_PATH):
             if os.path.isfile(NUM_PATH_TIMELAPSE):
                 logging.info("Delete TimeLapse dat file %s", NUM_PATH_TIMELAPSE)
                 os.remove(NUM_PATH_TIMELAPSE)
 
     # Check for Recent Image Folders and create if they do not already exist.
     if MOTION_RECENT_MAX > 0:
-        make_media_dir(MOTION_RECENT_DIR)
+        makeMediaDir(MOTION_RECENT_DIR)
 
     if TIMELAPSE_RECENT_MAX > 0:
-        make_media_dir(TIMELAPSE_RECENT_DIR)
+        makeMediaDir(TIMELAPSE_RECENT_DIR)
+
+    if PANTILT_SEQ_ON:
+        makeMediaDir(PANTILT_SEQ_IMAGES_DIR)
 
     if PANO_ON:
-        make_media_dir(PANO_DIR)
-        make_media_dir(PANO_IMAGES_DIR)
+        makeMediaDir(PANO_DIR)
+        makeMediaDir(PANO_IMAGES_DIR)
+
 
 #------------------------------------------------------------------------------
 def deleteOldFiles(maxFiles, dirPath, prefix):
@@ -992,20 +1011,21 @@ def deleteOldFiles(maxFiles, dirPath, prefix):
                 logging.error('Failed %s  err: %s', oldestFile, err)
 
 #------------------------------------------------------------------------------
-def saveRecent(recentMax, recentDir, filename, prefix):
+def saveRecent(recentMax, recentDir, filepath, prefix):
     '''
     Create a symlink file in recent folder (timelapse or motion subfolder)
     Delete Oldest symlink file if recentMax exceeded.
     '''
-    src = os.path.abspath(filename)  # original file path
-    dest = os.path.abspath(os.path.join(recentDir,
-                                        os.path.basename(filename)))
-    deleteOldFiles(recentMax, os.path.abspath(recentDir), prefix)
-    try:    # Create symlink in recent folder
-        logging.info('symlink %s', dest)
-        os.symlink(src, dest)  # Create a symlink to actual file
-    except OSError as err:
-        logging.error('symlink %s to %s  err: %s', dest, src, err)
+    if recentMax > 0:
+        src = os.path.abspath(filepath)  # original file path
+        dest = os.path.abspath(os.path.join(recentDir,
+                                            os.path.basename(filepath)))
+        deleteOldFiles(recentMax, os.path.abspath(recentDir), prefix)
+        try:    # Create symlink in recent folder
+            logging.info('symlink %s', dest)
+            os.symlink(src, dest)  # Create a symlink to actual file
+        except OSError as err:
+            logging.error('symlink %s to %s  err: %s', dest, src, err)
 
 #------------------------------------------------------------------------------
 def filesToDelete(mediaDirPath, extension=IMAGE_FORMAT):
@@ -1083,7 +1103,7 @@ def freeDiskSpaceCheck(lastSpaceCheck):
     return lastSpaceCheck
 
 #------------------------------------------------------------------------------
-def get_current_count(numberpath, numberstart):
+def getCurrentCount(numberpath, numberstart):
     '''
     Create a .dat file to store currentCount
     or read file if it already Exists
@@ -1269,7 +1289,7 @@ def getVideoName(path, prefix, numberon, counter):
     return filename
 
 #------------------------------------------------------------------------------
-def get_image_filename(path, prefix, numberon, counter):
+def getImageFilename(path, prefix, numberon, counter):
     ''' build image file names by number sequence or date/time '''
     if numberon:
         filename = os.path.join(path, prefix + str(counter) + IMAGE_FORMAT)
@@ -1281,14 +1301,6 @@ def get_image_filename(path, prefix, numberon, counter):
                        rightNow.hour, rightNow.minute, rightNow.second,
                        IMAGE_FORMAT))
     return filename
-
-#------------------------------------------------------------------------------
-def take_mo_quick_pic(image, filename):
-    ''' Enlarge and Save stream image if MOTION_TRACK_QUICK_PIC_ON=True'''
-    big_image = cv2.resize(image, (bigImageWidth, bigImageHeight)) if bigImage != 1 else image
-    cv2.imwrite(filename, big_image)
-    logging.info("Saved %ix%i Image to %s",
-                 bigImageWidth, bigImageHeight, filename)
 
 #------------------------------------------------------------------------------
 def showBox(filename):
@@ -1308,7 +1320,15 @@ def showBox(filename):
     cv2.imwrite(filename, working_image)
 
 #------------------------------------------------------------------------------
-def take_day_image(filename, cam_sleep_time):
+def takeMotionQuickImage(image, filename):
+    ''' Enlarge and Save stream image if MOTION_TRACK_QUICK_PIC_ON=True'''
+    big_image = cv2.resize(image, (bigImageWidth, bigImageHeight)) if bigImage != 1 else image
+    cv2.imwrite(filename, big_image)
+    logging.info("Saved %ix%i Image to %s",
+                 bigImageWidth, bigImageHeight, filename)
+
+#------------------------------------------------------------------------------
+def takeDayImage(filename, cam_sleep_time):
     ''' Take a Day image using exp=auto and awb=auto '''
     with picamera.PiCamera() as camera:
         camera.resolution = (image_width, image_height)
@@ -1339,102 +1359,7 @@ def take_day_image(filename, cam_sleep_time):
         logging.info("FilePath  %s", filename)
 
 #------------------------------------------------------------------------------
-def take_pano(pano_seq_num):
-    '''
-    Take a series of overlapping images using pantilt at specified PANO_CAM_STOPS
-    then attempt to stitch the images into one panoramic image. Note this
-    will take time so depending on number of cpu cores and speed. The PANO_TIMER
-    should be set to avoid multiple stitching operations at once.
-    use htop or top to check stitching PID activity.
-
-    Successfuly Stitching needs good lighting so it should be restricted to
-    day light hours or sufficient indoor lighting.
-    Review pano source image overlap using webserver. Adjust pano stops accordingly.
-    '''
-
-    logging.info('Sched Pano  timer=%i sec  pano_seq_num=%s',
-                 PANO_TIMER_SEC, pano_seq_num)
-    with picamera.PiCamera() as camera:
-        camera.resolution = (image_width, image_height)
-        camera.vflip = IMAGE_VFLIP
-        camera.hflip = IMAGE_HFLIP
-        camera.rotation = IMAGE_ROTATION # Valid values are 0, 90, 180, 270
-        # Day Automatic Mode
-        camera.exposure_mode = 'auto'
-        camera.awb_mode = 'auto'
-        if IMAGE_GRAYSCALE:
-            camera.color_effects = (128, 128)
-        time.sleep(MOTION_CAM_SLEEP) # use motion or TL camera sleep to get AWB
-        if IMAGE_PREVIEW:
-            camera.start_preview()
-
-        pano_image_num = 0   # initialize counter to ensure each image filename is unique
-        pano_image_files = ''  # string of contatenated image input pano filenames for stitch command line
-        pano_file_path = os.path.join(PANO_DIR,
-                                      PANO_IMAGE_PREFIX +
-                                      IMAGE_NAME_PREFIX +
-                                      str(pano_seq_num) +
-                                      IMAGE_FORMAT)
-
-        for cam_pos in PANO_CAM_STOPS:   # take images at each specified stop
-            pano_image_num += 1 # Set image numbering for this image
-            pan_x, tilt_y = cam_pos # set pan tilt values for this image
-            pano_filename = os.path.join(PANO_IMAGES_DIR,
-                                         PANO_IMAGE_PREFIX +
-                                         IMAGE_NAME_PREFIX +
-                                         str(pano_seq_num) +
-                                         '-' + str(pano_image_num) +
-                                         IMAGE_FORMAT)
-            pano_image_files += ' ' + pano_filename
-            pantilthat.pan(pan_x)
-            pantilthat.tilt(tilt_y)
-            if pano_seq_num == 1:
-                time.sleep(0.3)
-            time.sleep(PANTILT_SLEEP_SEC)
-            if IMAGE_FORMAT == ".jpg":   # Set quality if image is jpg
-                camera.capture(pano_filename, quality=IMAGE_JPG_QUAL)
-            else:
-                camera.capture(pano_filename)
-            logging.info('Size %ix%i Saved %s at cam_pos(%i, %i)',
-                         image_width, image_height,
-                         pano_filename,
-                         pan_x, tilt_y)
-        camera.close()
-    # Center pantilt
-    pantilt_go_home()
-
-    if not os.path.isfile(PANO_PROG_PATH):
-        logging.error('Cannot Find Pano Executable File at %s', PANO_PROG_PATH)
-        logging.info('Please run menubox.sh UPGRADE to correct problem')
-        logging.warning('Exiting - Cannot Run Image Stitching of Images.')
-        return
-    if not os.path.isfile('./config.cfg'):
-        logging.error('Cannot Find ./config.cfg required for %s', PANO_PROG_PATH)
-        logging.info('Please run menubox.sh UPGRADE to correct problem')
-        logging.warning('Exiting - Cannot Run Image Stitching of Images.')
-        return
-
-    # Create the stitch command line string
-    stitch_cmd = PANO_PROG_PATH + ' ' + pano_file_path + pano_image_files
-    try:
-        logging.info("Run Image Stitching Command per Below")
-        print("%s" % stitch_cmd)
-        # spawn stitch command with parameters as seperate task
-        proc = subprocess.Popen(stitch_cmd, shell=True, stdin=None,
-                                stdout=None, stderr=None, close_fds=True)
-    except IOError:
-        logging.error("Failed subprocess %s", stitch_cmd)
-    pano_seq_num += 1
-    if PANO_NUM_RECYCLE and PANO_NUM_MAX > 0:
-        if pano_seq_num > PANO_NUM_START + PANO_NUM_MAX:
-            logging.info('PANO_NUM_RECYCLE Activated. Reset pano_seq_num to %i',
-                         PANO_NUM_START)
-            pano_seq_num = PANO_NUM_START
-    writeCounter(pano_seq_num, NUM_PATH_PANO)
-    return pano_seq_num
-
-#------------------------------------------------------------------------------
-def get_shutter_setting(pxAve):
+def getShutterSetting(pxAve):
     '''
     Calculate a shutter speed based on image pixel average
     '''
@@ -1446,7 +1371,7 @@ def get_shutter_setting(pxAve):
     return int(shut)
 
 #------------------------------------------------------------------------------
-def take_night_image(filename, pixelAve):
+def takeNightImage(filename, pixelAve):
     ''' Take low light Twilight or Night image '''
     with picamera.PiCamera() as camera:
         camera.resolution = (image_width, image_height)
@@ -1477,7 +1402,7 @@ def take_night_image(filename, pixelAve):
                              pixelAve, NIGHT_BLACK_THRESHOLD,
                              shut2sec(NIGHT_MAX_SHUTTER), NIGHT_MAX_ISO, NIGHT_SLEEP_SEC)
             else: # Dark Threshold (Between Twilight and Black)
-                camShut = get_shutter_setting(pixelAve)
+                camShut = getShutterSetting(pixelAve)
                 if camShut > NIGHT_MAX_SHUTTER:
                     camShut = NIGHT_MAX_SHUTTER
                 # Set the shutter for long exposure
@@ -1504,58 +1429,6 @@ def take_night_image(filename, pixelAve):
         logging.info("FilePath %s", filename)
 
 #------------------------------------------------------------------------------
-def take_mo_mini_timelapse(moPath, prefix, NumOn, motionNumCount,
-                           currentDayMode, NumPath):
-    '''
-    Take a motion tracking activated mini timelapse sequence
-    using yield if motion triggered
-    '''
-    logging.info("START - Run for %i secs with image every %i secs",
-                 MOTION_TRACK_MINI_TL_SEQ_SEC, MOTION_TRACK_MINI_TL_TIMER_SEC)
-    checkTimeLapseTimer = datetime.datetime.now()
-    keepTakingImages = True
-    imgCnt = 0
-    filename = get_image_filename(moPath, prefix, NumOn, motionNumCount)
-    while keepTakingImages:
-        yield filename
-        rightNow = datetime.datetime.now()
-        timelapseDiff = (rightNow - checkTimeLapseTimer).total_seconds()
-        motionNumCount = postImageProcessing(NumOn,
-                                             MOTION_NUM_START,
-                                             MOTION_NUM_MAX,
-                                             motionNumCount,
-                                             MOTION_NUM_RECYCLE_ON,
-                                             NumPath, filename,
-                                             currentDayMode)
-        filename = get_image_filename(moPath, prefix, NumOn, motionNumCount)
-        if timelapseDiff > MOTION_TRACK_MINI_TL_SEQ_SEC:
-            keepTakingImages = False
-        else:
-            imgCnt += 1
-            if MOTION_RECENT_MAX > 0:
-                saveRecent(MOTION_RECENT_MAX,
-                           MOTION_RECENT_DIR,
-                           filename,
-                           prefix)
-            time.sleep(MOTION_TRACK_MINI_TL_TIMER_SEC)
-
-    logging.info('END - Total %i Images in %i sec every %i sec',
-                 imgCnt, timelapseDiff, MOTION_TRACK_MINI_TL_TIMER_SEC)
-
-#------------------------------------------------------------------------------
-def pantilt_go_home():
-    '''
-    Move pantilt to home position. If pantilt installed then this
-    can position pantilt to a home position for consistent
-    motion tracking and timelapse camera pointing.
-    '''
-    if PANTILT_ON:
-        pantilthat.pan(PANTILT_HOME[0])
-        time.sleep(PANTILT_SLEEP_SEC)
-        pantilthat.tilt(PANTILT_HOME[1])
-        time.sleep(PANTILT_SLEEP_SEC)
-
-#------------------------------------------------------------------------------
 def create_sync_lockfile(imagefilename):
     '''
     If required create a lock file to indicate file(s) to process
@@ -1575,70 +1448,7 @@ def create_sync_lockfile(imagefilename):
         f.close()
 
 #------------------------------------------------------------------------------
-def take_mo_video(filename, duration, fps=25):
-    ''' Take a short motion video if required '''
-    # Working folder for h264 videos
-    h264_work = os.path.join(BASE_DIR, "h264_work")
-    if not os.path.isdir(h264_work):
-        try:
-            os.makedirs(h264_work)
-        except OSError as err:
-            logging.error('%s  err: %s', h264_work, err)
-        else:
-            logging.info('Created Dir %s', h264_work)
-    filePath264 = os.path.join(h264_work, os.path.basename(filename))
-    # Final destination for mp4 videos
-    filePathMP4 = os.path.join(os.path.dirname(filename),
-                               os.path.splitext(os.path.basename(filename))[0] + ".mp4")
-    # command to convert h264 video to mp4
-    h264_mp4_cmd = ("/usr/bin/MP4Box -add %s:fps=%i -new %s" %
-                    (filePath264, fps, filePathMP4))
-    logging.info("File : %s", filePath264)
-    logging.info("Start: Size %ix%i for %i sec at %i fps",
-                 image_width, image_height, duration, fps)
-    if MOTION_VIDEO_ON or VIDEO_REPEAT_ON:
-        with picamera.PiCamera() as camera:
-            camera.resolution = (image_width, image_height)
-            camera.vflip = IMAGE_VFLIP
-            camera.hflip = IMAGE_HFLIP
-            # rotation can be used if camera is on side
-            camera.rotation = IMAGE_ROTATION
-            camera.framerate = fps
-            if SHOW_DATE_ON_IMAGE:
-                rightNow = datetime.datetime.now()
-                dateTimeText = (" Started at %04d-%02d-%02d %02d:%02d:%02d "
-                                % (rightNow.year,
-                                   rightNow.month,
-                                   rightNow.day,
-                                   rightNow.hour,
-                                   rightNow.minute,
-                                   rightNow.second))
-                camera.annotate_text_size = SHOW_TEXT_FONT_SIZE
-                camera.annotate_foreground = picamera.Color('black')
-                camera.annotate_background = picamera.Color('white')
-                camera.annotate_text = dateTimeText
-            camera.start_recording(filePath264)
-            camera.wait_recording(duration)
-            camera.stop_recording()
-            camera.close()
-        # This creates a subprocess that runs MP4Box to convert h264 file
-        # to MP4 with the filename as a parameter.  Note this will take
-        # some time so MP4Box logging info will be delayed.
-        try:
-            logging.info("MP4Box %s", filePathMP4)
-            proc = subprocess.Popen(h264_mp4_cmd, shell=True, stdin=None,
-                                    stdout=None, stderr=None, close_fds=True)
-        except IOError:
-            logging.error("subprocess %s", h264_mp4_cmd)
-        if MOTION_RECENT_MAX > 0:
-            saveRecent(MOTION_RECENT_MAX,
-                       MOTION_RECENT_DIR,
-                       filePathMP4,
-                       MOTION_PREFIX)
-        create_sync_lockfile(filename)
-
-#------------------------------------------------------------------------------
-def get_track_point(grayimage1, grayimage2):
+def getMotionTrackPoint(grayimage1, grayimage2):
     '''
     Process two cropped grayscale images.
     check for motion and return center point
@@ -1677,7 +1487,7 @@ def get_track_point(grayimage1, grayimage2):
     return movementCenterPoint
 
 #------------------------------------------------------------------------------
-def track_distance(mPoint1, mPoint2):
+def trackMotionDistance(mPoint1, mPoint2):
     '''
     Return the triangulated distance between two tracking locations
     '''
@@ -1687,26 +1497,26 @@ def track_distance(mPoint1, mPoint2):
     return trackLen
 
 #------------------------------------------------------------------------------
-def get_stream_pix_ave(streamData):
+def getStreamPixAve(streamData):
     '''
     Calculate the average pixel values for the specified stream
     used for determining day/night or twilight conditions
     '''
-    pixAverage = int(np.average(streamData[..., 1]))
+    pixAverage = int(np.average(streamData[..., 1]))  # Use 0=red 1=green 2=blue
     return pixAverage
 
 #------------------------------------------------------------------------------
-def check_if_day_stream(currentDayMode, image):
+def checkIfDayStream(currentDayMode, image):
     ''' Try to determine if it is day, night or twilight.'''
     dayPixAverage = 0
     currentDayMode = False
-    dayPixAverage = get_stream_pix_ave(image)
+    dayPixAverage = getStreamPixAve(image)
     if dayPixAverage > NIGHT_TWILIGHT_THRESHOLD:
         currentDayMode = True
     return currentDayMode
 
 #------------------------------------------------------------------------------
-def time_to_sleep(currentDayMode):
+def timeToSleep(currentDayMode):
     '''
     Based on weather it is day or night (exclude twilight)
     return sleepMode boolean based on variable
@@ -1782,7 +1592,7 @@ def checkSchedStart(schedDate):
     return startStatus
 
 #------------------------------------------------------------------------------
-def check_timer(timer_start, timer_sec):
+def checkTimer(timer_start, timer_sec):
     '''
     Check if timelapse timer has expired
     Return updated start time status of expired timer True or False
@@ -1796,549 +1606,258 @@ def check_timer(timer_start, timer_sec):
     return timer_start, timer_expired
 
 #------------------------------------------------------------------------------
-def timolo():
+def takeMiniTimelapse(moPath, prefix, NumOn, motionNumCount,
+                           currentDayMode, NumPath):
     '''
-    Main motion and or motion tracking
-    initialization and logic loop
+    Take a motion tracking activated mini timelapse sequence
+    using yield if motion triggered
     '''
-    # Counter for show_dots() display if not motion found
-    # shows system is working
-
-    cam_tl_pos = 0    # TIMELAPSE_PANTILT_STOPS List Start position of pantilt
-    pan_x, tilt_y = TIMELAPSE_PANTILT_STOPS[cam_tl_pos]
-    dotCount = 0
-    check_media_paths()
-    timelapseNumCount = 0
-    motionNumCount = 0
-
-    tlstr = ""  # Used to display if timelapse is selected
-    mostr = ""  # Used to display if motion is selected
-    moCnt = "non"
-    tlCnt = "non"
-
-    daymode = False # Keep track of night and day based on dayPixAve
-
-    motionFound = False
-    take_timelapse = True
-    stop_timelapse = False
-    takeMotion = True
-    stopMotion = False
-
-    # Initialize some Timers
-    pix_ave_timer = datetime.datetime.now()
-    motion_force_timer = datetime.datetime.now()
-    timelapseExitStart = datetime.datetime.now()
-    startTL = getSchedStart(TIMELAPSE_START_AT)
-    startMO = getSchedStart(MOTION_START_AT)
-    trackLen = 0.0
-    if SPACE_TIMER_HOURS > 0:
-        lastSpaceCheck = datetime.datetime.now()
-    if TIMELAPSE_ON:
-        tlstr = "TimeLapse"
-        # Check if timelapse subDirs reqd and create one if non exists
-        tlPath = subDirChecks(TIMELAPSE_SUBDIR_MAX_HOURS,
-                              TIMELAPSE_SUBDIR_MAX_FILES,
-                              TIMELAPSE_DIR, TIMELAPSE_PREFIX)
-        if TIMELAPSE_NUM_ON:
-            timelapseNumCount = get_current_count(NUM_PATH_TIMELAPSE,
-                                                  TIMELAPSE_NUM_START)
-            tlCnt = str(timelapseNumCount)
-    else:
-        logging.warning("Timelapse is Suppressed per TIMELAPSE_ON=%s",
-                        TIMELAPSE_ON)
-        stop_timelapse = True
-
-    if MOTION_TRACK_ON:
-        logging.info("Start PiVideoStream ....")
-        vs = PiVideoStream().start()
-        vs.camera.rotation = IMAGE_ROTATION
-        vs.camera.hflip = IMAGE_HFLIP
-        vs.camera.vflip = IMAGE_VFLIP
-        time.sleep(2)
-        mostr = "Motion Tracking"
-        # Check if motion subDirs required and
-        # create one if required and non exists
-        moPath = subDirChecks(MOTION_SUBDIR_MAX_HOURS,
-                              MOTION_SUBDIR_MAX_FILES,
-                              MOTION_DIR,
-                              MOTION_PREFIX)
-        if MOTION_NUM_ON:
-            motionNumCount = get_current_count(NUM_PATH_MOTION,
-                                               MOTION_NUM_START)
-            moCnt = str(motionNumCount)
-        trackTimeout = time.time()
-        trackTimer = TRACK_TIMEOUT
-        startPos = []
-        startTrack = False
-        image1 = vs.read()
-        image2 = vs.read()
-        grayimage1 = cv2.cvtColor(image1, cv2.COLOR_BGR2GRAY)
-        daymode = check_if_day_stream(daymode, image2)
-        pixAve = get_stream_pix_ave(image2)
-    else:
-        vs = PiVideoStream().start()
-        time.sleep(0.5)
-        image2 = vs.read()  # use video stream to check for pixAve & daymode
-        pixAve = get_stream_pix_ave(image2)
-        daymode = check_if_day_stream(daymode, image2)
-        vs.stop()
-        logging.info("Motion Tracking is Suppressed per variable MOTION_TRACK_ON=%s",
-                     MOTION_TRACK_ON)
-        stopMotion = True
-
-    if TIMELAPSE_ON and MOTION_TRACK_ON:
-        tlstr = " and " + tlstr
-    display_info(moCnt, tlCnt)  # Display config.py settings
-
-    if LOG_TO_FILE_ON:
-        logging.info("LOG_TO_FILE_ON=%s Logging to Console Disabled.",
-                     LOG_TO_FILE_ON)
-        logging.info("Sending Console Messages to %s", LOG_FILE_PATH)
-        logging.info("Entering Loop for %s%s", mostr, tlstr)
-    else:
-        if PLUGIN_ON:
-            logging.info("plugin %s - Start %s%s Loop ...",
-                         PLUGIN_NAME, mostr, tlstr)
+    logging.info("START - Run for %i secs with image every %i secs",
+                 MOTION_TRACK_MINI_TL_SEQ_SEC, MOTION_TRACK_MINI_TL_TIMER_SEC)
+    checkTimeLapseTimer = datetime.datetime.now()
+    keepTakingImages = True
+    imgCnt = 0
+    filename = getImageFilename(moPath, prefix, NumOn, motionNumCount)
+    while keepTakingImages:
+        yield filename
+        rightNow = datetime.datetime.now()
+        timelapseDiff = (rightNow - checkTimeLapseTimer).total_seconds()
+        motionNumCount = postImageProcessing(NumOn,
+                                             MOTION_NUM_START,
+                                             MOTION_NUM_MAX,
+                                             motionNumCount,
+                                             MOTION_NUM_RECYCLE_ON,
+                                             NUM_PATH_MOTION, filename,
+                                             currentDayMode)
+        filename = getImageFilename(moPath, prefix, NumOn, motionNumCount)
+        if timelapseDiff > MOTION_TRACK_MINI_TL_SEQ_SEC:
+            keepTakingImages = False
         else:
-            logging.info("Start %s%s Loop ... ctrl-c Exits", mostr, tlstr)
-    if MOTION_TRACK_ON and not checkSchedStart(startMO):
-        logging.info('Motion Track: MOTION_START_AT = "%s"', MOTION_START_AT)
-        logging.info("Motion Track: Sched Start Set For %s  Please Wait ...",
-                     startMO)
-    if TIMELAPSE_ON and not checkSchedStart(startTL):
-        logging.info('Timelapse   : TIMELAPSE_START_AT = "%s"', TIMELAPSE_START_AT)
-        logging.info("Timelapee   : Sched Start Set For %s  Please Wait ...",
-                     startTL)
-    logging.info("daymode=%s  MOTION_DOTS_ON=%s ", daymode, MOTION_DOTS_ON)
-    dotCount = show_dots(MOTION_DOTS_MAX)  # reset motion dots
+            imgCnt += 1
+            saveRecent(MOTION_RECENT_MAX, MOTION_RECENT_DIR,
+                       filename, prefix)
+            time.sleep(MOTION_TRACK_MINI_TL_TIMER_SEC)
 
-    first_pano = True  # Force a pano sequence on startup
-    firstTimeLapse = True  # Force a timelapse on startup
-    while True:  # Start main program Loop.
-        motionFound = False
-        if (MOTION_TRACK_ON and (not MOTION_NUM_RECYCLE_ON)
-                and (motionNumCount > MOTION_NUM_START + MOTION_NUM_MAX)
-                and (not stopMotion)):
-            logging.warning("MOTION_NUM_RECYCLE_ON=%s and motionNumCount %i Exceeds %i",
-                            MOTION_NUM_RECYCLE_ON, motionNumCount,
-                            MOTION_NUM_START + MOTION_NUM_MAX)
-            logging.warning("Suppressing Further Motion Tracking")
-            logging.warning("To Reset: Change %s Settings or Archive Images",
-                            CONFIG_FILENAME)
-            logging.warning("Then Delete %s and Restart %s \n",
-                            NUM_PATH_MOTION, PROG_NAME)
-            takeMotion = False
-            stopMotion = True
-        if stop_timelapse and stopMotion and not PANO_ON and not VIDEO_REPEAT_ON:
-            logging.warning("NOTICE: Motion, Timelapse, Pano and Video Repeat are Disabled")
-            logging.warning("per Num Recycle=False and "
-                            "Max Counter Reached or TIMELAPSE_EXIT_SEC Settings")
-            logging.warning("Change %s Settings or Archive/Save Media Then",
-                            CONFIG_FILENAME)
-            logging.warning("Delete appropriate .dat File(s) to Reset Counter(s)")
-            logging.warning("Exiting %s %s \n", PROG_NAME, PROG_VER)
-            sys.exit(1)
-        # if required check free disk space and delete older files (jpg)
-        if SPACE_TIMER_HOURS > 0:
-            lastSpaceCheck = freeDiskSpaceCheck(lastSpaceCheck)
-        # use image2 to check daymode as image1 may be average
-        # that changes slowly, and image1 may not be updated
-        if MOTION_TRACK_ON:
-            if daymode != check_if_day_stream(daymode, image2):
-                daymode = not daymode
-                image2 = vs.read()
-                image1 = image2
-            else:
-                image2 = vs.read()
-        elif TIMELAPSE_ON:
-            vs = PiVideoStream().start()
-            time.sleep(0.5)
-            image2 = vs.read()  # use video stream to check for daymode
-            vs.stop()
-            # check the timer for measuring pixel average of a stream frame
-        pix_ave_timer, take_pix_ave = check_timer(pix_ave_timer, PIX_AVE_TIMER_SEC)
-        if take_pix_ave:
-            pixAve = get_stream_pix_ave(image2)
-            daymode = check_if_day_stream(daymode, image2)
-            if daymode != check_if_day_stream(daymode, image2):
-                daymode = not daymode
-        if not daymode and TIMELAPSE_ON:
-            time.sleep(0.01)  # short delay to aviod high cpu usage at night
+    logging.info('END - Total %i Images in %i sec every %i sec',
+                 imgCnt, timelapseDiff, MOTION_TRACK_MINI_TL_TIMER_SEC)
+    print("")
 
-        if not time_to_sleep(daymode):
-            # Don't take images if IMAGE_NO_NIGHT_SHOTS
-            # or IMAGE_NO_DAY_SHOTS settings are valid
-            if TIMELAPSE_ON and checkSchedStart(startTL):
-                # Check for a scheduled date/time to start timelapse
-                if firstTimeLapse:
-                    timelapse_timer = datetime.datetime.now()
-                    firstTimeLapse = False
-                    take_timelapse = True
-                else:
-                    timelapse_timer, take_timelapse = check_timer(timelapse_timer,
-                                                                  TIMELAPSE_TIMER_SEC)
+#------------------------------------------------------------------------------
+def takeVideo(filename, duration, vidW=1280, vidH=720, fps=25):
+    ''' Take a short motion video if required '''
+    # Working folder for h264 videos
+    h264_work = os.path.join(BASE_DIR, "h264_work")
+    if not os.path.isdir(h264_work):
+        try:
+            os.makedirs(h264_work)
+        except OSError as err:
+            logging.error('%s  err: %s', h264_work, err)
+        else:
+            logging.info('Created Dir %s', h264_work)
+    filePath264 = os.path.join(h264_work, os.path.basename(filename))
+    # Final destination for mp4 videos
+    filePathMP4 = os.path.join(os.path.dirname(filename),
+                               os.path.splitext(os.path.basename(filename))[0] + ".mp4")
+    # command to convert h264 video to mp4
+    h264_mp4_cmd = ("/usr/bin/MP4Box -add %s:fps=%i -new %s" %
+                    (filePath264, fps, filePathMP4))
+    logging.info("File : %s", filePath264)
+    logging.info("Start: Size %ix%i for %i sec at %i fps",
+                 vidW, vidH, duration, fps)
+    if MOTION_VIDEO_ON or VIDEO_REPEAT_ON:
+        with picamera.PiCamera() as camera:
+            camera.resolution = (vidW, vidH)
+            camera.vflip = IMAGE_VFLIP
+            camera.hflip = IMAGE_HFLIP
+            # rotation can be used if camera is on side
+            camera.rotation = IMAGE_ROTATION
+            camera.framerate = fps
+            if SHOW_DATE_ON_IMAGE:
+                rightNow = datetime.datetime.now()
+                dateTimeText = (" Started at %04d-%02d-%02d %02d:%02d:%02d "
+                                % (rightNow.year,
+                                   rightNow.month,
+                                   rightNow.day,
+                                   rightNow.hour,
+                                   rightNow.minute,
+                                   rightNow.second))
+                camera.annotate_text_size = SHOW_TEXT_FONT_SIZE
+                camera.annotate_foreground = picamera.Color('black')
+                camera.annotate_background = picamera.Color('white')
+                camera.annotate_text = dateTimeText
+            camera.start_recording(filePath264)
+            camera.wait_recording(duration)
+            camera.stop_recording()
+            camera.close()
+        # This creates a subprocess that runs MP4Box to convert h264 file
+        # to MP4 with the filename as a parameter.  Note this will take
+        # some time so MP4Box logging info will be delayed.
+        try:
+            logging.info("MP4Box %s", filePathMP4)
+            proc = subprocess.Popen(h264_mp4_cmd, shell=True, stdin=None,
+                                    stdout=None, stderr=None, close_fds=True)
+        except IOError:
+            logging.error("subprocess %s", h264_mp4_cmd)
+        saveRecent(MOTION_RECENT_MAX, MOTION_RECENT_DIR,
+                   filePathMP4, MOTION_PREFIX)
+        create_sync_lockfile(filename)
 
-                if ((not stop_timelapse) and take_timelapse and
-                        TIMELAPSE_EXIT_SEC > 0):
-                    if ((datetime.datetime.now() -
-                         timelapseExitStart).total_seconds() >
-                            TIMELAPSE_EXIT_SEC):
-                        logging.info("TIMELAPSE_EXIT_SEC=%i Exceeded.",
-                                     TIMELAPSE_EXIT_SEC)
-                        logging.info("Suppressing Further Timelapse Images")
-                        logging.info("To RESET: Restart %s to Restart "
-                                     "TIMELAPSE_EXIT_SEC Timer. \n", PROG_NAME)
-                        # Suppress further timelapse images
-                        take_timelapse = False
-                        stop_timelapse = True
-                if ((not stop_timelapse) and TIMELAPSE_NUM_ON
-                        and (not TIMELAPSE_NUM_RECYCLE_ON)):
-                    if (TIMELAPSE_NUM_MAX > 0 and
-                            timelapseNumCount > (TIMELAPSE_NUM_START + TIMELAPSE_NUM_MAX)):
-                        logging.warning("TIMELAPSE_NUM_RECYCLE_ON=%s and Counter=%i Exceeds %i",
-                                        TIMELAPSE_NUM_RECYCLE_ON, timelapseNumCount,
-                                        TIMELAPSE_NUM_START + TIMELAPSE_NUM_MAX)
-                        logging.warning("Suppressing Further Timelapse Images")
-                        logging.warning("To RESET: Change %s Settings or Archive Images",
-                                        CONFIG_FILENAME)
-                        logging.warning("Then Delete %s and Restart %s \n",
-                                        NUM_PATH_TIMELAPSE, PROG_NAME)
-                        # Suppress further timelapse images
-                        take_timelapse = False
-                        stop_timelapse = True
-                if take_timelapse and (not stop_timelapse):
-                    # Reset the timelapse timer
-                    if MOTION_DOTS_ON and MOTION_TRACK_ON:
-                        # reset motion dots
-                        dotCount = show_dots(MOTION_DOTS_MAX + 2)
-                    else:
-                        print("")
-                    if PLUGIN_ON:
-                        if TIMELAPSE_EXIT_SEC > 0:
-                            exitSecProgress = (datetime.datetime.now() -
-                                               timelapseExitStart).total_seconds()
-                            logging.info("%s Sched TimeLapse  daymode=%s  Timer=%i sec"
-                                         "  ExitSec=%i/%i Status",
-                                         PLUGIN_NAME, daymode, TIMELAPSE_TIMER_SEC,
-                                         exitSecProgress, TIMELAPSE_EXIT_SEC)
-                        else:
-                            logging.info("%s Sched TimeLapse  daymode=%s"
-                                         "  Timer=%i sec  ExitSec=%i 0=Continuous",
-                                         PLUGIN_NAME, daymode,
-                                         TIMELAPSE_TIMER_SEC, TIMELAPSE_EXIT_SEC)
-                    else:
-                        if TIMELAPSE_EXIT_SEC > 0:
-                            exitSecProgress = (datetime.datetime.now() -
-                                               timelapseExitStart).total_seconds()
-                            logging.info("Sched TimeLapse  daymode=%s  Timer=%i sec"
-                                         "  ExitSec=%i/%i Status",
-                                         daymode, TIMELAPSE_TIMER_SEC,
-                                         exitSecProgress, TIMELAPSE_EXIT_SEC)
-                        else:
-                            logging.info("Sched TimeLapse  daymode=%s  Timer=%i sec"
-                                         "  ExitSec=%i 0=Continuous",
-                                         daymode, TIMELAPSE_TIMER_SEC,
-                                         TIMELAPSE_EXIT_SEC)
-                    tl_prefix = TIMELAPSE_PREFIX + IMAGE_NAME_PREFIX
-                    filename = get_image_filename(tlPath, tl_prefix,
-                                                  TIMELAPSE_NUM_ON,
-                                                  timelapseNumCount)
-                    if MOTION_TRACK_ON:
-                        logging.info("Stop Motion Tracking PiVideoStream ...")
-                        vs.stop()
-                        time.sleep(STREAM_STOP_SEC)
-                    # Time to take a Day or Night Time Lapse Image
-                    if TIMELAPSE_PANTILT_ON and PANTILT_ON:
-                        logging.info('Timelapse Pan Tilt at (%i, %i) cam_tl_pos %i/%i',
-                                     pan_x, tilt_y, cam_tl_pos, len(TIMELAPSE_PANTILT_STOPS))
-                        pantilthat.pan(pan_x)  # move pimoroni pantilt servos
-                        time.sleep(PANTILT_SLEEP_SEC)
-                        pantilthat.tilt(tilt_y)
-                        time.sleep(PANTILT_SLEEP_SEC)
-                    if daymode:
-                        take_day_image(filename, TIMELAPSE_CAM_SLEEP_SEC)
-                    else:
-                        take_night_image(filename, pixAve)
-                    timelapseNumCount = postImageProcessing(TIMELAPSE_NUM_ON,
-                                                            TIMELAPSE_NUM_START,
-                                                            TIMELAPSE_NUM_MAX,
-                                                            timelapseNumCount,
-                                                            TIMELAPSE_NUM_RECYCLE_ON,
-                                                            NUM_PATH_TIMELAPSE,
-                                                            filename, daymode)
-                    if TIMELAPSE_PANTILT_ON and PANTILT_ON:
-                        cam_tl_pos += 1
-                        if cam_tl_pos >= len(TIMELAPSE_PANTILT_STOPS):
-                            cam_tl_pos = 0
-                        pan_x, tilt_y = TIMELAPSE_PANTILT_STOPS[cam_tl_pos]
+#------------------------------------------------------------------------------
+def pantiltGoHome():
+    '''
+    Move pantilt to home position. If pantilt installed then this
+    can position pantilt to a home position for consistent
+    motion tracking and timelapse camera pointing.
+    '''
+    if PANTILT_ON:
+        pantilthat.pan(PANTILT_HOME[0])
+        time.sleep(PANTILT_SLEEP_SEC)
+        pantilthat.tilt(PANTILT_HOME[1])
+        time.sleep(PANTILT_SLEEP_SEC)
 
-                    if MOTION_TRACK_ON:
-                        logging.info("Restart Motion Tracking PiVideoStream ....")
-                        vs = PiVideoStream().start()
-                        vs.camera.rotation = IMAGE_ROTATION
-                        vs.camera.hflip = IMAGE_HFLIP
-                        vs.camera.vflip = IMAGE_VFLIP
-                        time.sleep(1)  # Allow camera to warm up and stream to start
+#------------------------------------------------------------------------------
+def addFilepathSeq(filepath, seq_num):
+    '''
+       Add a sequence number to the filename just prior to the image format extension.
+    '''
+    index = filepath.find(IMAGE_FORMAT)
+    seq_filepath = filepath[:index] + '-' + str(seq_num) + filepath[index:]
+    return seq_filepath
 
-                    if TIMELAPSE_RECENT_MAX > 0:
-                        saveRecent(TIMELAPSE_RECENT_MAX, TIMELAPSE_RECENT_DIR,
-                                   filename, tl_prefix)
-                    if TIMELAPSE_MAX_FILES > 0:
-                        deleteOldFiles(TIMELAPSE_MAX_FILES, TIMELAPSE_DIR,
-                                       tl_prefix)
-                    dotCount = show_dots(MOTION_DOTS_MAX)
+#------------------------------------------------------------------------------
+def takePantiltSequence(filename, daymode, pix_ave, num_count, num_path):
+    '''
+    Take a sequence of images based on a list of pantilt positions
+    '''
+    logging.info('... Start')
+    if MOTION_TRACK_PANTILT_SEQ_ON:
+        motion_prefix = MOTION_PREFIX + IMAGE_NAME_PREFIX
+    pantilt_seq_image_num = 0   # initialize counter to ensure each image filename is unique
+    for cam_pos in PANTILT_SEQ_STOPS:   # take images at each specified stop
+        pantilt_seq_image_num += 1 # Set image numbering for this image
+        seq_filepath = addFilepathSeq(filename, pantilt_seq_image_num)
+        pan_x, tilt_y = cam_pos # set pan tilt values for this image
+        pantilthat.pan(pan_x)
+        pantilthat.tilt(tilt_y)
+        time.sleep(PANTILT_SLEEP_SEC)
+        if daymode:
+            takeDayImage(seq_filepath, TIMELAPSE_CAM_SLEEP_SEC)
+        else:
+            if not PANTILT_SEQ_DAYONLY_ON:
+                takeNightImage(seq_filepath, pix_ave)
+        logging.info('Size %ix%i Saved %s at cam_pos(%i, %i)',
+                     image_width, image_height,
+                     seq_filepath,
+                     pan_x, tilt_y)
+        if MOTION_TRACK_PANTILT_SEQ_ON:
+            postImageProcessing(MOTION_NUM_ON,
+                                MOTION_NUM_START,
+                                MOTION_NUM_MAX,
+                                num_count,
+                                MOTION_NUM_RECYCLE_ON,
+                                NUM_PATH_MOTION,
+                                seq_filepath, daymode)
+            saveRecent(MOTION_NUM_MAX, MOTION_RECENT_DIR,
+                       seq_filepath, MOTION_PREFIX)
 
-                    tlPath = subDirChecks(TIMELAPSE_SUBDIR_MAX_HOURS,
-                                          TIMELAPSE_SUBDIR_MAX_FILES,
-                                          TIMELAPSE_DIR, TIMELAPSE_PREFIX)
-                    next_timelapse_time = timelapse_timer + datetime.timedelta(seconds=TIMELAPSE_TIMER_SEC)
-                    next_timelapse_at = ("%02d:%02d:%02d" % (next_timelapse_time.hour,
-                                                             next_timelapse_time.minute,
-                                                             next_timelapse_time.second))
-                    logging.info('Next Timelapse at %s  Waiting ...',
-                                 next_timelapse_at)
-                    pantilt_go_home()
+        elif PANTILT_SEQ_ON:
+            postImageProcessing(PANTILT_SEQ_NUM_ON,
+                                PANTILT_SEQ_NUM_START,
+                                PANTILT_SEQ_NUM_MAX,
+                                num_count,
+                                PANTILT_SEQ_NUM_RECYCLE_ON,
+                                NUM_PATH_PANTILT_SEQ,
+                                seq_filepath, daymode)
+            saveRecent(PANTILT_SEQ_NUM_MAX, PANTILT_SEQ_RECENT_DIR,
+                       seq_filepath, PANTILT_IMAGE_SEQ_PREFIX)
+    num_count +=1
 
-            if PANTILT_ON and PANO_ON:
-                # force a pano on first startup then go by timer.
-                if first_pano:
-                    first_pano = False
-                    start_pano = True
-                    pano_seq_num = get_current_count(NUM_PATH_PANO,
-                                                     PANO_NUM_START)
-                    pano_timer = datetime.datetime.now()
-                else:
-                    # Check if pano timer expired and if so start a pano sequence
-                    pano_timer, start_pano = check_timer(pano_timer, PANO_TIMER_SEC)
+    pantiltGoHome()  # Center pantilt
+    logging.info('... End')
+    return num_count
 
-                if start_pano:
-                     if (PANO_DAYONLY_ON and daymode) or not PANO_DAYONLY_ON:
-                          if MOTION_TRACK_ON:
-                               logging.info("Stop Motion Tracking PiVideoStream ...")
-                               vs.stop()
-                               time.sleep(STREAM_STOP_SEC)
-                          pano_seq_num = take_pano(pano_seq_num)
-                          if MOTION_TRACK_ON:
-                               logging.info("Restart Motion Tracking PiVideoStream ....")
-                               vs = PiVideoStream().start()
-                               vs.camera.rotation = IMAGE_ROTATION
-                               vs.camera.hflip = IMAGE_HFLIP
-                               vs.camera.vflip = IMAGE_VFLIP
-                               time.sleep(1)
-                     else:
-                          logging.info('Pano Turned Off During Night per PANO_DAYONLY_ON=%s',
-                                       PANO_DAYONLY_ON)
+#------------------------------------------------------------------------------
+def takePano(pano_seq_num, daymode, pix_ave):
+    '''
+    Take a series of overlapping images using pantilt at specified PANO_CAM_STOPS
+    then attempt to stitch the images into one panoramic image. Note this
+    will take time so depending on number of cpu cores and speed. The PANO_TIMER
+    should be set to avoid multiple stitching operations at once.
+    use htop or top to check stitching PID activity.
 
-                     next_pano_time = pano_timer + datetime.timedelta(seconds=PANO_TIMER_SEC)
-                     next_pano_at = ("%02d:%02d:%02d" % (next_pano_time.hour,
-                                                         next_pano_time.minute,
-                                                         next_pano_time.second))
-                     logging.info('Next Pano at %s  Waiting ...',
-                                   next_pano_at)
+    Successfuly Stitching needs good lighting so it should be restricted to
+    day light hours or sufficient indoor lighting.
+    Review pano source image overlap using webserver. Adjust pano stops accordingly.
+    '''
+    print("")
+    logging.info('Start timer=%i sec  pano_seq_num=%s',
+                 PANO_TIMER_SEC, pano_seq_num)
 
+    pano_image_num = 0     # initialize counter to ensure each image filename is unique
+    pano_image_files = ''  # string of contatenated image input pano filenames for stitch command line
+    pano_file_path = os.path.join(PANO_DIR,
+                                  PANO_IMAGE_PREFIX +
+                                  IMAGE_NAME_PREFIX +
+                                  str(pano_seq_num) +
+                                  IMAGE_FORMAT)
 
-            if MOTION_TRACK_ON and checkSchedStart(startMO) and takeMotion and (not stopMotion):
-                # IMPORTANT - Night motion tracking may not work very well
-                #             due to long exposure times and low light
-                image2 = vs.read()
-                grayimage2 = cv2.cvtColor(image2, cv2.COLOR_BGR2GRAY)
-                movePoint1 = get_track_point(grayimage1, grayimage2)
-                grayimage1 = grayimage2
-                if movePoint1 and not startTrack:
-                    startTrack = True
-                    trackTimeout = time.time()
-                    startPos = movePoint1
-                image2 = vs.read()
-                grayimage2 = cv2.cvtColor(image2, cv2.COLOR_BGR2GRAY)
-                movePoint2 = get_track_point(grayimage1, grayimage2)
-                if movePoint2 and startTrack:   # Two sets of movement required
-                    trackLen = track_distance(startPos, movePoint2)
-                    # wait until track well started
-                    if trackLen > TRACK_TRIG_LEN_MIN:
-                        # Reset tracking timer object moved
-                        trackTimeout = time.time()
-                        if MOTION_TRACK_INFO_ON:
-                            logging.info("Track Progress From(%i,%i) To(%i,%i) trackLen=%i/%i px",
-                                         startPos[0], startPos[1],
-                                         movePoint2[0], movePoint2[1],
-                                         trackLen, TRACK_TRIG_LEN)
-                    # Track length triggered
-                    if trackLen >= TRACK_TRIG_LEN:
-                        # reduce chance of two objects at different positions
-                        if trackLen >= TRACK_TRIG_LEN_MAX:
-                            motionFound = False
-                            if MOTION_TRACK_INFO_ON:
-                                logging.info("TrackLen %i px Exceeded %i px Max Trig Len Allowed.",
-                                             trackLen, TRACK_TRIG_LEN_MAX)
-                        else:
-                            motionFound = True
-                            if PLUGIN_ON:
-                                logging.info("%s Motion Triggered Start(%i,%i)"
-                                             "  End(%i,%i) trackLen=%.i/%i px",
-                                             PLUGIN_NAME, startPos[0], startPos[1],
-                                             movePoint2[0], movePoint2[1],
-                                             trackLen, TRACK_TRIG_LEN)
-                            else:
-                                logging.info("Motion Triggered Start(%i,%i)"
-                                             "  End(%i,%i) trackLen=%i/%i px",
-                                             startPos[0], startPos[1],
-                                             movePoint2[0], movePoint2[1],
-                                             trackLen, TRACK_TRIG_LEN)
-                        image1 = vs.read()
-                        image2 = image1
-                        grayimage1 = cv2.cvtColor(image1, cv2.COLOR_BGR2GRAY)
-                        grayimage2 = grayimage1
-                        startTrack = False
-                        startPos = []
-                        trackLen = 0.0
-                # Track timed out
-                if (time.time() - trackTimeout > trackTimer) and startTrack:
-                    image1 = vs.read()
-                    image2 = image1
-                    grayimage1 = cv2.cvtColor(image1, cv2.COLOR_BGR2GRAY)
-                    grayimage2 = grayimage1
-                    if MOTION_TRACK_INFO_ON:
-                        logging.info("Track Timer %.2f sec Exceeded. Reset Track",
-                                     trackTimer)
-                    startTrack = False
-                    startPos = []
-                    trackLen = 0.0
-                if MOTION_FORCE_SEC > 0:
-                    motion_force_timer, motion_force_start = check_timer(motion_force_timer,
-                                                                         MOTION_FORCE_SEC)
-                else:
-                    motion_force_start = False
+    for cam_pos in PANO_CAM_STOPS:   # take images at each specified stop
+        pano_image_num += 1 # Set image numbering for this image
+        pan_x, tilt_y = cam_pos # set pan tilt values for this image
+        pano_filename = os.path.join(PANO_IMAGES_DIR,
+                                     PANO_IMAGE_PREFIX +
+                                     IMAGE_NAME_PREFIX +
+                                     str(pano_seq_num) +
+                                     '-' + str(pano_image_num) +
+                                     IMAGE_FORMAT)
+        pano_image_files += ' ' + pano_filename
+        pantilthat.pan(pan_x)
+        pantilthat.tilt(tilt_y)
+        if pano_seq_num == 1:
+            time.sleep(0.3)
+        time.sleep(PANTILT_SLEEP_SEC)
+        if daymode:
+            takeDayImage(pano_filename, TIMELAPSE_CAM_SLEEP_SEC)
+        else:
+            if not PANO_DAYONLY_ON:
+                takeNightImage(pano_filename, pix_ave)
+        logging.info('Size %ix%i Saved %s at cam_pos(%i, %i)',
+                     image_width, image_height,
+                     pano_filename,
+                     pan_x, tilt_y)
+    # Center pantilt
+    pantiltGoHome()
+    logging.info("End")
 
-                if motion_force_start:
-                    image1 = vs.read()
-                    image2 = image1
-                    grayimage1 = cv2.cvtColor(image1, cv2.COLOR_BGR2GRAY)
-                    grayimage2 = grayimage1
-                    grayimage2 = grayimage1
-                    dotCount = show_dots(MOTION_DOTS_MAX + 2) # New Line
-                    logging.info("No Motion Detected for %s minutes. "
-                                 "Taking Forced Motion Image.",
-                                 (MOTION_FORCE_SEC / 60))
-                if motionFound or motion_force_start:
-                    motion_prefix = MOTION_PREFIX + IMAGE_NAME_PREFIX
-                    if MOTION_TRACK_QUICK_PIC_ON:  # Do not stop PiVideoStream
-                        filename = get_image_filename(moPath,
-                                                      motion_prefix,
-                                                      MOTION_NUM_ON,
-                                                      motionNumCount)
-                        take_mo_quick_pic(image2, filename)
-                        motionNumCount = postImageProcessing(MOTION_NUM_ON,
-                                                             MOTION_NUM_START,
-                                                             MOTION_NUM_MAX,
-                                                             motionNumCount,
-                                                             MOTION_NUM_RECYCLE_ON,
-                                                             NUM_PATH_MOTION,
-                                                             filename, daymode)
-                        if MOTION_RECENT_MAX > 0:
-                            saveRecent(MOTION_RECENT_MAX,
-                                       MOTION_RECENT_DIR,
-                                       filename,
-                                       motion_prefix)
-                    else:
-                        if MOTION_TRACK_ON:
-                            logging.info("Stop PiVideoStream ...")
-                            vs.stop()
-                            time.sleep(STREAM_STOP_SEC)
+    if not os.path.isfile(PANO_PROG_PATH):
+        logging.error('Cannot Find Pano Executable File at %s', PANO_PROG_PATH)
+        logging.info('Please run menubox.sh UPGRADE to correct problem')
+        logging.warning('Exiting - Cannot Run Image Stitching of Images.')
+        return
+    if not os.path.isfile('./config.cfg'):
+        logging.error('Cannot Find ./config.cfg required for %s', PANO_PROG_PATH)
+        logging.info('Please run menubox.sh UPGRADE to correct problem')
+        logging.warning('Exiting - Cannot Run Image Stitching of Images.')
+        return
 
-                        # check if motion Quick Time Lapse option is On.
-                        # This option supersedes MOTION_VIDEO_ON
-                        if MOTION_TRACK_MINI_TL_ON and daymode:
-                            filename = get_image_filename(moPath,
-                                                          motion_prefix,
-                                                          MOTION_NUM_ON,
-                                                          motionNumCount)
-                            with picamera.PiCamera() as camera:
-                                camera.resolution = (image_width, image_height)
-                                camera.vflip = IMAGE_VFLIP
-                                camera.hflip = IMAGE_HFLIP
-                                # valid rotation values 0, 90, 180, 270
-                                camera.rotation = IMAGE_ROTATION
-                                time.sleep(MOTION_CAM_SLEEP)
-                                # This uses yield to loop through time lapse
-                                # sequence but does not seem to be faster
-                                # due to writing images
-                                camera.capture_sequence(take_mo_mini_timelapse(moPath,
-                                                                               motion_prefix,
-                                                                               MOTION_NUM_ON,
-                                                                               motionNumCount,
-                                                                               daymode,
-                                                                               NUM_PATH_MOTION))
-                                camera.close()
-                                motionNumCount = get_current_count(NUM_PATH_MOTION,
-                                                                   MOTION_NUM_START)
-                        else:
-                            if MOTION_VIDEO_ON:
-                                filename = getVideoName(MOTION_PATH,
-                                                        motion_prefix,
-                                                        MOTION_NUM_ON,
-                                                        motionNumCount)
-                                take_mo_video(filename, MOTION_VIDEO_TIMER_SEC,
-                                          MOTION_VIDEO_FPS)
-                            else:
-                                filename = get_image_filename(moPath,
-                                                              motion_prefix,
-                                                              MOTION_NUM_ON,
-                                                              motionNumCount)
-                                if daymode:
-                                    take_day_image(filename, MOTION_CAM_SLEEP)
-                                else:
-                                    take_night_image(filename, pixAve)
-                            motionNumCount = postImageProcessing(MOTION_NUM_ON,
-                                                                 MOTION_NUM_START,
-                                                                 MOTION_NUM_MAX,
-                                                                 motionNumCount,
-                                                                 MOTION_NUM_RECYCLE_ON,
-                                                                 NUM_PATH_MOTION,
-                                                                 filename,
-                                                                 daymode)
-                            logging.info("Waiting for Next Motion Tracking Event ...")
-                            if MOTION_RECENT_MAX > 0:
-                                if not MOTION_VIDEO_ON:
-                                   # prevent h264 video files from
-                                   # being copied to recent
-                                    saveRecent(MOTION_RECENT_MAX,
-                                               MOTION_RECENT_DIR,
-                                               filename,
-                                               motion_prefix)
-                        if MOTION_TRACK_ON:
-                            logging.info("Restart PiVideoStream ....")
-                            vs = PiVideoStream().start()
-                            vs.camera.rotation = IMAGE_ROTATION
-                            vs.camera.hflip = IMAGE_HFLIP
-                            vs.camera.vflip = IMAGE_VFLIP
-                            time.sleep(1)
-                            image1 = vs.read()
-                            image2 = image1
-                            grayimage1 = cv2.cvtColor(image1, cv2.COLOR_BGR2GRAY)
-                            grayimage2 = grayimage1
-                            trackLen = 0.0
-                            trackTimeout = time.time()
-                            startPos = []
-                            startTrack = False
-                    pantilt_go_home()
-                    moPath = subDirChecks(MOTION_SUBDIR_MAX_HOURS,
-                                          MOTION_SUBDIR_MAX_FILES,
-                                          MOTION_DIR, MOTION_PREFIX)
-
-                    if motionFound and motionCode:
-                        # ===========================================
-                        # Put your user code in userMotionCode() function
-                        # In the File user_motion_code.py
-                        # ===========================================
-                        try:
-                            user_motion_code.userMotionCode(filename)
-                            dotCount = show_dots(MOTION_DOTS_MAX)
-                        except ValueError:
-                            logging.error("Problem running userMotionCode function from File %s",
-                                          userMotionFilePath)
-                else:
-                    # show progress dots when no motion found
-                    dotCount = show_dots(dotCount)
+    # Create the stitch command line string
+    stitch_cmd = PANO_PROG_PATH + ' ' + pano_file_path + pano_image_files
+    try:
+        logging.info("Run Image Stitching Command per Below")
+        print("%s" % stitch_cmd)
+        # spawn stitch command with parameters as seperate task
+        proc = subprocess.Popen(stitch_cmd, shell=True, stdin=None,
+                                stdout=None, stderr=None, close_fds=True)
+    except IOError:
+        logging.error("Failed subprocess %s", stitch_cmd)
+    pano_seq_num += 1
+    if PANO_NUM_RECYCLE and PANO_NUM_MAX > 0:
+        if pano_seq_num > PANO_NUM_START + PANO_NUM_MAX:
+            logging.info('PANO_NUM_RECYCLE Activated. Reset pano_seq_num to %i',
+                         PANO_NUM_START)
+            pano_seq_num = PANO_NUM_START
+    writeCounter(pano_seq_num, NUM_PATH_PANO)
+    return pano_seq_num
 
 #------------------------------------------------------------------------------
 def videoRepeat():
@@ -2355,8 +1874,8 @@ def videoRepeat():
     print("--------------------------------------------------------------------")
     print("VideoRepeat . VIDEO_REPEAT_ON=%s" % VIDEO_REPEAT_ON)
     print("   Info ..... Size=%ix%i  VIDEO_PREFIX=%s  VIDEO_FILE_SEC=%i seconds  VIDEO_FPS=%i"
-          % (image_width, image_height, VIDEO_PREFIX, VIDEO_FILE_SEC, VIDEO_FPS))
-    print("   Vid Path . VIDEO_DIR=%s" % VIDEO_DIR)
+          % (VIDEO_REPEAT_WIDTH, VIDEO_REPEAT_HEIGHT, VIDEO_PREFIX, VIDEO_FILE_SEC, VIDEO_FPS))
+    print("   Vid Path . VIDEO_DIR= %s" % VIDEO_DIR)
     print("   Sched .... VIDEO_START_AT=%s blank=Off or Set Valid Date and/or Time to Start Sequence"
           % VIDEO_START_AT)
     print("   Timer .... VIDEO_SESSION_MIN=%i minutes  0=Continuous" % VIDEO_SESSION_MIN)
@@ -2368,7 +1887,7 @@ def videoRepeat():
           % VIDEO_REPEAT_ON)
     startVideoRepeat = getSchedStart(VIDEO_START_AT)
     if not checkSchedStart(startVideoRepeat):
-        logging.info('Video Repeat: VIDEO_START_AT = "%s" ', VIDEO_START_AT)
+        logging.info('VIDEO_START_AT = "%s" ', VIDEO_START_AT)
         logging.info("Video Repeat: Sched Start Set For %s  Please Wait ...",
                      startVideoRepeat)
         while not checkSchedStart(startVideoRepeat):
@@ -2386,7 +1905,7 @@ def videoRepeat():
             lastSpaceCheck = freeDiskSpaceCheck(lastSpaceCheck)
         filename = getVideoName(VIDEO_DIR, VIDEO_PREFIX,
                                 VIDEO_NUM_ON, videoNumCounter)
-        take_mo_video(filename, VIDEO_FILE_SEC, VIDEO_FPS)
+        takeVideo(filename, VIDEO_FILE_SEC, VIDEO_REPEAT_WIDTH, VIDEO_REPEAT_HEIGHT, VIDEO_FPS)
         timeUsed = (datetime.datetime.now() - videoStartTime).total_seconds()
         timeRemaining = (VIDEO_SESSION_MIN*60 - timeUsed) / 60.0
         videoCount += 1
@@ -2428,6 +1947,565 @@ def videoRepeat():
                  videoCount, VIDEO_DIR)
 
 #------------------------------------------------------------------------------
+def timolo():
+    '''
+    Main motion and or motion tracking
+    initialization and logic loop
+    '''
+    # Counter for showDots() display if not motion found
+    # shows system is working
+
+    cam_tl_pos = 0    # PANTILT_SEQ_STOPS List Start position of pantilt
+    pan_x, tilt_y = PANTILT_SEQ_STOPS[cam_tl_pos]
+    dotCount = 0
+    checkMediaPaths()
+    timelapseNumCount = 0
+    motionNumCount = 0
+
+    tlstr = ""  # Used to display if timelapse is selected
+    mostr = ""  # Used to display if motion is selected
+    moCnt = "non"
+    tlCnt = "non"
+
+    daymode = False # Keep track of night and day based on dayPixAve
+
+    motionFound = False
+    take_timelapse = True
+    stop_timelapse = False
+    takeMotion = True
+    stopMotion = False
+
+    # Initialize some Timers
+    pix_ave_timer = datetime.datetime.now()
+    pantilt_seq_timer = datetime.datetime.now()
+    motion_force_timer = datetime.datetime.now()
+    timelapseExitStart = datetime.datetime.now()
+    startTL = getSchedStart(TIMELAPSE_START_AT)
+    startMO = getSchedStart(MOTION_START_AT)
+    trackLen = 0.0
+    if SPACE_TIMER_HOURS > 0:
+        lastSpaceCheck = datetime.datetime.now()
+    if TIMELAPSE_ON:
+        tlstr = "TimeLapse"
+        # Check if timelapse subDirs reqd and create one if non exists
+        tlPath = subDirChecks(TIMELAPSE_SUBDIR_MAX_HOURS,
+                              TIMELAPSE_SUBDIR_MAX_FILES,
+                              TIMELAPSE_DIR, TIMELAPSE_PREFIX)
+        if TIMELAPSE_NUM_ON:
+            timelapseNumCount = getCurrentCount(NUM_PATH_TIMELAPSE,
+                                                TIMELAPSE_NUM_START)
+            tlCnt = str(timelapseNumCount)
+    else:
+        logging.warning("Timelapse is Suppressed per TIMELAPSE_ON=%s",
+                        TIMELAPSE_ON)
+        stop_timelapse = True
+
+    if MOTION_TRACK_ON:
+        logging.info("Start PiVideoStream ....")
+        vs = PiVideoStream().start()
+        vs.camera.rotation = IMAGE_ROTATION
+        vs.camera.hflip = IMAGE_HFLIP
+        vs.camera.vflip = IMAGE_VFLIP
+        time.sleep(2)
+        mostr = "Motion Tracking"
+        # Check if motion subDirs required and
+        # create one if required and non exists
+        moPath = subDirChecks(MOTION_SUBDIR_MAX_HOURS,
+                              MOTION_SUBDIR_MAX_FILES,
+                              MOTION_DIR,
+                              MOTION_PREFIX)
+        if MOTION_NUM_ON:
+            motionNumCount = getCurrentCount(NUM_PATH_MOTION,
+                                             MOTION_NUM_START)
+            moCnt = str(motionNumCount)
+        trackTimeout = time.time()
+        trackTimer = TRACK_TIMEOUT
+        startPos = []
+        startTrack = False
+        image1 = vs.read()
+        image2 = vs.read()
+        pixAve = getStreamPixAve(image2)
+        grayimage1 = cv2.cvtColor(image1, cv2.COLOR_BGR2GRAY)
+        daymode = checkIfDayStream(daymode, image2)
+        #pixAve = getStreamPixAve(image2)
+    else:
+        vs = PiVideoStream().start()
+        time.sleep(0.5)
+        image2 = vs.read()  # use video stream to check for pixAve & daymode
+        #pixAve = getStreamPixAve(image2)
+        pixAve = getStreamPixAve(image2)
+        daymode = checkIfDayStream(daymode, image2)
+        vs.stop()
+        logging.info("Motion Tracking is Suppressed per variable MOTION_TRACK_ON=%s",
+                     MOTION_TRACK_ON)
+        stopMotion = True
+
+    if TIMELAPSE_ON and MOTION_TRACK_ON:
+        tlstr = " and " + tlstr
+    displayInfo(moCnt, tlCnt)  # Display config.py settings
+
+    if LOG_TO_FILE_ON:
+        logging.info("LOG_TO_FILE_ON=%s Logging to Console Disabled.",
+                     LOG_TO_FILE_ON)
+        logging.info("Sending Console Messages to %s", LOG_FILE_PATH)
+        logging.info("Entering Loop for %s%s", mostr, tlstr)
+    else:
+        if PLUGIN_ON:
+            logging.info("plugin %s - Start %s%s Loop ...",
+                         PLUGIN_NAME, mostr, tlstr)
+        else:
+            logging.info("Start %s%s Loop ... ctrl-c Exits", mostr, tlstr)
+    if MOTION_TRACK_ON and not checkSchedStart(startMO):
+        logging.info('Motion Track: MOTION_START_AT = "%s"', MOTION_START_AT)
+        logging.info("Motion Track: Sched Start Set For %s  Please Wait ...",
+                     startMO)
+    if TIMELAPSE_ON and not checkSchedStart(startTL):
+        logging.info('Timelapse   : TIMELAPSE_START_AT = "%s"', TIMELAPSE_START_AT)
+        logging.info("Timelapee   : Sched Start Set For %s  Please Wait ...",
+                     startTL)
+    logging.info("daymode=%s  MOTION_DOTS_ON=%s ", daymode, MOTION_DOTS_ON)
+    dotCount = showDots(MOTION_DOTS_MAX)  # reset motion dots
+    # Check to make sure PANTILT_ON is enabled if required.
+    if PANTILT_SEQ_ON and not PANTILT_ON:
+        logging.warning("PANTILT_SEQ_ON=True but PANTILT_ON=False (Suggest you Enable PANTILT_ON=True)")
+    if PANO_ON and not PANTILT_ON:
+        logging.warning("PANO_ON=True but PANTILT_ON=False (Suggest you Enable PANTILT_ON=True)")
+    if ((MOTION_TRACK_PANTILT_SEQ_ON and MOTION_TRACK_ON) and not PANTILT_ON):
+        logging.warning("MOTION_TRACK_PANTILT_SEQ_ON=True but PANTILT_ON=False (Suggest you Enable PANTILT_ON=True)")
+    first_pano = True  # Force a pano sequence on startup
+    firstTimeLapse = True  # Force a timelapse on startup
+    while True:  # Start main program Loop.
+        motionFound = False
+        if (MOTION_TRACK_ON and (not MOTION_NUM_RECYCLE_ON)
+                and (motionNumCount > MOTION_NUM_START + MOTION_NUM_MAX)
+                and (not stopMotion)):
+            logging.warning("MOTION_NUM_RECYCLE_ON=%s and motionNumCount %i Exceeds %i",
+                            MOTION_NUM_RECYCLE_ON, motionNumCount,
+                            MOTION_NUM_START + MOTION_NUM_MAX)
+            logging.warning("Suppressing Further Motion Tracking")
+            logging.warning("To Reset: Change %s Settings or Archive Images",
+                            CONFIG_FILENAME)
+            logging.warning("Then Delete %s and Restart %s \n",
+                            NUM_PATH_MOTION, PROG_NAME)
+            takeMotion = False
+            stopMotion = True
+        if stop_timelapse and stopMotion and not PANO_ON and not VIDEO_REPEAT_ON:
+            logging.warning("NOTICE: Motion, Timelapse, Pano and Video Repeat are Disabled")
+            logging.warning("per Num Recycle=False and "
+                            "Max Counter Reached or TIMELAPSE_EXIT_SEC Settings")
+            logging.warning("Change %s Settings or Archive/Save Media Then",
+                            CONFIG_FILENAME)
+            logging.warning("Delete appropriate .dat File(s) to Reset Counter(s)")
+            logging.warning("Exiting %s %s \n", PROG_NAME, PROG_VER)
+            sys.exit(1)
+        # if required check free disk space and delete older files (jpg)
+        if SPACE_TIMER_HOURS > 0:
+            lastSpaceCheck = freeDiskSpaceCheck(lastSpaceCheck)
+        # use image2 to check daymode as image1 may be average
+        # that changes slowly, and image1 may not be updated
+        if MOTION_TRACK_ON:
+            if daymode != checkIfDayStream(daymode, image2):
+                daymode = not daymode
+                image2 = vs.read()
+                image1 = image2
+            else:
+                image2 = vs.read()
+        elif TIMELAPSE_ON:
+            vs = PiVideoStream().start()
+            time.sleep(0.5)
+            image2 = vs.read()  # use video stream to check for daymode
+            vs.stop()
+        # check the timer for measuring pixel average of stream image frame
+        pix_ave_timer, take_pix_ave = checkTimer(pix_ave_timer,
+                                                 IMAGE_PIX_AVE_TIMER_SEC)
+        if take_pix_ave:
+            pixAve = getStreamPixAve(image2)
+            daymode = checkIfDayStream(daymode, image2)
+            if daymode != checkIfDayStream(daymode, image2):
+                daymode = not daymode
+        if not daymode and TIMELAPSE_ON:
+            time.sleep(0.02)  # short delay to aviod high cpu usage at night
+
+        # Don't take images if IMAGE_NO_NIGHT_SHOTS
+        # or IMAGE_NO_DAY_SHOTS settings are True
+        if not timeToSleep(daymode):
+            # Check if it is time for pantilt sequence
+            if PANTILT_ON and PANTILT_SEQ_ON:
+                pantilt_seq_timer, take_pantilt_sequence = checkTimer(pantilt_seq_timer,
+                                                                      PANTILT_SEQ_TIMER_SEC)
+                if take_pantilt_sequence:
+                    if MOTION_TRACK_ON:
+                        vs.stop()
+                        time.sleep(STREAM_STOP_SEC)
+                    seq_prefix = PANTILT_SEQ_IMAGE_PREFIX + IMAGE_NAME_PREFIX
+                    seq_num_count = getCurrentCount(NUM_PATH_PANTILT_SEQ,
+                                                    PANTILT_SEQ_NUM_START)
+                    filename = getImageFilename(PANTILT_SEQ_IMAGES_DIR,
+                                                seq_prefix,
+                                                PANTILT_SEQ_NUM_ON,
+                                                seq_num_count)
+                    seq_num_count = takePantiltSequence(filename, daymode, pixAve,
+                                                        seq_num_count, NUM_PATH_PANTILT_SEQ)
+                    if MOTION_TRACK_ON:
+                        vs = PiVideoStream().start()
+                        vs.camera.rotation = IMAGE_ROTATION
+                        vs.camera.hflip = IMAGE_HFLIP
+                        vs.camera.vflip = IMAGE_VFLIP
+                        time.sleep(1)  # Allow camera to warm up and stream to start
+                    next_seq_time = pantilt_seq_timer + datetime.timedelta(seconds=PANTILT_SEQ_TIMER_SEC)
+                    next_seq_at = ("%02d:%02d:%02d" % (next_seq_time.hour,
+                                                       next_seq_time.minute,
+                                                       next_seq_time.second))
+                    logging.info('Next Pantilt sequence at %s  Waiting ...', next_seq_at)
+
+            # Process Timelapse events per timers
+            if TIMELAPSE_ON and checkSchedStart(startTL):
+                # Check for a scheduled date/time to start timelapse
+                if firstTimeLapse:
+                    timelapse_timer = datetime.datetime.now()
+                    firstTimeLapse = False
+                    take_timelapse = True
+                else:
+                    timelapse_timer, take_timelapse = checkTimer(timelapse_timer,
+                                                                 TIMELAPSE_TIMER_SEC)
+                if ((not stop_timelapse) and take_timelapse and
+                        TIMELAPSE_EXIT_SEC > 0):
+                    if ((datetime.datetime.now() -
+                         timelapseExitStart).total_seconds() >
+                            TIMELAPSE_EXIT_SEC):
+                        logging.info("TIMELAPSE_EXIT_SEC=%i Exceeded.",
+                                     TIMELAPSE_EXIT_SEC)
+                        logging.info("Suppressing Further Timelapse Images")
+                        logging.info("To RESET: Restart %s to Restart "
+                                     "TIMELAPSE_EXIT_SEC Timer. \n", PROG_NAME)
+                        # Suppress further timelapse images
+                        take_timelapse = False
+                        stop_timelapse = True
+                if ((not stop_timelapse) and TIMELAPSE_NUM_ON
+                        and (not TIMELAPSE_NUM_RECYCLE_ON)):
+                    if (TIMELAPSE_NUM_MAX > 0 and
+                            timelapseNumCount > (TIMELAPSE_NUM_START + TIMELAPSE_NUM_MAX)):
+                        logging.warning("TIMELAPSE_NUM_RECYCLE_ON=%s and Counter=%i Exceeds %i",
+                                        TIMELAPSE_NUM_RECYCLE_ON, timelapseNumCount,
+                                        TIMELAPSE_NUM_START + TIMELAPSE_NUM_MAX)
+                        logging.warning("Suppressing Further Timelapse Images")
+                        logging.warning("To RESET: Change %s Settings or Archive Images",
+                                        CONFIG_FILENAME)
+                        logging.warning("Then Delete %s and Restart %s \n",
+                                        NUM_PATH_TIMELAPSE, PROG_NAME)
+                        # Suppress further timelapse images
+                        take_timelapse = False
+                        stop_timelapse = True
+                if take_timelapse and (not stop_timelapse):
+                    # Reset the timelapse timer
+                    if MOTION_DOTS_ON and MOTION_TRACK_ON:
+                        # reset motion dots
+                        dotCount = showDots(MOTION_DOTS_MAX + 2)
+                    else:
+                        print("")
+                    if PLUGIN_ON:
+                        if TIMELAPSE_EXIT_SEC > 0:
+                            exitSecProgress = (datetime.datetime.now() -
+                                               timelapseExitStart).total_seconds()
+                            logging.info("%s Sched TimeLapse  daymode=%s  Timer=%i sec"
+                                         "  ExitSec=%i/%i Status",
+                                         PLUGIN_NAME, daymode, TIMELAPSE_TIMER_SEC,
+                                         exitSecProgress, TIMELAPSE_EXIT_SEC)
+                        else:
+                            logging.info("%s Sched TimeLapse  daymode=%s"
+                                         "  Timer=%i sec  ExitSec=%i 0=Continuous",
+                                         PLUGIN_NAME, daymode,
+                                         TIMELAPSE_TIMER_SEC, TIMELAPSE_EXIT_SEC)
+                    else:
+                        if TIMELAPSE_EXIT_SEC > 0:
+                            exitSecProgress = (datetime.datetime.now() -
+                                               timelapseExitStart).total_seconds()
+                            logging.info("Sched TimeLapse  daymode=%s  Timer=%i sec"
+                                         "  ExitSec=%i/%i Status",
+                                         daymode, TIMELAPSE_TIMER_SEC,
+                                         exitSecProgress, TIMELAPSE_EXIT_SEC)
+                        else:
+                            logging.info("Sched TimeLapse  daymode=%s  Timer=%i sec"
+                                         "  ExitSec=%i 0=Continuous",
+                                         daymode, TIMELAPSE_TIMER_SEC,
+                                         TIMELAPSE_EXIT_SEC)
+                    tl_prefix = TIMELAPSE_PREFIX + IMAGE_NAME_PREFIX
+                    filename = getImageFilename(tlPath, tl_prefix,
+                                                TIMELAPSE_NUM_ON,
+                                                timelapseNumCount)
+
+                    if MOTION_TRACK_ON:
+                        logging.info("Stop Motion Tracking PiVideoStream ...")
+                        vs.stop()
+                        time.sleep(STREAM_STOP_SEC)
+                    # Time to take a Day or Night Time Lapse Image
+
+                    if daymode:
+                        takeDayImage(filename, TIMELAPSE_CAM_SLEEP_SEC)
+                    else:
+                        takeNightImage(filename, pixAve)
+                    timelapseNumCount = postImageProcessing(TIMELAPSE_NUM_ON,
+                                                            TIMELAPSE_NUM_START,
+                                                            TIMELAPSE_NUM_MAX,
+                                                            timelapseNumCount,
+                                                            TIMELAPSE_NUM_RECYCLE_ON,
+                                                            NUM_PATH_TIMELAPSE,
+                                                            filename, daymode)
+                    saveRecent(TIMELAPSE_RECENT_MAX, TIMELAPSE_RECENT_DIR,
+                               filename, tl_prefix)
+
+                    if MOTION_TRACK_ON:
+                        logging.info("Restart Motion Tracking PiVideoStream ....")
+                        vs = PiVideoStream().start()
+                        vs.camera.rotation = IMAGE_ROTATION
+                        vs.camera.hflip = IMAGE_HFLIP
+                        vs.camera.vflip = IMAGE_VFLIP
+                        time.sleep(1)  # Allow camera to warm up and stream to start
+
+                    if TIMELAPSE_MAX_FILES > 0:
+                        deleteOldFiles(TIMELAPSE_MAX_FILES, TIMELAPSE_DIR,
+                                       tl_prefix)
+                    dotCount = showDots(MOTION_DOTS_MAX)
+
+                    tlPath = subDirChecks(TIMELAPSE_SUBDIR_MAX_HOURS,
+                                          TIMELAPSE_SUBDIR_MAX_FILES,
+                                          TIMELAPSE_DIR, TIMELAPSE_PREFIX)
+                    next_timelapse_time = timelapse_timer + datetime.timedelta(seconds=TIMELAPSE_TIMER_SEC)
+                    next_timelapse_at = ("%02d:%02d:%02d" % (next_timelapse_time.hour,
+                                                             next_timelapse_time.minute,
+                                                             next_timelapse_time.second))
+                    logging.info('Next Timelapse at %s  Waiting ...',
+                                 next_timelapse_at)
+                    pantiltGoHome()
+
+            # Monitor for motion tracking events
+            # and trigger selected action eg image, quick pic, video, mini TL, pantilt
+            if MOTION_TRACK_ON and checkSchedStart(startMO) and takeMotion and (not stopMotion):
+                # IMPORTANT - Night motion tracking may not work very well
+                #             due to long exposure times and low light
+                image2 = vs.read()
+                grayimage2 = cv2.cvtColor(image2, cv2.COLOR_BGR2GRAY)
+                movePoint1 = getMotionTrackPoint(grayimage1, grayimage2)
+                grayimage1 = grayimage2
+                if movePoint1 and not startTrack:
+                    startTrack = True
+                    trackTimeout = time.time()
+                    startPos = movePoint1
+                image2 = vs.read()
+                grayimage2 = cv2.cvtColor(image2, cv2.COLOR_BGR2GRAY)
+                movePoint2 = getMotionTrackPoint(grayimage1, grayimage2)
+                if movePoint2 and startTrack:   # Two sets of movement required
+                    trackLen = trackMotionDistance(startPos, movePoint2)
+                    # wait until track well started
+                    if trackLen > TRACK_TRIG_LEN_MIN:
+                        # Reset tracking timer object moved
+                        trackTimeout = time.time()
+                        if MOTION_TRACK_INFO_ON:
+                            logging.info("Track Progress From(%i,%i) To(%i,%i) trackLen=%i/%i px",
+                                         startPos[0], startPos[1],
+                                         movePoint2[0], movePoint2[1],
+                                         trackLen, TRACK_TRIG_LEN)
+                    # Track length triggered
+                    if trackLen >= TRACK_TRIG_LEN:
+                        # reduce chance of two objects at different positions
+                        if trackLen >= TRACK_TRIG_LEN_MAX:
+                            motionFound = False
+                            if MOTION_TRACK_INFO_ON:
+                                logging.info("TrackLen %i px Exceeded %i px Max Trig Len Allowed.",
+                                             trackLen, TRACK_TRIG_LEN_MAX)
+                        else:
+                            motionFound = True
+                            if PLUGIN_ON:
+                                logging.info("%s Motion Triggered Start(%i,%i)"
+                                             "  End(%i,%i) trackLen=%.i/%i px",
+                                             PLUGIN_NAME, startPos[0], startPos[1],
+                                             movePoint2[0], movePoint2[1],
+                                             trackLen, TRACK_TRIG_LEN)
+                            else:
+                                logging.info("Motion Triggered Start(%i,%i)"
+                                             "  End(%i,%i) trackLen=%i/%i px",
+                                             startPos[0], startPos[1],
+                                             movePoint2[0], movePoint2[1],
+                                             trackLen, TRACK_TRIG_LEN)
+                            print("")
+                        image1 = vs.read()
+                        image2 = image1
+                        grayimage1 = cv2.cvtColor(image1, cv2.COLOR_BGR2GRAY)
+                        grayimage2 = grayimage1
+                        startTrack = False
+                        startPos = []
+                        trackLen = 0.0
+                # Track timed out
+                if (time.time() - trackTimeout > trackTimer) and startTrack:
+                    image1 = vs.read()
+                    image2 = image1
+                    grayimage1 = cv2.cvtColor(image1, cv2.COLOR_BGR2GRAY)
+                    grayimage2 = grayimage1
+                    if MOTION_TRACK_INFO_ON:
+                        logging.info("Track Timer %.2f sec Exceeded. Reset Track",
+                                     trackTimer)
+                    startTrack = False
+                    startPos = []
+                    trackLen = 0.0
+                if MOTION_FORCE_SEC > 0:
+                    motion_force_timer, motion_force_start = checkTimer(motion_force_timer,
+                                                                        MOTION_FORCE_SEC)
+                else:
+                    motion_force_start = False
+
+                if motion_force_start:
+                    image1 = vs.read()
+                    image2 = image1
+                    grayimage1 = cv2.cvtColor(image1, cv2.COLOR_BGR2GRAY)
+                    grayimage2 = grayimage1
+                    dotCount = showDots(MOTION_DOTS_MAX + 2) # New Line
+                    logging.info("No Motion Detected for %s minutes. "
+                                 "Taking Forced Motion Image.",
+                                 (MOTION_FORCE_SEC / 60))
+                if motionFound or motion_force_start:
+                    motion_prefix = MOTION_PREFIX + IMAGE_NAME_PREFIX
+                    filename = getImageFilename(moPath,
+                                                motion_prefix,
+                                                MOTION_NUM_ON,
+                                                motionNumCount)
+                    vs.stop()
+                    time.sleep(STREAM_STOP_SEC)
+
+                    # Save stream image frame to capture movement quickly
+                    if MOTION_TRACK_QUICK_PIC_ON:
+                        takeMotionQuickImage(image2, filename)
+                        motionNumCount = postImageProcessing(MOTION_NUM_ON,
+                                                             MOTION_NUM_START,
+                                                             MOTION_NUM_MAX,
+                                                             motionNumCount,
+                                                             MOTION_NUM_RECYCLE_ON,
+                                                             NUM_PATH_MOTION,
+                                                             filename, daymode)
+                        saveRecent(MOTION_RECENT_MAX, MOTION_RECENT_DIR,
+                                   filename, motion_prefix)
+
+                    # Save a series of images per settings (no pantilt)
+                    elif MOTION_TRACK_MINI_TL_ON and daymode:
+                        with picamera.PiCamera() as camera:
+                            camera.resolution = (image_width, image_height)
+                            camera.vflip = IMAGE_VFLIP
+                            camera.hflip = IMAGE_HFLIP
+                            # valid rotation values 0, 90, 180, 270
+                            camera.rotation = IMAGE_ROTATION
+                            time.sleep(MOTION_CAM_SLEEP)
+                            # This uses yield to loop through time lapse
+                            # sequence but does not seem to be faster
+                            # due to writing images
+                            camera.capture_sequence(takeMiniTimelapse(moPath,
+                                                                      motion_prefix,
+                                                                      MOTION_NUM_ON,
+                                                                      motionNumCount,
+                                                                      daymode,
+                                                                      NUM_PATH_MOTION))
+                            camera.close()
+                            motionNumCount = getCurrentCount(NUM_PATH_MOTION,
+                                                             MOTION_NUM_START)
+
+                    # Move camera pantilt through specified positions and take images
+                    elif MOTION_TRACK_PANTILT_SEQ_ON and PANTILT_ON:
+                        motionNumCount = takePantiltSequence(filename, daymode, pixAve,
+                                                             motionNumCount,
+                                                             NUM_PATH_MOTION)
+                        pantiltGoHome()
+
+                    elif MOTION_VIDEO_ON:
+                        filename = getVideoName(MOTION_PATH,
+                                                motion_prefix,
+                                                MOTION_NUM_ON,
+                                                motionNumCount)
+                        takeVideo(filename, MOTION_VIDEO_TIMER_SEC,
+                                  MOTION_VIDEO_WIDTH, MOTION_VIDEO_HEIGHT, MOTION_VIDEO_FPS)
+                        if MOTION_NUM_ON:
+                            motionNumCount +=1
+                            writeCounter(motionNumCount, NUM_PATH_MOTION)
+                    else:
+                        if daymode:
+                            takeDayImage(filename, MOTION_CAM_SLEEP)
+                        else:
+                            takeNightImage(filename, pixAve)
+                        motionNumCount = postImageProcessing(MOTION_NUM_ON,
+                                                             MOTION_NUM_START,
+                                                             MOTION_NUM_MAX,
+                                                             motionNumCount,
+                                                             MOTION_NUM_RECYCLE_ON,
+                                                             NUM_PATH_MOTION,
+                                                             filename,
+                                                             daymode)
+
+                        saveRecent(MOTION_RECENT_MAX, MOTION_RECENT_DIR,
+                                   filename, motion_prefix)
+
+                    vs = PiVideoStream().start()
+                    vs.camera.rotation = IMAGE_ROTATION
+                    vs.camera.hflip = IMAGE_HFLIP
+                    vs.camera.vflip = IMAGE_VFLIP
+                    time.sleep(1)
+                    image1 = vs.read()
+                    image2 = image1
+                    grayimage1 = cv2.cvtColor(image1, cv2.COLOR_BGR2GRAY)
+                    grayimage2 = grayimage1
+                    trackLen = 0.0
+                    trackTimeout = time.time()
+                    startPos = []
+                    startTrack = False
+                    moPath = subDirChecks(MOTION_SUBDIR_MAX_HOURS,
+                                          MOTION_SUBDIR_MAX_FILES,
+                                          MOTION_DIR, MOTION_PREFIX)
+                    logging.info("Waiting for Next Motion Tracking Event ...")
+
+            # Take panoramic images and stitch together if possible per settings
+            if PANTILT_ON and PANO_ON:
+                # force a pano on first startup then go by timer.
+                if first_pano:
+                    first_pano = False
+                    start_pano = True
+                    pano_seq_num = getCurrentCount(NUM_PATH_PANO,
+                                                   PANO_NUM_START)
+                    pano_timer = datetime.datetime.now()
+                else:
+                    # Check if pano timer expired and if so start a pano sequence
+                    pano_timer, start_pano = checkTimer(pano_timer, PANO_TIMER_SEC)
+
+                if start_pano:
+                    if MOTION_TRACK_ON:
+                        logging.info("Stop Motion Tracking PiVideoStream ...")
+                        vs.stop()
+                        time.sleep(STREAM_STOP_SEC)
+                    pano_seq_num = takePano(pano_seq_num, daymode, pixAve)
+                    if MOTION_TRACK_ON:
+                        logging.info("Restart Motion Tracking PiVideoStream ....")
+                        vs = PiVideoStream().start()
+                        vs.camera.rotation = IMAGE_ROTATION
+                        vs.camera.hflip = IMAGE_HFLIP
+                        vs.camera.vflip = IMAGE_VFLIP
+                        time.sleep(1)
+                    next_pano_time = pano_timer + datetime.timedelta(seconds=PANO_TIMER_SEC)
+                    next_pano_at = ("%02d:%02d:%02d" % (next_pano_time.hour,
+                                                        next_pano_time.minute,
+                                                        next_pano_time.second))
+                    logging.info('Next Pano at %s  Waiting ...', next_pano_at)
+
+                if motionFound and motionCode:
+                    # ===========================================
+                    # Put your user code in userMotionCode() function
+                    # In the File user_motion_code.py
+                    # ===========================================
+                    try:
+                        user_motion_code.userMotionCode(filename)
+                        dotCount = showDots(MOTION_DOTS_MAX)
+                    except ValueError:
+                        logging.error("Problem running userMotionCode function from File %s",
+                                      userMotionFilePath)
+            else:
+                # show progress dots when no motion found
+                dotCount = showDots(dotCount)
+
+#------------------------------------------------------------------------------
 if __name__ == '__main__':
     '''
     Initialization prior to launching
@@ -2453,14 +2531,14 @@ if __name__ == '__main__':
         print("NOTICE: Logging Disabled per variable VERBOSE_ON=False  ctrl-c Exits")
 
     try:
-        pantilt_go_home()
+        pantiltGoHome()
         if VIDEO_REPEAT_ON:
             videoRepeat()
         else:
             timolo()
     except KeyboardInterrupt:
         print("")
-        pantilt_go_home() # Ensure mouse is returned to home position
+        pantiltGoHome() # Ensure mouse is returned to home position
         if VERBOSE_ON:
             logging.info("User Pressed Keyboard ctrl-c")
             logging.info("Exiting %s %s", PROG_NAME, PROG_VER)
