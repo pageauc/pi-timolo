@@ -2027,12 +2027,10 @@ def timolo():
         pixAve = getStreamPixAve(image2)
         grayimage1 = cv2.cvtColor(image1, cv2.COLOR_BGR2GRAY)
         daymode = checkIfDayStream(daymode, image2)
-        #pixAve = getStreamPixAve(image2)
     else:
         vs = PiVideoStream().start()
         time.sleep(0.5)
         image2 = vs.read()  # use video stream to check for pixAve & daymode
-        #pixAve = getStreamPixAve(image2)
         pixAve = getStreamPixAve(image2)
         daymode = checkIfDayStream(daymode, image2)
         vs.stop()
