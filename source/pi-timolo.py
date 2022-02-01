@@ -1262,7 +1262,7 @@ def postImageProcessing(numberon, counterstart, countermax, counter,
     if numberon:
         counter += 1
         if countermax > 0:
-            if counter > counterstart + countermax:
+            if counter >= counterstart + countermax:
                 if recycle:
                     counter = counterstart
                 else:
@@ -1852,7 +1852,7 @@ def takePano(pano_seq_num, daymode, pix_ave):
         logging.error("Failed subprocess %s", stitch_cmd)
     pano_seq_num += 1
     if PANO_NUM_RECYCLE and PANO_NUM_MAX > 0:
-        if pano_seq_num > PANO_NUM_START + PANO_NUM_MAX:
+        if pano_seq_num >= PANO_NUM_START + PANO_NUM_MAX:
             logging.info('PANO_NUM_RECYCLE Activated. Reset pano_seq_num to %i',
                          PANO_NUM_START)
             pano_seq_num = PANO_NUM_START
