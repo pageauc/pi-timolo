@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 '''
 pi-timolo - Raspberry Pi Long Duration Timelapse, Motion Tracking,
 with Low Light Capability
@@ -1607,7 +1607,7 @@ def checkTimer(timer_start, timer_sec):
 
 #------------------------------------------------------------------------------
 def takeMiniTimelapse(moPath, prefix, NumOn, motionNumCount,
-                           currentDayMode, NumPath):
+                      currentDayMode, NumPath):
     '''
     Take a motion tracking activated mini timelapse sequence
     using yield if motion triggered
@@ -1770,7 +1770,7 @@ def takePantiltSequence(filename, daymode, pix_ave, num_count, num_path):
                                 seq_filepath, daymode)
             saveRecent(PANTILT_SEQ_NUM_MAX, PANTILT_SEQ_RECENT_DIR,
                        seq_filepath, PANTILT_IMAGE_SEQ_PREFIX)
-    num_count +=1
+    num_count += 1
 
     pantiltGoHome()  # Center pantilt
     logging.info('... End')
