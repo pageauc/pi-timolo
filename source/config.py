@@ -5,7 +5,7 @@
 
 CONFIG_TITLE = "pi-timolo ver 12.5 Default Settings"
 CONFIG_FILENAME  = "config.py"
-CONFIG_VERSION = 12.5  # Version of this file used for compatiblity checking
+CONFIG_VERSION = 12.52  # Version of this file used for compatiblity checking
 
 #======================================
 #   pi-timolo.py Settings
@@ -150,7 +150,7 @@ PANTILT_SEQ_ON = False      # Default= False Off, True= Enable a PanTilt Image S
 PANTILT_SEQ_TIMER_SEC = 600
 PANTILT_SEQ_IMAGES_DIR = "media/pantilt-seq"
 PANTILT_SEQ_IMAGE_PREFIX = 'seq-'
-PANTILT_SEQ_RECENT_DIR = "media/recent/seq"  # Default= "media/recent/seq"  Location of pantilt Recent files
+PANTILT_SEQ_RECENT_DIR = "media/recent/pt-seq"  # Default= "media/recent/pt-seq"  Location of pantilt Recent files
 PANTILT_SEQ_RECENT_MAX = 40  # Default= 40 0=Off or specify number of recent files in MOTION_RECENT_DIR
 PANTILT_SEQ_DAYONLY_ON = True
 PANTILT_SEQ_NUM_ON = True

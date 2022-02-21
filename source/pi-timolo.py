@@ -9,7 +9,7 @@ Oct 2020 Added panoramic pantilt option plus other improvements.
 """
 from __future__ import print_function
 
-PROG_VER = "ver 12.51"  # Requires Latest 12.5 release of config.py
+PROG_VER = "ver 12.52"  # Requires Latest 12.5 release of config.py
 __version__ = PROG_VER  # May test for version number at a future time
 
 import os
@@ -192,14 +192,16 @@ default_settings = {
     "PANTILT_HOME": (0, -10),
     "PANTILT_SPEED": 0.5,
     "PANTILT_SEQ_ON": False,
-    "PANTILT_SEQ_DAYONLY_ON": True,
     "PANTILT_SEQ_TIMER_SEC": 600,
+    "PANTILT_SEQ_IMAGES_DIR": "media/pantilt_seq",
     "PANTILT_SEQ_IMAGE_PREFIX": "seq-",
+    "PANTILT_SEQ_DAYONLY_ON": True,
+    "PANTILT_SEQ_RECENT_DIR": "media/recent/pt-seq",
+    "PANTILT_SEQ_NUM_MAX": 200,
     "PANTILT_SEQ_NUM_ON": True,
     "PANTILT_SEQ_NUM_START": 1000,
-    "PANTILT_SEQ_NUM_MAX": 200,
     "PANTILT_SEQ_NUM_RECYCLE_ON": True,
-    "PANTILT_SEQ_IMAGES_DIR": "media/pantilt_seq",
+    "PANTILT_SEQ_NUM_MAX": 200,
     "PANTILT_SEQ_STOPS": [
         (90, 10),
         (45, 10),
@@ -1149,6 +1151,8 @@ def checkMediaPaths():
         makeMediaDir(TIMELAPSE_RECENT_DIR)
     if PANTILT_SEQ_ON:
         makeMediaDir(PANTILT_SEQ_IMAGES_DIR)
+        if PANTILT_SEQ_RECENT_MAX > 0:
+            makeMediaDir(PANTILT_SEQ_RECENT_DIR)
     if PANO_ON:
         makeMediaDir(PANO_DIR)
         makeMediaDir(PANO_IMAGES_DIR)
@@ -2008,12 +2012,15 @@ def takePantiltSequence(filename, daymode, pix_ave, num_count, num_path):
     """
     Take a sequence of images based on a list of pantilt positions
     """
+    print("")
     logging.info("... Start")
     if MOTION_TRACK_PANTILT_SEQ_ON:
-        motion_prefix = MOTION_PREFIX + IMAGE_NAME_PREFIX
-    pantilt_seq_image_num = (
-        0  # initialize counter to ensure each image filename is unique
-    )
+        seq_prefix = MOTION_PREFIX + IMAGE_NAME_PREFIX
+    elif PANTILT_SEQ_ON:
+        seq_prefix = PANTILT_SEQ_IMAGE_PREFIX + IMAGE_NAME_PREFIX
+    # initialize counter to ensure each image filename is unique
+    pantilt_seq_image_num = 0
+
     for cam_pos in PANTILT_SEQ_STOPS:  # take images at each specified stop
         pantilt_seq_image_num += 1  # Set image numbering for this image
         seq_filepath = addFilepathSeq(filename, pantilt_seq_image_num)
@@ -2026,11 +2033,11 @@ def takePantiltSequence(filename, daymode, pix_ave, num_count, num_path):
         else:
             if not PANTILT_SEQ_DAYONLY_ON:
                 takeNightImage(seq_filepath, pix_ave)
+        logging.info("Saved %s", seq_filepath)
         logging.info(
-            "Size %ix%i Saved %s at cam_pos(%i, %i)",
+            "Size %ix%i at cam_pos(%i, %i)",
             image_width,
             image_height,
-            seq_filepath,
             pan_x,
             tilt_y,
         )
@@ -2045,7 +2052,8 @@ def takePantiltSequence(filename, daymode, pix_ave, num_count, num_path):
                 seq_filepath,
                 daymode,
             )
-            saveRecent(MOTION_NUM_MAX, MOTION_RECENT_DIR, seq_filepath, MOTION_PREFIX)
+            saveRecent(MOTION_NUM_MAX, MOTION_RECENT_DIR, seq_filepath, seq_prefix)
+
         elif PANTILT_SEQ_ON:
             postImageProcessing(
                 PANTILT_SEQ_NUM_ON,
@@ -2061,8 +2069,9 @@ def takePantiltSequence(filename, daymode, pix_ave, num_count, num_path):
                 PANTILT_SEQ_NUM_MAX,
                 PANTILT_SEQ_RECENT_DIR,
                 seq_filepath,
-                PANTILT_IMAGE_SEQ_PREFIX,
+                PANTILT_SEQ_IMAGE_PREFIX,
             )
+
     num_count += 1
 
     pantiltGoHome()  # Center pantilt
@@ -2449,8 +2458,15 @@ def timolo():
         # if required check free disk space and delete older files (jpg)
         if SPACE_TIMER_HOURS > 0:
             lastSpaceCheck = freeDiskSpaceCheck(lastSpaceCheck)
+        # check the timer for measuring pixel average of stream image frame
+        pix_ave_timer, take_pix_ave = checkTimer(pix_ave_timer, IMAGE_PIX_AVE_TIMER_SEC)
         # use image2 to check daymode as image1 may be average
         # that changes slowly, and image1 may not be updated
+        if take_pix_ave:
+            pixAve = getStreamPixAve(image2)
+            daymode = checkIfDayStream(daymode, image2)
+            if daymode != checkIfDayStream(daymode, image2):
+                daymode = not daymode
         if MOTION_TRACK_ON:
             if daymode != checkIfDayStream(daymode, image2):
                 daymode = not daymode
@@ -2463,13 +2479,7 @@ def timolo():
             time.sleep(0.5)
             image2 = vs.read()  # use video stream to check for daymode
             vs.stop()
-        # check the timer for measuring pixel average of stream image frame
-        pix_ave_timer, take_pix_ave = checkTimer(pix_ave_timer, IMAGE_PIX_AVE_TIMER_SEC)
-        if take_pix_ave:
-            pixAve = getStreamPixAve(image2)
-            daymode = checkIfDayStream(daymode, image2)
-            if daymode != checkIfDayStream(daymode, image2):
-                daymode = not daymode
+
         if not daymode and TIMELAPSE_ON:
             time.sleep(0.02)  # short delay to aviod high cpu usage at night
         # Don't take images if IMAGE_NO_NIGHT_SHOTS
@@ -2512,7 +2522,8 @@ def timolo():
                         next_seq_time.second,
                     )
                     logging.info(
-                        "Next Pantilt sequence at %s  Waiting ...", next_seq_at
+                        "Next Pantilt Sequence in %i seconds at %s  Waiting ...",
+                        PANTILT_SEQ_TIMER_SEC, next_seq_at
                     )
             # Process Timelapse events per timers
             if TIMELAPSE_ON and checkSchedStart(startTL):
@@ -2840,7 +2851,7 @@ def timolo():
                                 NUM_PATH_MOTION, MOTION_NUM_START
                             )
                     # Move camera pantilt through specified positions and take images
-                    elif MOTION_TRACK_PANTILT_SEQ_ON and PANTILT_ON:
+                    elif MOTION_TRACK_ON and PANTILT_ON and MOTION_TRACK_PANTILT_SEQ_ON:
                         motionNumCount = takePantiltSequence(
                             filename, daymode, pixAve, motionNumCount, NUM_PATH_MOTION
                         )
