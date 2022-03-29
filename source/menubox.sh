@@ -71,7 +71,7 @@ function do_webserver ()
      if [ -z "$( pgrep -f $DIR/webserver.py )" ]; then
         whiptail --msgbox "Failed to Start webserver.py   Please Investigate Problem." 20 70
      else
-       myip=$(ifconfig -a | grep 'inet ' | grep -v 127.0.0 | head -n 1 | tr -s " " | cut -d " " -f 3 )
+       myip=$( ip route get 8.8.8.8 | sed -n '/src/{s/.*src *\([^ ]*\).*/\1/p;q}' )
        myport=$( grep "web_server_port" config.py | cut -d "=" -f 2 | cut -d "#" -f 1 | awk '{$1=$1};1' )
        whiptail --msgbox --title "Webserver Access" "Access pi-timolo web server from another network computer web browser using url http://$myip:$myport" 15 50
      fi
