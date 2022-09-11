@@ -9,7 +9,7 @@ Oct 2020 Added panoramic pantilt option plus other improvements.
 """
 from __future__ import print_function
 
-PROG_VER = "ver 12.53"  # Requires Latest 12.5 release of config.py
+PROG_VER = "ver 12.55"  # Requires Latest 12.5 release of config.py
 __version__ = PROG_VER  # May test for version number at a future time
 
 import os
@@ -1179,15 +1179,6 @@ def deleteOldFiles(maxFiles, dirPath, prefix):
                 os.remove(oldestFile)
             except OSError as err:
                 logging.error("Failed %s  err: %s", oldestFile, err)
-
-
-# ------------------------------------------------------------------------------
-def symExists(symPath):
-    found = False
-    if os.path.islink(symPath):
-        found = True
-    return found
-
 
 # ------------------------------------------------------------------------------
 
