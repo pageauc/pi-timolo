@@ -9,7 +9,7 @@ Oct 2020 Added panoramic pantilt option plus other improvements.
 """
 from __future__ import print_function
 
-PROG_VER = "ver 12.56"  # Requires Latest 12.5 release of config.py
+PROG_VER = "ver 12.57"  # Requires Latest 12.5 release of config.py
 __version__ = PROG_VER  # May test for version number at a future time
 
 import os
@@ -714,11 +714,11 @@ def checkConfig():
     Check if both User disabled everything
     in config.py. At least one option needs to be enabled
     """
-    if not MOTION_TRACK_ON and not TIMELAPSE_ON and not PANO_ON and not VIDEO_REPEAT_ON:
+    if not MOTION_TRACK_ON and not TIMELAPSE_ON and not PANTILT_SEQ_ON and not PANO_ON and not VIDEO_REPEAT_ON:
         errorText = (
-            "You need to have Motion, Timelapse, Pano or Video Repeat turned ON\n"
-            "MOTION_TRACK_ON=%s TIMELAPSE_ON=%s PANO_ON=%s VIDEO_REPEAT_ON=%s"
-            % (MOTION_TRACK_ON, TIMELAPSE_ON, PANO_ON, VIDEO_REPEAT_ON)
+            "You need to have Motion, Timelapse, PanTilt Seq, Pano or Video Repeat turned ON\n"
+            "MOTION_TRACK_ON=%s TIMELAPSE_ON=%s PANTILT_SEQ_ON=%s PANO_ON=%s VIDEO_REPEAT_ON=%s"
+            % (MOTION_TRACK_ON, TIMELAPSE_ON, PANTILT_SEQ_ON, PANO_ON, VIDEO_REPEAT_ON)
         )
         if VERBOSE_ON:
             logging.error(errorText)
@@ -2490,9 +2490,9 @@ def timolo():
             )
             takeMotion = False
             stopMotion = True
-        if stop_timelapse and stopMotion and not PANO_ON and not VIDEO_REPEAT_ON:
+        if stop_timelapse and stopMotion and not PANTILT_SEQ_ON and not PANO_ON and not VIDEO_REPEAT_ON:
             logging.warning(
-                "NOTICE: Motion, Timelapse, Pano and Video Repeat are Disabled"
+                "NOTICE: Motion, Timelapse, pantilt_seq, Pano and Video Repeat are Disabled"
             )
             logging.warning(
                 "per Num Recycle=False and "
