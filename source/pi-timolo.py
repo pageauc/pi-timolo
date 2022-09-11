@@ -9,7 +9,7 @@ Oct 2020 Added panoramic pantilt option plus other improvements.
 """
 from __future__ import print_function
 
-PROG_VER = "ver 12.52"  # Requires Latest 12.5 release of config.py
+PROG_VER = "ver 12.53"  # Requires Latest 12.5 release of config.py
 __version__ = PROG_VER  # May test for version number at a future time
 
 import os
@@ -1182,20 +1182,62 @@ def deleteOldFiles(maxFiles, dirPath, prefix):
 
 
 # ------------------------------------------------------------------------------
+def symExists(symPath):
+    found = False
+    if os.path.islink(symPath):
+        found = True
+    return found
+
+
+# ------------------------------------------------------------------------------
+
+def makeRelSymlink(sourceFilenamePath, symDestDir):
+    '''
+    Creates a relative symlink in the specified symDestDir
+    that points to the Target file via a relative rather than
+    absolute path. If a symlink already exists it will be replaced.
+    Warning message will be displayed if symlink path is a file
+    rather than an existing symlink.
+    '''
+
+    # Initialize target and symlink file paths
+    targetDirPath = os.path.dirname(sourceFilenamePath)
+    srcfilename = os.path.basename(sourceFilenamePath)
+    symDestFilePath = os.path.join(symDestDir, srcfilename)
+    # Check if symlink already exists and unlink if required.
+    if os.path.islink(symDestFilePath):
+        logging.info("Remove Existing Symlink at %s ", symDestFilePath)
+        os.unlink(symDestFilePath)
+    # Check if symlink path is a file rather than a symlink. Error out if required
+    if os.path.isfile(symDestFilePath):
+        logging.warning("Failed. File Exists at %s." % symDestFilePath)
+        return
+
+    # Initialize required entries for creating a relative symlink to target file
+    absTargetDirPath = os.path.abspath(targetDirPath)
+    absSymDirPath = os.path.abspath(symDestDir)
+    relativeDirPath = os.path.relpath(absTargetDirPath, absSymDirPath)
+    # Initialize relative symlink entries to target file.
+
+    symFilePath = os.path.join(relativeDirPath, srcfilename)
+    # logging.info("ln -s %s %s ", symFilePath, symDestFilePath)
+    os.symlink(symFilePath, symDestFilePath)  # Create the symlink
+    # Check if symlink was created successfully
+    if os.path.islink(symDestFilePath):
+        logging.info("Saved at %s", symDestFilePath)
+    else:
+        logging.warning("Failed to Create Symlink at %s", symDestFilePath)
+
+# ------------------------------------------------------------------------------
 def saveRecent(recentMax, recentDir, filepath, prefix):
     """
     Create a symlink file in recent folder (timelapse or motion subfolder)
     Delete Oldest symlink file if recentMax exceeded.
     """
+    show_log = False
     if recentMax > 0:
-        src = os.path.abspath(filepath)  # original file path
-        dest = os.path.abspath(os.path.join(recentDir, os.path.basename(filepath)))
         deleteOldFiles(recentMax, os.path.abspath(recentDir), prefix)
-        try:  # Create symlink in recent folder
-            logging.info("symlink %s", dest)
-            os.symlink(src, dest)  # Create a symlink to actual file
-        except OSError as err:
-            logging.error("symlink %s to %s  err: %s", dest, src, err)
+        makeRelSymlink(filepath, recentDir)
 
 
 # ------------------------------------------------------------------------------
@@ -1581,7 +1623,7 @@ def takeDayImage(filename, cam_sleep_time):
     )
     # SHOW_DATE_ON_IMAGE displays FilePath so avoid showing twice
     if not SHOW_DATE_ON_IMAGE:
-        logging.info("FilePath  %s", filename)
+        logging.info("Saved  %s", filename)
 
 
 # ------------------------------------------------------------------------------
@@ -1669,7 +1711,7 @@ def takeNightImage(filename, pixelAve):
         showBox(filename)
     # SHOW_DATE_ON_IMAGE displays FilePath to avoid showing twice
     if not SHOW_DATE_ON_IMAGE:
-        logging.info("FilePath %s", filename)
+        logging.info("Saved %s", filename)
 
 
 # ------------------------------------------------------------------------------
@@ -2010,13 +2052,18 @@ def addFilepathSeq(filepath, seq_num):
 # ------------------------------------------------------------------------------
 def takePantiltSequence(filename, daymode, pix_ave, num_count, num_path):
     """
-    Take a sequence of images based on a list of pantilt positions
+    Take a sequence of images based on a list of pantilt positions and save with
+    a sequence number appended to the filename
     """
-    print("")
+
     logging.info("... Start")
     if MOTION_TRACK_PANTILT_SEQ_ON:
         seq_prefix = MOTION_PREFIX + IMAGE_NAME_PREFIX
+
     elif PANTILT_SEQ_ON:
+        takePhoto = True
+
+
         seq_prefix = PANTILT_SEQ_IMAGE_PREFIX + IMAGE_NAME_PREFIX
     # initialize counter to ensure each image filename is unique
     pantilt_seq_image_num = 0
@@ -2027,50 +2074,56 @@ def takePantiltSequence(filename, daymode, pix_ave, num_count, num_path):
         pan_x, tilt_y = cam_pos  # set pan tilt values for this image
         pantilthat.pan(pan_x)
         pantilthat.tilt(tilt_y)
+        logging.info("pan_x=%i tilt_y=%i", pan_x, tilt_y)
         time.sleep(PANTILT_SLEEP_SEC)
+        takePhoto = False
         if daymode:
             takeDayImage(seq_filepath, TIMELAPSE_CAM_SLEEP_SEC)
+            takePhoto = True
         else:
             if not PANTILT_SEQ_DAYONLY_ON:
+                takePhoto = True
                 takeNightImage(seq_filepath, pix_ave)
-        logging.info("Saved %s", seq_filepath)
-        logging.info(
-            "Size %ix%i at cam_pos(%i, %i)",
-            image_width,
-            image_height,
-            pan_x,
-            tilt_y,
-        )
-        if MOTION_TRACK_PANTILT_SEQ_ON:
-            postImageProcessing(
-                MOTION_NUM_ON,
-                MOTION_NUM_START,
-                MOTION_NUM_MAX,
-                num_count,
-                MOTION_NUM_RECYCLE_ON,
-                NUM_PATH_MOTION,
-                seq_filepath,
-                daymode,
-            )
-            saveRecent(MOTION_NUM_MAX, MOTION_RECENT_DIR, seq_filepath, seq_prefix)
 
-        elif PANTILT_SEQ_ON:
-            postImageProcessing(
-                PANTILT_SEQ_NUM_ON,
-                PANTILT_SEQ_NUM_START,
-                PANTILT_SEQ_NUM_MAX,
-                num_count,
-                PANTILT_SEQ_NUM_RECYCLE_ON,
-                NUM_PATH_PANTILT_SEQ,
-                seq_filepath,
-                daymode,
-            )
-            saveRecent(
-                PANTILT_SEQ_NUM_MAX,
-                PANTILT_SEQ_RECENT_DIR,
-                seq_filepath,
-                PANTILT_SEQ_IMAGE_PREFIX,
-            )
+        if takePhoto:
+            if MOTION_TRACK_PANTILT_SEQ_ON:
+                postImageProcessing(
+                    MOTION_NUM_ON,
+                    MOTION_NUM_START,
+                    MOTION_NUM_MAX,
+                    num_count,
+                    MOTION_NUM_RECYCLE_ON,
+                    NUM_PATH_MOTION,
+                    seq_filepath,
+                    daymode,
+                )
+                saveRecent(
+                    MOTION_NUM_MAX,
+                    MOTION_RECENT_DIR,
+                    seq_filepath,
+                    seq_prefix
+                )
+
+            elif PANTILT_SEQ_ON and PANTILT_SEQ_DAYONLY_ON:
+                postImageProcessing(
+                    PANTILT_SEQ_NUM_ON,
+                    PANTILT_SEQ_NUM_START,
+                    PANTILT_SEQ_NUM_MAX,
+                    num_count,
+                    PANTILT_SEQ_NUM_RECYCLE_ON,
+                    NUM_PATH_PANTILT_SEQ,
+                    seq_filepath,
+                    daymode,
+                )
+                saveRecent(
+                    PANTILT_SEQ_NUM_MAX,
+                    PANTILT_SEQ_RECENT_DIR,
+                    seq_filepath,
+                    PANTILT_SEQ_IMAGE_PREFIX,
+                )
+        else:
+            logging.warn("Not Photo Taken Since PANTILT_SEQ_DAYONLY_ON= %s",
+                          PANTILT_SEQ_DAYONLY_ON)
 
     num_count += 1
 
@@ -2773,7 +2826,7 @@ def timolo():
                     image2 = image1
                     grayimage1 = cv2.cvtColor(image1, cv2.COLOR_BGR2GRAY)
                     grayimage2 = grayimage1
-                    if MOTION_TRACK_INFO_ON:
+                    if MOTION_TRACK_ON and MOTION_TRACK_INFO_ON:
                         logging.info(
                             "Track Timer %.2f sec Exceeded. Reset Track", trackTimer
                         )
@@ -2945,6 +2998,7 @@ def timolo():
                         next_pano_time.second,
                     )
                     logging.info("Next Pano at %s  Waiting ...", next_pano_at)
+
                 if motionFound and motionCode:
                     # ===========================================
                     # Put your user code in userMotionCode() function
