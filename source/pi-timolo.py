@@ -9,7 +9,7 @@ Oct 2020 Added panoramic pantilt option plus other improvements.
 """
 from __future__ import print_function
 
-PROG_VER = "ver 12.55"  # Requires Latest 12.5 release of config.py
+PROG_VER = "ver 12.56"  # Requires Latest 12.5 release of config.py
 __version__ = PROG_VER  # May test for version number at a future time
 
 import os
@@ -2136,6 +2136,12 @@ def takePano(pano_seq_num, daymode, pix_ave):
     day light hours or sufficient indoor lighting.
     Review pano source image overlap using webserver. Adjust pano stops accordingly.
     """
+
+    if (not daymode) and PANO_DAYONLY_ON:
+        logging.info('Skip since PANO_DAYONLY_ON = %s and daymode = %s',
+                     PANO_DAYONLY_ON, daymode)
+        return
+
     print("")
     logging.info("Start timer=%i sec  pano_seq_num=%s", PANO_TIMER_SEC, pano_seq_num)
 
@@ -2169,8 +2175,7 @@ def takePano(pano_seq_num, daymode, pix_ave):
         if daymode:
             takeDayImage(pano_filename, TIMELAPSE_CAM_SLEEP_SEC)
         else:
-            if not PANO_DAYONLY_ON:
-                takeNightImage(pano_filename, pix_ave)
+            takeNightImage(pano_filename, pix_ave)
         logging.info(
             "Size %ix%i Saved %s at cam_pos(%i, %i)",
             image_width,
