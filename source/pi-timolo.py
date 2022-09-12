@@ -9,7 +9,7 @@ Oct 2020 Added panoramic pantilt option plus other improvements.
 """
 from __future__ import print_function
 
-PROG_VER = "ver 12.57"  # Requires Latest 12.5 release of config.py
+PROG_VER = "ver 12.58"  # Requires Latest 12.5 release of config.py
 __version__ = PROG_VER  # May test for version number at a future time
 
 import os
@@ -2046,6 +2046,11 @@ def takePantiltSequence(filename, daymode, pix_ave, num_count, num_path):
     Take a sequence of images based on a list of pantilt positions and save with
     a sequence number appended to the filename
     """
+
+    if (not daymode) and PANTILT_SEQ_DAYONLY_ON:
+        logging.info('Skip since PANTILT_SEQ_DAYONLY_ON = %s and daymode = %s',
+                     PANTILT_SEQ_DAYONLY_ON, daymode)
+        return
 
     logging.info("... Start")
     if MOTION_TRACK_PANTILT_SEQ_ON:
