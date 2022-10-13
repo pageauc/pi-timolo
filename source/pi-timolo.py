@@ -9,7 +9,7 @@ Oct 2020 Added panoramic pantilt option plus other improvements.
 """
 from __future__ import print_function
 
-PROG_VER = "ver 12.59"  # Requires Latest 12.5 release of config.py
+PROG_VER = "ver 12.60"  # Requires Latest 12.5 release of config.py
 __version__ = PROG_VER  # May test for version number at a future time
 
 import os
@@ -2059,7 +2059,6 @@ def takePantiltSequence(filename, daymode, pix_ave, num_count, num_path):
     elif PANTILT_SEQ_ON:
         takePhoto = True
 
-
         seq_prefix = PANTILT_SEQ_IMAGE_PREFIX + IMAGE_NAME_PREFIX
     # initialize counter to ensure each image filename is unique
     pantilt_seq_image_num = 0
@@ -2119,8 +2118,9 @@ def takePantiltSequence(filename, daymode, pix_ave, num_count, num_path):
         else:
             logging.warn("Not Photo Taken Since PANTILT_SEQ_DAYONLY_ON= %s",
                           PANTILT_SEQ_DAYONLY_ON)
-
-    num_count += 1
+    if PANTILT_SEQ_NUM_ON:
+        num_count += 1
+        writeCounter(num_count, NUM_PATH_PANTILT_SEQ)
 
     pantiltGoHome()  # Center pantilt
     logging.info("... End")
