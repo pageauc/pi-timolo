@@ -9,7 +9,7 @@ Oct 2020 Added panoramic pantilt option plus other improvements.
 """
 from __future__ import print_function
 
-PROG_VER = "ver 12.60"  # Requires Latest 12.5 release of config.py
+PROG_VER = "ver 12.62"  # Requires Latest 12.5 release of config.py
 __version__ = PROG_VER  # May test for version number at a future time
 
 import os
@@ -2051,15 +2051,21 @@ def takePantiltSequence(filename, daymode, pix_ave, num_count, num_path):
         logging.info('Skip since PANTILT_SEQ_DAYONLY_ON = %s and daymode = %s',
                      PANTILT_SEQ_DAYONLY_ON, daymode)
         return
+    elif not PANTILT_ON:
+        logging.error('PANTILT_ON not Enabled in Config.py')
+        return
 
-    logging.info("... Start")
-    if MOTION_TRACK_PANTILT_SEQ_ON:
+    if MOTION_TRACK_ON and MOTION_TRACK_PANTILT_SEQ_ON:
         seq_prefix = MOTION_PREFIX + IMAGE_NAME_PREFIX
-
+        if PANTILT_SEQ_ON:
+            logging.warning('MOTION_TRACK_PANTILT_SEQ_ON takes precedence over PANTILT_SEQ_ON')
+            logging.warning('Disable config.py MOTION_TRACK_PANTILT_SEQ_ON setting')
+            logging.warning('to Enable Timelapse PANTILT_SEQ_ON option.')
+        logging.info("... Start Motion Tracking PanTilt Sequence.")
     elif PANTILT_SEQ_ON:
-        takePhoto = True
-
         seq_prefix = PANTILT_SEQ_IMAGE_PREFIX + IMAGE_NAME_PREFIX
+        logging.info("... Start Timelapse PanTilt Sequence.")
+
     # initialize counter to ensure each image filename is unique
     pantilt_seq_image_num = 0
 
@@ -2071,57 +2077,55 @@ def takePantiltSequence(filename, daymode, pix_ave, num_count, num_path):
         pantilthat.tilt(tilt_y)
         logging.info("pan_x=%i tilt_y=%i", pan_x, tilt_y)
         time.sleep(PANTILT_SLEEP_SEC)
-        takePhoto = False
         if daymode:
             takeDayImage(seq_filepath, TIMELAPSE_CAM_SLEEP_SEC)
-            takePhoto = True
         else:
-            takePhoto = True
             takeNightImage(seq_filepath, pix_ave)
 
-        if takePhoto:
-            if MOTION_TRACK_PANTILT_SEQ_ON:
-                postImageProcessing(
-                    MOTION_NUM_ON,
-                    MOTION_NUM_START,
-                    MOTION_NUM_MAX,
-                    num_count,
-                    MOTION_NUM_RECYCLE_ON,
-                    NUM_PATH_MOTION,
-                    seq_filepath,
-                    daymode,
-                )
-                saveRecent(
-                    MOTION_NUM_MAX,
-                    MOTION_RECENT_DIR,
-                    seq_filepath,
-                    seq_prefix
-                )
+        if MOTION_TRACK_PANTILT_SEQ_ON:
+            postImageProcessing(
+                MOTION_NUM_ON,
+                MOTION_NUM_START,
+                MOTION_NUM_MAX,
+                num_count,
+                MOTION_NUM_RECYCLE_ON,
+                NUM_PATH_MOTION,
+                seq_filepath,
+                daymode,
+            )
+            saveRecent(
+                MOTION_NUM_MAX,
+                MOTION_RECENT_DIR,
+                seq_filepath,
+                seq_prefix
+            )
 
-            elif PANTILT_SEQ_ON:
-                postImageProcessing(
-                    PANTILT_SEQ_NUM_ON,
-                    PANTILT_SEQ_NUM_START,
-                    PANTILT_SEQ_NUM_MAX,
-                    num_count,
-                    PANTILT_SEQ_NUM_RECYCLE_ON,
-                    NUM_PATH_PANTILT_SEQ,
-                    seq_filepath,
-                    daymode,
-                )
-                saveRecent(
-                    PANTILT_SEQ_NUM_MAX,
-                    PANTILT_SEQ_RECENT_DIR,
-                    seq_filepath,
-                    PANTILT_SEQ_IMAGE_PREFIX,
-                )
-        else:
-            logging.warn("Not Photo Taken Since PANTILT_SEQ_DAYONLY_ON= %s",
-                          PANTILT_SEQ_DAYONLY_ON)
+        elif PANTILT_SEQ_ON:
+            postImageProcessing(
+                PANTILT_SEQ_NUM_ON,
+                PANTILT_SEQ_NUM_START,
+                PANTILT_SEQ_NUM_MAX,
+                num_count,
+                PANTILT_SEQ_NUM_RECYCLE_ON,
+                NUM_PATH_PANTILT_SEQ,
+                seq_filepath,
+                daymode,
+            )
+            saveRecent(
+                PANTILT_SEQ_NUM_MAX,
+                PANTILT_SEQ_RECENT_DIR,
+                seq_filepath,
+                PANTILT_SEQ_IMAGE_PREFIX,
+            )
+
     if PANTILT_SEQ_NUM_ON:
         num_count += 1
         writeCounter(num_count, NUM_PATH_PANTILT_SEQ)
 
+    deleteOldFiles(PANTILT_SEQ_RECENT_MAX,
+                   os.path.abspath(PANTILT_SEQ_RECENT_DIR),
+                   PANTILT_SEQ_IMAGE_PREFIX
+    )
     pantiltGoHome()  # Center pantilt
     logging.info("... End")
     return num_count
