@@ -413,7 +413,6 @@ camResult = subprocess.check_output("vcgencmd get_camera", shell=True)
 camResult = camResult.decode("utf-8")
 camResult = camResult.replace("\n", "")
 logging.info("Camera Status is %s", camResult)
-logging.info("Checking supported and detected Status")
 params = camResult.split()
 for x in range(0,2):
     if params[x].find("0") >= 0:
