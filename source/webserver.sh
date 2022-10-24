@@ -3,12 +3,12 @@
 # You will then be able close the terminal session.  To auto start
 # Add the following command to the /etc/rc.local
 # /home/pi/webserver/webserver.sh start  
-# To implement webserver3.py copy it to webserver.py.  Use Buster or later 
+# To implement webserver.py edit progname variable to webserver.py.  Use Buster or later 
 
 progpath="/home/pi/pi-timolo"
 progname="webserver.py"
 
-echo "$0 ver 1.2 written by Claude Pageau"
+echo "$0 ver 1.3 written by Claude Pageau"
 echo "-----------------------------------------------"
 cd "$progpath"
 

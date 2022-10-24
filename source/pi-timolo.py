@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 """
 pi-timolo - Raspberry Pi Long Duration Timelapse, Motion Tracking,
 with Low Light Capability
@@ -9,7 +9,7 @@ Oct 2020 Added panoramic pantilt option plus other improvements.
 """
 from __future__ import print_function
 
-PROG_VER = "ver 12.63"  # Requires Latest 12.5 release of config.py
+PROG_VER = "ver 12.64"  # Requires Latest 12.5 release of config.py
 __version__ = PROG_VER  # May test for version number at a future time
 
 import os
@@ -302,11 +302,14 @@ if PANTILT_ON:
         except ImportError:
             print("ERROR : Import Pimoroni PanTiltHat Python Library per")
             print("        sudo apt install pantilthat")
+            print("        Enable I2C support using sudo raspi-config")
             sys.exit()
         try:
             pantilthat.pan(pan_x)
         except IOError:
-            print("ERROR: pantilthat hardware problem")
+            print("ERROR: pimoroni pantilthat hardware problem")
+            print("       if pimoroni pantilt installed check that I2C enabled in raspi-config.")
+            print("if waveshare or conpatible pantilt installed perform the following")
             print("nano edit config.py per below")
             print("    nano config.py")
             print("Change value of variable per below. ctrl-x y to save and exit")
@@ -414,9 +417,9 @@ logging.info("Checking supported and detected Status")
 params = camResult.split()
 for x in range(0,2):
     if params[x].find("0") >= 0:
-        logging.error("Detected Problem with Pi Camera Module per %s", params[x])
+        logging.error("Detected picamera issue per %s", params[x])
         logging.error("  if supported=0 Enable Camera per command  sudo raspi-config")
-        logging.error("  Also check Legacy picamera support enabled for Bullseye and later.")
+        logging.error("  Bullseye and later enable Legacy picamera support.")
         logging.error("  if detected=0 Check Pi Camera Module and cable is Installed Correctly.")
         logging.error("%s %s Exiting Due to Error", PROG_NAME, PROG_VER)
         sys.exit(1)

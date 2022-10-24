@@ -1,6 +1,6 @@
 #!/bin/bash
 # Convenient pi-timolo-install.sh script written by Claude Pageau 1-Jul-2016
-ver="12.04"
+ver="12.05"
 progName=$(basename -- "$0")
 TIMOLO_DIR='pi-timolo'  # Default folder install location
 
@@ -35,7 +35,7 @@ INFO  : $progName $ver  written by Claude Pageau
 # check if this is an upgrade and bypass update of configuration files
 if $is_upgrade ; then
   timoloFiles=("menubox.sh" "pi-timolo.py" "pi-timolo.sh" "image-stitching" "config.cfg" \
-  "webserver.py" "webserver3.py" "webserver.sh" "pantilthat.py" \
+  "webserver.py" "webserver2.py" "webserver3.py" "webserver.sh" "pantilthat.py" \
   "convid.sh" "makevideo.sh" "mvleavelast.sh" "remote-run.sh" "install-py3exiv2.sh")
 
   if [ ! -f config.cfg ]; then
@@ -46,7 +46,7 @@ if $is_upgrade ; then
 
 else   # New Install
   timoloFiles=("config.py" "menubox.sh" "pi-timolo.py" "pi-timolo.sh" "image-stitching" "config.cfg" \
-  "webserver.py" "webserver3.py" "webserver.sh" "watch-app.sh" "shutdown.py" "pantilthat.py" \
+  "webserver.py" "webserver2.py" "webserver3.py" "webserver.sh" "watch-app.sh" "shutdown.py" "pantilthat.py" \
   "convid.sh" "makevideo.sh" "video.conf" "mvleavelast.sh" "remote-run.sh" "install-py3exiv2.sh")
 fi
 
@@ -260,6 +260,7 @@ fi
 cd $TIMOLO_DIR
 
 sudo pip install python-dateutil
+sudo pip3 install py3exiv2
 dos2unix -q *py
 dos2unix -q *sh
 
