@@ -9,7 +9,7 @@ Oct 2020 Added panoramic pantilt option plus other improvements.
 """
 from __future__ import print_function
 
-PROG_VER = "ver 12.64"  # Requires Latest 12.5 release of config.py
+PROG_VER = "ver 12.65"  # Requires Latest 12.5 release of config.py
 __version__ = PROG_VER  # May test for version number at a future time
 
 import os
@@ -424,9 +424,8 @@ for x in range(0,2):
         logging.error("%s %s Exiting Due to Error", PROG_NAME, PROG_VER)
         sys.exit(1)
 else:
-    logging.info("Success Pi Camera Module is Enabled and Connected %s", camResult)
+    logging.info("Success Pi Camera %s", camResult)
     # use raspistill to check maximum image resolution of attached camera module
-    logging.info("Pi Camera Module is Enabled and Connected %s", camResult)
     logging.info("Checking Pi Camera Module Version Wait ...")
     import picamera
     with picamera.PiCamera() as camera:
