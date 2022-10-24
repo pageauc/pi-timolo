@@ -9,7 +9,7 @@ Oct 2020 Added panoramic pantilt option plus other improvements.
 """
 from __future__ import print_function
 
-PROG_VER = "ver 12.62"  # Requires Latest 12.5 release of config.py
+PROG_VER = "ver 12.63"  # Requires Latest 12.5 release of config.py
 __version__ = PROG_VER  # May test for version number at a future time
 
 import os
@@ -404,23 +404,28 @@ except ImportError:
     sys.exit(1)
 from picamera.array import PiRGBArray
 import picamera.array
-
 # Check that pi camera module is installed and enabled
+logging.info("Checking Pi Camera Module using command - vcgencmd get_camera")
 camResult = subprocess.check_output("vcgencmd get_camera", shell=True)
 camResult = camResult.decode("utf-8")
 camResult = camResult.replace("\n", "")
-if (camResult.find("0")) >= 0:  # Was a 0 found in vcgencmd output
-    logging.error("Pi Camera Module Not Found %s", camResult)
-    logging.error("if supported=0 Enable Camera using command sudo raspi-config")
-    logging.error("if detected=0 Check Pi Camera Module is Installed Correctly")
-    logging.error("Exiting %s Due to Error", PROG_NAME)
-    sys.exit(1)
+logging.info("Camera Status is %s", camResult)
+logging.info("Checking supported and detected Status")
+params = camResult.split()
+for x in range(0,2):
+    if params[x].find("0") >= 0:
+        logging.error("Detected Problem with Pi Camera Module per %s", params[x])
+        logging.error("  if supported=0 Enable Camera per command  sudo raspi-config")
+        logging.error("  Also check Legacy picamera support enabled for Bullseye and later.")
+        logging.error("  if detected=0 Check Pi Camera Module and cable is Installed Correctly.")
+        logging.error("%s %s Exiting Due to Error", PROG_NAME, PROG_VER)
+        sys.exit(1)
 else:
+    logging.info("Success Pi Camera Module is Enabled and Connected %s", camResult)
     # use raspistill to check maximum image resolution of attached camera module
     logging.info("Pi Camera Module is Enabled and Connected %s", camResult)
     logging.info("Checking Pi Camera Module Version Wait ...")
     import picamera
-
     with picamera.PiCamera() as camera:
         CAM_MAX_RESOLUTION = camera.MAX_RESOLUTION
     logging.info("PiCamera Max resolution is %s", CAM_MAX_RESOLUTION)
@@ -430,6 +435,8 @@ else:
     else:
         picameraVer = "1"
     logging.info("PiCamera Module Hardware is Ver %s", picameraVer)
+
+
 if PLUGIN_ON:  # Check and verify plugin and load variable overlay
     pluginDir = os.path.join(BASE_DIR, "plugins")
     # Check if there is a .py at the end of PLUGIN_NAME variable
