@@ -412,7 +412,6 @@ logging.info("Checking Pi Camera Module using command - vcgencmd get_camera")
 camResult = subprocess.check_output("vcgencmd get_camera", shell=True)
 camResult = camResult.decode("utf-8")
 camResult = camResult.replace("\n", "")
-logging.info("Camera Status is %s", camResult)
 params = camResult.split()
 for x in range(0,2):
     if params[x].find("0") >= 0:
