@@ -169,7 +169,7 @@ VALUE="Refresh">&nbsp;&nbsp;<b>%s</b></FORM>''' % list_title)
         f.write('%s' % refresh_button)
         f.write('<ul name="menu" id="menu" style="list-style-type:none; padding-left: 4px">')
         # Create the formatted list of right panel hyper-links to files in the specified directory
-        if not self.path is "/":   # Display folder Back arrow navigation if not in web root
+        if self.path != "/":   # Display folder Back arrow navigation if not in web root
             f.write('<li><a href="%s" >%s</a></li>\n'
                     % (urllib.quote(".."), cgi.escape("< BACK")))
         display_entries = 0
@@ -194,7 +194,7 @@ VALUE="Refresh">&nbsp;&nbsp;<b>%s</b></FORM>''' % list_title)
                 f.write('<li><a href="%s" target="imgbox">%s</a> - %s</li>\n'
                         % (urllib.quote(linkname), cgi.escape(displayname), date_modified))
 
-        if (not self.path is "/") and display_entries > 35:   # Display folder Back arrow navigation if not in web root
+        if (self.path != "/") and display_entries > 35:   # Display folder Back arrow navigation if not in web root
             f.write('<li><a href="%s" >%s</a></li>\n' % (urllib.quote(".."), cgi.escape("< BACK")))
         f.write('</ul></div><p><b>')
         drive_status = df(MNT_POINT)
