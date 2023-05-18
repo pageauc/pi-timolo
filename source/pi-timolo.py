@@ -3010,19 +3010,19 @@ def timolo():
                     )
                     logging.info("Next Pano at %s  Waiting ...", next_pano_at)
 
-                if motionFound and motionCode:
-                    # ===========================================
-                    # Put your user code in userMotionCode() function
-                    # In the File user_motion_code.py
-                    # ===========================================
-                    try:
-                        user_motion_code.userMotionCode(filename)
-                        dotCount = showDots(MOTION_DOTS_MAX)
-                    except ValueError:
-                        logging.error(
-                            "Problem running userMotionCode function from File %s",
-                            userMotionFilePath,
-                        )
+            if motionFound and motionCode:
+                # ===========================================
+                # Put your user code in userMotionCode() function
+                # In the File user_motion_code.py
+                # ===========================================
+                try:
+                    user_motion_code.userMotionCode(filename)
+                    dotCount = showDots(MOTION_DOTS_MAX)
+                except ValueError:
+                    logging.error(
+                        "Problem running userMotionCode function from File %s",
+                        userMotionFilePath,
+                    )
             else:
                 # show progress dots when no motion found
                 dotCount = showDots(dotCount)
