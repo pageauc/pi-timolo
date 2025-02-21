@@ -1,43 +1,17 @@
 # PI-TIMOLO [![Mentioned in Awesome <INSERT LIST NAME>](https://awesome.re/mentioned-badge.svg)](https://github.com/thibmaek/awesome-raspberry-pi)
 ### Raspberry (Pi)camera, (Ti)melapse, (Mo)tion, (Lo)wlight 
-## For Details See [Program Features](https://github.com/pageauc/pi-timolo/wiki/Introduction#program-features) and [Wiki Instructions](https://github.com/pageauc/pi-timolo/wiki) and [YouTube Videos](https://www.youtube.com/playlist?list=PLLXJw_uJtQLa11A4qjVpn2D2T0pgfaSG0)
+### For Details See [Program Features](https://github.com/pageauc/pi-timolo/wiki/Introduction#program-features) and [Wiki Instructions](https://github.com/pageauc/pi-timolo/wiki) and [YouTube Videos](https://www.youtube.com/playlist?list=PLLXJw_uJtQLa11A4qjVpn2D2T0pgfaSG0)
 
-***IMPORTANT:*** Raspbian Stretch and pi-timolo.py ver 11.11 and earlier has long exposure low light 
-camera freezing issue due to kernel panic that requires a reboot to gain
-control of camera back per https://github.com/waveform80/picamera/issues/528 
-pi-timolo.py ver 11.12 has a fix to resolve issue but
-requires the latest Raspbian firmware. If you encounter camera freeze with latest Stretch image then
-you will need to run ***sudo rpi-update*** to update Stretch to latest firmware.  Normal
-backup precautions are advised before doing the firmware update.  See [wiki](https://github.com/pageauc/pi-timolo/wiki/Basic-Trouble-Shooting#raspbian-stretch-kernel-panic-and-camera-freeze)
-***Note:*** Raspbian Jessie works fine and does Not encounter freezing issue with long exposure low light operation.
 
-* ***Release 9.x*** New Features have been Added. See Wiki Details below    
- [plugins Setup and Operation](https://github.com/pageauc/pi-timolo/wiki/How-to-Use-Plugins)   
- [Rclone Setup and Media Sync](https://github.com/pageauc/pi-timolo/wiki/How-to-Setup-rclone) (Replaces gdrive)    
- [watch-app.sh Remote Configuration Management](https://github.com/pageauc/pi-timolo/wiki/How-to-Setup-config.py-Remote-Configuration)   
- [python3 Support Details](https://github.com/pageauc/pi-timolo/wiki/Prerequisites#python-3-support)   
-* ***Release 10.x*** Added Sched Start to Motion Track, Timelapse and VideoRepeat. See Wiki Details below    
- [How To Schedule Motion, Timelapse or VideoRepeat](https://github.com/pageauc/pi-timolo/wiki/How-to-Schedule-Motion,-Timelapse-or-VideoRepeat)  
- This release requires config.py be updated by the user with config.py.new since new variables have been added.
-* ***Release 11.12*** Added adhoc fix for Debian Stretch kernel panic and camera freeze issue when running
- under very low light conditions.  Note a ***sudo rpi-update*** may be required to update firmware if freezing
- still occurs under pi-timolo.py ver 11.12 or greater
-* ***Release 11.55*** Added config.py setting ***nightTwilightModeOn***  True is the normal twilight mode for outside conditions.
-False is used for indoors conditions where there is no twilight.  This setting will avoid overexposure when lights
-or sudden lighting changes are encountered.  If you have previously experienced overexposure when camera is indoors then
-this setting should help. 
-* ***Release 12.0*** Added [pantilthat panoramic image stitching Feature](https://github.com/pageauc/pi-timolo/wiki/Panoramic-Images-Stitching-Feature) 
-with support for Pimoroni and [Waveshare pantilthat](https://github.com/pageauc/waveshare.pantilthat) (and compatilble) hardware.
-This release also renames all the [config.py](https://github.com/pageauc/pi-timolo/blob/master/source/config.py) variable Constants to snake_case and does some code cleanup.  You need to update to
-the new config.py.  Built in instructions will prompt you if needed.  Please raise github issue if there are
-problems. See config.py comments and revised wiki for details. 
+### PI-TIMOLO2 Update
+PI-TIMOLO2 using libcamera and picamera2 on Bullseye, Bookworm or later is available at https://github.com/pageauc/pi-timolo2
  
 ## Requirements
 Requires a [***Raspberry Pi computer***](https://www.raspberrypi.org/documentation/setup/) and a 
 [***RPI camera module installed***](https://www.raspberrypi.org/documentation/usage/camera/).
 Make sure hardware is tested and works. Most [RPI models](https://www.raspberrypi.org/products/) will work OK. 
 A quad core RPI will greatly improve performance due to threading. A recent version of 
-[Raspbian operating system](https://www.raspberrypi.org/downloads/raspbian/) is Recommended.
+[Raspberry Pi OS, Bullseye or earlier](https://www.raspberrypi.org/downloads/raspbian/) is Recommended.
  
 ## Quick Install or Upgrade
 **IMPORTANT** - It is suggested you do a Raspbian ***sudo apt-get update*** and ***sudo apt-get upgrade***
