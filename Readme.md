@@ -1,10 +1,9 @@
 # PI-TIMOLO [![Mentioned in Awesome <INSERT LIST NAME>](https://awesome.re/mentioned-badge.svg)](https://github.com/thibmaek/awesome-raspberry-pi)
 ### Raspberry (Pi)camera, (Ti)melapse, (Mo)tion, (Lo)wlight 
-### For Details See [Program Features](https://github.com/pageauc/pi-timolo/wiki/Introduction#program-features) and [Wiki Instructions](https://github.com/pageauc/pi-timolo/wiki) and [YouTube Videos](https://www.youtube.com/playlist?list=PLLXJw_uJtQLa11A4qjVpn2D2T0pgfaSG0)
-
+For Details See [Program Features](https://github.com/pageauc/pi-timolo/wiki/Introduction#program-features) and [Wiki Instructions](https://github.com/pageauc/pi-timolo/wiki) and [YouTube Videos](https://www.youtube.com/playlist?list=PLLXJw_uJtQLa11A4qjVpn2D2T0pgfaSG0)
 
 ### PI-TIMOLO2 Update
-PI-TIMOLO2 using libcamera and picamera2 on Bullseye, Bookworm or later is available at https://github.com/pageauc/pi-timolo2
+PI-TIMOLO2 using libcamera and picamera2 on Bullseye, Bookworm or later is Now Available at https://github.com/pageauc/pi-timolo2
  
 ## Requirements
 Requires a [***Raspberry Pi computer***](https://www.raspberrypi.org/documentation/setup/) and a 
